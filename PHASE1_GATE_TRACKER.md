@@ -2,11 +2,11 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1C (Conceptual Schema Translation)
-- Latest known commit evidence: `c6d6d7b Fix lint scope for generated output` and `bd7c525` prior phase implementation commit
-- Current authority status: **Phase 1C is in progress (local design-only build prep)**
-- Implementation status: domain model types/constants + transition validation helpers
-- External delivery status: no push/deploy in this phase (local-only work only)
+- Phase: 1D (Ticket Lifecycle Backend)
+- Latest known commit evidence: `bd7c525` (Phase 1C domain model) and `48f17c3` (Phase 1C lint scope fix)
+- Current authority status: **Phase 1D is active**
+- Implementation status: local ticket lifecycle domain service foundation (in-memory only)
+- External delivery status: no push/deploy in this phase (cost-control local-only)
 
 ## 2) Phase Gates
 
@@ -94,16 +94,23 @@
 
 ### Phase 1D — Ticket Lifecycle Backend
 
-- **Status:** Blocked
+- **Status:** Diagnosed, Fixed Locally, Committed
 - **Current evidence:**
-  - `PHASE1_STATE_MACHINE.md` and `PHASE1_TECHNICAL_DESIGN.md` define lifecycle behavior and transitions
+  - `src/domain/ticketLifecycle.ts` with in-memory ticket helpers
+  - `scripts/validate-domain.mjs`
+  - `npm run lint`
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run validate:domain`
 - **Required evidence to close:**
-  - Transition matrix and validation rules approved for implementation-ready sequence
-  - Deterministic allowed/invalid transitions evidence captured
+  - Deterministic transition enforcement for create/transition/block/unblock/close
+  - In-memory audit event generation for required lifecycle events
+  - Evidence that helpers are local only and no route/api/ui/db/auth behavior exists
 - **Blockers:**
-  - Must remain pre-implementation until approved scaffold and schema-translation docs are in place
+  - None for local-only lifecycle domain logic.
 - **Notes:**
-  - No state engine or service logic may be implemented in this phase.
+  - Event model is in-memory only.
+  - No API, no database, no integrations, no persisted audit.
 
 ### Phase 1E — Internal Operator Workflow
 
@@ -218,6 +225,9 @@ Requirements interpretation for current scope:
 - **Phase 1C pushed:** Not pushed
 - **Phase 1C deployed:** Not deployed
 - **Phase 1C production verified:** Not production verified (cost-control default to local-only)
+- **Phase 1D pushed:** Not pushed
+- **Phase 1D deployed:** Not deployed
+- **Phase 1D production verified:** Not production verified (cost-control local-only)
 
 ## 8) Next Authorized Step
 

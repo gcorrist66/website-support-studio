@@ -46,6 +46,7 @@ export enum ActorRole {
 export enum AuditEventType {
   REQUEST_RECEIVED = "request_received",
   TICKET_CREATED = "ticket_created",
+  TICKET_TRIAGED = "ticket_triaged",
   INITIAL_CLASSIFICATION_ATTEMPT = "initial_classification_attempt",
   TRIAGE_COMPLETED = "triage_completed",
   CLASSIFICATION_RECORDED = "classification_recorded",
@@ -60,6 +61,7 @@ export enum AuditEventType {
   APPROVED_REPLY_FROZEN = "approved_reply_frozen",
   APPROVAL_CONTEXT_RECORDED = "approval_context_recorded",
   RESPONSE_SENT = "response_sent",
+  REPLY_SENT = "reply_sent",
   CUSTOMER_COMMUNICATION_CONFIRMATION = "customer_communication_confirmation",
   SENT_MESSAGE_HASH_REFERENCE = "sent_message_hash_or_reference",
   TICKET_BLOCKED = "ticket_blocked",
