@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "validate:domain": "node scripts/validate-domain.mjs",
+    "validate:e2e": "node scripts/validate-e2e.mjs",
     "format": "prettier --write .",
     "preview": "vite preview"
   },
