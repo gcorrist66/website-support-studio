@@ -11,6 +11,7 @@ const REQUIRED_ENV = {
 const OPTIONAL_URL_ENV = ['WSS_SUPABASE_URL', 'VITE_SUPABASE_URL'];
 const OPTIONAL_KEY_ENV = ['WSS_SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY'];
 const EXPECTED_PROJECT_REF = 'vrtfbbrwrxyljchywmzy';
+const VALID_KEY_PREFIXES = ['sb_secret_', 'eyJ'];
 
 function fail(message, details = {}) {
   const payload = {
@@ -37,6 +38,25 @@ function getRequiredEnv(name) {
     fail(`missing required env var: ${name}`);
   }
   return value.trim();
+}
+
+function assertServiceRoleKeyFormat(rawKey, keySourceName) {
+  if (!rawKey || typeof rawKey !== 'string') {
+    fail('missing service role key env var', {
+      required: OPTIONAL_KEY_ENV.join(' or '),
+      source: keySourceName,
+    });
+  }
+
+  const trimmed = rawKey.trim();
+  const hasKnownPrefix = VALID_KEY_PREFIXES.some((prefix) => trimmed.startsWith(prefix));
+  if (!hasKnownPrefix || trimmed.length < 24) {
+    fail('invalid service role key format', {
+      source: keySourceName,
+      receivedPrefix: trimmed.slice(0, 12),
+      allowedPrefixes: VALID_KEY_PREFIXES.join(', '),
+    });
+  }
 }
 
 function assertUrlMatchesExpectedProject(projectRefFromEnv, rawUrl) {
@@ -105,6 +125,7 @@ function assertGuard() {
       required: OPTIONAL_KEY_ENV.join(' or '),
     });
   }
+  assertServiceRoleKeyFormat(supabaseServiceRoleKey, keyName);
 
   assertSupabaseIdentity({
     environment,
@@ -297,26 +318,11 @@ async function run() {
       });
     }
 
-    const cleanupAudit = ensureSingle(
-      await supabase.from('ticket_audit_events').delete().eq('id', createdAudit.id),
-      'deleting audit event',
-    );
-    const cleanupTicket = ensureSingle(
-      await supabase.from('tickets').delete().eq('id', createdTicket.id),
-      'deleting ticket',
-    );
-    const cleanupSite = ensureSingle(
-      await supabase.from('sites').delete().eq('id', ids.siteId),
-      'deleting site',
-    );
-    const cleanupClient = ensureSingle(
-      await supabase.from('clients').delete().eq('id', ids.clientId),
-      'deleting client',
-    );
-    const cleanupAgency = ensureSingle(
-      await supabase.from('agencies').delete().eq('id', ids.agencyId),
-      'deleting agency',
-    );
+    await supabase.from('ticket_audit_events').delete().eq('id', createdAudit.id);
+    await supabase.from('tickets').delete().eq('id', createdTicket.id);
+    await supabase.from('sites').delete().eq('id', ids.siteId);
+    await supabase.from('clients').delete().eq('id', ids.clientId);
+    await supabase.from('agencies').delete().eq('id', ids.agencyId);
 
     const postCheck = await supabase.from('ticket_audit_events').select('id', { count: 'exact', head: true }).eq('id', createdAudit.id);
     if (postCheck.error || postCheck.count !== 0) {
@@ -366,13 +372,6 @@ async function run() {
       ),
     );
 
-    console.log('cleanup counts', {
-      auditsDeleted: cleanupAudit.count ?? null,
-      ticketDeleted: cleanupTicket.count ?? null,
-      siteDeleted: cleanupSite.count ?? null,
-      clientDeleted: cleanupClient.count ?? null,
-      agencyDeleted: cleanupAgency.count ?? null,
-    });
   } catch (error) {
     if (ids.agencyId) {
       await supabase.from('ticket_audit_events').delete().eq('ticket_id', ticket.id);
