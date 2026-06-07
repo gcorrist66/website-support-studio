@@ -202,16 +202,20 @@
 
 ### Phase 1I — Supabase Persistence Planning
 
-- **Status:** Blocked
+- **Status:** Diagnosed, Planning only
 - **Current evidence:**
-  - No end-to-end execution environment has been implemented
+  - No persistence implementation executed yet
+  - `PHASE1_SUPABASE_PERSISTENCE_PLAN.md` created
+  - Not fixed locally yet (persistence design only)
 - **Required evidence to close:**
-  - Scenario-based verification evidence for representative flows
-  - Signed go/no-go decision for implementation handoff
+  - Persistence table planning, migration sequence, and risk review completed
+  - RLS/auth considerations recorded for tenant boundary safety
+  - Mapping from domain types to Supabase entities approved
 - **Blockers:**
-  - End-to-end execution not available yet; requires completion of prior phases
+  - Execution not started by design; planning only.
 - **Notes:**
-  - This is a documentation and sign-off readiness stage only.
+  - No SQL/migrations or Supabase connectivity is executed in this phase.
+  - Not pushed or deployed in this planning-only phase.
 
 ## 4) Completion Rules
 
@@ -257,6 +261,8 @@ Requirements interpretation for current scope:
 - `a9295f3 Add Phase 1G local audit trail hardening`
 - `scripts/validate-e2e.mjs`
 - `npm run validate:e2e` pass output
+- `dc44381 Document Phase 1 local foundation checkpoint`
+- `PHASE1_SUPABASE_PERSISTENCE_PLAN.md`
 - Production evidence:
   - `https://website-support-studio.vercel.app/` returns `200`
   - `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` return `404`
@@ -281,6 +287,9 @@ Requirements interpretation for current scope:
 - **Phase 1H pushed:** Not pushed
 - **Phase 1H deployed:** Not deployed
 - **Phase 1H production verified:** Not production verified (cost-control local-only)
+- **Phase 1I pushed:** Not pushed
+- **Phase 1I deployed:** Not deployed
+- **Phase 1I production verified:** Not production verified (cost-control local-only)
 
 ## 8) Next Authorized Step
 
