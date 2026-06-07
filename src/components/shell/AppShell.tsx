@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { auditTrail, approvalQueue, getTicketDetail, ticketQueue, type MockTicketQueueItem } from "../../ui/mockData";
-import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
+
 import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
+import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
+import {
+  getReadOnlyApprovalQueue,
+  getReadOnlyModeLabel,
+  getReadOnlyTicketAuditTimeline,
+  getReadOnlyTicketDetail,
+  getReadOnlyTicketQueue,
+  getReadOnlyDataMode,
+} from "../../data/readOnlyTicketData";
+import { auditTrail, getTicketDetail, ticketQueue, type MockApprovalItem, type MockAuditEvent, type MockTicketQueueItem } from "../../ui/mockData";
 
 export function AppShell() {
   const [searchText, setSearchText] = useState("");
@@ -11,18 +20,74 @@ export function AppShell() {
   const [siteFilter, setSiteFilter] = useState("all");
   const [blockedFilter, setBlockedFilter] = useState("all");
   const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
+  const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
+  const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
+  const [ticketQueueData, setTicketQueueData] = useState<MockTicketQueueItem[]>(ticketQueue);
+  const [approvalQueue, setApprovalQueue] = useState<MockApprovalItem[]>([]);
+  const [readOnlyMode, setReadOnlyMode] = useState<ReturnType<typeof getReadOnlyDataMode>>("mock");
+
+  const loadReadOnlyData = async (modeOverride?: string) => {
+    const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
+    setReadOnlyMode(mode);
+
+    const [queue, approvals] = await Promise.all([
+      getReadOnlyTicketQueue(),
+      getReadOnlyApprovalQueue(),
+    ]);
+
+    setTicketQueueData(queue);
+    setApprovalQueue(approvals);
+
+    const activeId = queue.find((ticket) => ticket.id === selectedTicketId)?.id ?? queue[0]?.id ?? selectedTicketId;
+    setSelectedTicketId(activeId);
+  };
+
+  useEffect(() => {
+    loadReadOnlyData().catch(() => {
+      setTicketQueueData(ticketQueue);
+      setApprovalQueue([]);
+      setReadOnlyMode("mock");
+    });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const hydrateDetail = async () => {
+      const [detail, timeline] = await Promise.all([
+        getReadOnlyTicketDetail(selectedTicketId),
+        getReadOnlyTicketAuditTimeline(selectedTicketId),
+      ]);
+
+      if (!cancelled) {
+        setSelectedTicket(detail);
+        setAuditTimeline(timeline);
+      }
+    };
+
+    hydrateDetail().catch(() => {
+      if (!cancelled) {
+        setSelectedTicket(getTicketDetail(selectedTicketId));
+        setAuditTimeline(auditTrail);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedTicketId]);
 
   const clients = useMemo(() => {
-    return Array.from(new Set(ticketQueue.map((ticket) => ticket.clientName)));
-  }, [ticketQueue]);
+    return Array.from(new Set(ticketQueueData.map((ticket) => ticket.clientName)));
+  }, [ticketQueueData]);
 
   const sites = useMemo(() => {
-    return Array.from(new Set(ticketQueue.map((ticket) => ticket.siteName)));
-  }, [ticketQueue]);
+    return Array.from(new Set(ticketQueueData.map((ticket) => ticket.siteName)));
+  }, [ticketQueueData]);
 
   const filteredTickets: MockTicketQueueItem[] = useMemo(() => {
     const normalizedSearch = searchText.trim().toLowerCase();
-    return ticketQueue.filter((ticket) => {
+    return ticketQueueData.filter((ticket) => {
       const statusMatch = statusFilter === "all" || ticket.status === statusFilter;
       const priorityMatch = priorityFilter === "all" || ticket.priority === priorityFilter;
       const clientMatch = clientFilter === "all" || ticket.clientName === clientFilter;
@@ -31,11 +96,13 @@ export function AppShell() {
         blockedFilter === "all" ||
         (blockedFilter === "blocked" && ticket.status === "blocked") ||
         (blockedFilter === "not-blocked" && ticket.status !== "blocked");
-      const searchMatch = normalizedSearch.length === 0 || `${ticket.id} ${ticket.title} ${ticket.clientName} ${ticket.siteName}`.toLowerCase().includes(normalizedSearch);
+      const searchMatch =
+        normalizedSearch.length === 0 ||
+        `${ticket.id} ${ticket.title} ${ticket.clientName} ${ticket.siteName}`.toLowerCase().includes(normalizedSearch);
 
       return statusMatch && priorityMatch && clientMatch && siteMatch && blockedMatch && searchMatch;
     });
-  }, [searchText, statusFilter, priorityFilter, clientFilter, siteFilter, blockedFilter]);
+  }, [searchText, statusFilter, priorityFilter, clientFilter, siteFilter, blockedFilter, ticketQueueData]);
 
   useEffect(() => {
     if (filteredTickets.length > 0 && !filteredTickets.some((ticket) => ticket.id === selectedTicketId)) {
@@ -43,17 +110,15 @@ export function AppShell() {
     }
   }, [filteredTickets, selectedTicketId]);
 
-  const selectedTicket = getTicketDetail(selectedTicketId);
-
   return (
     <div className="phase4a-shell">
       <header className="phase4a-header">
         <div>
           <p className="brand-kicker">Website Support Studio</p>
           <h1>Internal Operator Workspace</h1>
-          <p>Phase 4D Read-only Ticket Search and Filters</p>
+          <p>Phase 5A Live Read-Only Data Integration</p>
         </div>
-        <span className="status-pill">Local shell only · No live ticket actions enabled</span>
+        <span className="status-pill">{getReadOnlyModeLabel()} · No live ticket actions enabled</span>
       </header>
 
       <div className="phase4a-layout">
@@ -73,15 +138,25 @@ export function AppShell() {
             <h2>Dashboard Placeholder</h2>
             <p>Read-only workspace for internal operator planning and local validation.</p>
             <ul>
-              <li>Queue views are built on mock data only.</li>
+              <li>
+                {readOnlyMode === "supabase-dev-readonly"
+                  ? "Live read-only data is allowed only in guarded dev mode."
+                  : "Queue views are in mock data mode until read-only dev guards are fully enabled."}
+              </li>
+              <li>Live read-only mode is safe-read only and requires WSS_ALLOW_SUPABASE_VALIDATION=dev guard.</li>
               <li>Planned workflow: draft → approval → send → close.</li>
               <li>All actions currently rendered as disabled placeholders.</li>
+              <li>No live writes, mutations, approvals, or customer sending in this phase.</li>
             </ul>
           </section>
 
           <section className="phase4a-card phase4d-search-panel">
             <h2>Search and Filters</h2>
-            <p className="placeholder-meta">All results and filters are mock-data only and read-only.</p>
+            <p className="placeholder-meta">
+              {readOnlyMode === "supabase-dev-readonly"
+                ? "All results are loaded from read-only guarded Supabase for this phase."
+                : "Mock-data only mode until guarded dev env is supplied."}
+            </p>
             <div className="phase4d-filter-grid">
               <label>
                 Search
@@ -99,10 +174,12 @@ export function AppShell() {
                   <option value="all">All</option>
                   <option value="received">received</option>
                   <option value="triaged">triaged</option>
-                  <option value="blocked">blocked</option>
+                  <option value="reply_drafted">reply_drafted</option>
                   <option value="awaiting_gary_approval">awaiting_gary_approval</option>
                   <option value="approved_to_send">approved_to_send</option>
                   <option value="sent_to_customer">sent_to_customer</option>
+                  <option value="blocked">blocked</option>
+                  <option value="closed">closed</option>
                 </select>
               </label>
 
@@ -114,6 +191,8 @@ export function AppShell() {
                   <option value="medium">medium</option>
                   <option value="high">high</option>
                   <option value="urgent">urgent</option>
+                  <option value="normal">normal</option>
+                  <option value="critical">critical</option>
                 </select>
               </label>
 
@@ -160,28 +239,9 @@ export function AppShell() {
           <ReadOnlyTicketDetail ticket={selectedTicket} />
 
           <section className="phase4a-card">
-            <h2>Approval Queue Placeholder</h2>
-            <div className="placeholder-table">
-              {approvalQueue.map((item) => (
-                <article key={item.id} className="placeholder-row">
-                  <div>
-                    <strong>{item.id}</strong> ({item.ticketId})
-                  </div>
-                  <div className="placeholder-meta">
-                    Requested by {item.requestBy} · state: {item.state} · {item.submittedAt}
-                  </div>
-                  <button type="button" disabled>
-                    Approve (disabled in Phase 4D - no live approval yet)
-                  </button>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="phase4a-card">
             <h2>Audit Trail Placeholder</h2>
             <div className="placeholder-table">
-              {auditTrail.map((event) => (
+              {auditTimeline.map((event) => (
                 <article key={event.id} className="placeholder-row">
                   <div>
                     <strong>{event.eventType}</strong> for {event.ticketId}
@@ -190,7 +250,26 @@ export function AppShell() {
                     {event.summary} · actor: {event.actor} · {event.occurredAt}
                   </div>
                   <button type="button" disabled>
-                    View details (disabled in Phase 4D - no live details yet)
+                    View details (disabled in Phase 5A - read-only mode)
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="phase4a-card">
+            <h2>Approval Queue Placeholder</h2>
+            <div className="placeholder-table">
+              {(approvalQueue ?? []).map((item) => (
+                <article key={item.id} className="placeholder-row">
+                  <div>
+                    <strong>{item.id}</strong> ({item.ticketId})
+                  </div>
+                  <div className="placeholder-meta">
+                    Requested by {item.requestBy} · state: {item.state} · {item.submittedAt}
+                  </div>
+                  <button type="button" disabled>
+                    Approve (disabled in Phase 5A - no live approval yet)
                   </button>
                 </article>
               ))}
@@ -200,11 +279,11 @@ export function AppShell() {
           <section className="phase4a-card">
             <h2>System Status / Validation Placeholder</h2>
             <ul>
-              <li>Read-only local queue complete (mock data only).</li>
-              <li>Phase 4C adds ticket detail context and read-only timeline/approvals.</li>
+              <li>Read-only data mode: {readOnlyMode}.</li>
+              <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
               <li>Route files: not introduced in this phase.</li>
-              <li>Live reads/writes: disabled.</li>
-              <li>Auth/email/provider: disabled.</li>
+              <li>Live writes/mutations: disabled.</li>
+              <li>Auth/email/provider: not added.</li>
             </ul>
           </section>
         </main>

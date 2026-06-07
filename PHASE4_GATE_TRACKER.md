@@ -6,6 +6,7 @@
 - Deployment status: not deployed
 - Push status: not pushed
 - Local checkpoint: PHASE4_LOCAL_CHECKPOINT.md documented.
+- Additional local progression: PHASE5A read-only data integration active in separate tracker.
 
 ## 2) Phase Gates
 

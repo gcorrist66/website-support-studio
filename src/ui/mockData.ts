@@ -7,8 +7,10 @@ export type MockTicketQueueItem = {
     | "blocked"
     | "awaiting_gary_approval"
     | "approved_to_send"
-    | "sent_to_customer";
-  priority: "low" | "medium" | "high" | "urgent";
+    | "sent_to_customer"
+    | "reply_drafted"
+    | "closed";
+  priority: "low" | "medium" | "high" | "urgent" | "normal" | "critical";
   submittedBy: string;
   updatedAt: string;
   siteId: string;
@@ -46,8 +48,10 @@ export type MockTicketDetail = {
     | "blocked"
     | "awaiting_gary_approval"
     | "approved_to_send"
-    | "sent_to_customer";
-  priority: "low" | "medium" | "high" | "urgent";
+    | "sent_to_customer"
+    | "reply_drafted"
+    | "closed";
+  priority: "low" | "medium" | "high" | "urgent" | "normal" | "critical";
   identityConfidence: "known" | "claimed" | "unknown";
   tenantContext: {
     agencyId: string;

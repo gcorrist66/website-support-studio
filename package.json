@@ -20,7 +20,8 @@
     "validate:supabase:direct": "node scripts/validate-supabase-direct.mjs",
     "validate:handlers": "node scripts/validate-handlers.mjs",
     "validate:route-boundary": "node scripts/validate-route-boundary.mjs",
-    "validate:ui-boundary": "node scripts/validate-ui-boundary.mjs"
+    "validate:ui-boundary": "node scripts/validate-ui-boundary.mjs",
+    "validate:readonly-data": "node scripts/validate-readonly-data.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

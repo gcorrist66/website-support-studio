@@ -9,8 +9,9 @@ const sourceDirs = [
 const importSupabase = /\bfrom\s+['"]@?supabase\/supabase-js['"]/i;
 const supabaseUsage = /\bsupabase\./i;
 const sendCommsPhrases = /customer communication|send to customer|send customer|delivery|email to customer/i;
-const disabledPhasePhrases = /not active in phase 4(B|C|D)/i;
-const disabledPhrase = /disabled in phase 4(B|C|D)/i;
+const disabledPhasePhrases = /not active in phase (?:4b|4c|4d|5a)/i;
+const disabledPhrase = /disabled in phase (?:4b|4c|4d|5a)/i;
+const noLiveActionPhrases = /no live ticket actions/i;
 const activeMutationPhrases = /\bsend\b|\bapprove\b|\bclose\b/i;
 const queueComponentPath = path.join(process.cwd(), "src", "components", "tickets", "ReadOnlyTicketQueue.tsx");
 const noDataFetchPhrases = /\bfetch\s*\(|\baxios\b|XMLHttpRequest|from\s+["']https?:\/\/|new\s+Request\(/i;
@@ -68,7 +69,10 @@ function hasForbiddenSendLabels(files) {
 function hasDisabledLanguage(files) {
   return files.some((file) => {
     const text = fs.readFileSync(file, "utf8");
-    return /disabled/i.test(text) && (disabledPhasePhrases.test(text) || disabledPhrase.test(text));
+    return (
+      /disabled/i.test(text) &&
+      (disabledPhasePhrases.test(text) || disabledPhrase.test(text) || noLiveActionPhrases.test(text))
+    );
   });
 }
 

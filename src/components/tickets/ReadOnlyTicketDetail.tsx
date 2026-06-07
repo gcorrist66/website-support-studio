@@ -10,10 +10,14 @@ function statusClass(status: MockTicketDetail["status"]) {
       return "phase4b-badge phase4b-badge--blocked";
     case "awaiting_gary_approval":
       return "phase4b-badge phase4b-badge--approval";
+    case "reply_drafted":
+      return "phase4b-badge phase4b-badge--approval";
     case "approved_to_send":
       return "phase4b-badge phase4b-badge--approved";
     case "sent_to_customer":
       return "phase4b-badge phase4b-badge--sent";
+    case "closed":
+      return "phase4b-badge phase4b-badge--blocked";
     default:
       return "phase4b-badge";
   }
@@ -27,8 +31,12 @@ function priorityClass(priority: MockTicketDetail["priority"]) {
       return "phase4b-badge phase4b-badge--high";
     case "medium":
       return "phase4b-badge phase4b-badge--medium";
+    case "normal":
+      return "phase4b-badge phase4b-badge--medium";
     case "low":
       return "phase4b-badge phase4b-badge--low";
+    case "critical":
+      return "phase4b-badge phase4b-badge--urgent";
     default:
       return "phase4b-badge";
   }
@@ -61,7 +69,7 @@ export function ReadOnlyTicketDetail({ ticket }: ReadOnlyTicketDetailProps) {
     <section className="phase4a-card">
       <h2>Read-only ticket detail</h2>
       <p className="placeholder-meta">
-        Mock data only · No live ticket actions enabled · Phase 4D local read-only details.
+        Mock data fallback available · No live ticket actions enabled · Phase 5A read-only data integration.
       </p>
 
       <article className="phase4c-detail-card">
@@ -129,13 +137,13 @@ export function ReadOnlyTicketDetail({ ticket }: ReadOnlyTicketDetailProps) {
         <h4>Local action placeholders</h4>
         <div className="phase4c-actions">
           <button type="button" className="phase4a-action" disabled>
-            Send to customer (disabled in Phase 4D)
+            Send to customer (disabled in Phase 5A)
           </button>
           <button type="button" className="phase4a-action" disabled>
-            Approve reply (disabled in Phase 4D)
+            Approve reply (disabled in Phase 5A)
           </button>
           <button type="button" className="phase4a-action" disabled>
-            Close ticket (disabled in Phase 4D)
+            Close ticket (disabled in Phase 5A)
           </button>
         </div>
         <p className="placeholder-meta">

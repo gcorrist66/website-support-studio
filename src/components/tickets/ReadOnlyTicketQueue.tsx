@@ -22,6 +22,8 @@ function statusClass(status: MockTicketQueueItem["status"]) {
 
 function priorityClass(priority: MockTicketQueueItem["priority"]) {
   switch (priority) {
+    case "critical":
+      return "phase4b-badge phase4b-badge--urgent";
     case "urgent":
       return "phase4b-badge phase4b-badge--urgent";
     case "high":
@@ -50,7 +52,7 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
     <section className="phase4a-card">
       <h2>Read-only local queue</h2>
       <p>
-        Mock data only · No live ticket actions enabled · All row action controls are disabled in this phase.
+        Read-only mode · No live ticket actions enabled · All row action controls are disabled in this phase.
       </p>
       <p className="placeholder-meta">Filter results: {tickets.length} ticket(s)</p>
 
