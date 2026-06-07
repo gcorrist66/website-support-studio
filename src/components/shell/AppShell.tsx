@@ -1,4 +1,5 @@
-import { auditTrail, approvalQueue, ticketQueue } from "../../ui/mockData";
+import { auditTrail, approvalQueue } from "../../ui/mockData";
+import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
 
 export function AppShell() {
   return (
@@ -7,7 +8,7 @@ export function AppShell() {
         <div>
           <p className="brand-kicker">Website Support Studio</p>
           <h1>Internal Operator Workspace</h1>
-          <p>Phase 4A Local Operator Shell</p>
+          <p>Phase 4B Local Read-only Ticket Queue</p>
         </div>
         <span className="status-pill">Local shell only · No live ticket actions enabled</span>
       </header>
@@ -29,30 +30,13 @@ export function AppShell() {
             <h2>Dashboard Placeholder</h2>
             <p>Read-only workspace for internal operator planning and local validation.</p>
             <ul>
-              <li>Ready states: ticket intake and triage simulation</li>
-              <li>Planned workflow: draft → approval → send → close</li>
-              <li>All actions currently rendered as disabled placeholders</li>
+              <li>Queue views are built on mock data only.</li>
+              <li>Planned workflow: draft → approval → send → close.</li>
+              <li>All actions currently rendered as disabled placeholders.</li>
             </ul>
           </section>
 
-          <section className="phase4a-card">
-            <h2>Ticket Queue Placeholder</h2>
-            <div className="placeholder-table">
-              {ticketQueue.map((ticket) => (
-                <article key={ticket.id} className="placeholder-row">
-                  <div>
-                    <strong>{ticket.id}</strong> — {ticket.title}
-                  </div>
-                  <div className="placeholder-meta">
-                    {ticket.status} · {ticket.priority} · {ticket.submittedBy}
-                  </div>
-                  <button type="button" disabled>
-                    Open ticket (disabled - local shell only)
-                  </button>
-                </article>
-              ))}
-            </div>
-          </section>
+          <ReadOnlyTicketQueue />
 
           <section className="phase4a-card">
             <h2>Approval Queue Placeholder</h2>
@@ -95,10 +79,10 @@ export function AppShell() {
           <section className="phase4a-card">
             <h2>System Status / Validation Placeholder</h2>
             <ul>
-              <li>Domain and workflow validation scripts: available</li>
-              <li>Route files: not introduced in this phase</li>
-              <li>Live writes: disabled</li>
-              <li>Auth/email/provider: disabled</li>
+              <li>Read-only local queue complete (mock data only).</li>
+              <li>Route files: not introduced in this phase.</li>
+              <li>Live reads/writes: disabled.</li>
+              <li>Auth/email/provider: disabled.</li>
             </ul>
           </section>
         </main>

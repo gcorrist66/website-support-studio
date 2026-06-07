@@ -140,6 +140,97 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.phase4b-header-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 1.2fr 1fr 1fr;
+  gap: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 1px solid #d8deea;
+  padding: 0 0.25rem 0.5rem;
+}
+
+.phase4b-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 1.2fr 1fr 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.phase4b-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  background: #e2e8f0;
+}
+
+.phase4b-badge--received {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+.phase4b-badge--triaged {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.phase4b-badge--blocked,
+.phase4b-badge--approval {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.phase4b-badge--approved,
+.phase4b-badge--sent {
+  background: #e9d5ff;
+  color: #5b21b6;
+}
+
+.phase4b-badge--urgent {
+  background: #ffedd5;
+  color: #92400e;
+}
+
+.phase4b-badge--high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.phase4b-badge--medium {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.phase4b-badge--low {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.phase4b-badge--known {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.phase4b-badge--uncertain {
+  background: #fde68a;
+  color: #92400e;
+}
+
+.phase4b-placeholder-text {
+  font-size: 0.8rem;
+  color: #334155;
+}
+
+.phase4a-action {
+  margin-top: 0.35rem;
+}
+
 @media (max-width: 900px) {
   .phase4a-layout {
     grid-template-columns: 1fr;

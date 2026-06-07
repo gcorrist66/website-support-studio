@@ -1,10 +1,22 @@
 export type MockTicketQueueItem = {
   id: string;
   title: string;
-  status: string;
-  priority: string;
+  status:
+    | "received"
+    | "triaged"
+    | "blocked"
+    | "awaiting_gary_approval"
+    | "approved_to_send"
+    | "sent_to_customer";
+  priority: "low" | "medium" | "high" | "urgent";
   submittedBy: string;
   updatedAt: string;
+  siteId: string;
+  siteName: string;
+  clientId: string;
+  clientName: string;
+  blockedReason?: string;
+  identityConfidence: "known" | "claimed" | "unknown";
 };
 
 export type MockApprovalItem = {
@@ -32,6 +44,12 @@ export const ticketQueue: MockTicketQueueItem[] = [
     priority: "medium",
     submittedBy: "Customer A",
     updatedAt: "2026-06-07T10:15:00Z",
+    siteId: "SITE-01",
+    siteName: "North Coast Site",
+    clientId: "CLI-01",
+    clientName: "North Coast Retail",
+    identityConfidence: "known",
+    blockedReason: undefined,
   },
   {
     id: "TKT-LOCAL-1002",
@@ -40,6 +58,25 @@ export const ticketQueue: MockTicketQueueItem[] = [
     priority: "high",
     submittedBy: "Support Form",
     updatedAt: "2026-06-07T09:50:00Z",
+    siteId: "SITE-02",
+    siteName: "Acme Site",
+    clientId: "CLI-02",
+    clientName: "Acme Holdings",
+    identityConfidence: "claimed",
+  },
+  {
+    id: "TKT-LOCAL-1003",
+    title: "Webhook not firing after checkout",
+    status: "blocked",
+    priority: "urgent",
+    submittedBy: "Partner Bot",
+    updatedAt: "2026-06-07T09:10:00Z",
+    siteId: "SITE-03",
+    siteName: "Pulse Lab",
+    clientId: "CLI-03",
+    clientName: "Pulse Labs",
+    identityConfidence: "unknown",
+    blockedReason: "customer_data_required",
   },
 ];
 

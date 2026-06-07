@@ -1,7 +1,7 @@
 # WSS Phase 4 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 4A (Internal Operator UI Shell)
+- Current focus: Phase 4B (Read-only Ticket Queue UI)
 - Authority: local UI proof only
 - Deployment status: not deployed
 - Push status: not pushed
@@ -11,7 +11,7 @@
 ### Phase 4A — Internal Operator UI Shell
 - **Diagnosed:** complete
 - **Fixed Locally:** complete
-- **Committed:** pending
+- **Committed:** complete
 - **Pushed:** not complete
 - **Deployed:** not complete
 - **Production Verified:** not complete
@@ -21,18 +21,32 @@
 - Operator shell implemented as local React component composition in `src/components/shell/AppShell.tsx`.
 - Mock data introduced at `src/ui/mockData.ts`.
 - Styling updated in `src/styles.css`.
-- Home page now shows:
+- Home page shows:
   - Website Support Studio
   - Internal Operator Workspace
-  - Phase 4A Local Operator Shell
+  - Phase 4B Local Read-only Ticket Queue
   - Local shell only · No live ticket actions enabled
-- All user actions in shell are explicitly disabled placeholders.
+- All user actions are explicitly disabled placeholders.
 - No API routes, auth, portal, or provider communication added.
-- Validation plan remains unchanged for local-only posture.
 
-## 3) Validation Baseline
-- This phase does not alter domain, persistence, or contract semantics.
-- Validate gates remain:
+### Phase 4B — Read-only Ticket Queue UI
+- **Diagnosed:** complete
+- **Fixed Locally:** complete
+- **Committed:** pending
+- **Pushed:** not complete
+- **Deployed:** not complete
+- **Production Verified:** not complete
+- **Closed:** not complete
+
+### Evidence
+- Added dedicated queue UI in `src/components/tickets/ReadOnlyTicketQueue.tsx`.
+- Queue data now includes status/priority and tenant/site/client labels plus blocked and identity context.
+- Added read-only row action language and disabled controls.
+- Added local validation command `validate:ui-boundary` (`scripts/validate-ui-boundary.mjs`).
+- `src/ui/mockData.ts` expanded for queue metadata used by UI placeholders.
+
+### Validation baseline
+- Core checks remain:
   - `npm run lint`
   - `npm run typecheck`
   - `npm run build`
@@ -43,12 +57,14 @@
   - `npm run validate:contracts`
   - `npm run validate:handlers`
   - `npm run validate:route-boundary`
+  - `npm run validate:ui-boundary`
 
-## 4) Known Intentional Limits
+## 3) Known Intentional Limits
 - No real ticket mutation UI.
-- No email sending or provider wiring.
-- No public customer portal.
 - No API routes.
-- No authentication implementation.
+- No auth implementation.
+- No customer communication/send implementation.
+- No live database reads/writes.
+- No customer portal.
 - No push.
 - No deploy.
