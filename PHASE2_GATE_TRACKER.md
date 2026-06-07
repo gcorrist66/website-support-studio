@@ -124,12 +124,16 @@
 - **Evidence:**
   - `src/persistence/supabaseAdapter.ts`
   - `scripts/validate-supabase-adapter.mjs`
-  - `npm run validate:supabase:adapter` (guarded; currently blocked locally until `.supabase/config.toml` link to `vrtfbbrwrxyljchywmzy` is present)
+  - `npm run validate:supabase:adapter` (guarded run passed with WSS dev ref + environment guard)
   - execution guard: `WSS_ALLOW_SUPABASE_VALIDATION=dev` and `WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy` required
   - command evidence:
+    - local dev link present and verified via `supabase/.temp/project-ref` and `.supabase/config.toml`
     - safe test agency/client/site/ticket/audit insertion
     - ticket readback + tenant relationship assertion
     - audit trail roundtrip verification (`event_type` set includes required values)
     - communication row persisted only with approved `approval_id` and non-prod placeholder payload
     - failure-path checks for tenant enforcement, FK checks, approval requirement, and audit metadata requirements
     - cleanup executed and residual rows validated in finally block
+    - explicit validation command used:
+      - `WSS_ALLOW_SUPABASE_VALIDATION=dev WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy WSS_SUPABASE_ENVIRONMENT=dev npm run validate:supabase:adapter`
+  - No secrets committed; `.supabase/` and `supabase/.temp/` remain untracked local metadata only
