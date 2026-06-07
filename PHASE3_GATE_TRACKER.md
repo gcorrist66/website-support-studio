@@ -1,8 +1,8 @@
 # WSS Phase 3 Gate Tracker
 
 ## 1) Current Phase Status
-- Phase: 3B (Workflow API Contract Planning)
-- Local execution authority: local contract-first planning over existing repository/service layer and persistence services
+- Phase: 3C (Internal Workflow Handler Layer)
+- Local execution authority: local handler orchestration over existing contract/domain/service/repository layers
 - Deployment status: no deploy
 - Push status: not pushed
 
@@ -11,6 +11,7 @@
 - Phase 3A — Local Repository Service Layer
 - Phase 3B — Workflow API Contract Planning
 - Phase 3C — Internal Service Surface Hardening
+- Phase 3C — Local API Handler Layer
 
 ## 3) Phase 3A — Local Repository Service Layer
 
@@ -131,6 +132,51 @@
   - cleanup inserted rows and verify cleanup
 - `.env.example` updated with placeholder key names only; no secrets committed.
 
-## 5) Recommended Next Phase
-- Next phase recommendation: **3C — Tenant Service Abstractions**
-- Rationale: Phase 3B has produced local contract artifacts and gate checks; service boundary hardening and handler contracts can follow.
+
+## 5) Phase 3C — Internal API Handler Layer
+
+- **Diagnosed:** complete
+- **Fixed Locally:** complete
+- **Committed:** complete
+- **Pushed:** not complete
+- **Deployed:** not complete
+- **Production Verified:** not complete
+- **Closed:** not complete
+
+### Evidence Collected
+- New local handler layer: `src/handlers/ticketWorkflowHandlers.ts`
+- Handler validation script: `scripts/validate-handlers.mjs`
+- Validation command: `npm run validate:handlers`
+- Validation behavior:
+  - tenant context required
+  - actor context required
+  - API route pattern scan under `src`
+  - non-approver send and close validation paths
+  - approve/reject role constraints exercised in handler flow
+  - send requires approval context
+  - block/unblock handlers exercised with local ticket pair
+  - no provider fields in requests
+  - no production deployment
+
+### Constraint summary
+- Local-only execution
+- no API route files
+- no UI
+- no auth
+- no real email provider
+
+### Outstanding local validation note
+- full handler workflow execution is environment-gated and requires:
+  - `WSS_ALLOW_SUPABASE_VALIDATION=dev`
+  - `WSS_SUPABASE_ENVIRONMENT=dev`
+  - `WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy`
+
+### Local evidence at this phase
+- `npm run validate:handlers` passed:
+  - missing tenant/actor context rejected
+  - no API route-like files detected under `src`
+  - full local handler workflow skipped because local Supabase validation guard vars were not configured with all required credentials
+
+## 6) Recommended Next Phase
+- Next phase recommendation: **3D — Internal Workflow Router Abstractions**
+- Rationale: handler-layer execution exists and can now be wrapped by a local router for transport orchestration.

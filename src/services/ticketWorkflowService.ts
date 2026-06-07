@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { ActorRole, IdentityConfidence, TicketPriority, TicketStatus } from "../domain/ticketStatus";
+import { ActorRole, BlockedReason, IdentityConfidence, TicketPriority, TicketStatus } from "../domain/ticketStatus";
 import type {
   Agency,
   Client,
@@ -13,14 +13,17 @@ import type {
 } from "../domain/types";
 import {
   approveDraftReply,
+  blockTicket,
   closeTicket,
   createCustomerReplyDraft,
   createTicket,
+  rejectDraftReply,
   getApprovals,
   getDrafts,
   getAuditTrail,
   getCommunicationTrail,
   markReplyReadyForApproval,
+  unblockTicket,
   sendApprovedCustomerReply,
   transitionTicket,
 } from "../domain/ticketLifecycle";
@@ -531,6 +534,103 @@ export function approvePersistedReply(
 
   markIds(session.persistedAuditIds, newAudits.map((event) => event.id));
   markIds(session.persistedApprovalIds, newApprovals.map((approval) => approval.approvalId));
+
+  return ticket;
+}
+
+export function rejectPersistedReply(
+  ticketId: string,
+  actorRole: ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN,
+  actorReference: string,
+  rejectionNotes?: string,
+): Ticket {
+  const session = getSession(ticketId);
+  assertTenantIntegrity(session);
+
+  const ticket = rejectDraftReply({
+    ticketId,
+    actorRole,
+    actorReference,
+    approvalNotes: rejectionNotes,
+    approverReference: actorReference,
+  });
+
+  const newAudits = filterNewById(getAuditTrail(ticketId), session.persistedAuditIds, "id");
+  const newApprovals = filterNewById(getApprovals(ticketId), session.persistedApprovalIds, "approvalId");
+
+  persistMutation(session, ticket, {
+    draftReplyId: getLatestDraftReplyId(session),
+    audits: newAudits,
+    approvals: newApprovals,
+  });
+
+  markIds(session.persistedAuditIds, newAudits.map((event) => event.id));
+  markIds(session.persistedApprovalIds, newApprovals.map((approval) => approval.approvalId));
+
+  return ticket;
+}
+
+export function blockPersistedTicket(
+  ticketId: string,
+  actorRole: ActorRole,
+  reason: string,
+  blockerOwner: ActorRole,
+  reasonDetail: string,
+  actorReference: string,
+  mitigationPlan?: string,
+  nextAction?: string,
+): Ticket {
+  const session = getSession(ticketId);
+  assertTenantIntegrity(session);
+
+  const ticket = blockTicket({
+    ticketId,
+    actorRole,
+    actorReference,
+    reason: reason as BlockedReason,
+    blockerOwner,
+    reasonDetail,
+    mitigationPlan,
+    nextAction,
+  });
+
+  const newAudits = filterNewById(getAuditTrail(ticketId), session.persistedAuditIds, "id");
+  persistMutation(session, ticket, {
+    audits: newAudits,
+    draftReplyId: getLatestDraftReplyId(session),
+  });
+  markIds(session.persistedAuditIds, newAudits.map((event) => event.id));
+
+  return ticket;
+}
+
+export function unblockPersistedTicket(
+  ticketId: string,
+  actorRole: ActorRole,
+  targetStatus: TicketStatus,
+  actorReference?: string,
+  previousBlockedStatus?: TicketStatus,
+  rationale?: string,
+): Ticket {
+  const session = getSession(ticketId);
+  assertTenantIntegrity(session);
+
+  const ticket = unblockTicket({
+    ticketId,
+    actorRole,
+    actorReference,
+    targetStatus,
+    rationale,
+    previousBlockedStatus,
+  });
+
+  const newAudits = filterNewById(getAuditTrail(ticketId), session.persistedAuditIds, "id");
+
+  persistMutation(session, ticket, {
+    audits: newAudits,
+    draftReplyId: getLatestDraftReplyId(session),
+  });
+  markIds(session.persistedAuditIds, newAudits.map((event) => event.id));
 
   return ticket;
 }

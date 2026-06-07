@@ -17,7 +17,8 @@
     "validate:supabase:adapter": "node scripts/validate-supabase-adapter.mjs",
     "validate:workflow-service": "node scripts/validate-workflow-service.mjs",
     "validate:contracts": "node scripts/validate-contracts.mjs",
-    "validate:supabase:direct": "node scripts/validate-supabase-direct.mjs"
+    "validate:supabase:direct": "node scripts/validate-supabase-direct.mjs",
+    "validate:handlers": "node scripts/validate-handlers.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
