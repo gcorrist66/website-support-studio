@@ -12,6 +12,7 @@
 - Phase 3B — Workflow API Contract Planning
 - Phase 3C — Internal Service Surface Hardening
 - Phase 3C — Local API Handler Layer
+- Phase 3D — Route Boundary and Security Plan
 
 ## 3) Phase 3A — Local Repository Service Layer
 
@@ -178,5 +179,28 @@
   - full local handler workflow skipped because local Supabase validation guard vars were not configured with all required credentials
 
 ## 6) Recommended Next Phase
-- Next phase recommendation: **3D — Internal Workflow Router Abstractions**
-- Rationale: handler-layer execution exists and can now be wrapped by a local router for transport orchestration.
+- Next phase recommendation: **3D — Route Boundary and Security Plan**
+- Rationale: handler-layer execution exists and now requires explicit route-boundary/security controls before any transport exposure.
+
+## 7) Phase 3D — Route Boundary and Security Plan
+
+- **Diagnosed:** complete
+- **Fixed Locally:** complete
+- **Committed:** complete
+- **Pushed:** not complete
+- **Deployed:** not complete
+- **Production Verified:** not complete
+- **Closed:** not complete
+
+### Evidence Collected
+- Route boundary/security plan: `PHASE3_ROUTE_SECURITY_PLAN.md`
+- Boundary validator: `scripts/validate-route-boundary.mjs`
+- Validation command: `npm run validate:route-boundary`
+- NPM script updated: `validate:route-boundary`
+
+### Constraint summary
+- local handler-only execution continues
+- no public route files under `src` are introduced in this phase
+- no auth implementation
+- no customer send provider integration
+- no UI or portal wiring
