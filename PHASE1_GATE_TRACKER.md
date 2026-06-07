@@ -3,7 +3,7 @@
 ## 1) Current Phase Status
 
 - Phase: 1C (Conceptual Schema Translation)
-- Latest known commit evidence: `1309429 Add Phase 1C domain model foundation` and `4005ce9` prior phase closure
+- Latest known commit evidence: `c6d6d7b Fix lint scope for generated output` and `bd7c525` prior phase implementation commit
 - Current authority status: **Phase 1C is in progress (local design-only build prep)**
 - Implementation status: domain model types/constants + transition validation helpers
 - External delivery status: no push/deploy in this phase (local-only work only)
@@ -81,6 +81,7 @@
   - `src/domain/ticketStatus.ts`
   - `src/domain/types.ts`
   - `src/domain/transitions.ts`
+  - `npm run lint` passes with generated output excluded from lint scope
 - **Required evidence to close:**
   - Conceptual entity map approved against tenant hierarchy
   - State-specific metadata coverage approved
@@ -206,6 +207,7 @@ Requirements interpretation for current scope:
 - `src/domain/ticketStatus.ts`
 - `src/domain/types.ts`
 - `src/domain/transitions.ts`
+- `npm run lint` passes after excluding generated build output from lint scope
 - Working tree clean after scaffold gate update
 - Production evidence:
   - `https://website-support-studio.vercel.app/` returns `200`
