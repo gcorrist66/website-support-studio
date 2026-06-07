@@ -111,3 +111,22 @@
 - No production Supabase write
 - No production deployment
 - No seed/customer data insertion
+
+## 12) Phase 2F — Local Supabase Persistence Adapter
+
+- **Diagnosed:** complete
+- **Fixed Locally:** complete
+- **Committed:** complete
+- **Pushed:** not complete
+- **Deployed:** not complete
+- **Production Verified:** not complete
+- **Closed:** complete (local evidence-backed execution complete; production gate intentionally pending)
+- **Evidence:**
+  - `src/persistence/supabaseAdapter.ts`
+  - `scripts/validate-supabase-adapter.mjs`
+  - `npm run validate:supabase:adapter`
+  - command evidence:
+    - safe test agency/client/site/ticket/audit insertion
+    - ticket readback + tenant relationship assertion
+    - audit trail roundtrip verification (`event_type` set includes required values)
+    - communication row persisted with approved approval reference and cleanup executed

@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "preview": "vite preview",
     "validate:phase2a": "node scripts/validate-phase2a.mjs",
-    "validate:persistence": "node scripts/validate-persistence.mjs"
+    "validate:persistence": "node scripts/validate-persistence.mjs",
+    "validate:supabase:adapter": "node scripts/validate-supabase-adapter.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
