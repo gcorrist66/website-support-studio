@@ -21,6 +21,7 @@ const filesToCompile = [
   "src/persistence/supabaseAdapter.ts",
   "src/services/ticketRepository.ts",
   "src/services/ticketWorkflowService.ts",
+    "src/utils/runtimeUuid.ts",
 ];
 
 function assert(condition, message) {

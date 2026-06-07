@@ -99,6 +99,7 @@ function transpileProjectModules() {
     "src/persistence/supabaseAdapter.ts",
     "src/services/ticketRepository.ts",
     "src/services/ticketWorkflowService.ts",
+    "src/utils/runtimeUuid.ts",
     "src/handlers/ticketWorkflowHandlers.ts",
   ];
 

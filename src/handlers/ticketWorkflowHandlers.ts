@@ -131,6 +131,19 @@ function buildResponseBase(
 export function handleCreateTicket(request: CreateTicketRequest): HandlerResult<CreateTicketResponse> {
   try {
     assertContractContext(request.tenantContext, request.actorContext);
+    if (!request.ticket.title?.trim()) {
+      fail("ticket.title is required");
+    }
+    if (!request.ticket.rawMessage?.trim()) {
+      fail("ticket.rawMessage is required");
+    }
+    const submitterEmail = request.ticket.submitter?.submitterEmail?.trim() ?? "";
+    if (!submitterEmail) {
+      fail("ticket.submitter.submitterEmail is required");
+    }
+    if (!submitterEmail.includes("@")) {
+      fail("ticket.submitter.submitterEmail must include a valid email-style value");
+    }
 
     const ticket = createPersistedTicket({
       tenant: {
@@ -143,6 +156,7 @@ export function handleCreateTicket(request: CreateTicketRequest): HandlerResult<
         submitterEmail: request.ticket.submitter?.submitterEmail,
       },
       ticket: {
+        submitterEmailRequired: true,
         rawMessage: request.ticket.rawMessage,
         intakeChannel: request.ticket.intakeChannel,
         source: request.ticket.source,

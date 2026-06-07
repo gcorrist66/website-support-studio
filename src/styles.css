@@ -318,6 +318,62 @@ button:disabled {
   font-weight: 700;
 }
 
+.phase5b-card {
+  border-style: dashed;
+  border-color: #93c5fd;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f5f9 100%);
+}
+
+.phase5b-form {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.phase5b-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.phase5b-form input,
+.phase5b-form select,
+.phase5b-form textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.phase5b-form textarea {
+  resize: vertical;
+}
+
+.phase5b-actions {
+  margin-top: 0.5rem;
+}
+
+.phase5b-error {
+  color: #991b1b;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.phase5b-success {
+  color: #14532d;
+  font-weight: 700;
+}
+
+.phase5b-debug-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.74rem;
+  color: #334155;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 @media (max-width: 900px) {
   .phase4a-layout {
     grid-template-columns: 1fr;

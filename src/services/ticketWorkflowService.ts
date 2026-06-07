@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { generateRuntimeUuid } from "../utils/runtimeUuid";
 
 import { ActorRole, BlockedReason, IdentityConfidence, TicketPriority, TicketStatus } from "../domain/ticketStatus";
 import type {
@@ -108,9 +108,9 @@ function defaultTenantContext(input: ServiceTenantInput): {
   site: Site;
   tenant: TicketTenantIds;
 } {
-  const agencyId = input.agencyId ?? randomUUID();
-  const clientId = input.clientId ?? randomUUID();
-  const siteId = input.siteId ?? randomUUID();
+  const agencyId = input.agencyId ?? generateRuntimeUuid();
+  const clientId = input.clientId ?? generateRuntimeUuid();
+  const siteId = input.siteId ?? generateRuntimeUuid();
   const now = new Date().toISOString();
 
   const agency: Agency = {
@@ -160,7 +160,7 @@ function buildSubmitter(
   const submitterEmail = normalizeText(input?.submitterEmail);
 
   return {
-    submitterId: input?.submitterId ?? `submitter-${randomUUID()}`,
+    submitterId: input?.submitterId ?? `submitter-${generateRuntimeUuid()}`,
     siteId: session.tenant.siteId,
     identityConfidence: IdentityConfidence.KNOWN,
     submitterName: normalizeText(input?.submitterName) || undefined,
@@ -221,7 +221,7 @@ function buildInitialMessage(
   source: string,
 ): TicketMessage {
   return {
-    messageId: randomUUID(),
+    messageId: generateRuntimeUuid(),
     ticketId: ticket.ticketId,
     submittedBySubmitterId: session.submitter?.submitterId,
     rawMessage,
@@ -239,7 +239,7 @@ function buildDraftRecord(session: ServiceSession, ticketId: string, draftText: 
   draftVersion?: number;
 }): TicketDraftReply {
   return {
-    draftId: options?.draftId ?? randomUUID(),
+    draftId: options?.draftId ?? generateRuntimeUuid(),
     ticketId,
     draftText,
     draftingAgentRole: ActorRole.CS_AGENT,

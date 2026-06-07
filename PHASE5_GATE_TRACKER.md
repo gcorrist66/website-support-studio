@@ -1,13 +1,13 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5A (Live Read-Only Supabase Data Integration)
+- Current focus: Phase 5B (Create Ticket Flow)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
 - Customer communication: not implemented
-- Mutations: not implemented
+- Mutations: create-only path implemented locally
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
@@ -86,6 +86,47 @@
 - No insert/update/delete/upsert call sites were introduced in the read-only data helper file.
 - No API route files were added.
 - No live mutations/handlers were wired into UI actions (disabled placeholders only).
+
+## 4) Phase 5B — Local Create Ticket Flow
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Evidence
+- Added local create-ticket form component `src/components/tickets/CreateTicketForm.tsx` with fields:
+  - title
+  - description
+  - client
+  - site
+  - submitter name
+  - submitter email
+  - priority
+- Added local validation in form and handler:
+  - required title
+  - required description
+  - required client/site context
+  - required submitter email
+  - submitter email format sanity check
+- Wired form into `AppShell` and `handleCreateTicket` path for local create-only flow.
+- Create flow writes ticket + `ticket_created` audit event only in local write path.
+- Added dedicated validator `scripts/validate-create-ticket.mjs` and npm script `validate:create-ticket`.
+- Added validation scenarios proving:
+  - valid create persists ticket and audit
+  - missing title rejected
+  - missing description rejected
+  - missing email rejected
+  - no approval rows written on create
+  - no communication rows written on create
+  - cleanup removes created ticket/audit records
+- Constraint checks for Phase 5B:
+  - No triage, approval, send, or close actions introduced.
+  - No customer portal changes.
+  - No API route files introduced.
+  - No auth provider wiring.
 
 ## 3) Previous Gate Notes
 - Phase 4D remains the local mock UI baseline.

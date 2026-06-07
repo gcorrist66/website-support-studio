@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
+import { CreateTicketForm } from "../tickets/CreateTicketForm";
 import {
   getReadOnlyApprovalQueue,
   getReadOnlyModeLabel,
@@ -149,6 +150,8 @@ export function AppShell() {
               <li>No live writes, mutations, approvals, or customer sending in this phase.</li>
             </ul>
           </section>
+
+          <CreateTicketForm />
 
           <section className="phase4a-card phase4d-search-panel">
             <h2>Search and Filters</h2>

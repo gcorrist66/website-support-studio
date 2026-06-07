@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { generateRuntimeUuid } from "../utils/runtimeUuid";
 
 import {
   ActorRole,
@@ -183,7 +183,7 @@ function normalizeUuidOrGenerated(value: string | undefined): string {
   if (typeof value === "string" && isUuidLike(value)) {
     return value;
   }
-  return randomUUID();
+  return generateRuntimeUuid();
 }
 
 function assertTicketRow(row: TicketInsert): void {
