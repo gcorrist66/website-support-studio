@@ -5,6 +5,7 @@
 - Authority: local UI proof only
 - Deployment status: not deployed
 - Push status: not pushed
+- Local checkpoint: PHASE4_LOCAL_CHECKPOINT.md documented.
 
 ## 2) Phase Gates
 
