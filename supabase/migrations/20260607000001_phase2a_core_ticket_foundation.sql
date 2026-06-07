@@ -3,7 +3,7 @@
 
 create extension if not exists pgcrypto;
 
-create type if not exists public.ticket_status as enum (
+create type public.ticket_status as enum (
   'received',
   'triaged',
   'reply_drafted',
@@ -14,20 +14,20 @@ create type if not exists public.ticket_status as enum (
   'blocked'
 );
 
-create type if not exists public.ticket_priority as enum (
+create type public.ticket_priority as enum (
   'low',
   'normal',
   'high',
   'critical'
 );
 
-create type if not exists public.identity_confidence as enum (
+create type public.identity_confidence as enum (
   'known',
   'claimed',
   'unknown'
 );
 
-create type if not exists public.blocked_reason as enum (
+create type public.blocked_reason as enum (
   'awaiting_customer',
   'awaiting_access',
   'awaiting_vendor',
@@ -37,7 +37,7 @@ create type if not exists public.blocked_reason as enum (
   'other'
 );
 
-create type if not exists public.actor_role as enum (
+create type public.actor_role as enum (
   'agency_admin',
   'client_admin',
   'site_user',
@@ -46,7 +46,7 @@ create type if not exists public.actor_role as enum (
   'system'
 );
 
-create type if not exists public.audit_event_type as enum (
+create type public.audit_event_type as enum (
   'request_received',
   'ticket_created',
   'ticket_triaged',

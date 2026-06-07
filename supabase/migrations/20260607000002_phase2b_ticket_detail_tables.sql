@@ -1,25 +1,25 @@
 -- Phase 2B ticket detail persistence slice.
 -- Scope: detail/auditability tables only, no email provider behavior, no external send actions.
 
-create type if not exists public.message_direction as enum (
+create type public.message_direction as enum (
   'inbound',
   'outbound'
 );
 
-create type if not exists public.draft_reply_status as enum (
+create type public.draft_reply_status as enum (
   'drafting',
   'ready_for_approval',
   'superseded',
   'sent'
 );
 
-create type if not exists public.approval_status as enum (
+create type public.approval_status as enum (
   'pending',
   'approved',
   'rejected'
 );
 
-create type if not exists public.communication_status as enum (
+create type public.communication_status as enum (
   'pending',
   'sent',
   'failed',

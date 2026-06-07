@@ -94,7 +94,7 @@ const requiredEnumValues = {
 };
 
 for (const [enumName, values] of Object.entries(requiredEnumValues)) {
-  const enumDecl = new RegExp(`create type if not exists public\\.${enumName}[\\s\\S]*?;`, "i").exec(migrationText)?.[0];
+  const enumDecl = new RegExp(`create type(?: if not exists)? public\\.${enumName}[\\s\\S]*?;`, "i").exec(migrationText)?.[0];
   if (!enumDecl) {
     throw new Error(`missing enum declaration: ${enumName}`);
   }
