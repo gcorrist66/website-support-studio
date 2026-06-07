@@ -2,11 +2,11 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1B (Application Scaffold)
-- Latest known commit evidence: `4005ce9 Document Phase 1B deployment blocker` (plus this gate-update commit)
-- Current authority status: **Phase 1B scaffold is closed**
-- Implementation status: application scaffold + verification only
-- External delivery status: Verified live deployment at `https://website-support-studio.vercel.app/`
+- Phase: 1C (Conceptual Schema Translation)
+- Latest known commit evidence: `1309429 Add Phase 1C domain model foundation` and `4005ce9` prior phase closure
+- Current authority status: **Phase 1C is in progress (local design-only build prep)**
+- Implementation status: domain model types/constants + transition validation helpers
+- External delivery status: no push/deploy in this phase (local-only work only)
 
 ## 2) Phase Gates
 
@@ -75,17 +75,21 @@
 
 ### Phase 1C — Conceptual Schema Translation
 
-- **Status:** Blocked
+- **Status:** Diagnosed, Fixed Locally, Committed
 - **Current evidence:**
   - `PHASE1_SCHEMA_PLAN.md` exists and is complete
+  - `src/domain/ticketStatus.ts`
+  - `src/domain/types.ts`
+  - `src/domain/transitions.ts`
 - **Required evidence to close:**
   - Conceptual entity map approved against tenant hierarchy
   - State-specific metadata coverage approved
   - Blocked reason mapping and transition mapping confirmed
 - **Blockers:**
-  - Awaiting completion of Phase 1B boundaries in practice
+  - None for local design scope.
 - **Notes:**
   - No schema artifacts, SQL, or migration files.
+  - No test framework was introduced because this repository currently has no test harness configured.
 
 ### Phase 1D — Ticket Lifecycle Backend
 
@@ -199,34 +203,38 @@ Requirements interpretation for current scope:
 - `f95706d Add Phase 1A foundation documentation`
 - `c017bbf Add Phase 1B application scaffold`
 - `4005ce9 Document Phase 1B deployment blocker`
+- `src/domain/ticketStatus.ts`
+- `src/domain/types.ts`
+- `src/domain/transitions.ts`
 - Working tree clean after scaffold gate update
 - Production evidence:
   - `https://website-support-studio.vercel.app/` returns `200`
   - `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` return `404`
 
-## 7) Next Authorized Step
+## 7) Push/Deploy/Verify Status by Phase
+
+- **Phase 1C pushed:** Not pushed
+- **Phase 1C deployed:** Not deployed
+- **Phase 1C production verified:** Not production verified (cost-control default to local-only)
+
+## 8) Next Authorized Step
 
 - **Phase 1C — Conceptual Schema Translation**
 
-## 8) Phase 1B Authorization Boundary
+## 9) Phase 1C Authorization Boundary
 
 ### Allowed
-
-- application scaffold
-- package setup
-- basic app shell
-- configuration files
-- lint/typecheck/build setup
-- no business logic
+ - Approved Phase 1 entity modeling
+ - State transition mapping and local validation helpers
+ - Domain type definitions only
+ - No production deployment or database work
 
 ### Forbidden
-
-- ticket functionality
-- database schema
-- API routes
-- auth
-- customer communication
-- approval workflow
-- audit engine
-- integrations
-- AI features
+ - No business logic
+ - No database schema or migrations
+ - No API routes
+ - No authentication
+ - No customer communication features
+ - No approvals implementation
+ - No audit engine persistence
+ - No HiveRunner/IntrynSync integrations
