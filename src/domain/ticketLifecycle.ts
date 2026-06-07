@@ -94,6 +94,7 @@ interface RejectDraftReplyParams extends ApprovalDecisionParams {
 type LifecycleRepository = Map<string, LifecycleTicketRecord>;
 
 const repository: LifecycleRepository = new Map();
+type AuditMetadata = Record<string, unknown>;
 const timestamp = () => new Date().toISOString();
 let nextTicketSeq = 1;
 let nextMessageSeq = 1;
@@ -144,25 +145,303 @@ function getRequiredNow(): { now: string } {
   return { now: timestamp() };
 }
 
+const REQUIRED_AUDIT_METADATA_FIELDS: Readonly<
+  Partial<Record<AuditEventType, readonly string[]>>
+> = {
+  [AuditEventType.TICKET_CREATED]: [
+    "ticket_source",
+    "site_of_origin",
+    "raw_customer_message",
+    "submission_timestamp",
+    "intake_channel",
+  ],
+  [AuditEventType.TICKET_TRIAGED]: [
+    "triage_owner",
+    "triage_timestamp",
+    "triage_notes",
+  ],
+  [AuditEventType.REPLY_DRAFTED]: [
+    "draft_reference",
+    "drafted_reply_text",
+    "drafting_agent",
+    "draft_timestamp",
+  ],
+  [AuditEventType.APPROVAL_REQUESTED]: [
+    "approval_request_timestamp",
+    "draft_reference",
+    "gary_assigned",
+  ],
+  [AuditEventType.APPROVAL_GRANTED]: [
+    "approval_timestamp",
+    "approver_id",
+    "approval_decision",
+    "approval_notes",
+  ],
+  [AuditEventType.APPROVAL_REJECTED]: [
+    "rejection_timestamp",
+    "approver_id",
+    "approval_decision",
+  ],
+  [AuditEventType.REPLY_SENT]: [
+    "communication_channel",
+    "recipient_contact",
+    "sent_payload_reference",
+    "sent_confirmation",
+  ],
+  [AuditEventType.TICKET_BLOCKED]: [
+    "blocked_reason",
+    "blocked_reason_detail",
+    "blocker_owner",
+    "blocked_timestamp",
+    "next_action",
+  ],
+  [AuditEventType.TICKET_UNBLOCKED]: [
+    "previous_blocked_status",
+    "blocked_reason",
+    "unblock_timestamp",
+    "unblock_owner",
+  ],
+  [AuditEventType.TICKET_CLOSED]: [
+    "closure_note",
+    "closure_timestamp",
+    "closed_by",
+    "final_status_summary",
+  ],
+};
+
+const AUDIT_SUMMARY: Record<string, string> = {
+  [AuditEventType.TICKET_CREATED]: "Ticket created",
+  [AuditEventType.TICKET_TRIAGED]: "Ticket triaged",
+  [AuditEventType.REPLY_DRAFTED]: "Reply drafted",
+  [AuditEventType.DRAFT_SNAPSHOT_STORED]: "Draft snapshot stored",
+  [AuditEventType.APPROVAL_REQUESTED]: "Approval requested",
+  [AuditEventType.APPROVAL_GRANTED]: "Approval granted",
+  [AuditEventType.APPROVAL_REJECTED]: "Approval rejected",
+  [AuditEventType.REPLY_SENT]: "Reply sent to customer",
+  [AuditEventType.TICKET_BLOCKED]: "Ticket blocked",
+  [AuditEventType.TICKET_UNBLOCKED]: "Ticket unblocked",
+  [AuditEventType.TICKET_CLOSED]: "Ticket closed",
+};
+
+function normalizeActorId(actorRole: ActorRole, actorReference?: string): string {
+  if (actorReference && actorReference.trim().length > 0) {
+    return actorReference.trim();
+  }
+  return `${actorRole}-actor`;
+}
+
+function latestTicketMessage(record: LifecycleTicketRecord): TicketMessage {
+  return record.messages.at(-1) ?? record.messages[0];
+}
+
+function latestDraft(record: LifecycleTicketRecord): TicketDraftReply {
+  return record.drafts.at(-1) as TicketDraftReply;
+}
+
+function requireNonEmptyString(value: unknown): string {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new Error(`audit_metadata_validation_failed`);
+  }
+  return value.trim();
+}
+
 function createAuditEvent(
   ticketId: string,
   eventType: AuditEventType,
   actorRole: ActorRole,
-  actorReference: string | undefined,
+  actorId: string,
   stateBefore: TicketStatus | undefined,
   stateAfter: TicketStatus,
+  summary: string,
   rationale?: string,
+  metadata: AuditMetadata = {},
 ): TicketAuditEvent {
+  const occurredAt = timestamp();
+  const eventId = nextAuditId();
   return {
-    eventId: nextAuditId(),
+    id: eventId,
+    eventId,
     ticketId,
     eventType,
     actorRole,
-    actorReference,
-    occurredAt: timestamp(),
+    actorId,
+    summary,
+    metadata,
+    occurredAt,
     stateBefore,
     stateAfter,
     rationale,
+  };
+}
+
+function assertAuditMetadata(eventType: AuditEventType, metadata: AuditMetadata): void {
+  const requiredKeys = REQUIRED_AUDIT_METADATA_FIELDS[eventType] ?? [];
+  for (const key of requiredKeys) {
+    if (!(key in metadata)) {
+      throw new Error(`audit_metadata_missing_${eventType}_${key}`);
+    }
+    const value = metadata[key];
+    if (value === undefined || value === null) {
+      throw new Error(`audit_metadata_missing_${eventType}_${key}`);
+    }
+  }
+}
+
+function createAuditMetadata(
+  record: LifecycleTicketRecord,
+  eventType: AuditEventType,
+  actorRole: ActorRole,
+  actorReference: string | undefined,
+  from: TicketStatus,
+  to: TicketStatus,
+  rationale?: string,
+): AuditMetadata {
+  const message = latestTicketMessage(record);
+  const draft = record.drafts.at(-1);
+  const actorId = normalizeActorId(actorRole, actorReference);
+  const actorContext = actorReference ?? actorRole;
+  const baseContext: AuditMetadata = {
+    ticket_id: record.ticket.ticketId,
+    current_status: to,
+    identity_confidence: record.ticket.identityConfidence,
+    site_of_origin: record.ticket.siteId,
+    actor_context: actorContext,
+    timestamp: timestamp(),
+  };
+
+  if (eventType === AuditEventType.TICKET_CREATED) {
+    return {
+      ...baseContext,
+      ticket_source: message.source,
+      intake_channel: message.intakeChannel,
+      submitter_identifier: record.submitter?.submitterId,
+      raw_customer_message: message.rawMessage,
+      submission_timestamp: message.receivedAt,
+      priority: record.ticket.priority,
+    };
+  }
+
+  if (eventType === AuditEventType.TICKET_TRIAGED) {
+    return {
+      ...baseContext,
+      triage_timestamp: timestamp(),
+      triage_owner: actorContext,
+      triage_notes: rationale ?? "triage complete",
+      classification: "classified_in_scope",
+      urgency_reason: "default_priority_track",
+      routing_target: record.ticket.siteId,
+    };
+  }
+
+  if (eventType === AuditEventType.REPLY_DRAFTED) {
+    if (!draft) {
+      throw new Error(`audit_metadata_missing_draft_${record.ticket.ticketId}`);
+    }
+    return {
+      ...baseContext,
+      draft_reference: draft.draftId,
+      draft_timestamp: draft.draftedAt,
+      drafted_reply_text: draft.draftText,
+      drafting_agent: actorId,
+      draft_assumptions: draft.draftAssumptions,
+      evidence_reference: draft.evidenceReference,
+      quality_check_flag: draft.qualityCheckFlag,
+    };
+  }
+
+  if (eventType === AuditEventType.APPROVAL_REQUESTED) {
+    return {
+      ...baseContext,
+      approval_request_timestamp: timestamp(),
+      draft_reference: draft?.draftId,
+      draft_snapshot: draft?.draftText,
+      gary_assigned: actorContext,
+      approval_request_notes: rationale,
+      risk_flags: "none",
+    };
+  }
+
+  if (eventType === AuditEventType.APPROVAL_GRANTED) {
+    return {
+      ...baseContext,
+      approval_timestamp: timestamp(),
+      approver_id: actorId,
+      approval_decision: "approved",
+      approval_notes: rationale,
+      approved_reply_snapshot: latestDraft(record)?.draftText,
+      approval_context: actorContext,
+    };
+  }
+
+  if (eventType === AuditEventType.APPROVAL_REJECTED) {
+    return {
+      ...baseContext,
+      rejection_timestamp: timestamp(),
+      approver_id: actorId,
+      approval_decision: "rejected",
+      rejection_reason: rationale,
+      draft_reference: latestDraft(record)?.draftId,
+    };
+  }
+
+  if (eventType === AuditEventType.REPLY_SENT) {
+    return {
+      ...baseContext,
+      communication_channel: "in_memory_record",
+      recipient_contact: record.submitter?.submitterEmail,
+      sent_payload_reference: latestDraft(record)?.draftText,
+      sent_confirmation: true,
+      sent_by: actorContext,
+    };
+  }
+
+  if (eventType === AuditEventType.TICKET_BLOCKED) {
+    const reasonContext = record.ticket.blockedContext;
+    return {
+      ...baseContext,
+      blocked_reason: record.ticket.currentBlockedReason ?? BlockedReason.OTHER,
+      blocked_reason_detail: reasonContext?.reasonDetail ?? rationale,
+      blocker_owner: reasonContext?.blockerOwner ?? actorRole,
+      mitigation_plan: reasonContext?.mitigationPlan ?? "resolve_blocked_context",
+      next_action: reasonContext?.nextAction ?? "resume_after_block_resolved",
+      blocked_timestamp: timestamp(),
+      blocking_evidence: reasonContext?.blockingEvidence,
+      blocked_from: from,
+    };
+  }
+
+  if (eventType === AuditEventType.TICKET_UNBLOCKED) {
+    return {
+      ...baseContext,
+      previous_blocked_status: from === TicketStatus.BLOCKED ? record.previousBlockedStatus ?? record.ticket.status : from,
+      unblocked_to: to,
+      blocked_reason: record.ticket.currentBlockedReason ?? BlockedReason.OTHER,
+      unblock_owner: actorContext,
+      unblock_timestamp: timestamp(),
+    };
+  }
+
+  if (eventType === AuditEventType.TICKET_CLOSED) {
+    return {
+      ...baseContext,
+      closure_note: requireNonEmptyString(rationale ?? ""),
+      closure_timestamp: timestamp(),
+      closed_by: actorContext,
+      final_status_summary: "work complete",
+    };
+  }
+
+  if (eventType === AuditEventType.DRAFT_SNAPSHOT_STORED) {
+    return {
+      ...baseContext,
+      draft_reference: draft?.draftId,
+      draft_revision: draft?.draftVersion ?? record.drafts.length,
+    };
+  }
+
+  return {
+    ...baseContext,
+    reason: "local-only-audit-event",
   };
 }
 
@@ -174,9 +453,32 @@ function emitEvent(
   stateBefore: TicketStatus | undefined,
   stateAfter: TicketStatus,
   rationale?: string,
+  metadataOverride?: AuditMetadata,
 ): void {
+  const actorId = normalizeActorId(actorRole, actorReference);
+  const metadata = metadataOverride
+    ?? createAuditMetadata(
+      record,
+      eventType,
+      actorRole,
+      actorReference,
+      stateBefore ?? record.ticket.status,
+      stateAfter,
+      rationale,
+    );
+  assertAuditMetadata(eventType, metadata);
   record.audits.push(
-    createAuditEvent(record.ticket.ticketId, eventType, actorRole, actorReference, stateBefore, stateAfter, rationale),
+    createAuditEvent(
+      record.ticket.ticketId,
+      eventType,
+      actorRole,
+      actorId,
+      stateBefore,
+      stateAfter,
+      AUDIT_SUMMARY[eventType] || `Ticket audit event ${eventType}`,
+      rationale,
+      metadata,
+    ),
   );
 }
 
@@ -306,13 +608,23 @@ function transitionTicketStatus(
   actorReference?: string,
   rationale?: string,
   unblockTarget = false,
+  metadataOverride?: AuditMetadata,
 ): Ticket {
   const from = record.ticket.status;
   const fromStatus = from as TicketStatus;
   const nextStatus = to as TicketStatus;
   ensureTransitionAllowed(record, to, actorRole);
 
-  emitEvent(record, determineAuditEvent(record.ticket.status, to, unblockTarget), actorRole, actorReference, from, to, rationale);
+  emitEvent(
+    record,
+    determineAuditEvent(record.ticket.status, to, unblockTarget),
+    actorRole,
+    actorReference,
+    from,
+    to,
+    rationale,
+    metadataOverride,
+  );
 
   if (to === TicketStatus.BLOCKED) {
     record.previousBlockedStatus = from;
@@ -437,6 +749,14 @@ export function requestApproval({
   actorReference,
 }: RequestApprovalParams): Ticket {
   const record = getRecord(ticketId);
+  const latestDraft = assertDraftExists(record);
+  createApprovalRecord(record, {
+    approverRole: actorRole,
+    decision: "pending",
+    decisionNotes: requestNotes,
+    approverReference: actorReference,
+    approvedReplySnapshot: draftSnapshot ?? latestDraft.draftText,
+  });
   const ticket = transitionTicketStatus(
     record,
     TicketStatus.AWAITING_GARY_APPROVAL,
@@ -444,14 +764,6 @@ export function requestApproval({
     actorReference,
     requestNotes,
   );
-
-  createApprovalRecord(record, {
-    approverRole: actorRole,
-    decision: "pending",
-    decisionNotes: requestNotes,
-    approverReference: actorReference,
-    approvedReplySnapshot: draftSnapshot,
-  });
   return ticket;
 }
 
@@ -471,15 +783,7 @@ export function createCustomerReplyDraft({
     throw new Error(`actor_not_authorized_${actorRole}_for_reply_drafted`);
   }
 
-  if (record.ticket.status === TicketStatus.TRIAGED) {
-    transitionTicketStatus(
-      record,
-      TicketStatus.REPLY_DRAFTED,
-      actorRole,
-      actorReference,
-      rationale,
-    );
-  } else if (record.ticket.status !== TicketStatus.REPLY_DRAFTED) {
+  if (record.ticket.status !== TicketStatus.TRIAGED && record.ticket.status !== TicketStatus.REPLY_DRAFTED) {
     throw new Error(`invalid_draft_state_${record.ticket.status}`);
   }
 
@@ -495,6 +799,16 @@ export function createCustomerReplyDraft({
     qualityCheckFlag,
   };
   record.drafts.push(draft);
+
+  if (record.ticket.status === TicketStatus.TRIAGED) {
+    transitionTicketStatus(
+      record,
+      TicketStatus.REPLY_DRAFTED,
+      actorRole,
+      actorReference,
+      rationale,
+    );
+  }
 
   if (record.drafts.length > 1) {
     emitEvent(
@@ -556,6 +870,14 @@ export function sendApprovedCustomerReply({
   assertHasApprovedApproval(record);
   assertDraftExists(record);
   const targetRecipient = (recipientEmail ?? assertRecipientEmail(record)).trim();
+  const draft = record.drafts.at(-1);
+  const replySentMetadata = {
+    communication_channel: "in_memory_record",
+    recipient_contact: targetRecipient,
+    sent_payload_reference: draft?.draftId,
+    sent_confirmation: true,
+    sent_by: actorReference ?? actorRole,
+  };
 
   transitionTicketStatus(
     record,
@@ -563,9 +885,10 @@ export function sendApprovedCustomerReply({
     actorRole,
     actorReference,
     rationale,
+    false,
+    replySentMetadata,
   );
 
-  const draft = record.drafts.at(-1);
   record.communicationRecords.push({
     communicationId: nextCommunicationId(),
     ticketId,
@@ -743,6 +1066,9 @@ export function closeTicket(
   actorReference?: string,
   rationale?: string,
 ): Ticket {
+  if (!rationale || rationale.trim().length === 0) {
+    throw new Error(`closure_note_required_${ticketId}`);
+  }
   const record = assertTicketExists(ticketId);
   return transitionTicketStatus(
     record,

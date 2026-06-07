@@ -2,10 +2,10 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1F (Customer Communication)
-- Latest known commit evidence: `a8f366d` (Phase 1F local customer communication guard)
-- Current authority status: **Phase 1F is active**
-- Implementation status: local customer communication domain logic (in-memory only)
+- Phase: 1G (Audit Trail)
+- Latest known commit evidence: `3a01c6a` (Phase 1F local customer communication guard)
+- Current authority status: **Phase 1G is in local hardening completion**
+- Implementation status: local audit trail hardening and validation updates
 - External delivery status: no push/deploy in this phase (cost-control local-only)
 
 ## 2) Phase Gates
@@ -16,8 +16,8 @@
 - Phase 1D — Ticket Lifecycle Backend
 - Phase 1E — Approval Gate
 - Phase 1F — Customer Communication
-- Phase 1G — Internal Operator Workflow
-- Phase 1H — Audit Trail
+- Phase 1G — Audit Trail
+- Phase 1H — End-to-End Verification
 - Phase 1I — End-to-End Verification
 
 ## 3) Phase Details
@@ -156,32 +156,42 @@
   - No provider integrations, API routes, schema/db, auth, or deployment changes in this phase.
   - Communication is represented as local in-memory records only.
 
-### Phase 1G — Internal Operator Workflow
+### Phase 1G — Audit Trail
+
+- **Status:** Diagnosed, Fixed Locally, Committed
+- **Current evidence:**
+  - `3a01c6a` (local customer communication guard baseline)
+  - `src/domain/ticketLifecycle.ts` normalized audit event shape and metadata helpers
+  - `src/domain/types.ts` audit event schema fields
+  - `scripts/validate-domain.mjs` audit-event completeness and metadata validation
+  - `npm run lint` passes after audit changes
+  - `npm run typecheck` passes after audit changes
+  - `npm run build` passes after audit changes
+  - `npm run validate:domain` passes after audit hardening
+- **Required evidence to close:**
+  - All required Phase 1 audit event types emitted for permitted lifecycle transitions
+  - Required audit metadata fields present and normalized
+  - Closed events include closure notes
+  - Closure behavior remains local only
+- **Blockers:**
+  - None for local-only hardening scope.
+- **Notes:**
+  - No database/API/auth/provider integration introduced.
+  - Each required event now includes id/actorId/summary/metadata.
+  - **Local-only:** no push and no deployment.
+
+### Phase 1H — End-to-End Verification
 
 - **Status:** Blocked
 - **Current evidence:**
-  - Internal workflow responsibilities remain documented in architecture and technical design
+  - No end-to-end verification runs have been executed yet.
 - **Required evidence to close:**
-  - Role/action matrix aligned to phase authority and blocked reasons
-  - escalation handling and ownership mapping approved for each blocked reason
+  - Scenario-based verification with real transitions for each Phase 1 endpoint
+  - Signed go/no-go decision for implementation handoff
 - **Blockers:**
-  - Pending alignment from approved authorization slice progression
+  - End-to-end verification requires prior phases to be completed and gated
 - **Notes:**
-  - No operational routing implementation in this phase.
-
-### Phase 1H — Audit Trail
-
-- **Status:** Blocked
-- **Current evidence:**
-  - Audit events and event-level evidence points defined in technical design
-  - Schema planning aligns on audit categories
-- **Required evidence to close:**
-  - Event model and audit chain reviewed and mapped by phase transition
-  - Traceability acceptance criteria agreed
-- **Blockers:**
-  - No audit implementation is authorized in this phase
-- **Notes:**
-  - Conceptual only.
+  - This is the final project-level verification stage for local implementations.
 
 ### Phase 1I — End-to-End Verification
 
@@ -255,27 +265,28 @@ Requirements interpretation for current scope:
 - **Phase 1F pushed:** Not pushed
 - **Phase 1F deployed:** Not deployed
 - **Phase 1F production verified:** Not production verified (cost-control local-only)
+- **Phase 1G pushed:** Not pushed
+- **Phase 1G deployed:** Not deployed
+- **Phase 1G production verified:** Not production verified (cost-control local-only)
 
 ## 8) Next Authorized Step
 
-- **Phase 1F — Customer Communication**
+- **Phase 1H — End-to-End Verification**
 
-## 9) Phase 1F Customer Communication Authorization Boundary
+## 9) Phase 1G Audit Trail Authorization Boundary
 
 ### Allowed
- - `createCustomerReplyDraft`
- - `markReplyReadyForApproval`
- - `sendApprovedCustomerReply`
- - In-memory communication record generation
- - Local validation for email + approval preconditions
+ - `createAuditEvent`
+ - `createAuditMetadata`
+ - `assertAuditMetadata`
+ - `TicketAuditEvent` normalization
  - No production deployment or database work
 
 ### Forbidden
- - No database schema or migrations
+ - No database persistence
  - No API routes
- - No real email provider integrations
- - No SMTP/SendGrid/Postmark/Resend providers
- - No auth implementation
- - No customer channel UI
- - No persisted communication/audit engine
+ - No UI
+ - No auth
+ - No real email sending
+ - No external integrations
  - No HiveRunner/IntrynSync integrations

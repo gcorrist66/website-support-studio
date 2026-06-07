@@ -60,6 +60,8 @@ try {
     getCommunicationTrail,
     clearLifecycleState,
   } = domainModule;
+  const statusModule = await import(`file://${path.join(tmpDir, "ticketStatus.js")}`);
+  const { AuditEventType } = statusModule;
 
   const lifecycleSource = fs.readFileSync(
     path.join(projectRoot, "src", "domain", "ticketLifecycle.ts"),
@@ -70,6 +72,56 @@ try {
     if (!value) {
       throw new Error(`Validation failed: ${message}`);
     }
+  };
+
+  const allAuditTypes = new Set(Object.values(AuditEventType));
+  const requiredAuditTypes = [
+    AuditEventType.TICKET_CREATED,
+    AuditEventType.TICKET_TRIAGED,
+    AuditEventType.REPLY_DRAFTED,
+    AuditEventType.APPROVAL_REQUESTED,
+    AuditEventType.APPROVAL_GRANTED,
+    AuditEventType.APPROVAL_REJECTED,
+    AuditEventType.REPLY_SENT,
+    AuditEventType.TICKET_BLOCKED,
+    AuditEventType.TICKET_UNBLOCKED,
+    AuditEventType.TICKET_CLOSED,
+  ];
+  const requiredAuditFields = [
+    "id",
+    "ticketId",
+    "actorId",
+    "actorRole",
+    "eventType",
+    "occurredAt",
+    "summary",
+    "metadata",
+  ];
+  const requiredTypeToMetadata = {
+    [AuditEventType.TICKET_CREATED]: ["ticket_source", "site_of_origin", "raw_customer_message", "submission_timestamp", "intake_channel"],
+    [AuditEventType.TICKET_TRIAGED]: ["triage_owner", "triage_timestamp", "triage_notes"],
+    [AuditEventType.REPLY_DRAFTED]: ["draft_reference", "drafted_reply_text", "drafting_agent", "draft_timestamp"],
+    [AuditEventType.APPROVAL_REQUESTED]: ["approval_request_timestamp", "draft_reference", "gary_assigned"],
+    [AuditEventType.APPROVAL_GRANTED]: ["approval_timestamp", "approver_id", "approval_decision", "approval_notes"],
+    [AuditEventType.APPROVAL_REJECTED]: ["rejection_timestamp", "approver_id", "approval_decision"],
+    [AuditEventType.REPLY_SENT]: ["communication_channel", "recipient_contact", "sent_payload_reference", "sent_confirmation"],
+    [AuditEventType.TICKET_BLOCKED]: ["blocked_reason", "blocked_reason_detail", "blocker_owner", "next_action", "blocked_timestamp"],
+    [AuditEventType.TICKET_UNBLOCKED]: ["previous_blocked_status", "blocked_reason", "unblock_timestamp", "unblock_owner"],
+    [AuditEventType.TICKET_CLOSED]: ["closure_note", "closure_timestamp", "closed_by", "final_status_summary"],
+  };
+
+  const expectAuditEventShape = (event) => {
+    requiredAuditFields.forEach((field) => expect(event?.[field] !== undefined, `audit event has ${field}`));
+    expect(typeof event?.metadata === "object" && event.metadata !== null, "metadata is object");
+    const requiredMetadataKeys = requiredTypeToMetadata[event.eventType] ?? [];
+    requiredMetadataKeys.forEach((key) => expect(event.metadata[key] !== undefined, `audit ${event.eventType} has metadata.${key}`));
+  };
+
+  const expectNoProviderHooks = () => {
+    expect(
+      !/resend|sendgrid|postmark|nodemailer|smtp|mailgun/i.test(lifecycleSource),
+      "no email provider integration hook exists in communication layer",
+    );
   };
 
   const expectThrows = (fn, message) => {
@@ -83,13 +135,25 @@ try {
     }
   };
 
+  const observedTicketIds = new Set();
+  const trackTicket = (ticket) => {
+    observedTicketIds.add(ticket.ticketId);
+    return ticket;
+  };
   const getEvents = (ticketId) => getAuditTrail(ticketId).map((event) => event.eventType);
   const getCommunicationEvents = (ticketId) => getCommunicationTrail(ticketId);
   const getApprovalDecisions = (ticketId) => getApprovals(ticketId).map((event) => event.decision);
+  const getAllAuditEvents = () => {
+    const events = [];
+    for (const ticketId of observedTicketIds) {
+      events.push(...getAuditTrail(ticketId));
+    }
+    return events;
+  };
 
   clearLifecycleState();
 
-  const happyTicket = createTicket({
+  const happyTicket = trackTicket(createTicket({
     siteId: "site-alpha",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -103,7 +167,7 @@ try {
     },
     priority: "normal",
     identityConfidence: "known",
-  });
+  }));
 
   expect(happyTicket.status === "received", "happy path starts in received");
   expect(getEvents(happyTicket.ticketId).includes("ticket_created"), "ticket_created event emitted");
@@ -154,13 +218,13 @@ try {
     "non-approver cannot approve",
   );
 
-  const earlyApprovalTicket = createTicket({
+  const earlyApprovalTicket = trackTicket(createTicket({
     siteId: "site-early-approval",
     intakeChannel: "portal",
     source: "unit-portal",
     rawMessage: "approval cannot happen early",
     identityConfidence: "known",
-  });
+  }));
   expectThrows(
     () => {
       approveDraftReply({
@@ -183,7 +247,7 @@ try {
   expect(getApprovalDecisions(happyTicket.ticketId).includes("approved"), "approval decision approved recorded");
   expect(getCommunicationEvents(happyTicket.ticketId).length === 0, "approval does not create customer communication record");
 
-  const noEmailApproved = createTicket({
+  const noEmailApproved = trackTicket(createTicket({
     siteId: "site-no-email",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -194,7 +258,7 @@ try {
       siteId: "site-no-email",
       identityConfidence: "known",
     },
-  });
+  }));
   transitionTicket(noEmailApproved.ticketId, "triaged", "cs_agent");
   createCustomerReplyDraft({
     ticketId: noEmailApproved.ticketId,
@@ -223,7 +287,7 @@ try {
     "approved_to_send still requires email before sent_to_customer",
   );
 
-  const rejectionTicket = createTicket({
+  const rejectionTicket = trackTicket(createTicket({
     siteId: "site-reject",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -235,7 +299,7 @@ try {
       identityConfidence: "known",
       submitterEmail: "customer@example.com",
     },
-  });
+  }));
   transitionTicket(rejectionTicket.ticketId, "triaged", "cs_agent");
   createCustomerReplyDraft({
     ticketId: rejectionTicket.ticketId,
@@ -301,13 +365,13 @@ try {
     "cannot reject from non-awaiting state",
   );
 
-  const receivedBlocked = createTicket({
+  const receivedBlocked = trackTicket(createTicket({
     siteId: "site-beta",
     intakeChannel: "portal",
     source: "unit-portal",
     rawMessage: "Missing details",
     identityConfidence: "known",
-  });
+  }));
 
   const blockedFromReceived = blockTicket({
     ticketId: receivedBlocked.ticketId,
@@ -336,7 +400,7 @@ try {
   });
   expect(receivedUnblocked.status === "triaged", "blocked ticket from received unlocks to triaged");
 
-  const rewriteDemo = createTicket({
+  const rewriteDemo = trackTicket(createTicket({
     siteId: "site-gamma",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -348,7 +412,7 @@ try {
       identityConfidence: "claimed",
       submitterEmail: "known@example.com",
     },
-  });
+  }));
 
   transitionTicket(rewriteDemo.ticketId, "triaged", "cs_agent");
   createCustomerReplyDraft({
@@ -382,7 +446,7 @@ try {
     "rewrite path records unblock/reject evidence",
   );
 
-  const awaitingSendCheck = createTicket({
+  const awaitingSendCheck = trackTicket(createTicket({
     siteId: "site-send-blocked",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -394,7 +458,7 @@ try {
       identityConfidence: "known",
       submitterEmail: "customer@example.com",
     },
-  });
+  }));
   transitionTicket(awaitingSendCheck.ticketId, "triaged", "cs_agent");
   createCustomerReplyDraft({
     ticketId: awaitingSendCheck.ticketId,
@@ -417,7 +481,7 @@ try {
     "sent_to_customer blocked from awaiting_gary_approval",
   );
 
-  const lackingApprovalRecord = createTicket({
+  const lackingApprovalRecord = trackTicket(createTicket({
     siteId: "site-no-approved-record",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -429,7 +493,7 @@ try {
       identityConfidence: "known",
       submitterEmail: "approved-no-record@example.com",
     },
-  });
+  }));
   transitionTicket(lackingApprovalRecord.ticketId, "triaged", "cs_agent");
   createCustomerReplyDraft({
     ticketId: lackingApprovalRecord.ticketId,
@@ -462,13 +526,13 @@ try {
     "approved_to_send without approved approval record is blocked",
   );
 
-  const immediateCloseAttempt = createTicket({
+  const immediateCloseAttempt = trackTicket(createTicket({
     siteId: "site-zeta",
     intakeChannel: "portal",
     source: "unit-portal",
     rawMessage: "Direct close check",
     identityConfidence: "known",
-  });
+  }));
 
   expectThrows(
     () => {
@@ -479,15 +543,50 @@ try {
 
   expectThrows(
     () => {
-      closeTicket(immediateCloseAttempt.ticketId, "cs_agent");
+      closeTicket(immediateCloseAttempt.ticketId, "cs_agent", "actor-close", "blocked check complete");
       transitionTicket(immediateCloseAttempt.ticketId, "triaged", "cs_agent");
     },
     "closed state cannot reopen",
   );
 
+  expectNoProviderHooks();
+
+  const allAuditEvents = getAllAuditEvents();
+  requiredAuditTypes.forEach((requiredType) => {
+    expect(
+      allAuditEvents.some((event) => event.eventType === requiredType),
+      `required audit type exists: ${requiredType}`,
+    );
+  });
+
+  for (const event of allAuditEvents) {
+    expect(allAuditTypes.has(event.eventType), `known audit event type ${event.eventType}`);
+    expectAuditEventShape(event);
+  }
+
+  const blockedEvents = allAuditEvents.filter((event) => event.eventType === AuditEventType.TICKET_BLOCKED);
+  for (const event of blockedEvents) {
+    expect(!!event.metadata.blocked_reason, `blocked event includes reason: ${event.eventId}`);
+    expect(!!event.metadata.blocked_reason_detail, `blocked event includes reason detail: ${event.eventId}`);
+    expect(!!event.metadata.blocker_owner, `blocked event includes blocker owner: ${event.eventId}`);
+  }
+
+  const unblockedEvents = allAuditEvents.filter((event) => event.eventType === AuditEventType.TICKET_UNBLOCKED);
+  for (const event of unblockedEvents) {
+    expect(!!event.metadata.previous_blocked_status, `unblock event includes previous blocked status: ${event.eventId}`);
+    expect(!!event.metadata.blocked_reason, `unblock event includes blocked reason context: ${event.eventId}`);
+  }
+
+  const closureEvents = allAuditEvents.filter((event) => event.eventType === AuditEventType.TICKET_CLOSED);
+  for (const event of closureEvents) {
+    expect(typeof event.metadata.closure_note === "string" && event.metadata.closure_note.trim().length > 0, `closure event includes note: ${event.eventId}`);
+    expect(!!event.metadata.closure_timestamp, `closure event includes timestamp: ${event.eventId}`);
+  }
+
+  const replySentEvents = allAuditEvents.filter((event) => event.eventType === AuditEventType.REPLY_SENT);
   expect(
-    !/resend|sendgrid|postmark|nodemailer|smtp|mailgun/i.test(lifecycleSource),
-    "no email provider integration hook exists in communication layer",
+    replySentEvents.length > 0 && replySentEvents.every((event) => event.metadata.sent_confirmation === true),
+    "reply_sent events capture positive send confirmation",
   );
 
   process.stdout.write("PASS: phase1 domain lifecycle validation completed\n");

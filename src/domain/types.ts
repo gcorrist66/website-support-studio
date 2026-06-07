@@ -91,10 +91,14 @@ export interface TicketApproval {
 }
 
 export interface TicketAuditEvent {
+  id: string;
   eventId: string;
   ticketId: string;
+  actorId: string;
   eventType: AuditEventType;
   actorRole: ActorRole;
+  summary: string;
+  metadata: Record<string, unknown>;
   actorReference?: string;
   occurredAt: string;
   stateBefore?: TicketStatus;
