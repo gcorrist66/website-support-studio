@@ -93,6 +93,7 @@
   - `npm run validate:persistence` ✅
   - `npm run validate:supabase:adapter` ⚠️ (passes are intermittently emitted, followed by repeated login-role retries and non-terminating loop behavior)
   - `npm run validate:workflow-service` ❌ (`unexpected status 502` while persisting rows)
+  - `npm run validate:supabase:direct` ⏳ (added; direct client path with explicit env/project/secret guards)
   - `npm run validate:contracts` ✅
 - Contract validation constraints enforced:
   - required tenant and actor context in request samples
@@ -109,6 +110,20 @@
   - `git ls-files` filter for `.supabase/`, `supabase/.temp/`, `.env`, `.env.local` returned no tracked matches
 - guard environment variables for validation are available and used
 - current status: **unstable in environment**, so Phase 3B remains local/blocked for stable Supabase-backed verification
+
+### Direct Supabase dev validation path
+- Added `scripts/validate-supabase-direct.mjs` with explicit safety checks:
+  - `WSS_ALLOW_SUPABASE_VALIDATION=dev`
+  - `WSS_SUPABASE_ENVIRONMENT=dev`
+  - `WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy`
+  - `WSS_SUPABASE_URL` or `VITE_SUPABASE_URL`
+  - `WSS_SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SERVICE_ROLE_KEY`
+- Script flow:
+  - insert safe test agency/client/site/ticket
+  - insert audit event
+  - read ticket + audit back and verify tenant linkage
+  - cleanup inserted rows and verify cleanup
+- `.env.example` updated with placeholder key names only; no secrets committed.
 
 ## 5) Recommended Next Phase
 - Next phase recommendation: **3C — Tenant Service Abstractions**
