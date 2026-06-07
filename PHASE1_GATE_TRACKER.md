@@ -6,6 +6,7 @@
 - Latest known commit evidence: `bce2090 Add Phase 1 gate tracker` plus new scaffold verification commit
 - Current authority status: **Phase 1B scaffold is in-progress (infrastructure only)**
 - Implementation status: application scaffold + verification only
+- External delivery status: blocked by missing remote/deployment configuration
 
 ## 2) Phase Gates
 
@@ -40,18 +41,24 @@
 ### Phase 1B — Application Scaffold
 
 - **Status:** Diagnosed, Fixed Locally, Committed
+- **Pushed:** Not complete (no remote repository configured)
+- **Deployed:** Not complete (no Vercel project/deployment metadata in workspace)
+- **Production Verified:** Not complete (no deployment URL available)
+- **Closed:** Not complete (gates above incomplete)
 - **Current evidence:**
   - `npm install` completed with dependency lockfile generated
   - `npm run lint` exits successfully
   - `npm run typecheck` exits successfully
   - `npm run build` exits successfully
+  - `c017bbf Add Phase 1B application scaffold`
+  - `bce2090 Add Phase 1 gate tracker`
 - **Required evidence to close:**
   - Approved application scaffold docs and folder strategy
   - Configuration and build scaffolding requirements approved in writing
   - No business logic included in scaffold boundary evidence
 - **Blockers:**
-  - Awaiting formal Phase 1A review outcome
-  - No explicit authorization to expand beyond foundation docs
+  - Git remote is not configured; `git push origin main` fails with `fatal: 'origin' does not appear to be a git repository`
+  - No `.vercel` project metadata in workspace and no deployment URL configured to verify
 - **Notes:**
   - Scope is planning-to-code transition preparation only after review.
 
