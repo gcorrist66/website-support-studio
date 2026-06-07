@@ -3,7 +3,7 @@
 ## 1) Current Phase Status
 
 - Phase: 1H (End-to-End Verification)
-- Latest known commit evidence: `a9295f3` (Harden Phase 1G local audit trail)
+- Latest known commit evidence: `1961500` (Add Phase 1H local end-to-end verification)
 - Current authority status: **Phase 1H (End-to-End Verification)**
 - Latest implementation evidence: local-only phase 1H end-to-end validator added and passing
 - External delivery status: no push/deploy in this phase (cost-control local-only)
@@ -18,7 +18,7 @@
 - Phase 1F — Customer Communication
 - Phase 1G — Audit Trail
 - Phase 1H — End-to-End Verification
-- Phase 1I — End-to-End Verification
+- Phase 1I — Supabase Persistence Planning
 
 ## 3) Phase Details
 
@@ -200,7 +200,7 @@
 - **Notes:**
   - This is the final project-level verification stage for local implementations.
 
-### Phase 1I — End-to-End Verification
+### Phase 1I — Supabase Persistence Planning
 
 - **Status:** Blocked
 - **Current evidence:**
@@ -284,7 +284,7 @@ Requirements interpretation for current scope:
 
 ## 8) Next Authorized Step
 
-- **Phase 1I — End-to-End Verification**
+- **Phase 1I — Supabase Persistence Planning**
 
 ## 9) Phase 1G Audit Trail Authorization Boundary
 
