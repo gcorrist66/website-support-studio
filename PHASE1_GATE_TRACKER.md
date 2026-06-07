@@ -2,10 +2,10 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1A (Foundation Documentation)
-- Latest known commit evidence: `f95706d Add Phase 1A foundation documentation`
-- Current authority status: **Phase 1A only is in-progress for planning execution**
-- Implementation status: planning only, documentation only
+- Phase: 1B (Application Scaffold)
+- Latest known commit evidence: `bce2090 Add Phase 1 gate tracker` plus new scaffold verification commit
+- Current authority status: **Phase 1B scaffold is in-progress (infrastructure only)**
+- Implementation status: application scaffold + verification only
 
 ## 2) Phase Gates
 
@@ -39,9 +39,12 @@
 
 ### Phase 1B — Application Scaffold
 
-- **Status:** Diagnosed
+- **Status:** Diagnosed, Fixed Locally, Committed
 - **Current evidence:**
-  - `PHASE1_IMPLEMENTATION_PLAN.md` includes Phase 1A then Phase 1B recommendation
+  - `npm install` completed with dependency lockfile generated
+  - `npm run lint` exits successfully
+  - `npm run typecheck` exits successfully
+  - `npm run build` exits successfully
 - **Required evidence to close:**
   - Approved application scaffold docs and folder strategy
   - Configuration and build scaffolding requirements approved in writing
@@ -180,7 +183,7 @@ Requirements interpretation for current scope:
 
 ## 7) Next Authorized Step
 
-- **Phase 1B — Application Scaffold**
+- **Phase 1C — Conceptual Schema Translation**
 
 ## 8) Phase 1B Authorization Boundary
 
