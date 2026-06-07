@@ -2,10 +2,10 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1E (Approval Gate)
-- Latest known commit evidence: `bb034a9` (Phase 1E approval gate hardening)
-- Current authority status: **Phase 1E is active**
-- Implementation status: local approval-gate domain logic (in-memory only)
+- Phase: 1F (Customer Communication)
+- Latest known commit evidence: `a8f366d` (Phase 1F local customer communication guard)
+- Current authority status: **Phase 1F is active**
+- Implementation status: local customer communication domain logic (in-memory only)
 - External delivery status: no push/deploy in this phase (cost-control local-only)
 
 ## 2) Phase Gates
@@ -15,8 +15,8 @@
 - Phase 1C — Conceptual Schema Translation
 - Phase 1D — Ticket Lifecycle Backend
 - Phase 1E — Approval Gate
-- Phase 1F — Internal Operator Workflow
-- Phase 1G — Customer Communication
+- Phase 1F — Customer Communication
+- Phase 1G — Internal Operator Workflow
 - Phase 1H — Audit Trail
 - Phase 1I — End-to-End Verification
 
@@ -134,31 +134,40 @@
 - **Notes:**
   - No customer messaging, no API routes, no database, no external integrations.
 
-### Phase 1F — Internal Operator Workflow
+### Phase 1F — Customer Communication
+
+- **Status:** Diagnosed, Fixed Locally, Committed
+- **Current evidence:**
+  - `src/domain/ticketLifecycle.ts` with `createCustomerReplyDraft`, `markReplyReadyForApproval`, and `sendApprovedCustomerReply`
+  - `scripts/validate-domain.mjs` with communication guard coverage
+  - `a8f366d Add Phase 1F local customer communication guard`
+  - `npm run lint`
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run validate:domain`
+- **Required evidence to close:**
+  - `sendApprovedCustomerReply` blocked from pre-send states (reply_drafted, awaiting_gary_approval)
+  - `sendApprovedCustomerReply` requires approved approval record and customer email
+  - send emits in-memory communication record and `reply_sent` audit event
+  - no external provider call exists in local communication layer
+- **Blockers:**
+  - None for local-only communication guard scope.
+- **Notes:**
+  - No provider integrations, API routes, schema/db, auth, or deployment changes in this phase.
+  - Communication is represented as local in-memory records only.
+
+### Phase 1G — Internal Operator Workflow
 
 - **Status:** Blocked
 - **Current evidence:**
-  - Operator workflow responsibilities remain documented in architecture and technical design
+  - Internal workflow responsibilities remain documented in architecture and technical design
 - **Required evidence to close:**
-  - Role/action matrix aligned to phase authority and blockers
-  - Escalation and ownership mapping approved for each blocked reason
+  - Role/action matrix aligned to phase authority and blocked reasons
+  - escalation handling and ownership mapping approved for each blocked reason
 - **Blockers:**
   - Pending alignment from approved authorization slice progression
 - **Notes:**
   - No operational routing implementation in this phase.
-
-### Phase 1G — Customer Communication
-
-- **Status:** Blocked
-- **Current evidence:**
-  - Non-autonomous communication constraints captured in architecture and technical design
-- **Required evidence to close:**
-  - Communication preconditions and outbound proof requirements agreed
-  - Contact and approval prerequisites explicitly documented
-- **Blockers:**
-  - No communication pipeline has been authorized for this stage
-- **Notes:**
-  - No messaging integrations, send automation, or customer channels are built.
 
 ### Phase 1H — Audit Trail
 
@@ -227,6 +236,7 @@ Requirements interpretation for current scope:
 - `npm run lint` passes after excluding generated build output from lint scope
 - Working tree clean after scaffold gate update
 - `bb034a9 Add Phase 1E approval gate hardening`
+- `a8f366d Add Phase 1F local customer communication guard`
 - Production evidence:
   - `https://website-support-studio.vercel.app/` returns `200`
   - `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` return `404`
@@ -242,25 +252,30 @@ Requirements interpretation for current scope:
 - **Phase 1E pushed:** Not pushed
 - **Phase 1E deployed:** Not deployed
 - **Phase 1E production verified:** Not production verified (cost-control local-only)
+- **Phase 1F pushed:** Not pushed
+- **Phase 1F deployed:** Not deployed
+- **Phase 1F production verified:** Not production verified (cost-control local-only)
 
 ## 8) Next Authorized Step
 
-- **Phase 1F — Internal Operator Workflow**
+- **Phase 1F — Customer Communication**
 
-## 9) Phase 1E Approval Gate Authorization Boundary
+## 9) Phase 1F Customer Communication Authorization Boundary
 
 ### Allowed
- - requestApproval helper and in-memory approval records
- - approveDraftReply / rejectDraftReply transition controls
- - Local-only validation and ticket lifecycle guardrails
+ - `createCustomerReplyDraft`
+ - `markReplyReadyForApproval`
+ - `sendApprovedCustomerReply`
+ - In-memory communication record generation
+ - Local validation for email + approval preconditions
  - No production deployment or database work
 
 ### Forbidden
  - No database schema or migrations
  - No API routes
- - No authentication
- - No customer communication features
- - No outbound send execution
- - No persisted approval/communication engine
- - No audit engine persistence
+ - No real email provider integrations
+ - No SMTP/SendGrid/Postmark/Resend providers
+ - No auth implementation
+ - No customer channel UI
+ - No persisted communication/audit engine
  - No HiveRunner/IntrynSync integrations

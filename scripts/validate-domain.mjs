@@ -46,17 +46,25 @@ try {
 
   const {
     createTicket,
+    createCustomerReplyDraft,
     transitionTicket,
     blockTicket,
     unblockTicket,
     closeTicket,
-    requestApproval,
     approveDraftReply,
     rejectDraftReply,
+    markReplyReadyForApproval,
+    sendApprovedCustomerReply,
     getApprovals,
     getAuditTrail,
+    getCommunicationTrail,
     clearLifecycleState,
   } = domainModule;
+
+  const lifecycleSource = fs.readFileSync(
+    path.join(projectRoot, "src", "domain", "ticketLifecycle.ts"),
+    "utf8",
+  );
 
   const expect = (value, message) => {
     if (!value) {
@@ -76,6 +84,7 @@ try {
   };
 
   const getEvents = (ticketId) => getAuditTrail(ticketId).map((event) => event.eventType);
+  const getCommunicationEvents = (ticketId) => getCommunicationTrail(ticketId);
   const getApprovalDecisions = (ticketId) => getApprovals(ticketId).map((event) => event.decision);
 
   clearLifecycleState();
@@ -103,18 +112,28 @@ try {
   expect(happyTriaged.status === "triaged", "ticket can triage from received");
   expect(getEvents(happyTicket.ticketId).includes("ticket_triaged"), "ticket_triaged event emitted");
 
-  const happyDrafted = transitionTicket(happyTicket.ticketId, "reply_drafted", "cs_agent", "actor-1", "draft prepared");
-  expect(happyDrafted.status === "reply_drafted", "ticket can draft");
+  const happyDrafted = createCustomerReplyDraft({
+    ticketId: happyTicket.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-1",
+    draftText: "Thanks for reporting this.",
+    rationale: "draft prepared",
+  });
+  expect(happyDrafted.status === "reply_drafted", "ticket can draft from triaged");
   expect(getEvents(happyTicket.ticketId).includes("reply_drafted"), "reply_drafted event emitted");
 
   expectThrows(
     () => {
-      transitionTicket(happyTicket.ticketId, "sent_to_customer", "cs_agent", "actor-1");
+      sendApprovedCustomerReply({
+        ticketId: happyTicket.ticketId,
+        actorRole: "cs_agent",
+        actorReference: "actor-1",
+      });
     },
     "direct reply_drafted to sent_to_customer is blocked",
   );
 
-  const requested = requestApproval({
+  const requested = markReplyReadyForApproval({
     ticketId: happyTicket.ticketId,
     actorRole: "cs_agent",
     requestNotes: "ready for approval",
@@ -162,6 +181,7 @@ try {
   expect(approved.status === "approved_to_send", "gary approval moves to approved_to_send");
   expect(getEvents(happyTicket.ticketId).includes("approval_granted"), "approval_granted event emitted");
   expect(getApprovalDecisions(happyTicket.ticketId).includes("approved"), "approval decision approved recorded");
+  expect(getCommunicationEvents(happyTicket.ticketId).length === 0, "approval does not create customer communication record");
 
   const noEmailApproved = createTicket({
     siteId: "site-no-email",
@@ -176,8 +196,13 @@ try {
     },
   });
   transitionTicket(noEmailApproved.ticketId, "triaged", "cs_agent");
-  transitionTicket(noEmailApproved.ticketId, "reply_drafted", "cs_agent");
-  requestApproval({
+  createCustomerReplyDraft({
+    ticketId: noEmailApproved.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-3",
+    draftText: "Need your email before we continue.",
+  });
+  markReplyReadyForApproval({
     ticketId: noEmailApproved.ticketId,
     actorRole: "cs_agent",
     requestNotes: "need approval before send",
@@ -190,7 +215,10 @@ try {
 
   expectThrows(
     () => {
-      transitionTicket(noEmailApproved.ticketId, "sent_to_customer", "cs_agent");
+      sendApprovedCustomerReply({
+        ticketId: noEmailApproved.ticketId,
+        actorRole: "cs_agent",
+      });
     },
     "approved_to_send still requires email before sent_to_customer",
   );
@@ -209,8 +237,13 @@ try {
     },
   });
   transitionTicket(rejectionTicket.ticketId, "triaged", "cs_agent");
-  transitionTicket(rejectionTicket.ticketId, "reply_drafted", "cs_agent");
-  requestApproval({
+  createCustomerReplyDraft({
+    ticketId: rejectionTicket.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-4",
+    draftText: "I need to review this again.",
+  });
+  markReplyReadyForApproval({
     ticketId: rejectionTicket.ticketId,
     actorRole: "cs_agent",
     requestNotes: "review and rewrite",
@@ -235,19 +268,16 @@ try {
     "rejection can route back to draft safely",
   );
 
-  const happySent = transitionTicket(
-    happyTicket.ticketId,
-    "sent_to_customer",
-    "cs_agent",
-    "actor-1",
-    "customer email known",
-  );
+  const happySent = sendApprovedCustomerReply({
+    ticketId: happyTicket.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-1",
+    rationale: "customer email known",
+  });
   expect(happySent.status === "sent_to_customer", "ticket can send from approved_to_send");
   expect(getEvents(happyTicket.ticketId).includes("reply_sent"), "reply_sent event emitted");
-  expect(
-    getEvents(happyTicket.ticketId).includes("ticket_created") && !getEvents(happyTicket.ticketId).includes("customer_communication_confirmation"),
-    "no autonomous customer communication event in approval-only flow",
-  );
+  expect(getCommunicationEvents(happyTicket.ticketId).length === 1, "communication event is recorded in memory");
+  expect(happySent.status !== "closed", "send does not close ticket");
 
   const happyClosed = closeTicket(happyTicket.ticketId, "cs_agent", "actor-1", "work completed");
   expect(happyClosed.status === "closed", "ticket can close after sent_to_customer");
@@ -321,8 +351,18 @@ try {
   });
 
   transitionTicket(rewriteDemo.ticketId, "triaged", "cs_agent");
-  transitionTicket(rewriteDemo.ticketId, "reply_drafted", "cs_agent");
-  transitionTicket(rewriteDemo.ticketId, "awaiting_gary_approval", "cs_agent");
+  createCustomerReplyDraft({
+    ticketId: rewriteDemo.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-9",
+    draftText: "Revisions are needed before approval.",
+  });
+  markReplyReadyForApproval({
+    ticketId: rewriteDemo.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-9",
+    requestNotes: "revision path setup",
+  });
   blockTicket({
     ticketId: rewriteDemo.ticketId,
     actorRole: "cs_agent",
@@ -356,17 +396,70 @@ try {
     },
   });
   transitionTicket(awaitingSendCheck.ticketId, "triaged", "cs_agent");
-  transitionTicket(awaitingSendCheck.ticketId, "reply_drafted", "cs_agent");
-  requestApproval({
+  createCustomerReplyDraft({
+    ticketId: awaitingSendCheck.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-10",
+    draftText: "Draft ready to review.",
+  });
+  markReplyReadyForApproval({
     ticketId: awaitingSendCheck.ticketId,
     actorRole: "cs_agent",
     requestNotes: "requires review",
   });
   expectThrows(
     () => {
-      transitionTicket(awaitingSendCheck.ticketId, "sent_to_customer", "cs_agent");
+      sendApprovedCustomerReply({
+        ticketId: awaitingSendCheck.ticketId,
+        actorRole: "cs_agent",
+      });
     },
     "sent_to_customer blocked from awaiting_gary_approval",
+  );
+
+  const lackingApprovalRecord = createTicket({
+    siteId: "site-no-approved-record",
+    intakeChannel: "portal",
+    source: "unit-portal",
+    rawMessage: "Approved path without approval record",
+    identityConfidence: "known",
+    submitter: {
+      submitterId: "submitter-010",
+      siteId: "site-no-approved-record",
+      identityConfidence: "known",
+      submitterEmail: "approved-no-record@example.com",
+    },
+  });
+  transitionTicket(lackingApprovalRecord.ticketId, "triaged", "cs_agent");
+  createCustomerReplyDraft({
+    ticketId: lackingApprovalRecord.ticketId,
+    actorRole: "cs_agent",
+    actorReference: "actor-11",
+    draftText: "Need manual send check.",
+  });
+  transitionTicket(
+    lackingApprovalRecord.ticketId,
+    "awaiting_gary_approval",
+    "cs_agent",
+    "actor-11",
+    "approval bypass",
+  );
+  transitionTicket(
+    lackingApprovalRecord.ticketId,
+    "approved_to_send",
+    "gary_approver",
+    "actor-12",
+    "bypass approval record",
+  );
+
+  expectThrows(
+    () => {
+      sendApprovedCustomerReply({
+        ticketId: lackingApprovalRecord.ticketId,
+        actorRole: "cs_agent",
+      });
+    },
+    "approved_to_send without approved approval record is blocked",
   );
 
   const immediateCloseAttempt = createTicket({
@@ -390,6 +483,11 @@ try {
       transitionTicket(immediateCloseAttempt.ticketId, "triaged", "cs_agent");
     },
     "closed state cannot reopen",
+  );
+
+  expect(
+    !/resend|sendgrid|postmark|nodemailer|smtp|mailgun/i.test(lifecycleSource),
+    "no email provider integration hook exists in communication layer",
   );
 
   process.stdout.write("PASS: phase1 domain lifecycle validation completed\n");

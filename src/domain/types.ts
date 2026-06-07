@@ -64,6 +64,18 @@ export interface TicketDraftReply {
   qualityCheckFlag?: boolean;
 }
 
+export interface TicketCommunicationRecord {
+  communicationId: string;
+  ticketId: string;
+  draftId?: TicketDraftReply["draftId"];
+  sentByRole: ActorRole.CS_AGENT | ActorRole.SYSTEM;
+  sentAt: string;
+  recipientEmail: string;
+  messagePreview: string;
+  communicationChannel: "in_memory_record";
+  rationale?: string;
+}
+
 export interface TicketApproval {
   approvalId: string;
   ticketId: string;

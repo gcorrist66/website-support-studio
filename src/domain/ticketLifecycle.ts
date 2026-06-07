@@ -12,6 +12,7 @@ import type {
   TicketApproval,
   TicketDraftReply,
   TicketMessage,
+  TicketCommunicationRecord,
   TicketSubmitter,
 } from "./types";
 import {
@@ -27,6 +28,7 @@ interface LifecycleTicketRecord {
   messages: TicketMessage[];
   drafts: TicketDraftReply[];
   approvals: TicketApproval[];
+  communicationRecords: TicketCommunicationRecord[];
   audits: TicketAuditEvent[];
   previousBlockedStatus?: TicketStatus;
 }
@@ -71,8 +73,18 @@ interface ApprovalDecisionParams extends TicketTransitionParams {
 interface RequestApprovalParams extends TicketTransitionParams {
   requestNotes?: string;
   draftSnapshot?: string;
-  actorReference?: string;
   actorRole: ActorRole.CS_AGENT | ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN;
+}
+
+interface CreateCustomerReplyDraftParams extends TicketTransitionParams {
+  draftText: string;
+  draftAssumptions?: string;
+  evidenceReference?: string;
+  qualityCheckFlag?: boolean;
+}
+
+interface SendApprovedCustomerReplyParams extends TicketTransitionParams {
+  recipientEmail?: string;
 }
 
 interface RejectDraftReplyParams extends ApprovalDecisionParams {
@@ -85,6 +97,8 @@ const repository: LifecycleRepository = new Map();
 const timestamp = () => new Date().toISOString();
 let nextTicketSeq = 1;
 let nextMessageSeq = 1;
+let nextDraftSeq = 1;
+let nextCommunicationSeq = 1;
 let nextAuditSeq = 1;
 let nextApprovalSeq = 1;
 
@@ -101,6 +115,18 @@ function nextTicketId(): string {
 function nextMessageId(): string {
   const id = nextId("msg", nextMessageSeq);
   nextMessageSeq += 1;
+  return id;
+}
+
+function nextDraftId(): string {
+  const id = nextId("draft", nextDraftSeq);
+  nextDraftSeq += 1;
+  return id;
+}
+
+function nextCommunicationId(): string {
+  const id = nextId("comm", nextCommunicationSeq);
+  nextCommunicationSeq += 1;
   return id;
 }
 
@@ -170,6 +196,30 @@ function assertHasPendingApproval(record: LifecycleTicketRecord): TicketApproval
     throw new Error(`approval_not_requested_${record.ticket.ticketId}`);
   }
   return latestApproval;
+}
+
+function assertHasApprovedApproval(record: LifecycleTicketRecord): TicketApproval {
+  const latestApproval = record.approvals.at(-1);
+  if (!latestApproval || latestApproval.decision !== "approved") {
+    throw new Error(`approval_required_${record.ticket.ticketId}`);
+  }
+  return latestApproval;
+}
+
+function assertDraftExists(record: LifecycleTicketRecord): TicketDraftReply {
+  const draft = record.drafts.at(-1);
+  if (!draft) {
+    throw new Error(`draft_missing_${record.ticket.ticketId}`);
+  }
+  return draft;
+}
+
+function assertRecipientEmail(record: LifecycleTicketRecord): string {
+  const recipientEmail = record.submitter?.submitterEmail ?? "";
+  if (!recipientEmail || recipientEmail.trim().length === 0) {
+    throw new Error(`missing_customer_contact_for_send_${record.ticket.ticketId}`);
+  }
+  return recipientEmail;
 }
 
 function createApprovalRecord(record: LifecycleTicketRecord, entry: {
@@ -362,6 +412,7 @@ export function createTicket(params: CreateTicketParams): Ticket {
     messages: [message],
     drafts: [],
     approvals: [],
+    communicationRecords: [],
     audits: [],
   };
 
@@ -402,6 +453,132 @@ export function requestApproval({
     approvedReplySnapshot: draftSnapshot,
   });
   return ticket;
+}
+
+export function createCustomerReplyDraft({
+  ticketId,
+  actorRole,
+  actorReference,
+  draftText,
+  draftAssumptions,
+  evidenceReference,
+  qualityCheckFlag,
+  rationale,
+}: CreateCustomerReplyDraftParams): Ticket {
+  const record = getRecord(ticketId);
+
+  if (actorRole !== ActorRole.CS_AGENT) {
+    throw new Error(`actor_not_authorized_${actorRole}_for_reply_drafted`);
+  }
+
+  if (record.ticket.status === TicketStatus.TRIAGED) {
+    transitionTicketStatus(
+      record,
+      TicketStatus.REPLY_DRAFTED,
+      actorRole,
+      actorReference,
+      rationale,
+    );
+  } else if (record.ticket.status !== TicketStatus.REPLY_DRAFTED) {
+    throw new Error(`invalid_draft_state_${record.ticket.status}`);
+  }
+
+  const draft: TicketDraftReply = {
+    draftId: nextDraftId(),
+    ticketId,
+    draftText,
+    draftingAgentRole: ActorRole.CS_AGENT,
+    draftedAt: timestamp(),
+    draftVersion: record.drafts.length + 1,
+    draftAssumptions,
+    evidenceReference,
+    qualityCheckFlag,
+  };
+  record.drafts.push(draft);
+
+  if (record.drafts.length > 1) {
+    emitEvent(
+      record,
+      AuditEventType.DRAFT_SNAPSHOT_STORED,
+      actorRole,
+      actorReference,
+      TicketStatus.REPLY_DRAFTED,
+      TicketStatus.REPLY_DRAFTED,
+      rationale,
+    );
+  }
+
+  return record.ticket;
+}
+
+export function markReplyReadyForApproval({
+  ticketId,
+  actorRole,
+  actorReference,
+  requestNotes,
+}: TicketTransitionParams & {
+  actorRole: ActorRole.CS_AGENT;
+  requestNotes?: string;
+}): Ticket {
+  const record = getRecord(ticketId);
+  if (record.ticket.status !== TicketStatus.REPLY_DRAFTED) {
+    throw new Error(`invalid_reply_draft_state_${record.ticket.status}`);
+  }
+
+  const latestDraft = assertDraftExists(record);
+
+  return requestApproval({
+    ticketId,
+    actorRole,
+    actorReference,
+    requestNotes,
+    draftSnapshot: latestDraft.draftText,
+  });
+}
+
+export function sendApprovedCustomerReply({
+  ticketId,
+  actorRole,
+  actorReference,
+  rationale,
+  recipientEmail,
+}: SendApprovedCustomerReplyParams): Ticket {
+  const record = getRecord(ticketId);
+
+  if (record.ticket.status !== TicketStatus.APPROVED_TO_SEND) {
+    throw new Error(`invalid_send_state_${record.ticket.status}`);
+  }
+
+  if (actorRole !== ActorRole.CS_AGENT && actorRole !== ActorRole.SYSTEM) {
+    throw new Error(`sender_role_required_${actorRole}`);
+  }
+
+  assertHasApprovedApproval(record);
+  assertDraftExists(record);
+  const targetRecipient = (recipientEmail ?? assertRecipientEmail(record)).trim();
+
+  transitionTicketStatus(
+    record,
+    TicketStatus.SENT_TO_CUSTOMER,
+    actorRole,
+    actorReference,
+    rationale,
+  );
+
+  const draft = record.drafts.at(-1);
+  record.communicationRecords.push({
+    communicationId: nextCommunicationId(),
+    ticketId,
+    draftId: draft?.draftId,
+    sentByRole: actorRole === ActorRole.SYSTEM ? ActorRole.SYSTEM : ActorRole.CS_AGENT,
+    sentAt: timestamp(),
+    recipientEmail: targetRecipient,
+    messagePreview: draft ? draft.draftText.slice(0, 200) : "no draft text",
+    communicationChannel: "in_memory_record",
+    rationale,
+  });
+
+  return record.ticket;
 }
 
 export function approveDraftReply({
@@ -591,6 +768,11 @@ export function getApprovals(ticketId: string): TicketApproval[] {
   return record ? [...record.approvals] : [];
 }
 
+export function getCommunicationTrail(ticketId: string): TicketCommunicationRecord[] {
+  const record = repository.get(ticketId);
+  return record ? [...record.communicationRecords] : [];
+}
+
 export function listTickets(): Ticket[] {
   return [...repository.values()].map((record) => record.ticket);
 }
@@ -599,6 +781,8 @@ export function clearLifecycleState(): void {
   repository.clear();
   nextTicketSeq = 1;
   nextMessageSeq = 1;
+  nextDraftSeq = 1;
+  nextCommunicationSeq = 1;
   nextAuditSeq = 1;
   nextApprovalSeq = 1;
 }
