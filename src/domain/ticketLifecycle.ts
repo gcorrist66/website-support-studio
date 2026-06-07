@@ -96,49 +96,40 @@ type LifecycleRepository = Map<string, LifecycleTicketRecord>;
 const repository: LifecycleRepository = new Map();
 type AuditMetadata = Record<string, unknown>;
 const timestamp = () => new Date().toISOString();
-let nextTicketSeq = 1;
-let nextMessageSeq = 1;
-let nextDraftSeq = 1;
-let nextCommunicationSeq = 1;
-let nextAuditSeq = 1;
-let nextApprovalSeq = 1;
+let idEntropyCounter = 1;
 
-function nextId(prefix: string, seq: number): string {
-  return `${prefix}-${String(seq).padStart(5, "0")}`;
+function nextId(): string {
+  const randomId =
+    typeof globalThis.crypto !== "undefined" &&
+    typeof globalThis.crypto.randomUUID === "function"
+      ? globalThis.crypto.randomUUID()
+      : `fallback-${Date.now().toString(36)}-${idEntropyCounter++}`;
+
+  return randomId;
 }
 
 function nextTicketId(): string {
-  const id = nextId("ticket", nextTicketSeq);
-  nextTicketSeq += 1;
-  return id;
+  return nextId();
 }
 
 function nextMessageId(): string {
-  const id = nextId("msg", nextMessageSeq);
-  nextMessageSeq += 1;
-  return id;
+  return nextId();
 }
 
 function nextDraftId(): string {
-  const id = nextId("draft", nextDraftSeq);
-  nextDraftSeq += 1;
-  return id;
+  return nextId();
 }
 
 function nextCommunicationId(): string {
-  const id = nextId("comm", nextCommunicationSeq);
-  nextCommunicationSeq += 1;
-  return id;
+  return nextId();
 }
 
 function nextAuditId(): string {
-  const id = nextId("audit", nextAuditSeq);
-  nextAuditSeq += 1;
-  return id;
+  return nextId();
 }
 
 function nextApprovalId(): string {
-  return nextId("approval", nextApprovalSeq++);
+  return nextId();
 }
 
 function getRequiredNow(): { now: string } {
@@ -1099,16 +1090,16 @@ export function getCommunicationTrail(ticketId: string): TicketCommunicationReco
   return record ? [...record.communicationRecords] : [];
 }
 
+export function getDrafts(ticketId: string): TicketDraftReply[] {
+  const record = repository.get(ticketId);
+  return record ? [...record.drafts] : [];
+}
+
 export function listTickets(): Ticket[] {
   return [...repository.values()].map((record) => record.ticket);
 }
 
 export function clearLifecycleState(): void {
   repository.clear();
-  nextTicketSeq = 1;
-  nextMessageSeq = 1;
-  nextDraftSeq = 1;
-  nextCommunicationSeq = 1;
-  nextAuditSeq = 1;
-  nextApprovalSeq = 1;
+  idEntropyCounter += 1;
 }

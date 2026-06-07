@@ -8,6 +8,7 @@ import { pathToFileURL } from "node:url";
 
 const projectRoot = process.cwd();
 const DEV_PROJECT_REF = "vrtfbbrwrxyljchywmzy";
+const ALLOWED_NON_PRODUCTION_ENVS = ["dev", "development", "local"];
 
 const filesToCompile = [
   "src/domain/ticketStatus.ts",
@@ -26,6 +27,46 @@ function assert(condition, message) {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+function assertLocalSupabaseConfig() {
+  const configPath = path.join(projectRoot, ".supabase", "config.toml");
+  assert(fs.existsSync(configPath), "Missing local Supabase link metadata (.supabase/config.toml).");
+  const configText = fs.readFileSync(configPath, "utf8");
+  assert(configText.includes(DEV_PROJECT_REF), "Local Supabase link does not match WSS phase-2 dev project ref.");
+}
+
+function isSupabaseAuthFailure(message) {
+  const text = `${message}`.toLowerCase();
+  return (
+    text.includes("password authentication failed") ||
+    text.includes("sasl") ||
+    text.includes("28p01") ||
+    text.includes("failed to connect as temp role")
+  );
+}
+
+function getErrorOutput(error) {
+  const pieces = [error?.message, error?.stdout?.toString?.(), error?.stderr?.toString?.()];
+  return pieces.filter(Boolean).join(" ");
+}
+
+function queryRowsWithGuard(querySqlFn, sql) {
+  try {
+    return querySqlFn(sql);
+  } catch (error) {
+    if (isSupabaseAuthFailure(getErrorOutput(error))) {
+      throw new Error(
+        "Supabase validation blocked by local CLI auth failure (SASL/28P01). Refresh WSS local dev credentials and rerun with explicit dev guard flags.",
+      );
+    }
+    throw error;
+  }
+}
+
+function runSupabaseAuthSmokeTest(querySqlFn) {
+  const rows = queryRowsWithGuard(querySqlFn, "select 'phase2-dev-smoke' as smoke_check;");
+  assert(Array.isArray(rows), "Expected supabase query smoke test to return rows.");
 }
 
 function compileProjectModules() {
@@ -76,17 +117,11 @@ function assertLocalExecutionGuard() {
   assert(Boolean(providedRef), "Set WSS_SUPABASE_PROJECT_REF before running validation.");
   assert(providedRef === DEV_PROJECT_REF, `Unexpected WSS_SUPABASE_PROJECT_REF ${providedRef}; expected ${DEV_PROJECT_REF}.`);
 
-  const allowed = ["dev", "development", "local"];
-  assert(Boolean(process.env.WSS_SUPABASE_ENVIRONMENT) && allowed.includes(process.env.WSS_SUPABASE_ENVIRONMENT.toLowerCase()), "Set WSS_SUPABASE_ENVIRONMENT=dev|development|local before running validation.");
-
-  const configPath = path.join(projectRoot, ".supabase", "config.toml");
-  assert(fs.existsSync(configPath), "Missing local Supabase link metadata (.supabase/config.toml).");
-  const configText = fs.readFileSync(configPath, "utf8");
-  assert(configText.includes(DEV_PROJECT_REF), "Local Supabase link is not the expected WSS dev project reference.");
+  assert(Boolean(process.env.WSS_SUPABASE_ENVIRONMENT) && ALLOWED_NON_PRODUCTION_ENVS.includes(process.env.WSS_SUPABASE_ENVIRONMENT.toLowerCase()), "Set WSS_SUPABASE_ENVIRONMENT=dev|development|local before running validation.");
 }
 
 function queryRows(querySql, sql) {
-  const rows = querySql(sql);
+  const rows = queryRowsWithGuard(querySql, sql);
   return rows;
 }
 
@@ -156,19 +191,33 @@ function ensureFailure(label, fn) {
 }
 
 function cleanupTicket(querySql, tenant) {
-  querySql(`delete from public.ticket_communications where ticket_id = '${tenant.ticketId}';`);
-  querySql(`delete from public.ticket_approvals where ticket_id = '${tenant.ticketId}';`);
-  querySql(`delete from public.ticket_draft_replies where ticket_id = '${tenant.ticketId}';`);
-  querySql(`delete from public.ticket_messages where ticket_id = '${tenant.ticketId}';`);
-  querySql(`delete from public.ticket_audit_events where ticket_id = '${tenant.ticketId}';`);
-  querySql(`delete from public.tickets where id = '${tenant.ticketId}';`);
-  querySql(`delete from public.sites where id='${tenant.siteId}';`);
-  querySql(`delete from public.clients where id='${tenant.clientId}';`);
-  querySql(`delete from public.agencies where id='${tenant.agencyId}';`);
+  const assertId = (value) => {
+    return typeof value === "string" && value.length > 0;
+  };
+
+  if (tenant.ticketId && assertId(tenant.ticketId)) {
+    querySql(`delete from public.ticket_communications where ticket_id = '${tenant.ticketId}';`);
+    querySql(`delete from public.ticket_approvals where ticket_id = '${tenant.ticketId}';`);
+    querySql(`delete from public.ticket_draft_replies where ticket_id = '${tenant.ticketId}';`);
+    querySql(`delete from public.ticket_messages where ticket_id = '${tenant.ticketId}';`);
+    querySql(`delete from public.ticket_audit_events where ticket_id = '${tenant.ticketId}';`);
+    querySql(`delete from public.tickets where id = '${tenant.ticketId}';`);
+  }
+
+  if (tenant.siteId && assertId(tenant.siteId)) {
+    querySql(`delete from public.sites where id='${tenant.siteId}';`);
+  }
+  if (tenant.clientId && assertId(tenant.clientId)) {
+    querySql(`delete from public.clients where id='${tenant.clientId}';`);
+  }
+  if (tenant.agencyId && assertId(tenant.agencyId)) {
+    querySql(`delete from public.agencies where id='${tenant.agencyId}';`);
+  }
 }
 
 async function run() {
   assertLocalExecutionGuard();
+  assertLocalSupabaseConfig();
   const { tmpDir, modules } = compileProjectModules();
   const workflowService = await modules.workflowService;
   const ticketRepository = await modules.ticketRepository;
@@ -191,6 +240,7 @@ async function run() {
 
   const { querySql, assertLocalExecutionGate } = ticketRepository;
   assertLocalExecutionGate();
+  runSupabaseAuthSmokeTest(querySql);
 
   const runId = `wss-service-${Date.now().toString().slice(-8)}`;
   const scenarioArtifacts = [];

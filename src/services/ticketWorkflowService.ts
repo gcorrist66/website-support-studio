@@ -17,6 +17,7 @@ import {
   createCustomerReplyDraft,
   createTicket,
   getApprovals,
+  getDrafts,
   getAuditTrail,
   getCommunicationTrail,
   markReplyReadyForApproval,
@@ -155,10 +156,6 @@ function buildSubmitter(
 ): TicketSubmitter | undefined {
   const submitterEmail = normalizeText(input?.submitterEmail);
 
-  if (!input?.submitterId && !normalizeText(input?.submitterName) && !submitterEmail) {
-    return undefined;
-  }
-
   return {
     submitterId: input?.submitterId ?? `submitter-${randomUUID()}`,
     siteId: session.tenant.siteId,
@@ -235,14 +232,16 @@ function buildDraftRecord(session: ServiceSession, ticketId: string, draftText: 
   draftAssumptions?: string;
   evidenceReference?: string;
   qualityCheckFlag?: boolean;
+  draftId?: string;
+  draftVersion?: number;
 }): TicketDraftReply {
   return {
-    draftId: randomUUID(),
+    draftId: options?.draftId ?? randomUUID(),
     ticketId,
     draftText,
     draftingAgentRole: ActorRole.CS_AGENT,
     draftedAt: new Date().toISOString(),
-    draftVersion: session.persistedDrafts.length + 1,
+    draftVersion: options?.draftVersion ?? session.persistedDrafts.length + 1,
     draftAssumptions: options?.draftAssumptions,
     evidenceReference: options?.evidenceReference,
     qualityCheckFlag: options?.qualityCheckFlag,
@@ -274,6 +273,7 @@ function persistMutation(
     approvals?: TicketLifecycleMutationInput["approvals"];
     communications?: TicketLifecycleMutationInput["communications"];
     closureNote?: string | null;
+    draftReplyId?: string;
   },
 ): void {
   if (
@@ -294,9 +294,14 @@ function persistMutation(
     audits: changes.audits,
     drafts: changes.drafts,
     approvals: changes.approvals,
+    approvalDraftReplyId: changes.draftReplyId,
     communications: changes.communications,
     messages: [],
   });
+}
+
+function getLatestDraftReplyId(session: ServiceSession): string | undefined {
+  return session.persistedDrafts.at(-1)?.draftId;
 }
 
 export function createPersistedTicket(input: CreatePersistedTicketInput): Ticket {
@@ -436,7 +441,23 @@ export function draftPersistedReply(
     rationale: options?.rationale,
   });
 
-  const draft = buildDraftRecord(session, ticketId, draftText, options);
+  const latestDomainDraft = getDrafts(ticketId).at(-1);
+  if (!latestDomainDraft) {
+    throw new Error("domain draft should exist after draft action");
+  }
+
+  const draft = buildDraftRecord(
+    session,
+    ticketId,
+    draftText,
+    {
+      draftAssumptions: options?.draftAssumptions,
+      evidenceReference: options?.evidenceReference,
+      qualityCheckFlag: options?.qualityCheckFlag,
+      draftId: latestDomainDraft.draftId,
+      draftVersion: latestDomainDraft.draftVersion,
+    },
+  );
   session.persistedDrafts.push(draft);
 
   const newAudits = filterNewById(getAuditTrail(ticketId), session.persistedAuditIds, "id");
@@ -471,6 +492,7 @@ export function requestPersistedApproval(
   const newApprovals = filterNewById(getApprovals(ticketId), session.persistedApprovalIds, "approvalId");
 
   persistMutation(session, ticket, {
+    draftReplyId: getLatestDraftReplyId(session),
     audits: newAudits,
     approvals: newApprovals,
   });
@@ -502,6 +524,7 @@ export function approvePersistedReply(
   const newApprovals = filterNewById(getApprovals(ticketId), session.persistedApprovalIds, "approvalId");
 
   persistMutation(session, ticket, {
+    draftReplyId: getLatestDraftReplyId(session),
     audits: newAudits,
     approvals: newApprovals,
   });
@@ -540,6 +563,7 @@ export function sendPersistedCustomerReplyLocalOnly(input: SendPersistedCustomer
   ).map((communication) => mapCommunicationToPersisted(communication, latestApproval.approvalId));
 
   persistMutation(session, ticket, {
+    draftReplyId: getLatestDraftReplyId(session),
     audits: newAudits,
     communications: newComms,
   });

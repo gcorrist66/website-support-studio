@@ -87,6 +87,7 @@ export interface TicketLifecycleMutationInput {
   approvals?: TicketApproval[];
   communications?: TicketCommunicationWrite[];
   audits: TicketAuditEvent[];
+  approvalDraftReplyId?: string;
 }
 
 interface DatabaseRow {
@@ -436,10 +437,11 @@ export function persistWorkflowMutation(input: TicketLifecycleMutationInput): vo
   }
 
   for (const approval of input.approvals ?? []) {
+    const draftReplyId = input.approvalDraftReplyId;
     runSqlBatch([
       buildUpsertSQL(
         "ticket_approvals",
-        buildApprovalRow(approval, input.tenantContext),
+        buildApprovalRow(approval, input.tenantContext, draftReplyId),
         "id",
         [
           "agency_id",

@@ -16,7 +16,7 @@
 
 - **Diagnosed:** complete
 - **Fixed Locally:** complete
-- **Committed:** pending (current objective)
+- **Committed:** complete (local blocker fixed and revalidation complete)
 - **Pushed:** not complete
 - **Deployed:** not complete
 - **Production Verified:** not complete
@@ -50,7 +50,18 @@
   - `npm run validate:phase2a` ✅
   - `npm run validate:persistence` ✅
   - `npm run validate:supabase:adapter` ✅ (pass; expected negative-path constraints observed and handled)
-  - `npm run validate:workflow-service` blocked (missing local DB auth credentials for Supabase CLI temp role)
+  - `npm run validate:workflow-service` ✅ (pass after fixes)
+
+### Root-cause and fix summary
+- Early failures were caused by:
+  - implicit missing submitter mapping when scenarios omitted submitter fields (`invalid_message_author_id`),
+  - draft/approval/communication identifier linkage mismatch across service mutations,
+  - auth failure output from Supabase CLI not reliably captured in workflow validator.
+- Fixes:
+  - made submitter fallback IDs always deterministic-safe in repository service workflow seeds,
+  - propagated domain draft IDs through approval/communication persistence paths,
+  - added robust auth-failure parsing in workflow validator wrappers,
+  - hardened workflow cleanup to skip delete statements when tenant identifiers are missing.
 
 ## 4) Recommended Next Phase
 - Next phase recommendation: **3B — Workflow API Layer**
