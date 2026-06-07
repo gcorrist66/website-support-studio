@@ -124,9 +124,12 @@
 - **Evidence:**
   - `src/persistence/supabaseAdapter.ts`
   - `scripts/validate-supabase-adapter.mjs`
-  - `npm run validate:supabase:adapter`
+  - `npm run validate:supabase:adapter` (guarded; currently blocked locally until `.supabase/config.toml` link to `vrtfbbrwrxyljchywmzy` is present)
+  - execution guard: `WSS_ALLOW_SUPABASE_VALIDATION=dev` and `WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy` required
   - command evidence:
     - safe test agency/client/site/ticket/audit insertion
     - ticket readback + tenant relationship assertion
     - audit trail roundtrip verification (`event_type` set includes required values)
-    - communication row persisted with approved approval reference and cleanup executed
+    - communication row persisted only with approved `approval_id` and non-prod placeholder payload
+    - failure-path checks for tenant enforcement, FK checks, approval requirement, and audit metadata requirements
+    - cleanup executed and residual rows validated in finally block
