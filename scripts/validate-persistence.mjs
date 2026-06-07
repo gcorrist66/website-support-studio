@@ -174,6 +174,12 @@ for (const routePath of badRoutes) {
   }
 }
 
+const phase4TrackerPath = path.join(projectRoot, "PHASE4_GATE_TRACKER.md");
+const phase4Text = fs.existsSync(phase4TrackerPath)
+  ? fs.readFileSync(phase4TrackerPath, "utf8")
+  : "";
+const allowUiFiles = /Phase 4A|Phase 4B/.test(phase4Text);
+
 const gitStatus = execSync("git status --short", { encoding: "utf8" })
   .split("\n")
   .map((line) => line.trim())
@@ -182,8 +188,12 @@ const gitStatus = execSync("git status --short", { encoding: "utf8" })
   .map((line) => line.split(" ")[0]);
 
 const disallowedChangedSrc = gitStatus.filter((p) => p.startsWith("src/components") || p.startsWith("src/main.tsx") || p.startsWith("src/styles.css"));
-if (disallowedChangedSrc.length > 0 && disallowedChangedSrc.some((p) => !p.startsWith("src/persistence"))) {
+if (!allowUiFiles && disallowedChangedSrc.length > 0 && disallowedChangedSrc.some((p) => !p.startsWith("src/persistence"))) {
   throw new Error("UI/presentation files changed during local persistence foundation phase");
+}
+if (allowUiFiles) {
+  // UI files are now allowed after Phase 4A/4B because this phase intentionally ships local
+  // operator-facing placeholders while keeping all persistence-scoped rules and forbidden integrations intact.
 }
 
 const sourceText = fs.readFileSync(

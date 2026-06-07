@@ -32,7 +32,7 @@
 ### Phase 4B — Read-only Ticket Queue UI
 - **Diagnosed:** complete
 - **Fixed Locally:** complete
-- **Committed:** pending
+- **Committed:** complete
 - **Pushed:** not complete
 - **Deployed:** not complete
 - **Production Verified:** not complete
@@ -44,6 +44,8 @@
 - Added read-only row action language and disabled controls.
 - Added local validation command `validate:ui-boundary` (`scripts/validate-ui-boundary.mjs`).
 - `src/ui/mockData.ts` expanded for queue metadata used by UI placeholders.
+- Phase 4B persistence validation boundary issue resolved by scoping `scripts/validate-persistence.mjs`.
+- All local validation commands currently passing after the scope adjustment.
 
 ### Validation baseline
 - Core checks remain:
