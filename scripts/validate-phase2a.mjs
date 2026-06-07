@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import process from "node:process";
+
+const migrationPath = path.join(process.cwd(), "supabase", "migrations", "20260607000001_phase2a_core_ticket_foundation.sql");
+const migrationText = fs.readFileSync(migrationPath, "utf8");
 
 const requiredTables = [
   "agencies",
@@ -18,35 +20,44 @@ const forbiddenTables = [
 ];
 
 const requiredColumns = {
-  agencies: ["agency_id", "agency_name", "created_at", "updated_at"],
-  clients: ["client_id", "agency_id", "client_name", "created_at", "updated_at"],
-  sites: ["site_id", "client_id", "site_name", "created_at", "updated_at"],
+  agencies: ["id", "name", "slug", "created_at", "updated_at"],
+  clients: ["id", "agency_id", "name", "slug", "created_at", "updated_at"],
+  sites: ["id", "agency_id", "client_id", "name", "url", "slug", "created_at", "updated_at"],
   tickets: [
-    "ticket_id",
+    "id",
+    "agency_id",
+    "client_id",
     "site_id",
+    "ticket_number",
+    "title",
     "status",
     "priority",
     "identity_confidence",
-    "current_actor_role",
+    "submitter_name",
+    "submitter_email",
+    "blocked_reason",
+    "blocked_from_status",
+    "blocked_notes",
+    "closure_note",
     "created_at",
     "updated_at",
+    "closed_at",
   ],
   ticket_audit_events: [
-    "audit_id",
+    "id",
+    "agency_id",
+    "client_id",
+    "site_id",
     "ticket_id",
     "actor_id",
-    "event_type",
     "actor_role",
+    "event_type",
     "summary",
     "metadata",
     "occurred_at",
-    "state_after",
     "created_at",
   ],
 };
-
-const migrationPath = path.join(process.cwd(), "supabase", "migrations", "20260607000000_phase2a_initial_core_tables.sql");
-const migrationText = fs.readFileSync(migrationPath, "utf8");
 
 const failures = [];
 
@@ -63,9 +74,9 @@ for (const table of forbiddenTables) {
 }
 
 for (const [table, cols] of Object.entries(requiredColumns)) {
+  const createMatch = migrationText.match(new RegExp(`create table if not exists public\\.${table}[\\s\\S]*?;`, "i"))?.[0] ?? "";
   for (const col of cols) {
-    const pattern = new RegExp(`${col}\\b`, "i");
-    if (!pattern.test(migrationText.match(new RegExp(`create table if not exists public\\.${table}[\\s\\S]*?;`, "i"))?.[0] || "")) {
+    if (!new RegExp(`\\b${col}\\b`, "i").test(createMatch)) {
       failures.push(`missing column ${col} on ${table}`);
     }
   }
@@ -73,10 +84,15 @@ for (const [table, cols] of Object.entries(requiredColumns)) {
 
 const requiredConstraints = [
   "clients_agency_fkey",
+  "sites_agency_fkey",
   "sites_client_fkey",
+  "tickets_agency_fkey",
+  "tickets_client_fkey",
   "tickets_site_fkey",
   "ticket_audit_events_ticket_fkey",
-  "tickets_current_blocked_reason_requires_context",
+  "ticket_audit_events_agency_fkey",
+  "ticket_audit_events_client_fkey",
+  "ticket_audit_events_site_fkey",
 ];
 
 for (const constraint of requiredConstraints) {
@@ -85,12 +101,8 @@ for (const constraint of requiredConstraints) {
   }
 }
 
-if (!/create or replace function public\.update_tickets_search_vector/i.test(migrationText)) {
-  failures.push("missing global search helper function");
-}
-
-if (!/tickets_search_vector_idx/i.test(migrationText)) {
-  failures.push("missing ticket search index for future card search");
+if (!/tickets_fulltext_idx/i.test(migrationText)) {
+  failures.push("missing future full-text/candidate card search index");
 }
 
 if (failures.length > 0) {
