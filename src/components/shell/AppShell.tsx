@@ -1,5 +1,6 @@
 import { auditTrail, approvalQueue } from "../../ui/mockData";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
+import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 
 export function AppShell() {
   return (
@@ -8,7 +9,7 @@ export function AppShell() {
         <div>
           <p className="brand-kicker">Website Support Studio</p>
           <h1>Internal Operator Workspace</h1>
-          <p>Phase 4B Local Read-only Ticket Queue</p>
+          <p>Phase 4C Read-only Ticket Detail View</p>
         </div>
         <span className="status-pill">Local shell only · No live ticket actions enabled</span>
       </header>
@@ -37,6 +38,7 @@ export function AppShell() {
           </section>
 
           <ReadOnlyTicketQueue />
+          <ReadOnlyTicketDetail />
 
           <section className="phase4a-card">
             <h2>Approval Queue Placeholder</h2>
@@ -80,6 +82,7 @@ export function AppShell() {
             <h2>System Status / Validation Placeholder</h2>
             <ul>
               <li>Read-only local queue complete (mock data only).</li>
+              <li>Phase 4C adds ticket detail context and read-only timeline/approvals.</li>
               <li>Route files: not introduced in this phase.</li>
               <li>Live reads/writes: disabled.</li>
               <li>Auth/email/provider: disabled.</li>

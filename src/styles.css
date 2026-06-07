@@ -231,6 +231,55 @@ button:disabled {
   margin-top: 0.35rem;
 }
 
+.phase4c-detail-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.phase4c-grid {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.phase4c-section {
+  margin-top: 1rem;
+}
+
+.phase4c-section h4 {
+  margin-bottom: 0.5rem;
+}
+
+.phase4c-summary {
+  margin: 0.3rem 0 0;
+}
+
+.phase4c-meta-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.phase4c-approval-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  width: fit-content;
+  padding: 0.15rem 0.45rem;
+  background: #e2e8f0;
+  color: #1f2937;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.phase4c-actions {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
 @media (max-width: 900px) {
   .phase4a-layout {
     grid-template-columns: 1fr;

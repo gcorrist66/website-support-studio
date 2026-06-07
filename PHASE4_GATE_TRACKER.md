@@ -1,7 +1,7 @@
 # WSS Phase 4 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 4B (Read-only Ticket Queue UI)
+- Current focus: Phase 4C (Read-only Ticket Detail View)
 - Authority: local UI proof only
 - Deployment status: not deployed
 - Push status: not pushed
@@ -46,6 +46,27 @@
 - `src/ui/mockData.ts` expanded for queue metadata used by UI placeholders.
 - Phase 4B persistence validation boundary issue resolved by scoping `scripts/validate-persistence.mjs`.
 - All local validation commands currently passing after the scope adjustment.
+
+### Phase 4C — Read-only Ticket Detail View
+- **Diagnosed:** complete
+- **Fixed Locally:** complete
+- **Committed:** not complete
+- **Pushed:** not complete
+- **Deployed:** not complete
+- **Production Verified:** not complete
+- **Closed:** not complete
+
+### Evidence
+- Added read-only detail panel in `src/components/tickets/ReadOnlyTicketDetail.tsx` with:
+  - customer request summary
+  - tenant/client/site context
+  - status / priority / identity labels
+  - approval state summary
+  - audit timeline from mock data
+  - disabled action placeholders only
+- Extended `src/ui/mockData.ts` with `MockTicketDetail` and `getTicketDetail()` for local detail rendering.
+- Updated `scripts/validate-ui-boundary.mjs` to block active send/approve/close button controls and enforce disabled-only UI action behavior.
+- Updated app shell copy to show Phase 4C local detail view.
 
 ### Validation baseline
 - Core checks remain:

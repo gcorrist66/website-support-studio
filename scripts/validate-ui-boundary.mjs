@@ -9,7 +9,8 @@ const sourceDirs = [
 const importSupabase = /\bfrom\s+['"]@?supabase\/supabase-js['"]/i;
 const supabaseUsage = /\bsupabase\./i;
 const sendCommsPhrases = /customer communication|send to customer|send customer|delivery|email to customer/i;
-const disabledPhasePhrase = /Not active in Phase 4B/i;
+const disabledPhasePhrases = /Not active in Phase 4(B|C)/i;
+const activeMutationPhrases = /\bsend\b|\bapprove\b|\bclose\b/i;
 
 function walkFiles(dir, acc = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -47,14 +48,38 @@ function hasSupabaseUsage(files) {
 function hasForbiddenSendLabels(files) {
   return files.filter((file) => {
     const text = fs.readFileSync(file, "utf8");
-    return sendCommsPhrases.test(text);
+    const buttonBlocks = text.match(/<button\b[^>]*>[\s\S]*?<\/button>/gi) || [];
+
+    return buttonBlocks.some((block) => {
+      const normalized = block.toLowerCase();
+      const hasDisabled = /\bdisabled\b/.test(normalized);
+      if (hasDisabled) {
+        return false;
+      }
+
+      return sendCommsPhrases.test(normalized);
+    });
   });
 }
 
 function hasDisabledLanguage(files) {
   return files.some((file) => {
     const text = fs.readFileSync(file, "utf8");
-    return /disabled/i.test(text) && disabledPhasePhrase.test(text);
+    return /disabled/i.test(text) && disabledPhasePhrases.test(text);
+  });
+}
+
+function hasActiveMutationButtons(files) {
+  return files.filter((file) => {
+    const text = fs.readFileSync(file, "utf8");
+    const buttonBlocks = text.match(/<button\b[^>]*>[\s\S]*?<\/button>/gi) || [];
+
+    return buttonBlocks.some((block) => {
+      const normalized = block.toLowerCase();
+      const hasDisabled = /\bdisabled\b/.test(normalized);
+      const hasActionWord = activeMutationPhrases.test(normalized);
+      return hasActionWord && !hasDisabled;
+    });
   });
 }
 
@@ -93,6 +118,16 @@ function main() {
     name: "disabled action language exists",
     passed: hasDisabled,
     detail: hasDisabled ? "found disabled action language in UI" : "missing disabled action language",
+  });
+
+  const activeMutationButtons = hasActiveMutationButtons(files);
+  checks.push({
+    name: "no active send/approve/close buttons",
+    passed: activeMutationButtons.length === 0,
+    detail:
+      activeMutationButtons.length === 0
+        ? "no active mutation-oriented buttons detected"
+        : activeMutationButtons.join(", "),
   });
 
   const mockUsed = usesMockData(files);
