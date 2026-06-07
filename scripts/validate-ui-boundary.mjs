@@ -9,8 +9,11 @@ const sourceDirs = [
 const importSupabase = /\bfrom\s+['"]@?supabase\/supabase-js['"]/i;
 const supabaseUsage = /\bsupabase\./i;
 const sendCommsPhrases = /customer communication|send to customer|send customer|delivery|email to customer/i;
-const disabledPhasePhrases = /Not active in Phase 4(B|C)/i;
+const disabledPhasePhrases = /not active in phase 4(B|C|D)/i;
+const disabledPhrase = /disabled in phase 4(B|C|D)/i;
 const activeMutationPhrases = /\bsend\b|\bapprove\b|\bclose\b/i;
+const queueComponentPath = path.join(process.cwd(), "src", "components", "tickets", "ReadOnlyTicketQueue.tsx");
+const noDataFetchPhrases = /\bfetch\s*\(|\baxios\b|XMLHttpRequest|from\s+["']https?:\/\/|new\s+Request\(/i;
 
 function walkFiles(dir, acc = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -65,7 +68,7 @@ function hasForbiddenSendLabels(files) {
 function hasDisabledLanguage(files) {
   return files.some((file) => {
     const text = fs.readFileSync(file, "utf8");
-    return /disabled/i.test(text) && disabledPhasePhrases.test(text);
+    return /disabled/i.test(text) && (disabledPhasePhrases.test(text) || disabledPhrase.test(text));
   });
 }
 
@@ -85,6 +88,24 @@ function hasActiveMutationButtons(files) {
 
 function usesMockData(files) {
   return files.some((file) => /mockData/.test(file));
+}
+
+function hasNoNetworkReadsInUI(files) {
+  return files.every((file) => {
+    const text = fs.readFileSync(file, "utf8");
+    return !noDataFetchPhrases.test(text);
+  });
+}
+
+function verifyQueueUsesMockData() {
+  const text = fs.readFileSync(queueComponentPath, "utf8");
+
+  const usesMockDataImport = /from\s+['"][^'"]*mockData['"]/.test(text);
+  if (!usesMockDataImport) {
+    return false;
+  }
+
+  return !noDataFetchPhrases.test(text);
 }
 
 function main() {
@@ -120,6 +141,13 @@ function main() {
     detail: hasDisabled ? "found disabled action language in UI" : "missing disabled action language",
   });
 
+  const networkFree = hasNoNetworkReadsInUI(files);
+  checks.push({
+    name: "search and UI read only path has no live reads",
+    passed: networkFree,
+    detail: networkFree ? "no network read APIs detected in UI files" : "found live-read/network patterns in UI files",
+  });
+
   const activeMutationButtons = hasActiveMutationButtons(files);
   checks.push({
     name: "no active send/approve/close buttons",
@@ -135,6 +163,13 @@ function main() {
     name: "mock data source is used",
     passed: mockUsed,
     detail: mockUsed ? "mock data imports used" : "mock data imports not detected",
+  });
+
+  const queueUsesMockData = verifyQueueUsesMockData();
+  checks.push({
+    name: "search/filter queue is mock-data-driven",
+    passed: queueUsesMockData,
+    detail: queueUsesMockData ? "ReadOnlyTicketQueue imports mock data and has no live fetch patterns" : "ReadOnlyTicketQueue does not show explicit mock-only data usage",
   });
 
   const failed = checks.filter((check) => !check.passed);

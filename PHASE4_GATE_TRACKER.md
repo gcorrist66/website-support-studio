@@ -1,7 +1,7 @@
 # WSS Phase 4 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 4C (Read-only Ticket Detail View)
+- Current focus: Phase 4D (Read-only Ticket Search and Filters)
 - Authority: local UI proof only
 - Deployment status: not deployed
 - Push status: not pushed
@@ -50,7 +50,7 @@
 ### Phase 4C — Read-only Ticket Detail View
 - **Diagnosed:** complete
 - **Fixed Locally:** complete
-- **Committed:** not complete
+- **Committed:** complete
 - **Pushed:** not complete
 - **Deployed:** not complete
 - **Production Verified:** not complete
@@ -67,6 +67,32 @@
 - Extended `src/ui/mockData.ts` with `MockTicketDetail` and `getTicketDetail()` for local detail rendering.
 - Updated `scripts/validate-ui-boundary.mjs` to block active send/approve/close button controls and enforce disabled-only UI action behavior.
 - Updated app shell copy to show Phase 4C local detail view.
+- No active mutation actions introduced in Phase 4C UI components.
+
+### Phase 4D — Read-only Ticket Search and Filters
+- **Diagnosed:** complete
+- **Fixed Locally:** complete
+- **Committed:** not complete
+- **Pushed:** not complete
+- **Deployed:** not complete
+- **Production Verified:** not complete
+- **Closed:** not complete
+
+### Evidence
+- Added local search and filters to mock ticket queue:
+  - text search
+  - status filter
+  - priority filter
+  - client filter
+  - site filter
+  - blocked-state filter
+- Queue supports filtering + selected row updates for read-only detail panel.
+- Search/filter operations remain local and derive from `src/ui/mockData.ts` only.
+- Updated `scripts/validate-ui-boundary.mjs` to assert:
+  - no UI network reads
+  - no active mutation button actions
+  - queue search path is mock-data-driven
+- Current focus copy updated to Phase 4D.
 
 ### Validation baseline
 - Core checks remain:

@@ -51,14 +51,17 @@ function approvalLabel(status: MockTicketDetail["approvalStatus"]) {
   }
 }
 
-export function ReadOnlyTicketDetail() {
-  const ticket = getTicketDetail("TKT-LOCAL-1001");
+type ReadOnlyTicketDetailProps = {
+  ticket: ReturnType<typeof getTicketDetail>;
+};
+
+export function ReadOnlyTicketDetail({ ticket }: ReadOnlyTicketDetailProps) {
 
   return (
     <section className="phase4a-card">
       <h2>Read-only ticket detail</h2>
       <p className="placeholder-meta">
-        Mock data only · No live ticket actions enabled · Phase 4C local read-only details.
+        Mock data only · No live ticket actions enabled · Phase 4D local read-only details.
       </p>
 
       <article className="phase4c-detail-card">
@@ -126,13 +129,13 @@ export function ReadOnlyTicketDetail() {
         <h4>Local action placeholders</h4>
         <div className="phase4c-actions">
           <button type="button" className="phase4a-action" disabled>
-            Send to customer (disabled in Phase 4C)
+            Send to customer (disabled in Phase 4D)
           </button>
           <button type="button" className="phase4a-action" disabled>
-            Approve reply (disabled in Phase 4C)
+            Approve reply (disabled in Phase 4D)
           </button>
           <button type="button" className="phase4a-action" disabled>
-            Close ticket (disabled in Phase 4C)
+            Close ticket (disabled in Phase 4D)
           </button>
         </div>
         <p className="placeholder-meta">

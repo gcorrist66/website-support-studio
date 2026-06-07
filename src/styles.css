@@ -280,6 +280,44 @@ button:disabled {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
+.phase4d-search-panel {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.phase4d-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.7rem;
+}
+
+.phase4d-filter-grid label {
+  display: grid;
+  gap: 0.3rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.phase4d-filter-grid input,
+.phase4d-filter-grid select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  color: #111827;
+  background: #f8fafc;
+}
+
+.phase4d-filter-grid input:focus,
+.phase4d-filter-grid select:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+.phase4d-filter-grid [data-selected="true"] {
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .phase4a-layout {
     grid-template-columns: 1fr;

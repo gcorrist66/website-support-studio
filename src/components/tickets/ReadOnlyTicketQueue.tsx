@@ -1,4 +1,5 @@
-import { ticketQueue, type MockTicketQueueItem } from "../../ui/mockData";
+import type { Dispatch, SetStateAction } from "react";
+import { type MockTicketQueueItem } from "../../ui/mockData";
 
 function statusClass(status: MockTicketQueueItem["status"]) {
   switch (status) {
@@ -38,13 +39,20 @@ function confidenceClass(confidence: MockTicketQueueItem["identityConfidence"]) 
   return confidence === "known" ? "phase4b-badge phase4b-badge--known" : "phase4b-badge phase4b-badge--uncertain";
 }
 
-export function ReadOnlyTicketQueue() {
+type ReadOnlyTicketQueueProps = {
+  tickets: MockTicketQueueItem[];
+  selectedTicketId?: string;
+  onSelectTicket: Dispatch<SetStateAction<string>>;
+};
+
+export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket }: ReadOnlyTicketQueueProps) {
   return (
     <section className="phase4a-card">
       <h2>Read-only local queue</h2>
       <p>
-        Mock data only · No live ticket actions enabled · All action buttons are disabled in Phase 4B.
+        Mock data only · No live ticket actions enabled · All row action controls are disabled in this phase.
       </p>
+      <p className="placeholder-meta">Filter results: {tickets.length} ticket(s)</p>
 
       <div className="placeholder-table" role="table" aria-label="Mock ticket queue">
         <article className="phase4b-header-row">
@@ -57,7 +65,7 @@ export function ReadOnlyTicketQueue() {
           <span>Action</span>
         </article>
 
-        {ticketQueue.map((ticket: MockTicketQueueItem) => (
+        {tickets.map((ticket: MockTicketQueueItem) => (
           <article key={ticket.id} className="placeholder-row phase4b-row">
             <div>
               <strong>{ticket.id}</strong>
@@ -81,14 +89,20 @@ export function ReadOnlyTicketQueue() {
             <span className={confidenceClass(ticket.identityConfidence)}>{ticket.identityConfidence}</span>
 
             <div>
+              <button
+                type="button"
+                className="phase4a-action"
+                onClick={() => onSelectTicket(ticket.id)}
+                data-selected={selectedTicketId === ticket.id ? "true" : "false"}
+              >
+                {selectedTicketId === ticket.id ? "Selected" : "View details (read-only)"}
+              </button>
+
               {ticket.blockedReason ? (
                 <span className="phase4b-badge phase4b-badge--blocked">{ticket.blockedReason}</span>
               ) : (
                 <span className="phase4b-placeholder-text">active</span>
               )}
-              <button type="button" className="phase4a-action" disabled>
-                Not active in Phase 4B
-              </button>
             </div>
           </article>
         ))}
