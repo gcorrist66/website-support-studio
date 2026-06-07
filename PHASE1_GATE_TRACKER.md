@@ -6,7 +6,7 @@
 - Latest known commit evidence: `bce2090 Add Phase 1 gate tracker` plus new scaffold verification commit
 - Current authority status: **Phase 1B scaffold is in-progress (infrastructure only)**
 - Implementation status: application scaffold + verification only
-- External delivery status: remote configured; deployment still pending
+- External delivery status: Vercel CLI unavailable in this environment (`command not found: vercel`)
 
 ## 2) Phase Gates
 
@@ -59,7 +59,8 @@
   - Configuration and build scaffolding requirements approved in writing
   - No business logic included in scaffold boundary evidence
 - **Blockers:**
-  - Vercel project/deployment not configured in this workspace (`.vercel` absent; no deployment URL)
+  - Vercel CLI is not installed (`command -v vercel` returns not found), so deployment cannot be executed from this environment
+  - `.vercel` project metadata not present; no deployment URL available in workspace
 - **Notes:**
   - Scope is planning-to-code transition preparation only after review.
 
