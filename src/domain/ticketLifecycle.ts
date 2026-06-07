@@ -14,7 +14,12 @@ import type {
   TicketMessage,
   TicketSubmitter,
 } from "./types";
-import { canTransition, requiresCustomerEmailForSend, validateTransitionActor } from "./transitions";
+import {
+  canTransition,
+  isApprovalActor,
+  requiresCustomerEmailForSend,
+  validateTransitionActor,
+} from "./transitions";
 
 interface LifecycleTicketRecord {
   submitter?: TicketSubmitter;
@@ -58,6 +63,22 @@ interface UnblockTicketParams extends TicketTransitionParams {
   previousBlockedStatus?: TicketStatus;
 }
 
+interface ApprovalDecisionParams extends TicketTransitionParams {
+  approvalNotes?: string;
+  approverReference?: string;
+}
+
+interface RequestApprovalParams extends TicketTransitionParams {
+  requestNotes?: string;
+  draftSnapshot?: string;
+  actorReference?: string;
+  actorRole: ActorRole.CS_AGENT | ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN;
+}
+
+interface RejectDraftReplyParams extends ApprovalDecisionParams {
+  route?: "reply_drafted" | "blocked";
+}
+
 type LifecycleRepository = Map<string, LifecycleTicketRecord>;
 
 const repository: LifecycleRepository = new Map();
@@ -65,6 +86,7 @@ const timestamp = () => new Date().toISOString();
 let nextTicketSeq = 1;
 let nextMessageSeq = 1;
 let nextAuditSeq = 1;
+let nextApprovalSeq = 1;
 
 function nextId(prefix: string, seq: number): string {
   return `${prefix}-${String(seq).padStart(5, "0")}`;
@@ -86,6 +108,10 @@ function nextAuditId(): string {
   const id = nextId("audit", nextAuditSeq);
   nextAuditSeq += 1;
   return id;
+}
+
+function nextApprovalId(): string {
+  return nextId("approval", nextApprovalSeq++);
 }
 
 function getRequiredNow(): { now: string } {
@@ -126,6 +152,63 @@ function emitEvent(
   record.audits.push(
     createAuditEvent(record.ticket.ticketId, eventType, actorRole, actorReference, stateBefore, stateAfter, rationale),
   );
+}
+
+function assertApproverRole(actorRole: ActorRole): void {
+  if (!isApprovalActor(actorRole)) {
+    throw new Error(`approver_role_required_${actorRole}`);
+  }
+}
+
+function getRecord(ticketId: string): LifecycleTicketRecord {
+  return assertTicketExists(ticketId);
+}
+
+function assertHasPendingApproval(record: LifecycleTicketRecord): TicketApproval {
+  const latestApproval = record.approvals.at(-1);
+  if (!latestApproval || latestApproval.decision !== "pending") {
+    throw new Error(`approval_not_requested_${record.ticket.ticketId}`);
+  }
+  return latestApproval;
+}
+
+function createApprovalRecord(record: LifecycleTicketRecord, entry: {
+  approverRole: ActorRole.CS_AGENT | ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN;
+  decision: TicketApproval["decision"];
+  decisionNotes?: string;
+  approverReference?: string;
+  approvedReplySnapshot?: string;
+}): void {
+  record.approvals.push({
+    approvalId: nextApprovalId(),
+    ticketId: record.ticket.ticketId,
+    approverRole: entry.approverRole,
+    decision: entry.decision,
+    decisionNotes: entry.decisionNotes,
+    decisionAt: timestamp(),
+    approverReference: entry.approverReference,
+    approvedReplySnapshot: entry.approvedReplySnapshot,
+  });
+}
+
+function updateLatestApprovalRecord(
+  record: LifecycleTicketRecord,
+  updates: {
+    approverRole: ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN;
+    decision: "approved" | "rejected";
+    decisionNotes?: string;
+    approvedReplySnapshot?: string;
+    approverReference?: string;
+    decisionAt: string;
+  },
+): void {
+  const latest = assertHasPendingApproval(record);
+  latest.approverRole = updates.approverRole;
+  latest.decision = updates.decision;
+  latest.decisionNotes = updates.decisionNotes;
+  latest.approverReference = updates.approverReference;
+  latest.approvedReplySnapshot = updates.approvedReplySnapshot;
+  latest.decisionAt = updates.decisionAt;
 }
 
 function assertTicketExists(ticketId: string): LifecycleTicketRecord {
@@ -295,6 +378,120 @@ export function createTicket(params: CreateTicketParams): Ticket {
   return ticket;
 }
 
+export function requestApproval({
+  ticketId,
+  actorRole,
+  requestNotes,
+  draftSnapshot,
+  actorReference,
+}: RequestApprovalParams): Ticket {
+  const record = getRecord(ticketId);
+  const ticket = transitionTicketStatus(
+    record,
+    TicketStatus.AWAITING_GARY_APPROVAL,
+    actorRole,
+    actorReference,
+    requestNotes,
+  );
+
+  createApprovalRecord(record, {
+    approverRole: actorRole,
+    decision: "pending",
+    decisionNotes: requestNotes,
+    approverReference: actorReference,
+    approvedReplySnapshot: draftSnapshot,
+  });
+  return ticket;
+}
+
+export function approveDraftReply({
+  ticketId,
+  actorRole,
+  approvalNotes,
+  actorReference,
+  approverReference,
+}: ApprovalDecisionParams): Ticket {
+  const record = getRecord(ticketId);
+  assertApproverRole(actorRole);
+  const latestPending = assertHasPendingApproval(record);
+  if (record.ticket.status !== TicketStatus.AWAITING_GARY_APPROVAL) {
+    throw new Error(`invalid_approval_state_${record.ticket.status}`);
+  }
+
+  const approvedReplySnapshot = latestPending.approvedReplySnapshot;
+  transitionTicketStatus(record, TicketStatus.APPROVED_TO_SEND, actorRole, actorReference, approvalNotes);
+
+  updateLatestApprovalRecord(record, {
+    approverRole: actorRole as ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN,
+    decision: "approved",
+    decisionNotes: approvalNotes,
+    approverReference,
+    approvedReplySnapshot,
+    decisionAt: timestamp(),
+  });
+
+  return record.ticket;
+}
+
+export function rejectDraftReply({
+  ticketId,
+  actorRole,
+  approvalNotes,
+  actorReference,
+  approverReference,
+  route = "reply_drafted",
+}: RejectDraftReplyParams): Ticket {
+  const record = getRecord(ticketId);
+  const isApprover = isApprovalActor(actorRole);
+  if (!isApprover) {
+    throw new Error(`approver_role_required_${actorRole}`);
+  }
+  assertHasPendingApproval(record);
+  if (record.ticket.status !== TicketStatus.AWAITING_GARY_APPROVAL) {
+    throw new Error(`invalid_rejection_state_${record.ticket.status}`);
+  }
+
+  record.ticket.currentBlockedReason = BlockedReason.INTERNAL_REVIEW;
+  const blocked = transitionTicketStatus(
+    record,
+    TicketStatus.BLOCKED,
+    actorRole,
+    actorReference,
+    approvalNotes,
+  );
+
+  updateLatestApprovalRecord(record, {
+    approverRole: actorRole as ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN,
+    decision: "rejected",
+    decisionNotes: approvalNotes,
+    approverReference,
+    decisionAt: timestamp(),
+    approvedReplySnapshot: undefined,
+  });
+
+  if (route === "reply_drafted") {
+    return unblockTicket({
+      ticketId,
+      actorRole: ActorRole.SYSTEM,
+      targetStatus: TicketStatus.REPLY_DRAFTED,
+      rationale: approvalNotes,
+      actorReference,
+    });
+  }
+
+  emitEvent(
+    record,
+    AuditEventType.APPROVAL_REJECTED,
+    actorRole,
+    actorReference,
+    TicketStatus.AWAITING_GARY_APPROVAL,
+    TicketStatus.BLOCKED,
+    approvalNotes,
+  );
+
+  return blocked;
+}
+
 export function transitionTicket(
   ticketId: string,
   to: TicketStatus,
@@ -389,6 +586,11 @@ export function getAuditTrail(ticketId: string): TicketAuditEvent[] {
   return record ? [...record.audits] : [];
 }
 
+export function getApprovals(ticketId: string): TicketApproval[] {
+  const record = repository.get(ticketId);
+  return record ? [...record.approvals] : [];
+}
+
 export function listTickets(): Ticket[] {
   return [...repository.values()].map((record) => record.ticket);
 }
@@ -398,4 +600,5 @@ export function clearLifecycleState(): void {
   nextTicketSeq = 1;
   nextMessageSeq = 1;
   nextAuditSeq = 1;
+  nextApprovalSeq = 1;
 }

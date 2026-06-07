@@ -40,6 +40,8 @@ export interface TicketSubmitter {
   identityConfidence: IdentityConfidence;
 }
 
+export type TicketDecision = "pending" | "approved" | "rejected";
+
 export interface TicketMessage {
   messageId: string;
   ticketId: string;
@@ -65,8 +67,11 @@ export interface TicketDraftReply {
 export interface TicketApproval {
   approvalId: string;
   ticketId: string;
-  approverRole: ActorRole.GARY_APPROVER | ActorRole.AGENCY_ADMIN;
-  decision: "approved" | "rejected";
+  approverRole:
+    | ActorRole.GARY_APPROVER
+    | ActorRole.AGENCY_ADMIN
+    | ActorRole.CS_AGENT;
+  decision: TicketDecision;
   decisionNotes?: string;
   decisionAt: string;
   approverReference?: string;

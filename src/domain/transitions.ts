@@ -63,6 +63,14 @@ export function getAllowedNextStatuses(
   return PHASE1_TRANSITION_MAP[status];
 }
 
+export function isApproverRole(actorRole: ActorRole): boolean {
+  return actorRole === ActorRole.GARY_APPROVER || actorRole === ActorRole.AGENCY_ADMIN;
+}
+
+export function isApprovalActor(actorRole: ActorRole): boolean {
+  return isApproverRole(actorRole);
+}
+
 export function isTerminalStatus(status: TicketStatus): boolean {
   return status === TicketStatus.CLOSED;
 }

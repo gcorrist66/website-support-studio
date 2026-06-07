@@ -2,10 +2,10 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1D (Ticket Lifecycle Backend)
-- Latest known commit evidence: `bd7c525` (Phase 1C domain model) and `48f17c3` (Phase 1C lint scope fix)
-- Current authority status: **Phase 1D is active**
-- Implementation status: local ticket lifecycle domain service foundation (in-memory only)
+- Phase: 1E (Approval Gate)
+- Latest known commit evidence: `bb034a9` (Phase 1E approval gate hardening)
+- Current authority status: **Phase 1E is active**
+- Implementation status: local approval-gate domain logic (in-memory only)
 - External delivery status: no push/deploy in this phase (cost-control local-only)
 
 ## 2) Phase Gates
@@ -14,8 +14,8 @@
 - Phase 1B — Application Scaffold
 - Phase 1C — Conceptual Schema Translation
 - Phase 1D — Ticket Lifecycle Backend
-- Phase 1E — Internal Operator Workflow
-- Phase 1F — Approval Gate
+- Phase 1E — Approval Gate
+- Phase 1F — Internal Operator Workflow
 - Phase 1G — Customer Communication
 - Phase 1H — Audit Trail
 - Phase 1I — End-to-End Verification
@@ -112,31 +112,40 @@
   - Event model is in-memory only.
   - No API, no database, no integrations, no persisted audit.
 
-### Phase 1E — Internal Operator Workflow
+### Phase 1E — Approval Gate
+
+- **Status:** Diagnosed, Fixed Locally, Committed
+- **Current evidence:**
+  - `src/domain/ticketLifecycle.ts` with approval helpers
+  - `src/domain/transitions.ts` with approver role checks
+  - `scripts/validate-domain.mjs` including request/approve/reject coverage
+  - `bb034a9 Add Phase 1E approval gate hardening`
+  - `npm run lint`
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run validate:domain`
+  - `approval_not_requested`/`approver_role_required`/`approval_rejected`-path behavior validated in local script
+- **Required evidence to close:**
+  - requestApproval, approveDraftReply, rejectDraftReply implemented
+  - non-approver/invalid-state approval transitions blocked
+  - approval cannot bypass customer send preconditions
+- **Blockers:**
+  - None for local-only gate logic.
+- **Notes:**
+  - No customer messaging, no API routes, no database, no external integrations.
+
+### Phase 1F — Internal Operator Workflow
 
 - **Status:** Blocked
 - **Current evidence:**
-  - Actor responsibilities defined in architecture and design docs
+  - Operator workflow responsibilities remain documented in architecture and technical design
 - **Required evidence to close:**
   - Role/action matrix aligned to phase authority and blockers
   - Escalation and ownership mapping approved for each blocked reason
 - **Blockers:**
   - Pending alignment from approved authorization slice progression
 - **Notes:**
-  - No operational routing implementation.
-
-### Phase 1F — Approval Gate
-
-- **Status:** Blocked
-- **Current evidence:**
-  - Approval semantics defined in state machine and technical design documentation
-- **Required evidence to close:**
-  - Mandatory gate policy approved as non-bypassable for communication paths
-  - Rework/rejection loop rules formally documented
-- **Blockers:**
-  - Must await Phase 1D and 1E progression
-- **Notes:**
-  - No approval engine or auth features are implemented now.
+  - No operational routing implementation in this phase.
 
 ### Phase 1G — Customer Communication
 
@@ -214,8 +223,10 @@ Requirements interpretation for current scope:
 - `src/domain/ticketStatus.ts`
 - `src/domain/types.ts`
 - `src/domain/transitions.ts`
+- `src/domain/ticketLifecycle.ts`
 - `npm run lint` passes after excluding generated build output from lint scope
 - Working tree clean after scaffold gate update
+- `bb034a9 Add Phase 1E approval gate hardening`
 - Production evidence:
   - `https://website-support-studio.vercel.app/` returns `200`
   - `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` return `404`
@@ -228,25 +239,28 @@ Requirements interpretation for current scope:
 - **Phase 1D pushed:** Not pushed
 - **Phase 1D deployed:** Not deployed
 - **Phase 1D production verified:** Not production verified (cost-control local-only)
+- **Phase 1E pushed:** Not pushed
+- **Phase 1E deployed:** Not deployed
+- **Phase 1E production verified:** Not production verified (cost-control local-only)
 
 ## 8) Next Authorized Step
 
-- **Phase 1C — Conceptual Schema Translation**
+- **Phase 1F — Internal Operator Workflow**
 
-## 9) Phase 1C Authorization Boundary
+## 9) Phase 1E Approval Gate Authorization Boundary
 
 ### Allowed
- - Approved Phase 1 entity modeling
- - State transition mapping and local validation helpers
- - Domain type definitions only
+ - requestApproval helper and in-memory approval records
+ - approveDraftReply / rejectDraftReply transition controls
+ - Local-only validation and ticket lifecycle guardrails
  - No production deployment or database work
 
 ### Forbidden
- - No business logic
  - No database schema or migrations
  - No API routes
  - No authentication
  - No customer communication features
- - No approvals implementation
+ - No outbound send execution
+ - No persisted approval/communication engine
  - No audit engine persistence
  - No HiveRunner/IntrynSync integrations
