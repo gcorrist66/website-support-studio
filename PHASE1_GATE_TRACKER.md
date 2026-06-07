@@ -3,10 +3,10 @@
 ## 1) Current Phase Status
 
 - Phase: 1B (Application Scaffold)
-- Latest known commit evidence: `bce2090 Add Phase 1 gate tracker` plus new scaffold verification commit
-- Current authority status: **Phase 1B scaffold is in-progress (infrastructure only)**
+- Latest known commit evidence: `4005ce9 Document Phase 1B deployment blocker` (plus this gate-update commit)
+- Current authority status: **Phase 1B scaffold is closed**
 - Implementation status: application scaffold + verification only
-- External delivery status: Vercel CLI unavailable in this environment (`command not found: vercel`)
+- External delivery status: Verified live deployment at `https://website-support-studio.vercel.app/`
 
 ## 2) Phase Gates
 
@@ -40,13 +40,17 @@
 
 ### Phase 1B — Application Scaffold
 
-- **Status:** Diagnosed, Fixed Locally, Committed
+- **Status:** Diagnosed, Fixed Locally, Committed, Pushed, Deployed, Production Verified, Closed
 - **Pushed:** Complete
 - **Remote:** `https://github.com/gcorrist66/website-support-studio.git`
-- **Pushed commit:** `a838c92` (latest local/remote)
-- **Deployed:** Not complete (no Vercel project/deployment metadata in workspace)
-- **Production Verified:** Not complete (no deployment URL available)
-- **Closed:** Not complete (gates above incomplete)
+- **Pushed commit:** `4005ce9`
+- **Deployed:** Complete  
+  - URL: `https://website-support-studio.vercel.app/`
+- **Production Verified:** Complete  
+  - Root page loads `200` and renders `Website Support Studio`
+  - Deployed bundle includes `Phase 1 Foundation`
+  - Confirmed non-functional scope: `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` all return `404`
+- **Closed:** Complete
 - **Current evidence:**
   - `npm install` completed with dependency lockfile generated
   - `npm run lint` exits successfully
@@ -54,13 +58,18 @@
   - `npm run build` exits successfully
   - `c017bbf Add Phase 1B application scaffold`
   - `bce2090 Add Phase 1 gate tracker`
+  - `4005ce9 Document Phase 1B deployment blocker`
+  - `107568a` and `4005ce9` are not closed-gate commits and were superseded by this closure evidence review
+  - Deployment checks:
+    - `curl -I https://website-support-studio.vercel.app/` returns `200`
+    - `curl -L https://website-support-studio.vercel.app/` includes `Website Support Studio` + `Phase 1 Foundation`
+    - `curl -sL https://website-support-studio.vercel.app/assets/index-CVWIZAKD.js` includes no ticket/API/auth/approval/audit/communication/integration markers in business-level code paths
 - **Required evidence to close:**
   - Approved application scaffold docs and folder strategy
   - Configuration and build scaffolding requirements approved in writing
   - No business logic included in scaffold boundary evidence
 - **Blockers:**
-  - Vercel CLI is not installed (`command -v vercel` returns not found), so deployment cannot be executed from this environment
-  - `.vercel` project metadata not present; no deployment URL available in workspace
+  - None.
 - **Notes:**
   - Scope is planning-to-code transition preparation only after review.
 
@@ -188,7 +197,12 @@ Requirements interpretation for current scope:
 ## 6) Current Evidence
 
 - `f95706d Add Phase 1A foundation documentation`
-- Working tree clean after commit
+- `c017bbf Add Phase 1B application scaffold`
+- `4005ce9 Document Phase 1B deployment blocker`
+- Working tree clean after scaffold gate update
+- Production evidence:
+  - `https://website-support-studio.vercel.app/` returns `200`
+  - `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` return `404`
 
 ## 7) Next Authorized Step
 
