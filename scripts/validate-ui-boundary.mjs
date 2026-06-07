@@ -9,6 +9,7 @@ const sourceDirs = [
 const importSupabase = /\bfrom\s+['"]@?supabase\/supabase-js['"]/i;
 const supabaseUsage = /\bsupabase\./i;
 const sendCommsPhrases = /customer communication|send to customer|send customer|delivery|email to customer/i;
+const serviceRolePhrases = /WSS_SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SERVICE_ROLE_KEY|SERVICE_ROLE/i;
 const disabledPhasePhrases = /not active in phase (?:4b|4c|4d|5a)/i;
 const disabledPhrase = /disabled in phase (?:4b|4c|4d|5a)/i;
 const noLiveActionPhrases = /no live ticket actions/i;
@@ -87,6 +88,13 @@ function hasActiveMutationButtons(files) {
       const hasActionWord = activeMutationPhrases.test(normalized);
       return hasActionWord && !hasDisabled;
     });
+  });
+}
+
+function hasNoServiceRoleRefs(files) {
+  return files.every((file) => {
+    const text = fs.readFileSync(file, "utf8");
+    return !serviceRolePhrases.test(text);
   });
 }
 
@@ -174,6 +182,13 @@ function main() {
     name: "search/filter queue is mock-data-driven",
     passed: queueUsesMockData,
     detail: queueUsesMockData ? "ReadOnlyTicketQueue imports mock data and has no live fetch patterns" : "ReadOnlyTicketQueue does not show explicit mock-only data usage",
+  });
+
+  const noServiceRole = hasNoServiceRoleRefs(files);
+  checks.push({
+    name: "no service-role token references in UI files",
+    passed: noServiceRole,
+    detail: noServiceRole ? "service-role references not found" : "service-role references detected in UI source",
   });
 
   const failed = checks.filter((check) => !check.passed);

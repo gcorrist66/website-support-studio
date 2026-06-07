@@ -57,6 +57,30 @@
   - Live read path requires guarded validation mode and anon key, with mock fallback for missing/failed reads.
   - No service-role key references in UI/browser source.
 
+### Phase 5A Hardening Pass
+- Completed targeted read-only boundary hardening checks:
+  - `scripts/validate-readonly-data.mjs` now enforces:
+    - no `insert/update/delete/upsert/rpc` calls in `src/data/readOnlyTicketData.ts`
+    - explicit mock fallback branches are present
+    - anon-env-only client key usage (service-role key names rejected)
+    - no customer communication/provider phrases in read-only layer + AppShell
+  - `scripts/validate-ui-boundary.mjs` now enforces no service-role token references in UI source.
+  - Added explicit checks for no service-role exposure, explicit mock fallback assertions, and customer communication absence.
+- Validation commands rerun:
+  - `npm run lint`
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run validate:domain`
+  - `npm run validate:e2e`
+  - `npm run validate:phase2a`
+  - `npm run validate:persistence`
+  - `npm run validate:contracts`
+  - `npm run validate:handlers`
+  - `npm run validate:route-boundary`
+  - `npm run validate:ui-boundary`
+  - `npm run validate:readonly-data`
+- Outcome: all commands pass; no browser/service-role leakage, no mutating calls in read-only data layer, and UI still remains read-only/disconnected.
+
 ### Constraints checked for Phase 5A
 - Queue/detail/audit reads are sourced only through helper functions in `src/data`.
 - No insert/update/delete/upsert call sites were introduced in the read-only data helper file.

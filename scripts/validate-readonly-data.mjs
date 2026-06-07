@@ -12,9 +12,12 @@ const sourceRoots = [
 
 const readOnlyDataFile = path.join(process.cwd(), "src", "data", "readOnlyTicketData.ts");
 
-const mutationInDataRegex = /\b(insert|update|delete|upsert)\b/i;
+const mutationInDataRegex = /(?:\.|\b)(insert|update|delete|upsert|rpc)\s*\(/i;
 const mutationButtonRegex = /<(?:button|a)\b[^>]*>([\s\S]*?)<\/(?:button|a)>/gi;
 const serviceRoleKeyRegex = /WSS_SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SERVICE_ROLE_KEY|WSS_SUPABASE_SERVICE_ROLE/i;
+const customerCommunicationKeywords = /customer communication|send customer|send to customer|communication provider|resend|smtp|postmark|sendgrid|mailgun/i;
+const anonKeyEnvPattern = /WSS_SUPABASE_ANON_KEY|VITE_SUPABASE_ANON_KEY|VITE_SUPABASE_PUBLIC_ANON_KEY/i;
+const serviceRoleEnvPattern = /WSS_SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SERVICE_ROLE_KEY|SERVICE_ROLE/i;
 function walkFiles(directory, acc = []) {
   if (!fs.existsSync(directory)) {
     return acc;
@@ -55,6 +58,18 @@ function hasNoMutatingQueries(filePath, text) {
 
 function hasMockFallback(text) {
   return /createMockFallback|ticketQueue\b|mockData/.test(text);
+}
+
+function hasReadOnlyFallbackAssertions(text) {
+  return (
+    /return\s+createMockFallbackQueue\(/.test(text) &&
+    /return\s+createMockFallbackDetail\(/.test(text) &&
+    /return\s+createMockFallbackAuditTrail\(/.test(text)
+  );
+}
+
+function usesAnonOnlyClientEnv(text) {
+  return anonKeyEnvPattern.test(text) && !serviceRoleEnvPattern.test(text);
 }
 
 function hasReadOnlyModeCopy(text) {
@@ -106,15 +121,33 @@ const checks = [];
 const readOnlyText = readFile(readOnlyDataFile);
 const dataMutationCheck = hasNoMutatingQueries(readOnlyDataFile, readOnlyText);
 checks.push({
-  name: "read-only data layer performs no insert/update/delete/upsert",
+  name: "read-only data layer performs no insert/update/delete/upsert/rpc",
   passed: dataMutationCheck.passed,
-  detail: dataMutationCheck.passed ? "no mutating sql helper patterns detected" : `${readOnlyDataFile} contains mutating query terms`,
+  detail: dataMutationCheck.passed
+    ? "no mutating or rpc helper patterns detected"
+    : `${readOnlyDataFile} contains mutating query terms`,
 });
 
 checks.push({
   name: "read-only data layer includes mock fallback path",
   passed: hasMockFallback(readOnlyText),
   detail: hasMockFallback(readOnlyText) ? "mock fallback detected" : "mock fallback logic not detected",
+});
+
+checks.push({
+  name: "read-only data layer keeps live mode explicit and mock fallback branches present",
+  passed: hasReadOnlyFallbackAssertions(readOnlyText),
+  detail: hasReadOnlyFallbackAssertions(readOnlyText)
+    ? "guarded live mode and explicit mock fallback returns detected"
+    : "read-only layer missing one or more explicit mock fallback returns",
+});
+
+checks.push({
+  name: "read-only data layer uses anon-style env keys only",
+  passed: usesAnonOnlyClientEnv(readOnlyText),
+  detail: usesAnonOnlyClientEnv(readOnlyText)
+    ? "createClient uses anon/env-style key names only"
+    : "service-role-related env pattern detected in read-only layer",
 });
 
 const routeLike = hasRouteLikeFiles(allFiles);
@@ -161,11 +194,22 @@ checks.push({
 
 checks.push({
   name: "no service-role key reference in UI/browser source",
-  passed: noServiceRoleInSrc(uiText) && noServiceRoleInSrc(readOnlyText) && allFiles.every((file) => noServiceRoleInSrc(readFile(file))),
+  passed:
+    noServiceRoleInSrc(uiText) &&
+    noServiceRoleInSrc(readOnlyText) &&
+    allFiles.every((file) => noServiceRoleInSrc(readFile(file))),
   detail:
     noServiceRoleInSrc(uiText) && noServiceRoleInSrc(readOnlyText)
       ? "no service role key tokens detected in src"
       : "service role key reference detected in UI/browser path",
+});
+
+checks.push({
+  name: "no customer communication/provider references in read-only layer",
+  passed: !customerCommunicationKeywords.test(readOnlyText) && !customerCommunicationKeywords.test(uiText),
+  detail: !customerCommunicationKeywords.test(readOnlyText) && !customerCommunicationKeywords.test(uiText)
+    ? "customer communication phrases not detected"
+    : "customer communication/provision provider language detected",
 });
 
 checks.push({
