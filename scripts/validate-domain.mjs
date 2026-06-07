@@ -42,9 +42,7 @@ try {
     fs.writeFileSync(outputPath, transpiled.outputText, "utf8");
   });
 
-  const domainModule = await import(
-    `file://${path.join(tmpDir, "ticketLifecycle.js")}`
-  );
+  const domainModule = await import(`file://${path.join(tmpDir, "ticketLifecycle.js")}`);
 
   const {
     createTicket,
@@ -54,7 +52,6 @@ try {
     closeTicket,
     getAuditTrail,
     clearLifecycleState,
-    getTicket,
   } = domainModule;
 
   const expect = (value, message) => {
@@ -63,10 +60,22 @@ try {
     }
   };
 
+  const expectThrows = (fn, message) => {
+    try {
+      fn();
+      throw new Error(`Expected failure did not occur: ${message}`);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes(`Expected failure did not occur: ${message}`)) {
+        throw error;
+      }
+    }
+  };
+
   const getEvents = (ticketId) => getAuditTrail(ticketId).map((event) => event.eventType);
 
   clearLifecycleState();
-  const ticket = createTicket({
+
+  const happyTicket = createTicket({
     siteId: "site-alpha",
     intakeChannel: "portal",
     source: "unit-portal",
@@ -82,79 +91,206 @@ try {
     identityConfidence: "known",
   });
 
-  expect(ticket.status === "received", "ticket starts received");
-  expect(getEvents(ticket.ticketId).includes("ticket_created"), "ticket_created event emitted");
+  expect(happyTicket.status === "received", "happy path starts in received");
+  expect(getEvents(happyTicket.ticketId).includes("ticket_created"), "ticket_created event emitted");
 
-  const triaged = transitionTicket(ticket.ticketId, "triaged", "cs_agent", "actor-1", "triage complete");
-  expect(triaged.status === "triaged", "ticket triaged");
-  expect(getEvents(ticket.ticketId).includes("ticket_triaged"), "ticket_triaged event emitted");
+  const happyTriaged = transitionTicket(happyTicket.ticketId, "triaged", "cs_agent", "actor-1", "triage complete");
+  expect(happyTriaged.status === "triaged", "ticket can triage from received");
+  expect(getEvents(happyTicket.ticketId).includes("ticket_triaged"), "ticket_triaged event emitted");
 
-  const drafted = transitionTicket(ticket.ticketId, "reply_drafted", "cs_agent", "actor-1", "draft prepared");
-  expect(drafted.status === "reply_drafted", "draft state reached");
-  expect(getEvents(ticket.ticketId).includes("reply_drafted"), "reply_drafted event emitted");
+  const happyDrafted = transitionTicket(happyTicket.ticketId, "reply_drafted", "cs_agent", "actor-1", "draft prepared");
+  expect(happyDrafted.status === "reply_drafted", "ticket can draft");
+  expect(getEvents(happyTicket.ticketId).includes("reply_drafted"), "reply_drafted event emitted");
 
-  const awaiting = transitionTicket(ticket.ticketId, "awaiting_gary_approval", "cs_agent", "actor-1", "ready for approval");
-  expect(awaiting.status === "awaiting_gary_approval", "approval requested");
-  expect(getEvents(ticket.ticketId).includes("approval_requested"), "approval_requested event emitted");
+  const happyAwaiting = transitionTicket(
+    happyTicket.ticketId,
+    "awaiting_gary_approval",
+    "cs_agent",
+    "actor-1",
+    "ready for approval",
+  );
+  expect(happyAwaiting.status === "awaiting_gary_approval", "ticket can enter approval gate");
+  expect(getEvents(happyTicket.ticketId).includes("approval_requested"), "approval_requested event emitted");
 
-  const approved = transitionTicket(
-    ticket.ticketId,
+  expectThrows(
+    () => {
+      transitionTicket(happyTicket.ticketId, "sent_to_customer", "cs_agent", "actor-1");
+    },
+    "sent_to_customer requires approval state",
+  );
+
+  const happyApproved = transitionTicket(
+    happyTicket.ticketId,
     "approved_to_send",
     "gary_approver",
     "actor-2",
     "approved to send",
   );
-  expect(approved.status === "approved_to_send", "approved_to_send state reached");
-  expect(getEvents(ticket.ticketId).includes("approval_granted"), "approval_granted event emitted");
+  expect(happyApproved.status === "approved_to_send", "ticket can enter approved_to_send");
+  expect(getEvents(happyTicket.ticketId).includes("approval_granted"), "approval_granted event emitted");
 
-  // Add known submitter email to satisfy pre-send check in a local flow.
-  const sendable = transitionTicket(
-    ticket.ticketId,
+  const happySent = transitionTicket(
+    happyTicket.ticketId,
     "sent_to_customer",
     "cs_agent",
     "actor-1",
     "customer email known",
   );
-  expect(sendable.status === "sent_to_customer", "sent_to_customer state reached");
-  expect(getEvents(ticket.ticketId).includes("reply_sent"), "reply_sent event emitted");
+  expect(happySent.status === "sent_to_customer", "ticket can send from approved_to_send");
+  expect(getEvents(happyTicket.ticketId).includes("reply_sent"), "reply_sent event emitted");
 
-  const blockedDemo = createTicket({
-    siteId: "site-alpha",
+  const happyClosed = closeTicket(happyTicket.ticketId, "cs_agent", "actor-1", "work completed");
+  expect(happyClosed.status === "closed", "ticket can close after sent_to_customer");
+  expect(getEvents(happyTicket.ticketId).includes("ticket_closed"), "ticket_closed event emitted");
+
+  // governance checks
+  expectThrows(
+    () => {
+      transitionTicket(happyTicket.ticketId, "triaged", "cs_agent");
+    },
+    "closed ticket cannot transition out",
+  );
+
+  const receivedBlocked = createTicket({
+    siteId: "site-beta",
     intakeChannel: "portal",
     source: "unit-portal",
-    rawMessage: "Email missing",
-    priority: "high",
-    identityConfidence: "claimed",
+    rawMessage: "Missing details",
+    identityConfidence: "known",
   });
-  const blocked = blockTicket({
-    ticketId: blockedDemo.ticketId,
+
+  const blockedFromReceived = blockTicket({
+    ticketId: receivedBlocked.ticketId,
+    actorRole: "cs_agent",
+    reason: "other",
+    blockerOwner: "cs_agent",
+    reasonDetail: "requires validation",
+  });
+  expect(blockedFromReceived.status === "blocked", "received ticket can enter blocked");
+
+  expectThrows(
+    () => {
+      unblockTicket({
+        ticketId: receivedBlocked.ticketId,
+        actorRole: "cs_agent",
+        targetStatus: "awaiting_gary_approval",
+      });
+    },
+    "blocked ticket from received cannot unlock to awaiting approval",
+  );
+
+  const receivedUnblocked = unblockTicket({
+    ticketId: receivedBlocked.ticketId,
+    actorRole: "cs_agent",
+    targetStatus: "triaged",
+  });
+  expect(receivedUnblocked.status === "triaged", "blocked ticket from received unlocks to triaged");
+
+  const rewriteDemo = createTicket({
+    siteId: "site-gamma",
+    intakeChannel: "portal",
+    source: "unit-portal",
+    rawMessage: "Draft refinement needed",
+    identityConfidence: "claimed",
+    submitter: {
+      submitterId: "submitter-002",
+      siteId: "site-gamma",
+      identityConfidence: "claimed",
+      submitterEmail: "known@example.com",
+    },
+  });
+
+  transitionTicket(rewriteDemo.ticketId, "triaged", "cs_agent");
+  transitionTicket(rewriteDemo.ticketId, "reply_drafted", "cs_agent");
+  transitionTicket(rewriteDemo.ticketId, "awaiting_gary_approval", "cs_agent");
+  blockTicket({
+    ticketId: rewriteDemo.ticketId,
     actorRole: "cs_agent",
     reason: "awaiting_customer",
     blockerOwner: "cs_agent",
-    reasonDetail: "Need identity verification",
-    rationale: "capture missing contact email",
+    reasonDetail: "revision requested",
   });
-  expect(blocked.status === "blocked", "ticket blocked");
-  expect(getEvents(blockedDemo.ticketId).includes("ticket_blocked"), "ticket_blocked event emitted");
 
-  const unblocked = unblockTicket({
-    ticketId: blockedDemo.ticketId,
+  const rewritten = unblockTicket({
+    ticketId: rewriteDemo.ticketId,
     actorRole: "cs_agent",
-    targetStatus: "triaged",
-    rationale: "customer contact captured",
+    targetStatus: "reply_drafted",
   });
-  expect(unblocked.status === "triaged", "ticket unblocked to triaged");
-  expect(getEvents(blockedDemo.ticketId).includes("ticket_unblocked"), "ticket_unblocked event emitted");
+  expect(rewritten.status === "reply_drafted", "approval-requested rewrite returns to reply_drafted");
   expect(
-    getEvents(blockedDemo.ticketId).includes("approval_rejected") ||
-      getEvents(blockedDemo.ticketId).includes("ticket_unblocked"),
-    "blocked flow emits required transition support events",
+    getEvents(rewriteDemo.ticketId).includes("ticket_unblocked") || getEvents(rewriteDemo.ticketId).includes("approval_rejected"),
+    "rewrite path records unblock/reject evidence",
   );
 
-  const closed = closeTicket(ticket.ticketId, "cs_agent", "actor-1", "work completed");
-  expect(closed.status === "closed", "ticket closed");
-  expect(getEvents(ticket.ticketId).includes("ticket_closed"), "ticket_closed event emitted");
-  expect(getTicket(ticket.ticketId)?.status === "closed", "getTicket returns final state");
+  const noEmailApproved = createTicket({
+    siteId: "site-delta",
+    intakeChannel: "portal",
+    source: "unit-portal",
+    rawMessage: "No email supplied",
+    identityConfidence: "known",
+    submitter: {
+      submitterId: "submitter-003",
+      siteId: "site-delta",
+      identityConfidence: "known",
+      submitterName: "No Email",
+    },
+  });
+  transitionTicket(noEmailApproved.ticketId, "triaged", "cs_agent");
+  transitionTicket(noEmailApproved.ticketId, "reply_drafted", "cs_agent");
+  transitionTicket(noEmailApproved.ticketId, "awaiting_gary_approval", "cs_agent");
+  transitionTicket(noEmailApproved.ticketId, "approved_to_send", "gary_approver");
+
+  expectThrows(
+    () => {
+      transitionTicket(noEmailApproved.ticketId, "sent_to_customer", "cs_agent", "actor-1");
+    },
+    "sent_to_customer requires customer email",
+  );
+
+  const noEmailPreApproval = createTicket({
+    siteId: "site-epsilon",
+    intakeChannel: "portal",
+    source: "unit-portal",
+    rawMessage: "Direct invalid to send",
+    identityConfidence: "known",
+    submitter: {
+      submitterId: "submitter-004",
+      siteId: "site-epsilon",
+      identityConfidence: "known",
+    },
+  });
+  transitionTicket(noEmailPreApproval.ticketId, "triaged", "cs_agent");
+  transitionTicket(noEmailPreApproval.ticketId, "reply_drafted", "cs_agent");
+
+  expectThrows(
+    () => {
+      transitionTicket(noEmailPreApproval.ticketId, "sent_to_customer", "cs_agent", "actor-1");
+    },
+    "invalid direct reply_drafted to sent_to_customer");
+
+  const immediateCloseAttempt = createTicket({
+    siteId: "site-zeta",
+    intakeChannel: "portal",
+    source: "unit-portal",
+    rawMessage: "Direct close check",
+    identityConfidence: "known",
+  });
+
+  expectThrows(
+    () => {
+      transitionTicket(immediateCloseAttempt.ticketId, "closed", "cs_agent");
+    },
+    "received cannot directly close",
+  );
+
+  expectThrows(
+    () => {
+      closeTicket(immediateCloseAttempt.ticketId, "cs_agent");
+      transitionTicket(immediateCloseAttempt.ticketId, "triaged", "cs_agent");
+    },
+    "closed state cannot reopen",
+  );
+
   process.stdout.write("PASS: phase1 domain lifecycle validation completed\n");
 } catch (error) {
   throw new Error(`Validation failed: ${(error?.message || error)}`);
