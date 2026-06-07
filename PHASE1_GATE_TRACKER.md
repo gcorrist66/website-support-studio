@@ -2,10 +2,10 @@
 
 ## 1) Current Phase Status
 
-- Phase: 1H (End-to-End Verification)
-- Latest known commit evidence: `1961500` (Add Phase 1H local end-to-end verification)
-- Current authority status: **Phase 1H (End-to-End Verification)**
-- Latest implementation evidence: local-only phase 1H end-to-end validator added and passing
+- Phase: 2A (First Supabase Persistence Slice)
+- Latest known local evidence: `09247f0` (Add Phase 1I Supabase persistence plan) plus local core migration scaffold and validation script
+- Current authority status: **Phase 2A (First Supabase Persistence Slice)**
+- Latest implementation evidence: core migration file + phase2a migration validator + local checks passing
 - External delivery status: no push/deploy in this phase (cost-control local-only)
 
 ## 2) Phase Gates
@@ -19,6 +19,7 @@
 - Phase 1G — Audit Trail
 - Phase 1H — End-to-End Verification
 - Phase 1I — Supabase Persistence Planning
+- Phase 2A — First Supabase Persistence Slice
 
 ## 3) Phase Details
 
@@ -217,6 +218,32 @@
   - No SQL/migrations or Supabase connectivity is executed in this phase.
   - Not pushed or deployed in this planning-only phase.
 
+### Phase 2A — First Supabase Persistence Slice
+
+- **Status:** Diagnosed, Fixed Locally, Committed
+- **Current evidence:**
+  - `supabase/migrations/20260607000000_phase2a_initial_core_tables.sql`
+  - `scripts/validate-phase2a.mjs`
+  - `scripts/validate-phase2a.mjs` confirms required tables/constraints/indexes and forbidden tables absence
+  - `npm run lint`
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run validate:domain`
+  - `npm run validate:e2e`
+  - `npm run validate:phase2a`
+- **Required evidence to close:**
+  - Migration includes tenant hierarchy tables: `agencies`, `clients`, `sites`
+  - Migration includes ticket core table and audit event table: `tickets`, `ticket_audit_events`
+  - Tenant FKs and useful search indexes included
+  - Later tables deliberately deferred: `ticket_messages`, `ticket_draft_replies`, `ticket_approvals`, `ticket_communications`
+  - No production migration applied in this phase
+- **Blockers:**
+  - None.
+- **Notes:**
+  - First persistence slice only.
+  - No UI, APIs, auth, integrations, or customer communication runtime behavior were added.
+  - Runtime behavior remains local validation + migration artifact authoring only.
+
 ## 4) Completion Rules
 
 - No phase is closed without evidence.
@@ -263,6 +290,9 @@ Requirements interpretation for current scope:
 - `npm run validate:e2e` pass output
 - `dc44381 Document Phase 1 local foundation checkpoint`
 - `PHASE1_SUPABASE_PERSISTENCE_PLAN.md`
+- `supabase/migrations/20260607000000_phase2a_initial_core_tables.sql`
+- `scripts/validate-phase2a.mjs`
+- `npm run validate:phase2a` output: PASS
 - Production evidence:
   - `https://website-support-studio.vercel.app/` returns `200`
   - `/api`, `/tickets`, `/login`, `/dashboard`, `/approvals`, `/auth` return `404`
@@ -290,10 +320,13 @@ Requirements interpretation for current scope:
 - **Phase 1I pushed:** Not pushed
 - **Phase 1I deployed:** Not deployed
 - **Phase 1I production verified:** Not production verified (cost-control local-only)
+- **Phase 2A pushed:** Not pushed
+- **Phase 2A deployed:** Not deployed
+- **Phase 2A production verified:** Not production verified (cost-control local-only)
 
 ## 8) Next Authorized Step
 
-- **Phase 1I — Supabase Persistence Planning**
+- **Phase 2A — First Supabase Persistence Slice**
 
 ## 9) Phase 1G Audit Trail Authorization Boundary
 

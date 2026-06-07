@@ -48,4 +48,13 @@ export default [
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
+  {
+    files: ["scripts/*.mjs", "scripts/**/*.mjs"],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+      },
+    },
+  },
 ];
