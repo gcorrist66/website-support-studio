@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import {
   ActorRole,
   AuditEventType,
@@ -173,6 +175,17 @@ function assertText(value: string | undefined | null, name: string): string {
   return value.trim();
 }
 
+function isUuidLike(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function normalizeUuidOrGenerated(value: string | undefined): string {
+  if (typeof value === "string" && isUuidLike(value)) {
+    return value;
+  }
+  return randomUUID();
+}
+
 function assertTicketRow(row: TicketInsert): void {
   assertText(row.id, "ticket_id");
   assertText(row.agency_id, "ticket_agency_id");
@@ -285,7 +298,7 @@ function mapApprovalToInsert(
   assertText(approval.approverRole, "approval_actor_role");
   assertText(approval.decision, "approval_status");
   return {
-    id: approval.approvalId,
+    id: normalizeUuidOrGenerated(approval.approvalId),
     agency_id: tenant.agencyId,
     client_id: tenant.clientId,
     site_id: tenant.siteId,
@@ -337,6 +350,17 @@ function mapCommunicationToInsert(
   };
 }
 
+const isBlockedTicketState = (
+  status: TicketStatus,
+  tenant: SupabaseWorkflowMappingInput["tenantContext"],
+): boolean => {
+  return (
+    status === TicketStatus.BLOCKED
+    || tenant.blockedFromStatus !== undefined
+    && tenant.blockedFromStatus !== null
+  );
+};
+
 export function buildSupabaseWorkflowPayload(
   input: SupabaseWorkflowMappingInput,
 ): SupabaseWorkflowPersistencePayload {
@@ -363,13 +387,14 @@ export function buildSupabaseWorkflowPayload(
       firstApprovalId,
     ),
   );
-  const auditInserts = (input.audits ?? []).map((audit) =>
-    mapAuditEventToPersistenceInsert(audit, {
+  const auditInserts = (input.audits ?? []).map((audit) => ({
+    ...mapAuditEventToPersistenceInsert(audit, {
       agencyId: tenantContext.agencyId,
       clientId: tenantContext.clientId,
       siteId: tenantContext.siteId,
     }),
-  );
+    id: normalizeUuidOrGenerated(audit.id),
+  }));
 
   const mappedTicket = mapDomainTicketToPersistenceInsert(ticket, {
     ...tenantContext,
@@ -379,12 +404,13 @@ export function buildSupabaseWorkflowPayload(
     closureNote: tenantContext.closureNote ?? null,
   });
 
+  const isBlocked = isBlockedTicketState(ticket.status, input.tenantContext);
   const safeTicket = {
     ...mappedTicket,
     status: ticket.status ?? TicketStatus.RECEIVED,
     priority: ticket.priority ?? TicketPriority.NORMAL,
     identity_confidence: ticket.identityConfidence ?? IdentityConfidence.UNKNOWN,
-    blocked_reason: ticket.currentBlockedReason ?? BlockedReason.OTHER,
+    blocked_reason: isBlocked ? ticket.currentBlockedReason ?? BlockedReason.OTHER : null,
   };
   assertTicketRow(safeTicket);
   assertTenantDomainMatch(tenantContext, agency, client, site);
