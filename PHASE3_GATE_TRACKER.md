@@ -91,10 +91,11 @@
   - `npm run validate:e2e` ✅
   - `npm run validate:phase2a` ✅
   - `npm run validate:persistence` ✅
-  - `npm run validate:supabase:adapter` ⚠️ (passes are intermittently emitted, followed by repeated login-role retries and non-terminating loop behavior)
+- `npm run validate:supabase:adapter` ⚠️ (passes are intermittently emitted, followed by repeated login-role retries and non-terminating loop behavior)
   - `npm run validate:workflow-service` ❌ (`unexpected status 502` while persisting rows)
   - `npm run validate:supabase:direct` ⏳ (added; direct client path with explicit env/project/secret guards)
   - `npm run validate:contracts` ✅
+- `npm run validate:supabase:direct` ❌ (failed with invalid API key in local environment)
 - Contract validation constraints enforced:
   - required tenant and actor context in request samples
   - send request requires approval context
@@ -110,6 +111,11 @@
   - `git ls-files` filter for `.supabase/`, `supabase/.temp/`, `.env`, `.env.local` returned no tracked matches
 - guard environment variables for validation are available and used
 - current status: **unstable in environment**, so Phase 3B remains local/blocked for stable Supabase-backed verification
+
+### Direct validation execution result
+- Direct Supabase client validation was executed with `WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy` and guarded env settings.
+- Result: **failed** because service role key was invalid (`Invalid API key` from Supabase insert attempt).
+- No secrets were committed, and the command used only local environment variables for runtime.
 
 ### Direct Supabase dev validation path
 - Added `scripts/validate-supabase-direct.mjs` with explicit safety checks:
