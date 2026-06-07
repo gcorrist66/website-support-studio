@@ -2,6 +2,7 @@
 
 ## 1) Current Phase Status
 - Phase: 3C (Internal Workflow Handler Layer)
+- Phase: 3D (Route Boundary and Security Plan)
 - Local execution authority: local handler orchestration over existing contract/domain/service/repository layers
 - Deployment status: no deploy
 - Push status: not pushed
@@ -179,8 +180,8 @@
   - full local handler workflow skipped because local Supabase validation guard vars were not configured with all required credentials
 
 ## 6) Recommended Next Phase
-- Next phase recommendation: **3D — Route Boundary and Security Plan**
-- Rationale: handler-layer execution exists and now requires explicit route-boundary/security controls before any transport exposure.
+- Next phase recommendation: **3E (planned) — Controlled route transport implementation**
+- Rationale: route and contract/security guardrails are defined; next step is staged route transport with explicit auth/tenant/actor enforcement and no public mutation without authorization.
 
 ## 7) Phase 3D — Route Boundary and Security Plan
 
@@ -204,3 +205,10 @@
 - no auth implementation
 - no customer send provider integration
 - no UI or portal wiring
+
+## 8) Local Checkpoint
+
+- Latest checkpoint doc: `PHASE3_LOCAL_CHECKPOINT.md`
+- Supabase note: direct dev validation path is the preferred supported proof; CLI validation remains intermittently unstable.
+- Push/deploy status remains unchanged: not pushed, not deployed.
+- Recommended checkpoint cadence: create a new checkpoint after route transport boundary implementation before any production-facing work.
