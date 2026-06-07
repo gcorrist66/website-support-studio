@@ -6,7 +6,7 @@
 - Latest known commit evidence: `bce2090 Add Phase 1 gate tracker` plus new scaffold verification commit
 - Current authority status: **Phase 1B scaffold is in-progress (infrastructure only)**
 - Implementation status: application scaffold + verification only
-- External delivery status: blocked by missing remote/deployment configuration
+- External delivery status: remote configured; deployment still pending
 
 ## 2) Phase Gates
 
@@ -41,7 +41,9 @@
 ### Phase 1B — Application Scaffold
 
 - **Status:** Diagnosed, Fixed Locally, Committed
-- **Pushed:** Not complete (no remote repository configured)
+- **Pushed:** Complete
+- **Remote:** `https://github.com/gcorrist66/website-support-studio.git`
+- **Pushed commit:** `a838c92` (latest local/remote)
 - **Deployed:** Not complete (no Vercel project/deployment metadata in workspace)
 - **Production Verified:** Not complete (no deployment URL available)
 - **Closed:** Not complete (gates above incomplete)
@@ -57,8 +59,7 @@
   - Configuration and build scaffolding requirements approved in writing
   - No business logic included in scaffold boundary evidence
 - **Blockers:**
-  - Git remote is not configured; `git push origin main` fails with `fatal: 'origin' does not appear to be a git repository`
-  - No `.vercel` project metadata in workspace and no deployment URL configured to verify
+  - Vercel project/deployment not configured in this workspace (`.vercel` absent; no deployment URL)
 - **Notes:**
   - Scope is planning-to-code transition preparation only after review.
 
