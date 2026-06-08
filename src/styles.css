@@ -166,6 +166,29 @@ body {
   }
 }
 
+.phase6-operator-card {
+  border-left: 3px solid #f59e0b;
+}
+
+.phase6-operator-switcher {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.4rem 0;
+  font-weight: 600;
+  color: #334155;
+}
+
+.phase6-capability-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.2rem 1rem;
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
 button {
   border: 1px solid #9ca3af;
   background: #f1f5f9;

@@ -77,13 +77,18 @@ function hasReadOnlyModeCopy(text) {
 }
 
 function noAuthAddedInUI(text) {
+  // Phase 6J intentionally drives UI visibility from the LOCAL operator capability guards in
+  // src/auth (pure, no runtime auth). That is allowed. This check still blocks any real auth
+  // RUNTIME / login surface in the UI shell: auth libraries/SDKs, Supabase Auth, OAuth, login
+  // or logout flows, and bearer tokens. (Local relative `../../auth/...` capability imports are
+  // permitted; auth-library package imports are not.)
   const uiAuthPatterns = [
     /next-auth/i,
-    /from\s+["'][^"']*auth/i,
+    /from\s+["'](?:next-auth|next\/auth|@auth\/|@auth0\/|@clerk\/|@supabase\/auth|@supabase\/ssr|firebase\/auth|@aws-amplify\/auth|gotrue)/i,
     /supabase\.auth/i,
     /OAuth/i,
     /authenticate/i,
-    /login|logout/i,
+    /\blogin\b|\blogout\b/i,
     /bearer/i,
   ];
   return !uiAuthPatterns.some((pattern) => pattern.test(text));

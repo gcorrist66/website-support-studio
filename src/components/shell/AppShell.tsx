@@ -24,6 +24,8 @@ import {
 } from "../../data/readOnlyTicketData";
 import { auditTrail, getTicketDetail, ticketQueue, type MockApprovalItem, type MockAuditEvent, type MockTicketQueueItem } from "../../ui/mockData";
 import { filterTickets, getSearchFilterSummary, type TicketSearchFilters } from "../../search/ticketSearch";
+import { buildDevOperatorSession, DEV_OPERATOR_ROLE_OPTIONS, type DevOperatorRoleChoice } from "../../auth/devOperatorSession";
+import { getOperatorCapabilityFlags } from "../../auth/operatorCapabilities";
 
 export function AppShell() {
   const [searchText, setSearchText] = useState("");
@@ -33,6 +35,7 @@ export function AppShell() {
   const [siteFilter, setSiteFilter] = useState("all");
   const [blockedFilter, setBlockedFilter] = useState("all");
   const [identityFilter, setIdentityFilter] = useState("all");
+  const [devOperatorRole, setDevOperatorRole] = useState<DevOperatorRoleChoice>("agency_admin");
   const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
   const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
   const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
@@ -470,25 +473,40 @@ export function AppShell() {
     setCloseTicketInProgress(false);
   };
 
-  const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
+  // Phase 6I/6J: development-only operator session drives UI capability gating (NOT auth).
+  const operatorSession = useMemo(() => buildDevOperatorSession(devOperatorRole), [devOperatorRole]);
+  const capabilities = useMemo(() => getOperatorCapabilityFlags(operatorSession), [operatorSession]);
+
+  // An action is offered only when BOTH the ticket-state is eligible (guarded dev mode) AND the
+  // current operator role has the capability to see/perform it.
+  const canTriageSelected =
+    readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received" && capabilities.canSeeTriage;
   const canDraftReplySelected =
-    readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "triaged" && Boolean(selectedTicket.workflowId);
+    readOnlyMode === "supabase-dev-readonly" &&
+    selectedTicket.status === "triaged" &&
+    Boolean(selectedTicket.workflowId) &&
+    capabilities.canSeeDraftReply;
   const canRequestApprovalSelected =
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "reply_drafted" &&
-    Boolean(selectedTicket.workflowId);
+    Boolean(selectedTicket.workflowId) &&
+    capabilities.canSeeRequestApproval;
   const canDecideApprovalSelected =
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "awaiting_gary_approval" &&
-    Boolean(selectedTicket.workflowId);
+    Boolean(selectedTicket.workflowId) &&
+    capabilities.canSeeApproveReply &&
+    capabilities.canSeeRejectReply;
   const canSendReplySelected =
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "approved_to_send" &&
-    Boolean(selectedTicket.workflowId);
+    Boolean(selectedTicket.workflowId) &&
+    capabilities.canSeeSendReply;
   const canCloseTicketSelected =
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "sent_to_customer" &&
-    Boolean(selectedTicket.workflowId);
+    Boolean(selectedTicket.workflowId) &&
+    capabilities.canSeeCloseTicket;
 
   return (
     <div className="phase4a-shell">
@@ -516,6 +534,42 @@ export function AppShell() {
         </nav>
 
         <main className="phase4a-main">
+          <section className="phase4a-card phase6-operator-card">
+            <h2>Operator (Development Mode Only)</h2>
+            <p className="placeholder-meta">
+              Local capability preview only — this is NOT a sign-in and performs no credential check. It builds a
+              synthetic in-memory operator session to preview role-based action visibility. No production auth behavior.
+            </p>
+            <label className="phase6-operator-switcher">
+              Acting as
+              <select
+                value={devOperatorRole}
+                onChange={(event) => setDevOperatorRole(event.target.value as DevOperatorRoleChoice)}
+              >
+                {DEV_OPERATOR_ROLE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="placeholder-meta">
+              {operatorSession
+                ? `Signed-in (dev): ${operatorSession.displayName} · role ${operatorSession.role}`
+                : "No operator session (signed out) — operator actions are hidden."}
+            </p>
+            <ul className="phase6-capability-list">
+              <li>Create ticket: {capabilities.canSeeCreateTicket ? "visible" : "hidden"}</li>
+              <li>Triage: {capabilities.canSeeTriage ? "visible" : "hidden"}</li>
+              <li>Draft reply: {capabilities.canSeeDraftReply ? "visible" : "hidden"}</li>
+              <li>Request approval: {capabilities.canSeeRequestApproval ? "visible" : "hidden"}</li>
+              <li>Approve / Reject: {capabilities.canSeeApproveReply ? "visible" : "hidden"}</li>
+              <li>Send reply: {capabilities.canSeeSendReply ? "visible" : "hidden"}</li>
+              <li>Close ticket: {capabilities.canSeeCloseTicket ? "visible" : "hidden"}</li>
+              <li>Operator admin: {capabilities.canSeeOperatorAdmin ? "visible" : "hidden"}</li>
+            </ul>
+          </section>
+
           <section className="phase4a-card">
             <h2>Workspace status</h2>
             <p>Read-only internal operator workspace. Data mode and available actions are shown below.</p>
@@ -551,7 +605,16 @@ export function AppShell() {
             </dl>
           </section>
 
-          <CreateTicketForm />
+          {capabilities.canSeeCreateTicket ? (
+            <CreateTicketForm />
+          ) : (
+            <section className="phase4a-card">
+              <h2>Create ticket</h2>
+              <p className="placeholder-meta phase7-empty-state" role="status">
+                Create ticket is not available for the current operator role.
+              </p>
+            </section>
+          )}
 
           <section className="phase4a-card phase4d-search-panel">
             <h2>Search and Filters</h2>

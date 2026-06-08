@@ -79,6 +79,35 @@ plus the dev-apply evidence commit.
 - Pushed/Deployed/Verified/Closed: not complete
 - Files: `PHASE6_OPERATOR_IDENTITY_CHECKPOINT.md`, this tracker.
 
+## Phase 6I — Runtime Auth Session Resolution
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6I commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/auth/operatorSessionResolver.ts` — `resolveOperatorSession`, `createOperatorSession`,
+  `resolveOperatorByEmail`, `resolveOperatorByAuthUserId`, `validateOperatorSession`. Pure, local;
+  active-only (suspended/archived rejected; invited surfaced but not fully active); agency + role
+  required. No Supabase Auth runtime, no login UI, no routes, no RLS.
+
+## Phase 6J — Local UI Capability Gating
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6J commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- Files: `src/auth/operatorCapabilities.ts` (`canSee*` over the existing guards),
+  `src/auth/devOperatorSession.ts` (DEV-only synthetic session factory),
+  `src/components/shell/AppShell.tsx` (operator switcher "Development Mode Only"; actions gated by
+  capability AND ticket state; create form gated by capability), `src/styles.css`.
+- Note: refined `scripts/validate-readonly-data.mjs` (`noAuthAddedInUI`) to permit local
+  `src/auth` capability imports while still blocking real auth runtime/login (next-auth, supabase.auth,
+  OAuth, login/logout, bearer, auth SDKs); and `scripts/validate-auth-boundary.mjs` to scan all
+  `src/auth/*.ts` for service-role/runtime (instead of an exact two-file list). Security intent preserved;
+  no guard removed.
+
+## Phase 6K — Validation + Checkpoint
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6K commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `scripts/validate-operator-session.mjs` (`npm run validate:operator-session`) — PASS:
+  active resolves; suspended/archived/missing-agency/missing-role rejected; invited not fully active;
+  session created correctly; auth guards consume the session; capability mapping matches roles;
+  no login UI / route middleware / API routes / RLS introduced. Checkpoint: `PHASE6_RUNTIME_AUTH_CHECKPOINT.md`.
+
 ## Safety Posture (unchanged)
 - No push, no deploy, no Vercel trigger.
 - No RLS enabled, no login UI, no public API routes, no customer portal, no email provider.

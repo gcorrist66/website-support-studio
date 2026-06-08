@@ -205,24 +205,27 @@ function runStaticSourceChecks() {
   const serviceRolePattern = /service_role|sb_secret_|SUPABASE_SERVICE_ROLE|SERVICE_ROLE_KEY/;
   const supabaseRuntimePattern = /@supabase\/supabase-js|createClient\s*\(|supabase\.auth|from\s+["'][^"']*supabase/i;
 
-  for (const file of authFiles) {
-    const text = fs.readFileSync(path.join(projectRoot, file), "utf8");
-    assert(!serviceRolePattern.test(text), `service-role reference found in ${file}`);
-    assert(!supabaseRuntimePattern.test(text), `Supabase runtime dependency found in ${file}`);
-  }
-  mark("no service-role key in auth files", true, "no service_role/sb_secret/SERVICE_ROLE tokens in src/auth");
-  mark("no Supabase Auth runtime dependency yet", true, "no @supabase/supabase-js, createClient, or supabase.auth in src/auth");
-
-  // No route files created under src/auth (no app/pages/routes directories).
   const authDir = path.join(projectRoot, "src", "auth");
   const entries = fs.readdirSync(authDir, { withFileTypes: true });
+
+  // Scan EVERY local auth source file (the auth module grows across phases: contracts/guards plus
+  // session resolution and capability mapping). All must remain free of service-role keys and any
+  // Supabase Auth / runtime client dependency.
+  const authSourceFiles = entries.filter((e) => e.isFile() && e.name.endsWith(".ts")).map((e) => e.name);
+  for (const name of authSourceFiles) {
+    const text = fs.readFileSync(path.join(authDir, name), "utf8");
+    assert(!serviceRolePattern.test(text), `service-role reference found in src/auth/${name}`);
+    assert(!supabaseRuntimePattern.test(text), `Supabase runtime dependency found in src/auth/${name}`);
+  }
+  mark("no service-role key in auth files", true, `no service_role/sb_secret/SERVICE_ROLE tokens across ${authSourceFiles.length} src/auth files`);
+  mark("no Supabase Auth runtime dependency yet", true, "no @supabase/supabase-js, createClient, or supabase.auth in src/auth");
+
+  // No route files / route-like directories under src/auth; TypeScript source only.
   const routeLike = entries.filter((e) => e.isDirectory() && ["app", "pages", "routes", "api"].includes(e.name));
   assert(routeLike.length === 0, `route-like directory found under src/auth: ${routeLike.map((e) => e.name).join(", ")}`);
-  const onlyExpected = entries
-    .filter((e) => e.isFile())
-    .every((e) => ["authTypes.ts", "authGuards.ts"].includes(e.name));
-  assert(onlyExpected, "unexpected files under src/auth (expected only authTypes.ts and authGuards.ts)");
-  mark("no route files created", true, "src/auth contains only local auth contract/guard files");
+  const onlyTsFiles = entries.filter((e) => e.isFile()).every((e) => e.name.endsWith(".ts"));
+  assert(onlyTsFiles, "src/auth must contain only local TypeScript auth source files (no route/.js files)");
+  mark("no route files created", true, "src/auth contains only local TypeScript auth source files");
 }
 
 async function main() {

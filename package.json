@@ -34,6 +34,7 @@
     "validate:operators": "node scripts/validate-operators.mjs",
     "validate:operator-seed": "node scripts/validate-operator-seed.mjs",
     "validate:operator-seed-db": "node scripts/validate-operator-seed-db.mjs",
+    "validate:operator-session": "node scripts/validate-operator-session.mjs",
     "seed:operators-dev": "node scripts/seed-operators-dev.mjs"
   },
   "dependencies": {
