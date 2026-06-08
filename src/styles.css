@@ -366,3 +366,135 @@ pre {
   overflow-x: auto;
   line-height: 1.55;
 }
+
+/* ============================================================================
+ * Phase A — Auth screens (login / callback / workspace-setup placeholder)
+ *
+ * CTA is GREEN (the WSS CTA color); brand blue stays for identity/links only.
+ * --cta-green is tunable — chosen for AA-large contrast with white bold text.
+ * ============================================================================ */
+:root {
+  --cta-green: #16a34a;
+  --cta-green-hover: #128a3e;
+  --cta-green-text: #ffffff;
+}
+
+.auth-screen {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface-elevated, #ffffff);
+  border: 1px solid var(--border, #e5e3dc);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  text-align: left;
+}
+
+.auth-title {
+  margin: 0.5rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.auth-subtitle {
+  margin: 0;
+  color: var(--text-muted, #64748b);
+  font-size: 0.92rem;
+}
+
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    filter 0.15s ease,
+    background 0.15s ease;
+}
+
+/* Green CTA — primary action. */
+.auth-btn-green {
+  background: var(--cta-green);
+  color: var(--cta-green-text);
+  border-color: var(--cta-green);
+}
+.auth-btn-green:hover {
+  background: var(--cta-green-hover);
+  border-color: var(--cta-green-hover);
+}
+
+/* Ghost / secondary. */
+.auth-btn-ghost {
+  background: transparent;
+  color: var(--text-strong, #0b1220);
+  border-color: var(--border-strong, #d6d2c5);
+  align-self: flex-start;
+}
+.auth-btn-ghost:hover {
+  background: var(--surface-muted, #f4f3ee);
+}
+
+.auth-meta {
+  margin: 0;
+  color: var(--text-muted, #64748b);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.auth-meta code {
+  font-size: 0.78rem;
+}
+.auth-footnote {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border, #e5e3dc);
+  padding-top: 0.85rem;
+}
+
+.auth-disabled {
+  background: var(--surface-muted, #f4f3ee);
+  border: 1px solid var(--border, #e5e3dc);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.auth-disabled-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.auth-error {
+  margin: 0;
+  color: var(--tone-mulberry-text, #5c1c49);
+  background: var(--tone-mulberry-bg, #f4daec);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
