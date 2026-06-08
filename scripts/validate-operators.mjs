@@ -136,10 +136,13 @@ function runStaticSafetyChecks() {
   assert(routeLike.length === 0, `route-like paths exist: ${routeLike.join(", ")}`);
   mark("no API routes exist", true, "no src/api|routes|server and no app/pages/routes paths");
 
-  // No login UI files.
-  const loginLike = srcFiles.filter((f) => /(login|signin|sign-in|logout)/i.test(path.basename(f)));
+  // No real login/sign-in/sign-up/sign-out screen files. Uses word-boundary matching so a file
+  // literally named Login/SignIn/Logout is flagged, while the authorized Phase 7 "LoginShell" state
+  // simulator (login immediately followed by another letter) is not. Consistent with the other
+  // validators' login-file check.
+  const loginLike = srcFiles.filter((f) => /(^|[^a-z])(login|signin|sign-in|signup|sign-up|logout)([^a-z]|$)/i.test(path.basename(f)));
   assert(loginLike.length === 0, `login UI files exist: ${loginLike.join(", ")}`);
-  mark("no login UI files exist", true, "no Login/SignIn/Logout component files present");
+  mark("no login UI files exist", true, "no real Login/SignIn/SignUp/Logout screen files present");
 
   // No Supabase Auth runtime introduced in the operator persistence files.
   const supabaseAuthPattern = /@supabase\/supabase-js|createClient\s*\(|supabase\.auth/i;

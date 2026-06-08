@@ -37,6 +37,8 @@ import {
   getActiveOperatorSession,
   type AuthMode,
 } from "../../auth/localAuthMode";
+import { LoginShell } from "../auth/LoginShell";
+import { buildLoginShellState, type LoginShellStatus } from "../../auth/loginShellState";
 
 export function AppShell() {
   const [searchText, setSearchText] = useState("");
@@ -49,6 +51,8 @@ export function AppShell() {
   const [devOperatorRole, setDevOperatorRole] = useState<DevOperatorRoleChoice>("agency_admin");
   const [authMode, setAuthMode] = useState<AuthMode>("dev_role_switcher");
   const [adapterPrincipalId, setAdapterPrincipalId] = useState("");
+  const [viewMode, setViewMode] = useState<"workspace" | "auth_simulator">("workspace");
+  const [loginShellStatus, setLoginShellStatus] = useState<LoginShellStatus>("loading");
   const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
   const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
   const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
@@ -500,6 +504,18 @@ export function AppShell() {
   const operatorSession = getActiveOperatorSession(localAuthState);
   const capabilities = getActiveCapabilityFlags(localAuthState);
 
+  // Phase 7D: local auth-state simulation. Builds the modeled shell state for the selected status.
+  // The operator-active state reuses a dev operator session so the workspace preview is realistic.
+  // SIMULATOR only — no real auth, no redirects, no route protection.
+  const loginShellState = useMemo(() => {
+    const sampleSession = getActiveOperatorSession(createDevRoleSwitcherAuthState("agency_admin"));
+    return buildLoginShellState(loginShellStatus, sampleSession);
+  }, [loginShellStatus]);
+
+  // In simulator view, the workspace is shown only when the simulated state grants operator access.
+  // In workspace view it always shows (current behavior). No real protection — visualization only.
+  const showWorkspace = viewMode === "workspace" || (viewMode === "auth_simulator" && loginShellState.canAccessWorkspace);
+
   // An action is offered only when BOTH the ticket-state is eligible (guarded dev mode) AND the
   // current operator role has the capability to see/perform it.
   const canTriageSelected =
@@ -557,6 +573,43 @@ export function AppShell() {
         </nav>
 
         <main className="phase4a-main">
+          <section className="phase4a-card phase7-auth-view">
+            <h2>Auth View (Development)</h2>
+            <p className="placeholder-meta">
+              Visualize future auth transitions locally. No real auth, no redirects, no route protection — a preview only.
+            </p>
+            <fieldset className="phase6-auth-mode">
+              <legend>View</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="wss-auth-view"
+                  value="workspace"
+                  checked={viewMode === "workspace"}
+                  onChange={() => setViewMode("workspace")}
+                />
+                Operator Workspace
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="wss-auth-view"
+                  value="auth_simulator"
+                  checked={viewMode === "auth_simulator"}
+                  onChange={() => setViewMode("auth_simulator")}
+                />
+                Auth State Simulator
+              </label>
+            </fieldset>
+            <p className="placeholder-meta">Current simulated auth state: {loginShellState.label}</p>
+          </section>
+
+          {viewMode === "auth_simulator" && (
+            <LoginShell state={loginShellState} status={loginShellStatus} onSelectStatus={setLoginShellStatus} />
+          )}
+
+          {showWorkspace && (
+          <>
           <section className="phase4a-card phase6-operator-card">
             <h2>Operator (Development Mode Only)</h2>
             <p className="placeholder-meta">
@@ -905,6 +958,8 @@ export function AppShell() {
             <li>Auth/email/provider: not added.</li>
           </ul>
         </section>
+          </>
+          )}
         </main>
       </div>
     </div>

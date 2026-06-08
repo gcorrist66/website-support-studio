@@ -226,6 +226,26 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+.phase7-auth-view {
+  border-left: 3px solid #6366f1;
+}
+
+.phase7-login-shell {
+  border-left: 3px solid #0ea5e9;
+}
+
+.phase7-login-shell-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  margin: 0.5rem 0;
+  background: #f8fafc;
+}
+
+.phase7-login-shell-operator {
+  margin-top: 0.5rem;
+}
+
 button {
   border: 1px solid #9ca3af;
   background: #f1f5f9;
