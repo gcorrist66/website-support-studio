@@ -60,11 +60,19 @@ plus the dev-apply evidence commit.
   - `supabase migration list` now shows 20260608090609 on both Local and Remote.
 - Production customer DB: untouched. No RLS enabled. No seed inserted.
 
-## Phase 6G — Operator Dev Seed Plan
-- Diagnosed: complete · Fixed Locally: complete · Committed: complete (checkpoint commit / `364b209` for the script)
-- Pushed/Deployed/Verified/Closed: not complete
-- Files: `PHASE6_OPERATOR_DEV_SEED_PLAN.md`, `scripts/validate-operator-seed.mjs`
-  (`npm run validate:operator-seed`) — PASS. No DB inserts; shape-only validation of 3 dev operators.
+## Phase 6G — Operator Dev Seed (APPLIED to dev)
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (seed commit)
+- Pushed/Deployed/Verified/Closed: not complete (production unaffected)
+- Status: **APPLIED to Supabase DEV only** (ref `vrtfbbrwrxyljchywmzy`). Three operators seeded
+  idempotently under a synthetic dev seed agency. No production data; no auth linkage; no RLS.
+- Files: `supabase/seed/phase6g_dev_operators.sql`, `scripts/seed-operators-dev.mjs`
+  (`npm run seed:operators-dev`), `scripts/validate-operator-seed-db.mjs`
+  (`npm run validate:operator-seed-db`), `scripts/validate-operator-seed.mjs` (shape-only).
+- Evidence: `validate:operator-seed-db` PASS (operators inserted, roles correct, unique respected,
+  auth_user_id null, active, RLS disabled, rows map to capable sessions, rerun-safe). Direct query:
+  `count(public.operators) = 3` (no duplicates after applying twice).
+- Cleanup: `delete from public.operators where agency_id='00000000-0000-4000-8000-0000000000a6';`
+  (then optionally remove the seed agency). See `PHASE6_OPERATOR_DEV_SEED_PLAN.md`.
 
 ## Phase 6H — Local Checkpoint
 - Diagnosed: complete · Fixed Locally: complete · Committed: complete (checkpoint commit)

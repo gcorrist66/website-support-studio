@@ -1,7 +1,16 @@
-# WSS Phase 6G — Operator Dev Seed Plan (Dev-Only)
+# WSS Phase 6G — Operator Dev Seed (Dev-Only)
 
-Status: plan + shape-validation only. No operator rows were inserted tonight.
-Scope: WSS Supabase **dev** project (`vrtfbbrwrxyljchywmzy`) only. Never production.
+Status: **APPLIED to Supabase dev.** Three dev operators are seeded (idempotently) into the dev
+`operators` table. Scope: WSS Supabase **dev** project (`vrtfbbrwrxyljchywmzy`) only. Never production.
+
+Artifacts:
+- `supabase/seed/phase6g_dev_operators.sql` — idempotent dev seed (synthetic seed agency + 3 operators).
+- `scripts/seed-operators-dev.mjs` (`npm run seed:operators-dev`) — guarded apply (dev env + linked-ref guard).
+- `scripts/validate-operator-seed-db.mjs` (`npm run validate:operator-seed-db`) — guarded DB verification.
+- `scripts/validate-operator-seed.mjs` (`npm run validate:operator-seed`) — shape-only validation (no DB).
+
+Seed agency: a dedicated synthetic dev fixture `00000000-0000-4000-8000-0000000000a6`
+("WSS Dev Seed Agency" / `wss-dev-seed-agency`) — deterministic, not a real production id.
 
 ## 1) Purpose
 Define a small, deterministic set of internal operators to seed into the **dev** `operators`
@@ -60,7 +69,16 @@ without enabling runtime auth, login UI, RLS, or any production data change.
 - Post-apply DB verification (dev only, when applied): confirm the three rows exist with the
   expected roles/status, that no extra rows were inserted, and that RLS remains disabled.
 
-## 8) What Is NOT Done Tonight
-- No rows inserted into any database (dev or prod).
-- No migration applied to dev (deferred to a reviewed morning step).
-- No auth linkage, no login UI, no RLS, no routes.
+## 8) Apply Evidence (Supabase dev)
+- Applied via `npm run seed:operators-dev` (guarded). Run twice to confirm idempotency.
+- Verified via `npm run validate:operator-seed-db` (all checks pass) and direct queries:
+  - 3 operators present under agency `00000000-0000-4000-8000-0000000000a6`:
+    `agency.admin@wss-dev.test` (agency_admin), `cs.agent@wss-dev.test` (cs_agent),
+    `gary.approver@wss-dev.test` (gary_approver) — all `status=active`, `auth_user_id=null`.
+  - `select count(*) from public.operators` = 3 (only the seed; no duplicates after repeated apply).
+  - `operators.relrowsecurity = false` (RLS still disabled).
+
+## 9) What Is NOT Done
+- No production seed; no rows in any production/customer database.
+- No `auth_user_id` linkage; no auth runtime; no login UI; no RLS; no routes.
+- No secrets; no real PII (synthetic `@wss-dev.test` operators under a synthetic dev agency).
