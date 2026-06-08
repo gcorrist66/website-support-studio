@@ -1,0 +1,400 @@
+/* ============================================================================
+ * Website Support Studio — public site stylesheet
+ *
+ * Brand system shared with Corriston Consulting (the owning firm):
+ * JetBrains Mono site-wide, Google-complement palette, snake_case voice with a
+ * brand-blue underscore as the brand tell. Professional / technical / operational.
+ * ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap");
+
+:root {
+  /* Brand palette (HSL complements of Google's brand colors) */
+  --brand-amber: #f4b142;
+  --brand-cyan: #35dcea;
+  --brand-blue: #0443fb;
+  --brand-mulberry: #a83489;
+
+  /* Wordmark */
+  --wordmark-ink: #0b1220;
+  --wordmark-accent: var(--brand-blue);
+  --wordmark-ink-inverse: #f1f5f9;
+  --wordmark-accent-inverse: #5c8bff;
+
+  /* Surfaces + text */
+  --surface: #fafaf7;
+  --surface-elevated: #ffffff;
+  --surface-muted: #f4f3ee;
+  --surface-dark: #0b1220;
+  --border: #e5e3dc;
+  --border-strong: #d6d2c5;
+
+  --text-strong: #0b1220;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+
+  /* Tonal chips */
+  --tone-amber-bg: #fef3da;
+  --tone-amber-text: #7a5410;
+  --tone-cyan-bg: #d6f8fc;
+  --tone-cyan-text: #0b6770;
+  --tone-blue-bg: #dce4fe;
+  --tone-blue-text: #0026a6;
+  --tone-mulberry-bg: #f4daec;
+  --tone-mulberry-text: #5c1c49;
+
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  --maxw: 1080px;
+  --maxw-prose: 720px;
+
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--brand-blue);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-strong);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  font-weight: 700;
+}
+h1 {
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 800;
+}
+h2 {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  margin-top: 2.5rem;
+}
+h3 {
+  font-size: 1.15rem;
+  margin-top: 1.75rem;
+}
+
+p {
+  color: var(--text);
+}
+
+/* Layout primitives */
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.prose {
+  max-width: var(--maxw-prose);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.section {
+  padding: 4rem 0;
+}
+main {
+  min-height: 60vh;
+}
+
+/* snake_case kicker label — the brand voice for section eyebrows */
+.kicker {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  text-transform: lowercase;
+  margin: 0 0 0.75rem;
+}
+.kicker .us {
+  color: var(--wordmark-accent);
+}
+
+/* Lede / summary block — supports answer-engine readability */
+.lede {
+  font-size: 1.1rem;
+  color: var(--text);
+  max-width: 60ch;
+}
+.summary {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--brand-blue);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-radius: 10px;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.btn:hover {
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--brand-blue);
+  color: #fff;
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-strong);
+  border-color: var(--border-strong);
+}
+.btn-ghost:hover {
+  background: var(--surface-muted);
+}
+
+/* Cards / grids */
+.grid {
+  display: grid;
+  gap: 1.25rem;
+}
+@media (min-width: 720px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.4rem;
+}
+.card h3 {
+  margin-top: 0;
+}
+
+/* Accent bar cycling brand colors */
+.accent-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-amber) 0 25%,
+    var(--brand-cyan) 25% 50%,
+    var(--brand-mulberry) 50% 75%,
+    var(--brand-blue) 75% 100%
+  );
+}
+
+/* Header / footer */
+.site-header,
+.site-footer {
+  border-bottom: 1px solid var(--border);
+}
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(8px);
+}
+.site-header .bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+}
+.site-nav {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.site-nav a {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.site-nav a[aria-current="page"] {
+  color: var(--brand-blue);
+}
+.site-footer {
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+  margin-top: 4rem;
+  background: var(--surface-muted);
+}
+.footer-inner {
+  display: grid;
+  gap: 2rem;
+  padding: 3rem 0 2rem;
+}
+@media (min-width: 720px) {
+  .footer-inner {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+}
+.footer-col h4 {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: lowercase;
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+.footer-col a,
+.footer-col p {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+.footer-meta {
+  border-top: 1px solid var(--border);
+  padding: 1.25rem 0 2.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Hero */
+.hero {
+  padding: 4.5rem 0 3rem;
+}
+.hero h1 {
+  max-width: 18ch;
+}
+.hero .lede {
+  margin-top: 1.25rem;
+}
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  flex-wrap: wrap;
+}
+
+/* Definition / feature lists */
+.deflist {
+  display: grid;
+  gap: 1rem;
+}
+.deflist dt {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+.deflist dd {
+  margin: 0.25rem 0 0;
+  color: var(--text);
+}
+
+/* FAQ */
+.faq details {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.75rem;
+  background: var(--surface-elevated);
+}
+.faq summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-strong);
+}
+.faq p {
+  margin: 0.75rem 0 0;
+}
+
+/* Article prose */
+.article-body {
+  font-size: 1.02rem;
+}
+.article-body p,
+.article-body ul,
+.article-body ol {
+  margin: 1.1rem 0;
+}
+.article-body h2 {
+  margin-top: 2.5rem;
+}
+.article-body blockquote,
+.article-body blockquote.pullquote {
+  margin: 2rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid var(--brand-mulberry);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  background: var(--tone-mulberry-bg);
+  border-radius: 0 10px 10px 0;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.breadcrumbs a {
+  color: var(--text-muted);
+}
+.breadcrumbs .sep {
+  color: var(--text-subtle);
+  margin: 0 0.4rem;
+}
+
+/* Accessibility */
+.skip-link {
+  position: absolute;
+  left: -999px;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 0.5rem;
+  background: var(--brand-blue);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  z-index: 100;
+}
+:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}

@@ -1,0 +1,40 @@
+---
+import LogoLockup from "./LogoLockup.astro";
+import { NAV, FOOTER_LEGAL, CONTACT, ORG } from "../consts";
+
+const year = 2026;
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <LogoLockup size={26} />
+        <p style="margin-top:1rem; max-width:34ch; color:var(--text-muted); font-size:0.86rem;">
+          Managed website operations and support for organizations with revenue-critical websites.
+          A product of {ORG.legalName}.
+        </p>
+        <a href={CONTACT.linkedin} target="_blank" rel="noopener" style="font-size:0.86rem;">linkedin</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>navigate</h4>
+        {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      </div>
+
+      <div class="footer-col">
+        <h4>legal</h4>
+        {FOOTER_LEGAL.map((item) => <a href={item.href}>{item.label}</a>)}
+        <h4 style="margin-top:1.25rem;">contact</h4>
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        <a href={CONTACT.bookingUrl} target="_blank" rel="noopener">book a call</a>
+      </div>
+    </div>
+
+    <div class="footer-meta">
+      <div class="accent-bar" style="max-width:160px; margin-bottom:1rem;"></div>
+      © {year} {ORG.legalName}. Website Support Studio is operated by {ORG.shortName}.
+      {ORG.address.street}, {ORG.address.locality}, {ORG.address.region} {ORG.address.postalCode}, {ORG.address.countryName}.
+    </div>
+  </div>
+</footer>

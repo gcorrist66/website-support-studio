@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { breadcrumbSchema } from "../schema";
+import { CONTACT, ORG, SITE_NAME } from "../consts";
+import { ID } from "../schema";
+
+const schemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Contact — Website Support Studio",
+    description: "Contact Website Support Studio to scope a managed website operations engagement.",
+    url: "https://websitesupportstudio.com/contact",
+    mainEntity: {
+      "@type": "Organization",
+      "@id": ID.org,
+      name: SITE_NAME,
+      email: CONTACT.email,
+      url: "https://websitesupportstudio.com",
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact" },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Website Support Studio to scope a managed website operations engagement. Book a call or email Corriston Consulting, LLC."
+  path="/contact"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="container" style="max-width:760px;">
+      <p class="kicker">contact</p>
+      <h1>Let's scope your website operations.</h1>
+      <p class="lede" style="margin-top:1rem;">
+        Tell us about your sites and request volume, and we'll confirm scope and pricing for the right tier.
+        The fastest path is a short scoping call.
+      </p>
+
+      <div class="grid grid-2" style="margin-top:2.5rem;">
+        <div class="card">
+          <h3 style="margin-top:0;">book_a_call</h3>
+          <p style="color:var(--text-muted);">A 30-minute scoping conversation to confirm scope, sites, and expected request volume.</p>
+          <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">schedule a call</a>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0;">email_us</h3>
+          <p style="color:var(--text-muted);">Prefer to write first? Send the details and we'll respond with next steps.</p>
+          <a class="btn btn-ghost" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.5rem;">
+        <h3 style="margin-top:0;">operated_by</h3>
+        <p style="margin:0; color:var(--text);">{ORG.legalName}</p>
+        <p style="margin:0.25rem 0 0; color:var(--text-muted);">
+          {ORG.address.street}<br />
+          {ORG.address.locality}, {ORG.address.region} {ORG.address.postalCode}, {ORG.address.countryName}
+        </p>
+        <p style="margin:0.75rem 0 0;">
+          <a href={CONTACT.linkedin} target="_blank" rel="noopener">linkedin</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

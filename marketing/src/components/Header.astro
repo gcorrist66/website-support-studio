@@ -1,0 +1,24 @@
+---
+import LogoLockup from "./LogoLockup.astro";
+import { NAV, CONTACT } from "../consts";
+
+const current = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a href="/" aria-label="Website Support Studio — home">
+      <LogoLockup size={28} />
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      {
+        NAV.map((item) => (
+          <a href={item.href} aria-current={current === item.href ? "page" : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+      <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book_a_call</a>
+    </nav>
+  </div>
+</header>

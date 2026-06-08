@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { breadcrumbSchema } from "../../schema";
+
+const articles = (await getCollection("articles", ({ data }) => !data.draft)).sort(
+  (a, b) => new Date(b.data.datePublished).valueOf() - new Date(a.data.datePublished).valueOf(),
+);
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Articles", path: "/articles" },
+  ]),
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Articles — Website Support Studio",
+    description: "Announcements and operational thinking on website operations, support, and digital reliability.",
+    url: "https://websitesupportstudio.com/articles",
+  },
+];
+---
+
+<BaseLayout
+  title="Articles"
+  description="Announcements and operational thinking on website operations, managed support, and digital reliability from Website Support Studio."
+  path="/articles"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="container">
+      <p class="kicker">articles</p>
+      <h1>Operational thinking on website reliability</h1>
+      <p class="lede" style="margin-top:1rem;">
+        Announcements and field notes on running revenue-critical websites as operations — visibility,
+        managed support, response workflows, and accountability.
+      </p>
+
+      <div class="grid grid-2" style="margin-top:2.5rem;">
+        {
+          articles.map((a) => (
+            <a class="card" href={`/articles/${a.slug}`} style="text-decoration:none; color:inherit; display:block;">
+              <div class="accent-bar" style="max-width:60px; margin-bottom:1rem;" />
+              <p class="kicker" style="margin-bottom:0.5rem;">{a.data.category.toLowerCase().replace(/\s+/g, "_")}</p>
+              <h3 style="margin-top:0;">{a.data.title}</h3>
+              <p style="color:var(--text-muted); font-size:0.9rem;">{a.data.summary}</p>
+              <p style="color:var(--text-subtle); font-size:0.8rem; margin-top:0.75rem;">
+                {new Date(a.data.datePublished).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+              </p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

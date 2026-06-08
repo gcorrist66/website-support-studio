@@ -1,0 +1,80 @@
+# Website Support Studio — robots.txt
+# Operated by Corriston Consulting, LLC
+
+# Default: allow all well-behaved crawlers across the public site.
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+# Major AI / answer-engine crawlers — explicitly welcome on public content,
+# same private-area restrictions apply.
+User-agent: GPTBot
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /account
+
+Sitemap: https://websitesupportstudio.com/sitemap-index.xml
+Host: https://websitesupportstudio.com

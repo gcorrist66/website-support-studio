@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#FAFAF7"/>
+  <!-- 4-quadrant logomark -->
+  <g transform="translate(80,80)">
+    <rect x="0" y="0" width="92" height="92" rx="7" fill="#F4B142"/>
+    <rect x="100" y="0" width="92" height="92" rx="7" fill="#35DCEA"/>
+    <rect x="0" y="100" width="92" height="92" rx="7" fill="#A83489"/>
+    <rect x="100" y="100" width="92" height="92" rx="7" fill="#0443FB"/>
+  </g>
+  <text x="300" y="205" font-family="'JetBrains Mono','SF Mono',Menlo,Consolas,monospace" font-size="46" font-weight="800" letter-spacing="-1" fill="#0B1220">website<tspan fill="#0443FB">_</tspan>support<tspan fill="#0443FB">_</tspan>studio</text>
+  <text x="80" y="360" font-family="'JetBrains Mono','SF Mono',Menlo,Consolas,monospace" font-size="62" font-weight="800" letter-spacing="-2" fill="#0B1220">Managed website operations</text>
+  <text x="80" y="438" font-family="'JetBrains Mono','SF Mono',Menlo,Consolas,monospace" font-size="62" font-weight="800" letter-spacing="-2" fill="#0B1220">and support.</text>
+  <text x="80" y="510" font-family="'JetBrains Mono','SF Mono',Menlo,Consolas,monospace" font-size="28" font-weight="500" fill="#64748B">For organizations with revenue-critical websites.</text>
+  <!-- brand accent bar -->
+  <g transform="translate(80,560)">
+    <rect x="0" y="0" width="65" height="6" rx="3" fill="#F4B142"/>
+    <rect x="75" y="0" width="65" height="6" rx="3" fill="#35DCEA"/>
+    <rect x="150" y="0" width="65" height="6" rx="3" fill="#A83489"/>
+    <rect x="225" y="0" width="65" height="6" rx="3" fill="#0443FB"/>
+  </g>
+  <text x="1120" y="575" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="22" font-weight="500" fill="#94A3B8">corriston consulting, llc</text>
+</svg>

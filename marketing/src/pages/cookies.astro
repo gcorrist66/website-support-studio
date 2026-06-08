@@ -1,0 +1,119 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { breadcrumbSchema } from "../schema";
+import { ORG, CONTACT, LEGAL_EFFECTIVE_DATE } from "../consts";
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Cookie Policy", path: "/cookies" },
+  ]),
+];
+
+const cookieTable = [
+  {
+    category: "Strictly necessary",
+    purpose: "Enable core site and platform functions such as navigation, security, and authenticated sessions.",
+    provider: "Website Support Studio / Supabase",
+    consent: "Required for the service to function; not subject to consent.",
+  },
+  {
+    category: "Analytics (only when configured)",
+    purpose: "When enabled, understand how the site is used in aggregate (pages viewed, device, referral source, interactions) to improve it. Not active by default.",
+    provider: "Google Analytics 4 via Google Tag Manager",
+    consent: "Set only when analytics is configured, and where permitted or with consent; can be opted out.",
+  },
+];
+---
+
+<BaseLayout
+  title="Cookie Policy"
+  description="How Website Support Studio uses cookies and similar technologies, including strictly necessary and Google Analytics cookies, and how to control or opt out of them."
+  path="/cookies"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="prose">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">home</a><span class="sep">/</span><span>cookie_policy</span>
+      </nav>
+      <p class="kicker">legal</p>
+      <h1>Cookie Policy</h1>
+      <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
+
+      <div class="summary" style="margin:1.5rem 0;">
+        <strong>Summary.</strong> Website Support Studio uses cookies that are strictly necessary for the
+        site and platform to work. When analytics is configured, it also uses Google Analytics cookies in
+        aggregate to understand site usage — analytics is not enabled by default and runs only when
+        configured. We do not use advertising, retargeting, or cross-site tracking cookies. You can control
+        or opt out of analytics cookies as described below.
+      </div>
+
+      <h2>1. What cookies are</h2>
+      <p>
+        Cookies are small text files placed on your device by a website. Similar technologies (such as
+        pixels and local storage) work in comparable ways. They help a site function, remember preferences,
+        and understand usage. This policy explains the cookies used by Website Support Studio, operated by
+        {" "}{ORG.legalName}, and should be read together with our <a href="/privacy">Privacy Policy</a>.
+      </p>
+
+      <h2>2. Cookies we use</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:1rem;">
+          <thead>
+            <tr style="text-align:left; border-bottom:2px solid var(--border-strong);">
+              <th style="padding:0.6rem 0.5rem;">Category</th>
+              <th style="padding:0.6rem 0.5rem;">Purpose</th>
+              <th style="padding:0.6rem 0.5rem;">Provider</th>
+              <th style="padding:0.6rem 0.5rem;">Consent</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              cookieTable.map((c) => (
+                <tr style="border-bottom:1px solid var(--border); vertical-align:top;">
+                  <td style="padding:0.6rem 0.5rem; font-weight:600;">{c.category}</td>
+                  <td style="padding:0.6rem 0.5rem;">{c.purpose}</td>
+                  <td style="padding:0.6rem 0.5rem;">{c.provider}</td>
+                  <td style="padding:0.6rem 0.5rem;">{c.consent}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem;">
+        We do not use advertising cookies, retargeting pixels, or cross-site tracking technologies.
+      </p>
+
+      <h2>3. Analytics in detail</h2>
+      <p>
+        Analytics is not enabled by default. When it is configured, we use Google Analytics 4 (loaded via
+        Google Tag Manager) to measure site usage in aggregate. Google Analytics then sets first-party
+        cookies that collect information such as pages
+        viewed, approximate (city-level) location derived from IP address, device and browser, referral
+        source, and interaction events. We use this only to understand and improve the site, not to identify
+        individuals or to advertise to you.
+      </p>
+
+      <h2>4. Managing and opting out of cookies</h2>
+      <ul>
+        <li><strong>Browser controls.</strong> Most browsers let you block or delete cookies through their settings. Blocking strictly necessary cookies may prevent parts of the service from working.</li>
+        <li><strong>Google Analytics opt-out.</strong> You can opt out of Google Analytics across all sites using Google's browser add-on at <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">tools.google.com/dlpage/gaoptout</a>.</li>
+        <li><strong>Consent.</strong> Where required by law, non-essential analytics cookies are set only with your consent, and you may withdraw consent at any time through your browser controls.</li>
+      </ul>
+
+      <h2>5. Changes to this policy</h2>
+      <p>
+        We may update this Cookie Policy as our practices or applicable law change. We will revise the
+        effective date above when we do.
+      </p>
+
+      <h2>6. Contact</h2>
+      <p>
+        Questions about our use of cookies can be sent to {ORG.legalName} at
+        {" "}<a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

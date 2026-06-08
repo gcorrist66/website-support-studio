@@ -1,0 +1,72 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { articleSchema, breadcrumbSchema, personSchema } from "../schema";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"articles">;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+const path = `/articles/${entry.slug}`;
+
+const schemas = [
+  articleSchema({
+    headline: data.title,
+    description: data.description,
+    path,
+    datePublished: data.datePublished,
+    dateModified: data.dateModified,
+    authorName: data.author,
+  }),
+  personSchema({ name: data.author, jobTitle: data.authorTitle, path: "/about" }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Articles", path: "/articles" },
+    { name: data.title, path },
+  ]),
+];
+
+const pubDate = new Date(data.datePublished).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  path={path}
+  ogType="article"
+  publishedTime={data.datePublished}
+  modifiedTime={data.dateModified ?? data.datePublished}
+  schemas={schemas}
+>
+  <article class="section">
+    <div class="prose">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">home</a><span class="sep">/</span>
+        <a href="/articles">articles</a><span class="sep">/</span>
+        <span>{data.category.toLowerCase()}</span>
+      </nav>
+
+      <p class="kicker">{data.category.toLowerCase().replace(/\s+/g, "_")}</p>
+      <h1>{data.title}</h1>
+
+      <p style="color:var(--text-muted); font-size:0.86rem; margin-top:1rem;">
+        By {data.author}, {data.authorTitle} · <time datetime={data.datePublished}>{pubDate}</time>
+      </p>
+
+      <div class="summary" style="margin:1.75rem 0;">
+        <strong>Summary.</strong> {data.summary}
+      </div>
+
+      <div class="accent-bar" style="max-width:180px; margin:1.5rem 0 2rem;"></div>
+
+      <div class="article-body">
+        <slot />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

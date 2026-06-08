@@ -1,0 +1,5 @@
+# Operator console (app.websitesupportstudio.com) — private application.
+# This is not the public site. Disallow all indexing. The public marketing
+# site at https://websitesupportstudio.com serves its own robots.txt + sitemap.
+User-agent: *
+Disallow: /

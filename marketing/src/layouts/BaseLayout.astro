@@ -1,0 +1,59 @@
+---
+import "../styles/global.css";
+import BaseHead from "../components/BaseHead.astro";
+import JsonLd from "../components/JsonLd.astro";
+import Analytics from "../components/Analytics.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { organizationSchema, websiteSchema } from "../schema";
+
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogType?: "website" | "article";
+  image?: string;
+  noindex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Page-specific JSON-LD nodes (Service, FAQ, Breadcrumb, Article, …). */
+  schemas?: (Record<string, unknown> | Record<string, unknown>[])[];
+}
+
+const { schemas = [], ...head } = Astro.props;
+// Organization + WebSite ship on every page so the entity graph is always resolvable.
+const globalSchemas = [organizationSchema(), websiteSchema()];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead {...head} />
+    {globalSchemas.map((s) => <JsonLd schema={s} />)}
+    {schemas.map((s) => <JsonLd schema={s} />)}
+    <Analytics />
+  </head>
+  <body>
+    {
+      gtmId && (
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+            height="0"
+            width="0"
+            style="display:none;visibility:hidden"
+            title="gtm"
+          />
+        </noscript>
+      )
+    }
+    <a class="skip-link" href="#main">skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

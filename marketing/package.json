@@ -1,0 +1,19 @@
+{
+  "name": "website-support-studio-marketing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Public marketing, SEO, legal, and content site for Website Support Studio (Astro SSG). The authenticated operator console lives in the root Vite app.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "0.9.4",
+    "@astrojs/sitemap": "3.2.1",
+    "astro": "4.16.19",
+    "typescript": "^5.8.3"
+  }
+}

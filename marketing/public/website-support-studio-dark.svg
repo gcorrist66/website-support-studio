@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1213 152" width="1213" height="152" role="img" aria-label="website_support_studio">
+  <rect width="1213" height="152" fill="#0B1220"/>
+  <g transform="translate(32, 32)">
+    <rect x="0" y="0" width="42.0" height="42.0" rx="6" fill="#F4B142"/>
+    <rect x="46.0" y="0" width="42.0" height="42.0" rx="6" fill="#35DCEA"/>
+    <rect x="0" y="46.0" width="42.0" height="42.0" rx="6" fill="#A83489"/>
+    <rect x="46.0" y="46.0" width="42.0" height="42.0" rx="6" fill="#0443FB"/>
+  </g>
+  <text x="144" y="103.36"
+        font-family='"JetBrains Mono", "SF Mono", Menlo, Consolas, monospace'
+        font-size="76"
+        font-weight="800"
+        letter-spacing="-2"
+        style="font-feature-settings:'kern' 1;"><tspan fill="#F1F5F9">website</tspan><tspan fill="#5C8BFF">_</tspan><tspan fill="#F1F5F9">support</tspan><tspan fill="#5C8BFF">_</tspan><tspan fill="#F1F5F9">studio</tspan></text>
+</svg>

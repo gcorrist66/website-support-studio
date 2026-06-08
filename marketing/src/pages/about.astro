@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { breadcrumbSchema, personSchema, faqSchema } from "../schema";
+import { ORG, CONTACT } from "../consts";
+
+const faqs = [
+  {
+    q: "Who operates Website Support Studio?",
+    a: "Website Support Studio is operated by Corriston Consulting, LLC, a Florida limited liability company based in Tampa. The platform grew out of the firm's own internal operating model for website support.",
+  },
+  {
+    q: "Why was Website Support Studio built?",
+    a: "The same pattern appeared across client after client: capable teams, important websites, and no shared system for getting website work done reliably. Corriston Consulting built an internal operating model — single intake, defined workflow, mandatory approval, complete record — and productized it as Website Support Studio.",
+  },
+];
+
+const schemas = [
+  personSchema({ name: ORG.founder, jobTitle: "Founder, Corriston Consulting, LLC", path: "/about" }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+  ]),
+  faqSchema(faqs),
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Website Support Studio is operated by Corriston Consulting, LLC, a Florida company based in Tampa. It grew out of the firm's own internal operating model for reliable, accountable website support."
+  path="/about"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="container" style="max-width:760px;">
+      <p class="kicker">about</p>
+      <h1>Built from real operational experience.</h1>
+      <p class="lede" style="margin-top:1rem;">
+        Website Support Studio did not start as a product idea. It started as an operational reality at
+        Corriston Consulting, LLC.
+      </p>
+
+      <div class="accent-bar" style="max-width:200px; margin:2rem 0;"></div>
+
+      <h2>The origin</h2>
+      <p>
+        Across client after client, the same pattern appeared: capable teams, important websites, and no
+        shared system for getting website work done reliably. Requests arrived through every channel
+        imaginable. Approvals happened in side conversations. Knowledge about how each site was built lived
+        in a handful of heads.
+      </p>
+      <p>
+        Corriston Consulting built an internal operating model to solve its own problem — a single intake, a
+        defined workflow, a mandatory approval before anything shipped, and a complete record of every
+        decision. The discipline, not any single tool, was what made the difference. Website Support Studio
+        is that operating model, built into a platform and offered as a managed service.
+      </p>
+
+      <h2 id="gary-corriston">Who runs it</h2>
+      <p>
+        Website Support Studio is led by {ORG.founder}, founder of {ORG.legalName}. The firm provides senior
+        demand-generation and marketing-operations work; Website Support Studio extends that discipline to
+        the day-to-day operation of revenue-critical websites.
+      </p>
+
+      <h2>What we believe</h2>
+      <p>
+        A revenue-critical website is infrastructure, and it deserves the same operational discipline as any
+        other system the business depends on: visible work, defined workflows, reviewed changes, and a
+        record of who decided what. Accountability is the product — not a feature added after the fact.
+      </p>
+
+      <div class="hero-actions" style="margin-top:2rem;">
+        <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book a scoping call</a>
+        <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">read the launch announcement</a>
+      </div>
+
+      <div class="faq" style="margin-top:3rem;">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
