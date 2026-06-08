@@ -139,21 +139,21 @@ Starting commit: `1bf98f4`. Session commit: the Phase 7 auth-planning commit.
 - Confirms local session shape → `getSessionPrincipal` → adapter/pipeline → `LoginShellState` and capability flags. No auth runtime, no writes.
 
 ## Phase 7N — Local Route Protection Prototype
-- Diagnosed: complete · Fixed Locally: complete (`src/components/auth/SessionSourcePrototype.tsx`) · Committed: pending
+- Diagnosed: complete · Fixed Locally: complete (`src/components/auth/SessionSourcePrototype.tsx`) · Committed: complete
 - Pushed/Deployed/Production Verified/Closed: not complete
 - Simulates protected route decisions (workspace/operator-admin) from prototype auth state and capabilities. UI-only simulation only.
 
 ## Phase 7O — RLS Readiness Review
-- Diagnosed: complete · Fixed Locally: complete (`PHASE7_RLS_READINESS_CHECKPOINT.md`, `PHASE7_RLS_PLAN.md`) · Committed: pending
+- Diagnosed: complete · Fixed Locally: complete (`PHASE7_RLS_READINESS_CHECKPOINT.md`, `PHASE7_RLS_PLAN.md`) · Committed: complete
 - Pushed/Deployed/Production Verified/Closed: not complete
 - RLS remains disabled. Readiness review completed: auth source and real linkup path still pending before any RLS rollout.
 
 ## Phase 7P — Production Auth Readiness Review
-- Diagnosed: complete · Fixed Locally: complete (`PHASE7_AUTH_READINESS_CHECKPOINT.md`) · Committed: pending
+- Diagnosed: complete · Fixed Locally: complete (`PHASE7_AUTH_READINESS_CHECKPOINT.md`) · Committed: complete
 - Pushed/Deployed/Production Verified/Closed: not complete
 - Production readiness review notes: no auth rollout, no RLS, no middleware, and no prod auth validation yet.
 
 ## Phase 7Q — Local Checkpoint
-- Diagnosed: complete · Fixed Locally: complete (`PHASE7_AUTH_READINESS_CHECKPOINT.md`) · Committed: pending
+- Diagnosed: complete · Fixed Locally: complete (`PHASE7_AUTH_READINESS_CHECKPOINT.md`) · Committed: complete
 - Pushed/Deployed/Production Verified/Closed: not complete
 - Local checkpoint consolidation for Phases 7L–7P with guardrails intact and local-only execution.
