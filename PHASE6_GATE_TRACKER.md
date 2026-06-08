@@ -108,8 +108,39 @@ plus the dev-apply evidence commit.
   session created correctly; auth guards consume the session; capability mapping matches roles;
   no login UI / route middleware / API routes / RLS introduced. Checkpoint: `PHASE6_RUNTIME_AUTH_CHECKPOINT.md`.
 
+## Phase 6L — Operator ↔ Supabase Auth Linkage Helpers
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6L commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/auth/operatorIdentityLinking.ts` — `normalizeAuthUserId`, `isValidAuthUserId`,
+  `isOperatorLinked`, `assertOperatorCanBeLinked`, `linkOperatorToAuthUser`,
+  `unlinkOperatorFromAuthUser`, `resolveOperatorFromAuthUser`, `resolveSessionFromAuthUser`.
+  Pure TS. Active-only linking; UUID-validated; one auth_user_id ↔ one operator; agency/role
+  preserved (no elevation); unlink preserves the row. No Supabase Auth runtime, no login.
+
+## Phase 6M — Auth Linkage Validation
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6M commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `scripts/validate-auth-linkage.mjs` (`npm run validate:auth-linkage`) — PASS (19 checks):
+  UUID accept/reject; active link; suspended/archived rejected; invited→no session; resolve by
+  auth_user_id; unlinked fails cleanly; duplicate rejected; role/agency preserved; unlink preserves
+  row; resolved session works with auth guards; no login UI / middleware / routes / RLS / Supabase Auth runtime.
+
+## Phase 6M-DB — Dev Linkage DB Validation (performed)
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6M commit)
+- Pushed/Deployed/Verified/Closed: not complete (dev only; production untouched)
+- File: `scripts/validate-auth-linkage-db.mjs` (`npm run validate:auth-linkage-db`, guarded) — PASS (7 checks).
+  Ran against Supabase dev (ref `vrtfbbrwrxyljchywmzy`): seeded operators exist; linked a seed operator
+  to a SYNTHETIC auth_user_id; read-back ok; the partial unique index rejected a duplicate link; the
+  link was cleared and the operator rows preserved; RLS remained disabled. No real auth users created;
+  no login; dev left clean (0 linked operators).
+
+## Phase 6N — Checkpoint
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6N commit)
+- File: `PHASE6_AUTH_LINKAGE_CHECKPOINT.md`, this tracker.
+
 ## Safety Posture (unchanged)
 - No push, no deploy, no Vercel trigger.
 - No RLS enabled, no login UI, no public API routes, no customer portal, no email provider.
 - No production data changes; no secrets committed; no service-role key in client code.
-- No existing validation weakened; MMVP workflow unchanged.
+- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage is a reversible
+  metadata test only (no real Supabase Auth users, no magic links, no credentials).
