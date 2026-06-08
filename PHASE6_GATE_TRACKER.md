@@ -2,11 +2,14 @@
 
 Gated model: Diagnosed → Fixed Locally → Committed → Pushed → Deployed → Production Verified → Closed.
 
-Local-only session. For every item below: Pushed / Deployed / Production Verified / Closed = not complete.
+Local-only branch work. For every item below: Pushed / Deployed / Production Verified / Closed = not complete.
 Production remains safe at `d5381fa` (read-only mock mode). Nothing pushed, nothing deployed.
+Phase 6F has been applied to the Supabase **dev** project only (ref `vrtfbbrwrxyljchywmzy`); the
+production customer database is untouched and RLS remains disabled.
 
-Starting commit for this session: `215ea49`.
-Session commits: `e97d112` (6C migration), `364b209` (6D/6E/6G code), plus the checkpoint commit.
+Starting commit: `215ea49`.
+Session commits: `e97d112` (6C migration), `364b209` (6D/6E/6G code), `8181d0b` (checkpoint),
+plus the dev-apply evidence commit.
 
 ## Phase 6A — Operator Auth Boundary Plan
 - Diagnosed: complete · Fixed Locally: complete (`PHASE6_AUTH_BOUNDARY_PLAN.md`) · Committed: complete (`f36ef0e`)
@@ -37,14 +40,25 @@ Session commits: `e97d112` (6C migration), `364b209` (6D/6E/6G code), plus the c
 - File: `scripts/validate-operators.mjs` (`npm run validate:operators`) — PASS (21 checks).
   Migration/file checks + type/guard checks (roles align, mapping, capabilities, rejection paths).
 
-## Phase 6F — Optional Dev Apply
-- Diagnosed: complete · Fixed Locally: n/a · Committed: n/a
-- Pushed/Deployed/Verified/Closed: not complete
-- Status: **NOT applied tonight (deliberate deferral, not a CLI blocker).**
-- Rationale: Gary is away; persistent dev schema change is best done as a reviewed step with the owner
-  present. The repo has no tracked migration-apply path; `supabase db push` risks interactive prompts /
-  history reconciliation, and applying raw SQL via `db query` would leave migration history untracked.
-  Nothing applied = nothing to roll back. The migration is fully validated locally and is idempotent.
+## Phase 6F — Dev Apply (Supabase dev only)
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (apply-evidence commit)
+- Pushed/Deployed/Verified/Closed: not complete (production unaffected)
+- Status: **APPLIED to the Supabase DEV project only (project ref `vrtfbbrwrxyljchywmzy`).**
+- Method: reviewed migration → `npm run lint/typecheck/build`, `validate:operators`, `validate:operator-seed`
+  all PASS → confirmed linked ref `vrtfbbrwrxyljchywmzy` → `supabase db push --dry-run` (only the
+  phase6c migration pending) → `supabase db push --yes --linked`. No `--include-seed` (no seed data).
+- Apply result: `Applying migration 20260608090609_phase6c_operator_identity_foundation.sql ... Finished`.
+  Benign notices only (pgcrypto already exists; trigger drop-if-exists no-op).
+- Remote verification (via `supabase db query`):
+  - `public.operators` table exists; `relrowsecurity = false` (RLS NOT enabled).
+  - `operator_role` enum = agency_admin, cs_agent, gary_approver.
+  - `operator_status` enum = active, invited, suspended, archived.
+  - Indexes present: operators_pkey, operators_agency_email_unique, operators_auth_user_id_unique_idx,
+    operators_agency_id_idx, operators_email_idx, operators_role_idx, operators_status_idx,
+    operators_agency_role_idx, operators_agency_status_idx.
+  - Row count = 0 (no rows inserted).
+  - `supabase migration list` now shows 20260608090609 on both Local and Remote.
+- Production customer DB: untouched. No RLS enabled. No seed inserted.
 
 ## Phase 6G — Operator Dev Seed Plan
 - Diagnosed: complete · Fixed Locally: complete · Committed: complete (checkpoint commit / `364b209` for the script)
