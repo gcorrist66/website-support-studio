@@ -189,6 +189,43 @@ body {
   font-size: 0.9rem;
 }
 
+.phase6-auth-mode {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0;
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.phase6-auth-mode legend {
+  font-weight: 600;
+  color: #334155;
+  padding: 0 0.4rem;
+}
+
+.phase6-auth-mode label {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  color: #334155;
+}
+
+.phase6-adapter-preview {
+  display: grid;
+  gap: 0.4rem;
+  border-left: 3px solid #94a3b8;
+  padding-left: 0.75rem;
+  margin: 0.25rem 0;
+}
+
+.phase6-adapter-preview input[type="text"] {
+  min-width: 320px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 button {
   border: 1px solid #9ca3af;
   background: #f1f5f9;

@@ -62,3 +62,47 @@ export const DEV_OPERATOR_ROLE_OPTIONS: ReadonlyArray<{ value: DevOperatorRoleCh
   { value: "gary_approver", label: "Gary Approver" },
   { value: "none", label: "No operator (signed out)" },
 ];
+
+/**
+ * DEV-ONLY in-memory fixture representing EXISTING operator↔auth_user_id linkage state, used to
+ * preview the adapter path locally. These are NOT real Supabase Auth users and are NOT written to
+ * any database — they are a synthetic preview fixture so the UI can demonstrate
+ * `resolveOperatorSessionFromAuthPrincipal` resolving (or not) without DB access or any write.
+ */
+export interface DevAdapterPrincipalPreset {
+  principalId: string;
+  label: string;
+  role: OperatorRole;
+  email: string;
+  displayName: string;
+}
+
+export const DEV_ADAPTER_PRINCIPAL_PRESETS: readonly DevAdapterPrincipalPreset[] = [
+  {
+    principalId: "00000000-0000-4000-8000-00000000d001",
+    label: "Agency Admin (linked)",
+    role: OperatorRole.AGENCY_ADMIN,
+    email: "agency.admin@wss-dev.test",
+    displayName: "Agency Admin (dev)",
+  },
+  {
+    principalId: "00000000-0000-4000-8000-00000000d002",
+    label: "CS Agent (linked)",
+    role: OperatorRole.CS_AGENT,
+    email: "cs.agent@wss-dev.test",
+    displayName: "CS Agent (dev)",
+  },
+  {
+    principalId: "00000000-0000-4000-8000-00000000d003",
+    label: "Gary Approver (linked)",
+    role: OperatorRole.GARY_APPROVER,
+    email: "gary.approver@wss-dev.test",
+    displayName: "Gary Approver",
+  },
+];
+
+/** In-memory operator rows (linked to the preset principal ids) for adapter preview only. */
+export const DEV_PREVIEW_OPERATOR_ROWS: readonly OperatorRow[] = DEV_ADAPTER_PRINCIPAL_PRESETS.map((preset) => ({
+  ...devRow(preset.role, preset.email, preset.displayName),
+  auth_user_id: preset.principalId,
+}));

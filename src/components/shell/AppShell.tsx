@@ -24,8 +24,19 @@ import {
 } from "../../data/readOnlyTicketData";
 import { auditTrail, getTicketDetail, ticketQueue, type MockApprovalItem, type MockAuditEvent, type MockTicketQueueItem } from "../../ui/mockData";
 import { filterTickets, getSearchFilterSummary, type TicketSearchFilters } from "../../search/ticketSearch";
-import { buildDevOperatorSession, DEV_OPERATOR_ROLE_OPTIONS, type DevOperatorRoleChoice } from "../../auth/devOperatorSession";
-import { getOperatorCapabilityFlags } from "../../auth/operatorCapabilities";
+import {
+  DEV_ADAPTER_PRINCIPAL_PRESETS,
+  DEV_OPERATOR_ROLE_OPTIONS,
+  DEV_PREVIEW_OPERATOR_ROWS,
+  type DevOperatorRoleChoice,
+} from "../../auth/devOperatorSession";
+import {
+  createAdapterPrincipalAuthState,
+  createDevRoleSwitcherAuthState,
+  getActiveCapabilityFlags,
+  getActiveOperatorSession,
+  type AuthMode,
+} from "../../auth/localAuthMode";
 
 export function AppShell() {
   const [searchText, setSearchText] = useState("");
@@ -36,6 +47,8 @@ export function AppShell() {
   const [blockedFilter, setBlockedFilter] = useState("all");
   const [identityFilter, setIdentityFilter] = useState("all");
   const [devOperatorRole, setDevOperatorRole] = useState<DevOperatorRoleChoice>("agency_admin");
+  const [authMode, setAuthMode] = useState<AuthMode>("dev_role_switcher");
+  const [adapterPrincipalId, setAdapterPrincipalId] = useState("");
   const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
   const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
   const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
@@ -473,9 +486,19 @@ export function AppShell() {
     setCloseTicketInProgress(false);
   };
 
-  // Phase 6I/6J: development-only operator session drives UI capability gating (NOT auth).
-  const operatorSession = useMemo(() => buildDevOperatorSession(devOperatorRole), [devOperatorRole]);
-  const capabilities = useMemo(() => getOperatorCapabilityFlags(operatorSession), [operatorSession]);
+  // Phase 6R: the local auth mode (dev role switcher OR adapter-principal preview) provides the
+  // operator session that drives UI capability gating. This is a LOCAL preview only — NOT a sign-in.
+  const localAuthState = useMemo(() => {
+    if (authMode === "adapter_principal") {
+      const trimmedId = adapterPrincipalId.trim();
+      const principal = trimmedId ? { id: trimmedId } : null;
+      return createAdapterPrincipalAuthState(principal, DEV_PREVIEW_OPERATOR_ROWS);
+    }
+    return createDevRoleSwitcherAuthState(devOperatorRole);
+  }, [authMode, devOperatorRole, adapterPrincipalId]);
+
+  const operatorSession = getActiveOperatorSession(localAuthState);
+  const capabilities = getActiveCapabilityFlags(localAuthState);
 
   // An action is offered only when BOTH the ticket-state is eligible (guarded dev mode) AND the
   // current operator role has the capability to see/perform it.
@@ -537,26 +560,88 @@ export function AppShell() {
           <section className="phase4a-card phase6-operator-card">
             <h2>Operator (Development Mode Only)</h2>
             <p className="placeholder-meta">
-              Local capability preview only — this is NOT a sign-in and performs no credential check. It builds a
-              synthetic in-memory operator session to preview role-based action visibility. No production auth behavior.
+              Local capability preview only — this is NOT a sign-in and performs no credential check. It previews
+              role-based action visibility from a synthetic in-memory operator session. No production auth behavior.
             </p>
-            <label className="phase6-operator-switcher">
-              Acting as
-              <select
-                value={devOperatorRole}
-                onChange={(event) => setDevOperatorRole(event.target.value as DevOperatorRoleChoice)}
-              >
-                {DEV_OPERATOR_ROLE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+
+            <fieldset className="phase6-auth-mode">
+              <legend>Development Auth Mode</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="wss-dev-auth-mode"
+                  value="dev_role_switcher"
+                  checked={authMode === "dev_role_switcher"}
+                  onChange={() => setAuthMode("dev_role_switcher")}
+                />
+                Dev Role Switcher
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="wss-dev-auth-mode"
+                  value="adapter_principal"
+                  checked={authMode === "adapter_principal"}
+                  onChange={() => setAuthMode("adapter_principal")}
+                />
+                Adapter Principal Preview
+              </label>
+            </fieldset>
+
+            {authMode === "dev_role_switcher" ? (
+              <label className="phase6-operator-switcher">
+                Acting as
+                <select
+                  value={devOperatorRole}
+                  onChange={(event) => setDevOperatorRole(event.target.value as DevOperatorRoleChoice)}
+                >
+                  {DEV_OPERATOR_ROLE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : (
+              <div className="phase6-adapter-preview">
+                <p className="placeholder-meta">
+                  Resolves an operator session via the adapter from a supplied synthetic auth principal id
+                  (id only — no real auth user, no DB writes). The linkage source of truth is auth_user_id.
+                </p>
+                <label className="phase6-operator-switcher">
+                  Principal preset
+                  <select value={adapterPrincipalId} onChange={(event) => setAdapterPrincipalId(event.target.value)}>
+                    <option value="">— none —</option>
+                    {DEV_ADAPTER_PRINCIPAL_PRESETS.map((preset) => (
+                      <option key={preset.principalId} value={preset.principalId}>
+                        {preset.label} ({preset.principalId})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="phase6-operator-switcher">
+                  Synthetic auth principal id
+                  <input
+                    type="text"
+                    value={adapterPrincipalId}
+                    onChange={(event) => setAdapterPrincipalId(event.target.value)}
+                    placeholder="synthetic uuid (dev only)"
+                  />
+                </label>
+                <p className="placeholder-meta" role="status">
+                  {operatorSession
+                    ? `Resolved operator session: ${operatorSession.displayName} · role ${operatorSession.role}`
+                    : adapterPrincipalId.trim()
+                      ? "No linked operator for this principal in dev."
+                      : "Enter or select a synthetic auth principal id to preview the adapter result."}
+                </p>
+              </div>
+            )}
+
             <p className="placeholder-meta">
               {operatorSession
-                ? `Signed-in (dev): ${operatorSession.displayName} · role ${operatorSession.role}`
-                : "No operator session (signed out) — operator actions are hidden."}
+                ? `Active operator (dev): ${operatorSession.displayName} · role ${operatorSession.role}`
+                : "No operator session — operator actions are hidden."}
             </p>
             <ul className="phase6-capability-list">
               <li>Create ticket: {capabilities.canSeeCreateTicket ? "visible" : "hidden"}</li>

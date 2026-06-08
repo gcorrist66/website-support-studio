@@ -203,7 +203,10 @@ function runAuthScenarios(runtime) {
 
 function runStaticSourceChecks() {
   const serviceRolePattern = /service_role|sb_secret_|SUPABASE_SERVICE_ROLE|SERVICE_ROLE_KEY/;
-  const supabaseRuntimePattern = /@supabase\/supabase-js|createClient\s*\(|supabase\.auth|from\s+["'][^"']*supabase/i;
+  // Blocks the real Supabase SDK / auth runtime (package imports, createClient, supabase.auth).
+  // Local relative imports of our own modules (e.g. "./supabaseAuthSessionAdapter", whose filename
+  // merely contains "supabase") are allowed — they are pure local TS, not a runtime dependency.
+  const supabaseRuntimePattern = /@supabase\/[a-z-]+|createClient\s*\(|supabase\.auth|from\s+["']https?:\/\/[^"']*supabase/i;
 
   const authDir = path.join(projectRoot, "src", "auth");
   const entries = fs.readdirSync(authDir, { withFileTypes: true });

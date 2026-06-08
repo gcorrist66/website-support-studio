@@ -172,9 +172,54 @@ plus the dev-apply evidence commit.
 - Diagnosed: complete · Fixed Locally: complete · Committed: complete (6Q commit)
 - File: `PHASE6_SUPABASE_AUTH_ADAPTER_CHECKPOINT.md`, this tracker.
 
+## Phase 6R — Local Auth Mode Abstraction
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6R commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/auth/localAuthMode.ts` — `AuthMode` (dev_role_switcher | adapter_principal),
+  `LocalAuthModeState`, `createDevRoleSwitcherAuthState`, `createAdapterPrincipalAuthState`,
+  `getActiveOperatorSession`, `getActiveCapabilityFlags`, `isAdapterModeAvailable`, `describeAuthMode`.
+  Plus dev adapter-preview fixtures (`DEV_ADAPTER_PRINCIPAL_PRESETS`, `DEV_PREVIEW_OPERATOR_ROWS`) in
+  `devOperatorSession.ts`. Pure; adapter mode only CONSUMES linkage state (no DB write, no linking, no
+  user creation); requires an explicitly supplied principal; never trusts email alone.
+
+## Phase 6S — Development Auth Mode UI
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6S commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/components/shell/AppShell.tsx` (+ `styles.css`) — a "Development Auth Mode" switch
+  (Dev Role Switcher / Adapter Principal Preview). Adapter preview offers preset + free-text synthetic
+  auth principal ids (id only — no email/password, no login button, no magic link), shows whether it
+  resolves to an operator session ("No linked operator for this principal in dev." when unresolved),
+  and capability flags update from the resolved session. No Supabase writes from the UI.
+
+## Phase 6T — Local Auth Mode Validation
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6T commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `scripts/validate-local-auth-mode.mjs` (`npm run validate:local-auth-mode`) — PASS (15 checks):
+  dev_role_switcher returns expected CS/Gary/Admin sessions; adapter mode uses
+  resolveOperatorSessionFromAuthPrincipal; email-only / no-principal / unlinked → unauthenticated;
+  adapter mode writes/links nothing; capability flags derive from active session; UI contains
+  "Development Auth Mode" and no login/signup/password/magic-link wording; no middleware/routes/RLS/
+  service-role.
+- Note: refined `scripts/validate-auth-boundary.mjs` Supabase-runtime pattern to block real `@supabase/`
+  package imports / `createClient(` / `supabase.auth` while allowing local relative imports of our own
+  `supabaseAuthSessionAdapter` module (filename contains "supabase"). Security intent preserved.
+
+## Phase 6T-DB — Dev Local Auth Mode DB Validation (performed)
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6T commit)
+- Pushed/Deployed/Verified/Closed: not complete (dev only; production untouched)
+- File: `scripts/validate-local-auth-mode-db.mjs` (`npm run validate:local-auth-mode-db`, guarded) — PASS (7 checks).
+  Ran against Supabase dev (ref `vrtfbbrwrxyljchywmzy`): linked a seeded operator to a SYNTHETIC
+  auth_user_id, resolved an `OperatorSession` through `localAuthMode` adapter_principal mode, verified
+  capability flags (cs_agent), confirmed nothing was linked by the adapter, cleared the link and
+  preserved rows; RLS remained disabled. No real auth users, no login; dev left clean (0 linked).
+
+## Phase 6U — Checkpoint
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6U commit)
+- File: `PHASE6_LOCAL_AUTH_MODE_CHECKPOINT.md`, this tracker.
+
 ## Safety Posture (unchanged)
 - No push, no deploy, no Vercel trigger.
 - No RLS enabled, no login UI, no public API routes, no customer portal, no email provider.
 - No production data changes; no secrets committed; no service-role key in client code.
-- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage/adapter checks are
-  reversible metadata tests only (no real Supabase Auth users, no magic links, no credentials).
+- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage/adapter/auth-mode
+  checks are reversible metadata tests only (no real Supabase Auth users, no magic links, no credentials).
