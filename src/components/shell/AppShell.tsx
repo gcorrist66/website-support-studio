@@ -4,7 +4,7 @@ import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
 import { CreateTicketForm } from "../tickets/CreateTicketForm";
 import { ActorRole } from "../../domain/ticketStatus";
-import { handleTriageTicket } from "../../handlers/ticketWorkflowHandlers";
+import { handleDraftReply, handleTriageTicket } from "../../handlers/ticketWorkflowHandlers";
 import {
   getReadOnlyApprovalQueue,
   getReadOnlyModeLabel,
@@ -31,6 +31,10 @@ export function AppShell() {
   const [triageMessage, setTriageMessage] = useState("");
   const [triageError, setTriageError] = useState("");
   const [triageInProgress, setTriageInProgress] = useState(false);
+  const [draftText, setDraftText] = useState("");
+  const [draftMessage, setDraftMessage] = useState("");
+  const [draftError, setDraftError] = useState("");
+  const [draftInProgress, setDraftInProgress] = useState(false);
 
   const loadReadOnlyData = async (modeOverride?: string) => {
     const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
@@ -160,7 +164,60 @@ export function AppShell() {
     setTriageInProgress(false);
   };
 
+  const handleDraftReplyAction = async () => {
+    if (readOnlyMode !== "supabase-dev-readonly") {
+      setDraftError("Draft reply is only available in guarded Supabase-dev data mode.");
+      return;
+    }
+
+    if (!selectedTicket?.workflowId) {
+      setDraftError("No workflow identifier available for this ticket.");
+      return;
+    }
+
+    const normalizedDraftText = draftText.trim();
+    if (!normalizedDraftText) {
+      setDraftError("Draft body is required.");
+      return;
+    }
+
+    setDraftError("");
+    setDraftMessage("");
+    setDraftInProgress(true);
+
+    const result = handleDraftReply({
+      tenantContext: {
+        agencyId: selectedTicket.tenantContext.agencyId,
+        clientId: selectedTicket.tenantContext.clientId,
+        siteId: selectedTicket.tenantContext.siteId,
+      },
+      actorContext: {
+        actorRole: ActorRole.CS_AGENT,
+        actorReference: "phase5d-ui-operator",
+      },
+      ticketId: selectedTicket.workflowId,
+      draftText: normalizedDraftText,
+    });
+
+    if (result.status === "error") {
+      setDraftError(result.error);
+      setDraftMessage("");
+      setDraftInProgress(false);
+      return;
+    }
+
+    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
+    setSelectedTicket(refreshed);
+    setAuditTimeline(timeline);
+    setDraftMessage(`Draft created for ticket ${selectedTicket.id}.`);
+    setDraftText("");
+    setDraftInProgress(false);
+  };
+
   const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
+  const canDraftReplySelected =
+    readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "triaged" && Boolean(selectedTicket.workflowId);
 
   return (
     <div className="phase4a-shell">
@@ -299,6 +356,13 @@ export function AppShell() {
             triageMessage={triageMessage}
             triageError={triageError}
             onTriage={handleTriageTicketAction}
+            draftText={draftText}
+            canDraft={canDraftReplySelected}
+            isDraftInProgress={draftInProgress}
+            draftMessage={draftMessage}
+            draftError={draftError}
+            onDraftTextChange={setDraftText}
+            onDraft={handleDraftReplyAction}
           />
 
           <section className="phase4a-card">

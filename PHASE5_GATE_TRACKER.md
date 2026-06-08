@@ -1,7 +1,7 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5C (Triage Flow)
+- Current focus: Phase 5D (Draft Reply Flow)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
@@ -172,6 +172,64 @@
   - No send/approval/close controls are present in this phase.
   - No customer communication providers or API routes added.
   - Triaged updates are write-only to local/Supabase path as intended.
+
+## 6) Phase 5D — Draft Reply Flow
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Evidence
+- Added draft reply form action in local detail view for triaged tickets:
+  - `src/components/tickets/ReadOnlyTicketDetail.tsx` exposes `Draft Reply` for draft-eligible tickets.
+  - `src/components/shell/AppShell.tsx` provides draft text state, action wiring, and status/error messaging.
+- Added draft service/handler hardening:
+  - `src/handlers/ticketWorkflowHandlers.ts` validates draft requests and actor context.
+  - `src/services/ticketWorkflowService.ts` validates non-empty draft text and persists draft + audit outputs.
+- Domain transition and actor constraints remain in force (CS-agent only and triaged state requirement).
+- Added draft validator:
+  - `scripts/validate-draft-reply.mjs`
+  - npm script `validate:draft-reply`
+- Validation status:
+  - `WSS_ALLOW_SUPABASE_VALIDATION=dev`
+  - `WSS_SUPABASE_ENVIRONMENT=dev`
+  - `WSS_SUPABASE_PROJECT_REF=vrtfbbrwrxyljchywmzy`
+  - `npm run validate:draft-reply`
+- Validation checks to cover:
+  - triaged → reply_drafted transition
+  - received → draft is blocked
+  - unauthorized actor blocked
+  - empty draft text blocked
+  - `ticket_draft_replies` row exists
+  - `reply_drafted` audit emitted
+  - no approvals/communications created
+  - cleanup path removes created rows
+- Boundary update:
+  - `scripts/validate-readonly-data.mjs` now permits `handleDraftReply` usage in UI shell only, while still blocking create/approval/send/close handlers and API routes.
+- Validation outcomes:
+  - `npm run lint` PASS
+  - `npm run typecheck` PASS
+  - `npm run build` PASS
+  - `npm run validate:domain` PASS
+  - `npm run validate:e2e` PASS
+  - `npm run validate:phase2a` PASS
+  - `npm run validate:persistence` PASS
+  - `npm run validate:contracts` PASS
+  - `npm run validate:handlers` PASS
+  - `npm run validate:route-boundary` PASS
+  - `npm run validate:ui-boundary` PASS
+  - `npm run validate:readonly-data` PASS
+  - `npm run validate:draft-reply` PASS
+
+### Controls preserved in Phase 5D
+- No API routes added
+- No auth/auth provider wiring
+- No customer portal
+- No customer communication/send/approve/close/write UI actions
+- No service role key in browser code (guarded/placeholder checks still in place)
 
 ## 3) Previous Gate Notes
 - Phase 4D remains the local mock UI baseline.

@@ -66,6 +66,14 @@ type ReadOnlyTicketDetailProps = {
   triageMessage?: string;
   triageError?: string;
   onTriage?: () => Promise<void>;
+  draftText?: string;
+  canDraft?: boolean;
+  isDraftInProgress?: boolean;
+  draftMessage?: string;
+  draftError?: string;
+  // eslint-disable-next-line no-unused-vars
+  onDraftTextChange?: (_draftBody: string) => void;
+  onDraft?: () => Promise<void>;
 };
 
 export function ReadOnlyTicketDetail({
@@ -75,6 +83,13 @@ export function ReadOnlyTicketDetail({
   triageMessage,
   triageError,
   onTriage,
+  draftText = "",
+  canDraft = false,
+  isDraftInProgress = false,
+  draftMessage,
+  draftError,
+  onDraftTextChange,
+  onDraft,
 }: ReadOnlyTicketDetailProps) {
   const hasTriageAction = typeof onTriage === "function";
   const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
@@ -97,7 +112,7 @@ export function ReadOnlyTicketDetail({
     <section className="phase4a-card">
       <h2>Read-only ticket detail</h2>
       <p className="placeholder-meta">
-        Mock data fallback available · No customer communication actions enabled · Triaged actions are phase 5C-gated.
+        Mock data fallback available · No customer communication, approval, or close actions are enabled.
       </p>
 
       <article className="phase4c-detail-card">
@@ -145,7 +160,7 @@ export function ReadOnlyTicketDetail({
       </article>
 
       <article className="phase4c-section">
-        <h4>Audit timeline (local mock)</h4>
+        <h4>Audit timeline</h4>
         <div className="placeholder-table">
           {ticket.auditTimeline.map((event) => (
             <div key={event.id} className="placeholder-row">
@@ -166,10 +181,35 @@ export function ReadOnlyTicketDetail({
             {triageLabel}
           </button>
         </div>
-        <p className="placeholder-meta">
-          No active approval/send/close controls are present in Phase 5C. Only triage is available for received tickets in guarded
-          Supabase mode.
-        </p>
+        <label htmlFor={`draft-${ticket.id}`} className="phase4c-label">
+          Draft reply body
+        </label>
+        <textarea
+          id={`draft-${ticket.id}`}
+          className="phase4a-textarea"
+          rows={4}
+          value={draftText}
+          onChange={(event) => {
+            onDraftTextChange?.(event.target.value);
+          }}
+          disabled={isDraftInProgress || !canDraft}
+          placeholder={canDraft ? "Draft reply text (phase 5D)" : "Draft is only available for triaged tickets in guarded mode"}
+        />
+        <button
+          type="button"
+          className="phase4a-action"
+          disabled={!canDraft || isDraftInProgress || !onDraft || !draftText.trim()}
+          onClick={() => {
+            if (canDraft && onDraft && draftText.trim()) {
+              onDraft();
+            }
+          }}
+        >
+          {isDraftInProgress ? "Drafting reply..." : canDraft ? "Draft Reply" : "Draft Reply (disabled)"}
+        </button>
+        <p className="placeholder-meta">Send/approval/close controls are still not enabled in this phase.</p>
+        {draftMessage && <p className="phase5b-success">{draftMessage}</p>}
+        {draftError && <p className="phase5b-error">{draftError}</p>}
         {triageMessage && <p className="phase5b-success">{triageMessage}</p>}
         {triageError && <p className="phase5b-error">{triageError}</p>}
       </article>

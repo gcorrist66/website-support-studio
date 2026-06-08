@@ -214,10 +214,13 @@ export function handleDraftReply(request: DraftReplyRequest): HandlerResult<Draf
   try {
     assertContractContext(request.tenantContext, request.actorContext);
     allowedActorGuard(request.actorContext.actorRole);
+    if (!request.draftText?.trim()) {
+      fail("draft text is required");
+    }
 
     const ticket = draftPersistedReply(
       request.ticketId,
-      request.draftText,
+      request.draftText.trim(),
       request.actorContext.actorReference,
       {
         draftAssumptions: request.draftAssumptions,

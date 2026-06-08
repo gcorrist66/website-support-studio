@@ -406,12 +406,16 @@ export function draftPersistedReply(
 ): Ticket {
   const session = getSession(ticketId);
   assertTenantIntegrity(session);
+  const normalizedDraftText = draftText.trim();
+  if (!normalizedDraftText) {
+    throw new Error("draftText is required");
+  }
 
   const ticket = createCustomerReplyDraft({
     ticketId,
     actorRole: ActorRole.CS_AGENT,
     actorReference,
-    draftText,
+    draftText: normalizedDraftText,
     draftAssumptions: options?.draftAssumptions,
     evidenceReference: options?.evidenceReference,
     qualityCheckFlag: options?.qualityCheckFlag,
@@ -426,7 +430,7 @@ export function draftPersistedReply(
   const draft = buildDraftRecord(
     session,
     ticketId,
-    draftText,
+    normalizedDraftText,
     {
       draftAssumptions: options?.draftAssumptions,
       evidenceReference: options?.evidenceReference,
