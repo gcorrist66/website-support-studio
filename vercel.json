@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "//": "Operator console (Vite SPA). Deploy this project to app.websitesupportstudio.com. It is private and must never be indexed. The marketing site deploys separately from the marketing/ directory to the apex domain.",
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
