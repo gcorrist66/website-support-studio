@@ -38,6 +38,7 @@ import {
   type AuthMode,
 } from "../../auth/localAuthMode";
 import { LoginShell } from "../auth/LoginShell";
+import { SessionSourcePrototype } from "../auth/SessionSourcePrototype";
 import { buildLoginShellState, type LoginShellStatus } from "../../auth/loginShellState";
 import {
   createDisabledSessionReadState,
@@ -811,6 +812,8 @@ export function AppShell() {
               <li>Operator admin: {devSessionReadState.capabilityFlags.canSeeOperatorAdmin ? "visible" : "hidden"}</li>
             </ul>
           </section>
+
+          <SessionSourcePrototype />
 
           <section className="phase4a-card">
             <h2>Workspace status</h2>
