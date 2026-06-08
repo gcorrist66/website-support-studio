@@ -9,11 +9,13 @@ import {
   handleDraftReply,
   handleRejectReply,
   handleRequestApproval,
+  handleSendApprovedReply,
   handleTriageTicket,
 } from "../../handlers/ticketWorkflowHandlers";
 import {
   getReadOnlyApprovalQueue,
   getReadOnlyModeLabel,
+  getReadOnlySendContext,
   getReadOnlyTicketAuditTimeline,
   getReadOnlyTicketDetail,
   getReadOnlyTicketQueue,
@@ -47,6 +49,9 @@ export function AppShell() {
   const [approvalDecisionMessage, setApprovalDecisionMessage] = useState("");
   const [approvalDecisionError, setApprovalDecisionError] = useState("");
   const [approvalDecisionInProgress, setApprovalDecisionInProgress] = useState(false);
+  const [sendReplyMessage, setSendReplyMessage] = useState("");
+  const [sendReplyError, setSendReplyError] = useState("");
+  const [sendReplyInProgress, setSendReplyInProgress] = useState(false);
 
   const loadReadOnlyData = async (modeOverride?: string) => {
     const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
@@ -342,6 +347,67 @@ export function AppShell() {
     await runApprovalDecision("reject");
   };
 
+  const handleSendReplyAction = async () => {
+    if (readOnlyMode !== "supabase-dev-readonly") {
+      setSendReplyError("Send reply is only available in guarded Supabase-dev data mode.");
+      return;
+    }
+
+    if (!selectedTicket?.workflowId) {
+      setSendReplyError("No workflow identifier available for this ticket.");
+      return;
+    }
+
+    setSendReplyError("");
+    setSendReplyMessage("");
+    setSendReplyInProgress(true);
+
+    // The send handler validates the approval id, draft id, and recipient email against
+    // persisted state, so resolve them read-only before issuing the local-only send.
+    const sendContext = await getReadOnlySendContext(selectedTicket.workflowId);
+    if (!sendContext) {
+      setSendReplyError("Could not resolve approved approval, draft, or recipient context for this ticket.");
+      setSendReplyInProgress(false);
+      return;
+    }
+
+    const result = handleSendApprovedReply({
+      tenantContext: {
+        agencyId: selectedTicket.tenantContext.agencyId,
+        clientId: selectedTicket.tenantContext.clientId,
+        siteId: selectedTicket.tenantContext.siteId,
+      },
+      actorContext: {
+        actorRole: ActorRole.CS_AGENT,
+        actorReference: "phase5g-ui-operator",
+      },
+      ticketId: selectedTicket.workflowId,
+      draftReplyId: sendContext.draftReplyId,
+      recipientEmail: sendContext.recipientEmail,
+      approvalContext: {
+        approvalId: sendContext.approvalId,
+        approvedByActorReference: sendContext.approvedByActorReference,
+        approvedAt: sendContext.approvedAt,
+      },
+      rationale: "Customer reply recorded as sent (local-only) from phase-5G UI",
+      communicationContext: { channel: "local_only" },
+    });
+
+    if (result.status === "error") {
+      setSendReplyError(result.error);
+      setSendReplyMessage("");
+      setSendReplyInProgress(false);
+      return;
+    }
+
+    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
+    setSelectedTicket(refreshed);
+    setAuditTimeline(timeline);
+    setSendReplyMessage(`Reply recorded as sent (local-only) for ticket ${selectedTicket.id}.`);
+    setSendReplyInProgress(false);
+  };
+
   const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
   const canDraftReplySelected =
     readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "triaged" && Boolean(selectedTicket.workflowId);
@@ -353,6 +419,10 @@ export function AppShell() {
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "awaiting_gary_approval" &&
     Boolean(selectedTicket.workflowId);
+  const canSendReplySelected =
+    readOnlyMode === "supabase-dev-readonly" &&
+    selectedTicket.status === "approved_to_send" &&
+    Boolean(selectedTicket.workflowId);
 
   return (
     <div className="phase4a-shell">
@@ -363,7 +433,7 @@ export function AppShell() {
           <p>Phase 5A Live Read-Only Data Integration</p>
         </div>
             <span className="status-pill">
-              {getReadOnlyModeLabel()} · Triage/draft/approval-request phase (send/close disabled)
+              {getReadOnlyModeLabel()} · Triage/draft/approval/send phase (close disabled)
             </span>
           </header>
 
@@ -393,7 +463,8 @@ export function AppShell() {
                 <li>Planned workflow: draft → approval → send → close.</li>
                 <li>Phase 5C enables triage action (received → triaged) in guarded workflow execution.</li>
                 <li>Phase 5E enables request approval (reply_drafted → awaiting_gary_approval) in guarded workflow execution.</li>
-                <li>Send/close actions are not available in this phase.</li>
+                <li>Phase 5G enables send reply (approved_to_send → sent_to_customer) as local-only persistence in guarded mode.</li>
+                <li>Close ticket action is not available in this phase.</li>
             </ul>
           </section>
 
@@ -510,6 +581,11 @@ export function AppShell() {
             approvalDecisionError={approvalDecisionError}
             onApproveReply={handleApproveReplyAction}
             onRejectReply={handleRejectReplyAction}
+            canSendReply={canSendReplySelected}
+            isSendReplyInProgress={sendReplyInProgress}
+            sendReplyMessage={sendReplyMessage}
+            sendReplyError={sendReplyError}
+            onSendReply={handleSendReplyAction}
           />
 
           <section className="phase4a-card">
@@ -553,7 +629,7 @@ export function AppShell() {
             <li>Read-only data mode: {readOnlyMode}.</li>
             <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
             <li>Route files: not introduced in this phase.</li>
-            <li>Live writes/mutations: triage/draft/approval-request in guarded mode; send/close actions disabled.</li>
+            <li>Live writes/mutations: triage/draft/approval/send (local-only, no provider) in guarded mode; close action disabled.</li>
             <li>Auth/email/provider: not added.</li>
           </ul>
         </section>

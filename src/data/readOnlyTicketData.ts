@@ -405,6 +405,92 @@ export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTic
   };
 }
 
+export interface ReadOnlySendContext {
+  approvalId: string;
+  approvedByActorReference: string;
+  approvedAt: string;
+  draftReplyId: string;
+  recipientEmail: string;
+}
+
+interface SupabaseApprovedApprovalRow {
+  id?: string;
+  approver_id?: string;
+  requested_by?: string;
+  status?: string;
+  decided_at?: string;
+}
+
+interface SupabaseDraftIdRow {
+  id?: string;
+  created_at?: string;
+}
+
+interface SupabaseRecipientRow {
+  submitter_email?: string | null;
+}
+
+// Read-only helper that resolves the context the send handler validates against
+// (approved approval id/reference/time, latest draft id, recipient email). This performs
+// reads only; it never mutates and falls back to null outside guarded dev mode.
+export async function getReadOnlySendContext(workflowId: string): Promise<ReadOnlySendContext | null> {
+  if (getReadOnlyDataMode() !== "supabase-dev-readonly") {
+    return null;
+  }
+
+  const client = createSupabaseClient();
+
+  const approvalQuery = await client
+    .from("ticket_approvals")
+    .select("id,approver_id,requested_by,status,decided_at")
+    .eq("ticket_id", workflowId)
+    .eq("status", "approved")
+    .order("decided_at", { ascending: false })
+    .limit(1);
+
+  if (approvalQuery.error || !approvalQuery.data || approvalQuery.data.length === 0) {
+    return null;
+  }
+  const approval = toRecord(approvalQuery.data[0]) as SupabaseApprovedApprovalRow | undefined;
+  const approvalId = approval?.id?.trim();
+  const approvedByActorReference = (approval?.approver_id ?? approval?.requested_by ?? "").trim();
+  const approvedAt = approval?.decided_at?.trim();
+  if (!approvalId || !approvedByActorReference || !approvedAt) {
+    return null;
+  }
+
+  const draftQuery = await client
+    .from("ticket_draft_replies")
+    .select("id,created_at")
+    .eq("ticket_id", workflowId)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  if (draftQuery.error || !draftQuery.data || draftQuery.data.length === 0) {
+    return null;
+  }
+  const draftReplyId = (toRecord(draftQuery.data[0]) as SupabaseDraftIdRow | undefined)?.id?.trim();
+  if (!draftReplyId) {
+    return null;
+  }
+
+  const recipientQuery = await client
+    .from("tickets")
+    .select("submitter_email")
+    .eq("id", workflowId)
+    .single();
+
+  if (recipientQuery.error || !recipientQuery.data) {
+    return null;
+  }
+  const recipientEmail = (toRecord(recipientQuery.data) as SupabaseRecipientRow | undefined)?.submitter_email?.trim();
+  if (!recipientEmail) {
+    return null;
+  }
+
+  return { approvalId, approvedByActorReference, approvedAt, draftReplyId, recipientEmail };
+}
+
 export async function getReadOnlyApprovalQueue(): Promise<MockApprovalItem[]> {
   if (getReadOnlyDataMode() !== "supabase-dev-readonly") {
     return approvalQueue;

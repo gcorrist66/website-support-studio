@@ -85,6 +85,11 @@ type ReadOnlyTicketDetailProps = {
   approvalDecisionError?: string;
   onApproveReply?: () => Promise<void>;
   onRejectReply?: () => Promise<void>;
+  canSendReply?: boolean;
+  isSendReplyInProgress?: boolean;
+  sendReplyMessage?: string;
+  sendReplyError?: string;
+  onSendReply?: () => Promise<void>;
 };
 
 export function ReadOnlyTicketDetail({
@@ -112,6 +117,11 @@ export function ReadOnlyTicketDetail({
   approvalDecisionError,
   onApproveReply,
   onRejectReply,
+  canSendReply = false,
+  isSendReplyInProgress = false,
+  sendReplyMessage,
+  sendReplyError,
+  onSendReply,
 }: ReadOnlyTicketDetailProps) {
   const hasTriageAction = typeof onTriage === "function";
   const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
@@ -161,6 +171,16 @@ export function ReadOnlyTicketDetail({
       return;
     }
     await onRejectReply();
+  };
+
+  const hasSendReplyAction = typeof onSendReply === "function";
+  const sendReplyDisabled = !hasSendReplyAction || !canSendReply || isSendReplyInProgress;
+
+  const handleSendReply = async () => {
+    if (sendReplyDisabled) {
+      return;
+    }
+    await onSendReply();
   };
 
   return (
@@ -296,7 +316,22 @@ export function ReadOnlyTicketDetail({
         {!canDecideApproval && (
           <p className="placeholder-meta">Approve Reply / Reject Reply: Not active for this ticket state</p>
         )}
-        <p className="placeholder-meta">Send/close controls are still not enabled in this phase.</p>
+        <div className="phase4c-actions">
+          <button
+            type="button"
+            className="phase4a-action"
+            disabled={sendReplyDisabled}
+            onClick={handleSendReply}
+          >
+            {isSendReplyInProgress ? "Sending reply..." : "Send Reply"}
+          </button>
+        </div>
+        {!canSendReply && (
+          <p className="placeholder-meta">Send Reply: Not active for this ticket state</p>
+        )}
+        <p className="placeholder-meta">Close controls are still not enabled in this phase.</p>
+        {sendReplyMessage && <p className="phase5b-success">{sendReplyMessage}</p>}
+        {sendReplyError && <p className="phase5b-error">{sendReplyError}</p>}
         {approvalDecisionMessage && <p className="phase5b-success">{approvalDecisionMessage}</p>}
         {approvalDecisionError && <p className="phase5b-error">{approvalDecisionError}</p>}
         {approvalRequestMessage && <p className="phase5b-success">{approvalRequestMessage}</p>}

@@ -1,13 +1,13 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5F (Gary Approval Decision Flow)
+- Current focus: Phase 5G (Customer Communication — local-only send)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
-- Customer communication: not implemented
-- Mutations: create + triage + draft + request-approval + approval-decision (approve/reject) path implemented locally
+- Customer communication: persistence-only (local), no provider/email integration
+- Mutations: create + triage + draft + request-approval + approval-decision + send (local-only) path implemented locally
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
@@ -366,6 +366,83 @@
 - No auth/auth provider wiring
 - No customer portal
 - No send reply / send email / customer communication wiring
+- No close ticket UI action or handler wired into the UI
+- No service role key in browser code (guarded/placeholder checks still in place)
+
+## 9) Phase 5G — Customer Communication (local-only send)
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Scope
+- Implemented only `approved_to_send → sent_to_customer` (Send Reply).
+- Communication is persistence-only: a `ticket_communications` row is recorded locally.
+- Not implemented: real email send, provider integration (Resend/SendGrid/SMTP/etc.),
+  ticket closure, auth, API routes, customer portal, deployment, push.
+
+### Evidence
+- Handlers/service/domain reused (already present): `handleSendApprovedReply` →
+  `sendPersistedCustomerReplyLocalOnly` → domain `sendApprovedCustomerReply`.
+  - Send requires: ticket in `approved_to_send`, an `approved` approval record, a recipient
+    customer email, and a valid actor context.
+  - Send records a `ticket_communications` row (`delivery_status='pending'`, `external_provider`
+    and `external_message_id` NULL — no provider, nothing actually delivered), transitions the
+    ticket to `sent_to_customer`, and emits a `reply_sent` audit event.
+- Read-only support helper (reads only, no mutations):
+  - `src/data/readOnlyTicketData.ts: getReadOnlySendContext` resolves the approved approval id /
+    approver reference / approved-at, the latest draft id, and the recipient email for a ticket so
+    the UI can issue a send that satisfies the handler's approval-context validation.
+- UI send action:
+  - `src/components/tickets/ReadOnlyTicketDetail.tsx` exposes `Send Reply`, enabled only when
+    eligible (approved_to_send in guarded mode); otherwise disabled with copy
+    `Not active for this ticket state`. No Close Ticket control added.
+  - `src/components/shell/AppShell.tsx` wires the send in guarded Supabase-dev mode
+    (`canSendReplySelected = approved_to_send`), resolves send context read-only, shows
+    status/error messaging, and refreshes detail/audit.
+- Boundary update:
+  - `scripts/validate-readonly-data.mjs` now permits `handleSendApprovedReply` in the UI shell only,
+    while still blocking create/close/block/unblock handlers and API routes.
+- Added send validator:
+  - `scripts/validate-send-reply.mjs`
+  - npm script `validate:send-reply`
+- Validation proofs (all pass, guarded dev env):
+  - approved_to_send → sent_to_customer succeeds
+  - communication row exists (recipient recorded)
+  - reply_sent audit exists
+  - no real email sent (nothing marked delivered/sent; delivery stays local pending)
+  - no provider integration (external_provider / external_message_id remain NULL)
+  - missing email fails (and persists nothing)
+  - missing approval fails (and persists nothing)
+  - unauthorized actor fails (and persists nothing)
+  - cleanup removes created rows; database left clean
+- Validation outcomes:
+  - `npm run lint` PASS
+  - `npm run typecheck` PASS
+  - `npm run build` PASS
+  - `npm run validate:domain` PASS
+  - `npm run validate:e2e` PASS
+  - `npm run validate:phase2a` PASS
+  - `npm run validate:persistence` PASS
+  - `npm run validate:contracts` PASS
+  - `npm run validate:handlers` PASS
+  - `npm run validate:route-boundary` PASS
+  - `npm run validate:ui-boundary` PASS
+  - `npm run validate:readonly-data` PASS
+  - `npm run validate:draft-reply` PASS (guarded dev env)
+  - `npm run validate:request-approval` PASS (guarded dev env)
+  - `npm run validate:approval-decision` PASS (guarded dev env)
+  - `npm run validate:send-reply` PASS (guarded dev env)
+  - Note: run the guarded Supabase validators sequentially; concurrent runs contend on the shared dev DB.
+
+### Controls preserved in Phase 5G
+- No API routes added
+- No auth/auth provider wiring
+- No customer portal
+- No real email send and no provider integration (Resend/SendGrid/SMTP/etc.) — persistence-only
 - No close ticket UI action or handler wired into the UI
 - No service role key in browser code (guarded/placeholder checks still in place)
 

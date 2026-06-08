@@ -26,7 +26,8 @@
     "validate:triage-ticket": "node scripts/validate-triage-ticket.mjs",
     "validate:draft-reply": "node scripts/validate-draft-reply.mjs",
     "validate:request-approval": "node scripts/validate-request-approval.mjs",
-    "validate:approval-decision": "node scripts/validate-approval-decision.mjs"
+    "validate:approval-decision": "node scripts/validate-approval-decision.mjs",
+    "validate:send-reply": "node scripts/validate-send-reply.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
