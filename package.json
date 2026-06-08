@@ -30,7 +30,9 @@
     "validate:send-reply": "node scripts/validate-send-reply.mjs",
     "validate:close-ticket": "node scripts/validate-close-ticket.mjs",
     "validate:auth-boundary": "node scripts/validate-auth-boundary.mjs",
-    "validate:search-boundary": "node scripts/validate-search-boundary.mjs"
+    "validate:search-boundary": "node scripts/validate-search-boundary.mjs",
+    "validate:operators": "node scripts/validate-operators.mjs",
+    "validate:operator-seed": "node scripts/validate-operator-seed.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
