@@ -1,25 +1,57 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5 MMVP local checkpoint (complete)
-- Authority: local UI read-only proof only
-- Deployment status: not deployed
-- Push status: not pushed
+- Current focus: Phase 5 MMVP — production gate (closed)
+- Authority: read-only operator UI shipped to production; mutations remain guarded/local-only
+- Deployment status: deployed to production (Vercel)
+- Push status: pushed (origin/main)
 - Auth: not implemented
 - Customer communication: persistence-only (local), no provider/email integration
-- Mutations: full local lifecycle — create + triage + draft + request-approval + approval-decision + send (local-only) + close — implemented locally
+- Mutations: full local lifecycle — create + triage + draft + request-approval + approval-decision + send (local-only) + close — implemented locally; production bundle has no Supabase credentials, so it runs read-only mock mode
 
-## 0) Phase 5 MMVP Local Checkpoint
-- Status: complete (local only) — not pushed, not deployed
-- Branch: `phase3-local-foundation`
-- Latest commit at checkpoint: `9dbcffa Add Phase 5H ticket closure flow`
-- Full lifecycle (create → triage → draft → request-approval → approve/reject → send (local-only) → close) implemented and validated locally.
-- Evidence: see `PHASE5_MMVP_LOCAL_CHECKPOINT.md`. All standard validators pass; all guarded
-  Supabase validators (`draft-reply`, `request-approval`, `approval-decision`, `send-reply`,
-  `close-ticket`) pass sequentially under the dev guard and self-clean.
-- Intentionally not built: auth, API routes, real email/communication provider, customer portal, deploy/push.
-- Recommended next step: secured API route + auth boundary, then a real provider behind the
-  existing local-only send seam (`sendPersistedCustomerReplyLocalOnly`).
+## 0) Phase 5 MMVP Production Gate
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: complete — `origin/main` at `6db5b09`; branch `phase3-local-foundation` pushed and in sync
+- Deployed: complete — Vercel production deployment `dpl_4ukhJE3Xe18B5oVD1ifztisTK9ot` (state READY, target production, commit SHA `6db5b09`)
+- Production Verified: complete — see evidence below
+- Closed: complete
+
+### Local checkpoint reference
+- Branch: `phase3-local-foundation`; checkpoint commit `6db5b09 Document Phase 5 MMVP local checkpoint`.
+- Full lifecycle (create → triage → draft → request-approval → approve/reject → send (local-only) → close)
+  implemented and validated locally. See `PHASE5_MMVP_LOCAL_CHECKPOINT.md`.
+
+### Pre-push validation (all PASS)
+- Standard: lint, typecheck, build, validate:domain, e2e, phase2a, persistence, contracts, handlers,
+  route-boundary, ui-boundary, readonly-data.
+- Guarded Supabase (sequential, dev guard, self-cleaning): draft-reply, request-approval,
+  approval-decision, send-reply, close-ticket — all PASS.
+
+### Push / merge
+- Pushed `phase3-local-foundation` (`8f5f620..6db5b09`).
+- `main` fast-forward-only merge of the branch succeeded (no force); pushed `main` (`4005ce9..6db5b09`).
+- `origin/main` and local `main` in sync (0/0).
+
+### Production verification (https://website-support-studio.vercel.app/)
+- App loads: HTTP 200, text/html.
+- Vercel production deployment READY for commit `6db5b09` (ref `main`).
+- WSS operator UI present (bundle contains "Internal Operator Workspace").
+- No API routes exposed: `/api/tickets` → 404 NOT_FOUND.
+- No auth required yet: 200 with no login redirect / no 401.
+- No real email provider active: only the defensive `hasNoProviderContractHints` reject-regex is present
+  (no sendgrid/postmark/mailgun/resend/SMTP integration).
+- No customer portal (single internal operator SPA).
+- No service-role key exposed: only the defensive `isLikelyAnonKey` reject code is present; no
+  `sb_secret_<key>`, no `eyJ…` JWT, and no `*.supabase.co` URL/anon credentials baked into the bundle —
+  production therefore runs in read-only mock mode (the live-data guard requires non-VITE `WSS_*` vars
+  absent from the client bundle).
+
+### Recommended next step
+- Secured API route + auth boundary (server-side actor identity + tenant scoping), then a real
+  email/communication provider behind the existing local-only send seam
+  (`sendPersistedCustomerReplyLocalOnly`). Keep each step gated and independently validated.
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
