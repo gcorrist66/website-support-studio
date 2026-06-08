@@ -120,8 +120,18 @@
   - missing description rejected
   - missing email rejected
   - no approval rows written on create
+  - no draft rows written on create
+  - no message rows written on create
   - no communication rows written on create
   - cleanup removes created ticket/audit records
+- Added hardening checks:
+  - tenant context required by create
+  - actor context required by create
+  - tenant/client/site hierarchy integrity check
+  - exactly one ticket row required for create
+  - explicit local validation guard enforcement
+  - local create cleanup reliability check
+- No `ticket_messages`, `ticket_draft_replies`, `ticket_approvals`, and `ticket_communications` are now part of create-only persistence assertions.
 - Constraint checks for Phase 5B:
   - No triage, approval, send, or close actions introduced.
   - No customer portal changes.

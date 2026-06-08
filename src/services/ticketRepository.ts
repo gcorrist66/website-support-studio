@@ -381,7 +381,6 @@ function buildAuditRow(event: TicketAuditEvent, tenant: TicketTenantIds): Databa
 
 export function persistWorkflowCreate(input: TicketLifecycleCreateInput): void {
   assertLocalExecutionGate();
-  assert(input.messages.length > 0, "Workflow create requires initial message");
 
   const payload = buildSupabaseWorkflowPayload({
     agency: input.agency,

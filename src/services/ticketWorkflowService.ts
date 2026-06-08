@@ -8,7 +8,6 @@ import type {
   Ticket,
   TicketCommunicationRecord,
   TicketDraftReply,
-  TicketMessage,
   TicketSubmitter,
 } from "../domain/types";
 import {
@@ -213,24 +212,6 @@ function markIds(knownIds: Set<string>, ids: string[]): void {
   }
 }
 
-function buildInitialMessage(
-  session: ServiceSession,
-  ticket: Ticket,
-  rawMessage: string,
-  intakeChannel: string,
-  source: string,
-): TicketMessage {
-  return {
-    messageId: generateRuntimeUuid(),
-    ticketId: ticket.ticketId,
-    submittedBySubmitterId: session.submitter?.submitterId,
-    rawMessage,
-    receivedAt: ticket.createdAt,
-    intakeChannel,
-    source,
-  };
-}
-
 function buildDraftRecord(session: ServiceSession, ticketId: string, draftText: string, options?: {
   draftAssumptions?: string;
   evidenceReference?: string;
@@ -355,14 +336,6 @@ export function createPersistedTicket(input: CreatePersistedTicketInput): Ticket
   const auditTrail = getAuditTrail(ticket.ticketId);
   session.persistedAuditIds = new Set(auditTrail.map((event) => event.id));
 
-  const initialMessage = buildInitialMessage(
-    session,
-    ticket,
-    input.ticket.rawMessage,
-    input.ticket.intakeChannel,
-    input.ticket.source,
-  );
-
   const payload: TicketLifecycleCreateInput = {
     agency,
     client,
@@ -387,7 +360,7 @@ export function createPersistedTicket(input: CreatePersistedTicketInput): Ticket
           siteId: submitter.siteId,
         }
       : undefined,
-    messages: [initialMessage],
+    messages: [],
     audits: auditTrail,
   };
 

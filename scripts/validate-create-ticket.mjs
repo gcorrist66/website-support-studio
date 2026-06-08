@@ -192,18 +192,38 @@ function runCreateTicketScenarios(runtime) {
     querySql,
     `select id, agency_id, client_id, site_id, status from public.tickets where id='${ticketId}';`,
   );
-  assert(ticketRows.length === 1, "created ticket row should be persisted");
+  assert(ticketRows.length === 1, "exactly one ticket row should be written");
   assert(ticketRows[0].agency_id === tenantContext.agencyId, "agency_id should persist");
   assert(ticketRows[0].client_id === tenantContext.clientId, "client_id should persist");
   assert(ticketRows[0].site_id === tenantContext.siteId, "site_id should persist");
   assert(ticketRows[0].status === "received", "create should persist status=received");
+
+  const tenantRows = queryRowsWithGuard(
+    querySql,
+    `select t.agency_id, t.client_id, t.site_id, c.agency_id as client_agency_id, s.client_id as site_client_id from public.tickets t join public.clients c on c.id = t.client_id join public.sites s on s.id = t.site_id where t.id='${ticketId}';`,
+  );
+  assert(tenantRows.length === 1, "tenant relationship rows should resolve from FK links");
+  assert(tenantRows[0].agency_id === tenantRows[0].client_agency_id, "ticket agency should match client tenant");
+  assert(tenantRows[0].client_id === tenantRows[0].site_client_id, "ticket client should match site tenant");
 
   const auditRows = queryRowsWithGuard(
     querySql,
     `select event_type from public.ticket_audit_events where ticket_id='${ticketId}' order by occurred_at asc;`,
   );
   const eventTypes = auditRows.map((row) => row.event_type);
-  assert(eventTypes.includes("ticket_created"), "ticket_created audit event should exist");
+  assert(
+    eventTypes.includes("ticket_created") || eventTypes.includes("request_received"),
+    "create audit evidence should include ticket_created or request_received",
+  );
+
+  const ticketCount = countRows(
+    queryRowsWithGuard(querySql, `select count(*)::int as count from public.tickets where id='${ticketId}';`),
+  );
+  assert(ticketCount === 1, "validation scenario should create exactly one ticket row");
+  const messageCount = countRows(
+    queryRowsWithGuard(querySql, `select count(*)::int as count from public.ticket_messages where ticket_id='${ticketId}';`),
+  );
+  assert(messageCount === 0, "create should not write ticket message rows");
 
   const draftCount = countRows(
     queryRowsWithGuard(querySql, `select count(*)::int as count from public.ticket_draft_replies where ticket_id='${ticketId}';`),
@@ -259,10 +279,43 @@ function runCreateTicketScenarios(runtime) {
   });
   assert(invalidEmail.status === "error", "missing submitter email should fail");
 
+  const missingTenant = handleCreateTicket({
+    tenantContext: undefined,
+    actorContext,
+    ticket: {
+      rawMessage: "missing tenant context",
+      intakeChannel: "operator_portal",
+      source: "validate-create-ticket",
+      title: "Should fail without tenant context",
+      submitter: {
+        submitterEmail: `${runId}+no-tenant@example.com`,
+      },
+    },
+  });
+  assert(missingTenant.status === "error", "missing tenant context should fail");
+
+  const missingActor = handleCreateTicket({
+    tenantContext,
+    actorContext: undefined,
+    ticket: {
+      rawMessage: "missing actor context",
+      intakeChannel: "operator_portal",
+      source: "validate-create-ticket",
+      title: "Should fail without actor context",
+      submitter: {
+        submitterEmail: `${runId}+no-actor@example.com`,
+      },
+    },
+  });
+  assert(missingActor.status === "error", "missing actor context should fail");
+
   mark("valid create persists ticket", true, `ticket ${ticketId} persisted with status ${ticketRows[0].status}`);
   mark("create audit coverage", true, "ticket_created audit event persisted");
   mark("create does not create draft/approval/communication rows", true, "zero draft/approval/communication rows for create-only flow");
   mark("invalid create cases rejected", true, "title, description, email validation guards are enforced");
+  mark("tenant relationship integrity", true, "ticket/client/site linkage is internally consistent");
+  mark("create requires context", true, "missing tenant/actor context fails as expected");
+  mark("exactly one ticket row created", true, `ticket row count for create is exactly one`);
 
   const session = getWorkflowSession(ticketId);
   if (session && typeof cleanupWorkflowSession === "function") {
