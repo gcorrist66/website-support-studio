@@ -19,10 +19,8 @@ export const ORG = {
   jurisdiction: "State of Florida, United States",
   founder: "Gary Corriston",
   address: {
-    street: "6601 South Westshore Boulevard #2403",
     locality: "Tampa",
     region: "FL",
-    postalCode: "33616",
     country: "US",
     countryName: "United States",
   },
@@ -35,6 +33,11 @@ export const CONTACT = {
   bookingUrl: "https://calendar.app.google/bXXqePJJqhLinTgX8",
   linkedin: "https://www.linkedin.com/company/corriston-consulting/",
 } as const;
+
+// ---- Operator console (authenticated app) -----------------------------------
+export const APP_URL = "https://app.websitesupportstudio.com";
+// Primary conversion destination for the public "Join Now" CTA.
+export const JOIN_PATH = "/pricing";
 
 // ---- Sub-processors / vendors actually in the stack -------------------------
 // Used to keep the privacy, cookie, and sub-processor disclosures truthful.

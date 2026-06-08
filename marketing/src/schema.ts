@@ -18,10 +18,8 @@ export const ID = {
 
 const postalAddress = {
   "@type": "PostalAddress",
-  streetAddress: ORG.address.street,
   addressLocality: ORG.address.locality,
   addressRegion: ORG.address.region,
-  postalCode: ORG.address.postalCode,
   addressCountry: ORG.address.country,
 };
 

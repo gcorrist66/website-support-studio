@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { breadcrumbSchema, personSchema, faqSchema } from "../schema";
-import { ORG, CONTACT } from "../consts";
+import { ORG, JOIN_PATH } from "../consts";
 
 const faqs = [
   {
@@ -70,8 +70,8 @@ const schemas = [
       </p>
 
       <div class="hero-actions" style="margin-top:2rem;">
-        <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book a scoping call</a>
-        <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">read the launch announcement</a>
+        <a class="btn btn-primary btn-cta" href={JOIN_PATH}>Join Now</a>
+        <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">Read the Launch Announcement</a>
       </div>
 
       <div class="faq" style="margin-top:3rem;">

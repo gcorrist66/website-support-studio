@@ -168,7 +168,11 @@ main {
   padding: 0.7rem 1.15rem;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: filter 0.15s ease;
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 .btn:hover {
   text-decoration: none;
@@ -187,6 +191,46 @@ main {
 }
 .btn-ghost:hover {
   background: var(--surface-muted);
+}
+
+/* Emphasised conversion CTA — restrained "pop" using the existing palette only.
+   A brand-blue lift/shadow plus a thin amber→cyan→mulberry→blue accent underline. */
+.btn-cta {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.85rem 1.6rem;
+  position: relative;
+  box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--brand-blue) 55%, transparent);
+}
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-amber) 0 25%,
+    var(--brand-cyan) 25% 50%,
+    var(--brand-mulberry) 50% 75%,
+    var(--brand-blue) 75% 100%
+  );
+  opacity: 0.85;
+}
+.btn-cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 12px 26px -8px color-mix(in srgb, var(--brand-blue) 70%, transparent);
+}
+.btn-cta:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px -6px color-mix(in srgb, var(--brand-blue) 55%, transparent);
+}
+.btn-cta:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand-blue) 45%, transparent);
+  outline-offset: 2px;
 }
 
 /* Cards / grids */

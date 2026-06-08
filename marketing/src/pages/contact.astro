@@ -38,14 +38,17 @@ const schemas = [
       <h1>Let's scope your website operations.</h1>
       <p class="lede" style="margin-top:1rem;">
         Tell us about your sites and request volume, and we'll confirm scope and pricing for the right tier.
-        The fastest path is a short scoping call.
+        Start with a short intake — it takes only a few minutes.
       </p>
 
       <div class="grid grid-2" style="margin-top:2.5rem;">
         <div class="card">
-          <h3 style="margin-top:0;">book_a_call</h3>
-          <p style="color:var(--text-muted);">A 30-minute scoping conversation to confirm scope, sites, and expected request volume.</p>
-          <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">schedule a call</a>
+          <h3 style="margin-top:0;">start_intake</h3>
+          <p style="color:var(--text-muted);">Review the engagement tiers and start a short intake so we can confirm scope, sites, and expected request volume.</p>
+          <a class="btn btn-primary btn-cta" href="/pricing">Join Now</a>
+          <p style="margin:0.85rem 0 0; font-size:0.82rem; color:var(--text-subtle);">
+            Prefer to talk first? <a href={CONTACT.bookingUrl} target="_blank" rel="noopener">Schedule an intro call</a>.
+          </p>
         </div>
         <div class="card">
           <h3 style="margin-top:0;">email_us</h3>
@@ -58,8 +61,7 @@ const schemas = [
         <h3 style="margin-top:0;">operated_by</h3>
         <p style="margin:0; color:var(--text);">{ORG.legalName}</p>
         <p style="margin:0.25rem 0 0; color:var(--text-muted);">
-          {ORG.address.street}<br />
-          {ORG.address.locality}, {ORG.address.region} {ORG.address.postalCode}, {ORG.address.countryName}
+          {ORG.address.locality}, {ORG.address.region}
         </p>
         <p style="margin:0.75rem 0 0;">
           <a href={CONTACT.linkedin} target="_blank" rel="noopener">linkedin</a>

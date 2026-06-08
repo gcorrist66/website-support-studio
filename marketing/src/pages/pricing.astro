@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "../schema";
-import { CONTACT } from "../consts";
+import { APP_URL } from "../consts";
 
 // Enterprise engagements are scoped and priced per organization — no public
 // figures. Tiers describe scope and accountability, not a price list.
@@ -87,13 +87,13 @@ const schemas = [
         misrepresent the work.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book a scoping call</a>
-        <a class="btn btn-ghost" href={`mailto:${CONTACT.email}`}>email for a quote</a>
+        <a class="btn btn-primary btn-cta" href="#engagement_tiers">Join Now</a>
+        <a class="btn btn-ghost" href={APP_URL}>Login</a>
       </div>
     </div>
   </section>
 
-  <section class="section" style="background:var(--surface-muted);">
+  <section class="section" id="engagement_tiers" style="background:var(--surface-muted);">
     <div class="container">
       <p class="kicker">engagement_tiers</p>
       <h2>Three tiers, by scope and accountability.</h2>
@@ -119,6 +119,22 @@ const schemas = [
         Tiers differ in the scope of execution and the number of sites covered, not in the level of
         accountability.
       </p>
+    </div>
+  </section>
+
+  <!-- Strong conversion CTA -->
+  <section class="section" id="contact" style="background:var(--surface-dark);">
+    <div class="container" style="max-width:760px; text-align:center;">
+      <div class="accent-bar" style="max-width:200px; margin:0 auto 1.5rem;"></div>
+      <h2 style="color:var(--wordmark-ink-inverse);">Ready to move website support into an operating model?</h2>
+      <p class="lede" style="margin:1rem auto 1.75rem; color:#cbd5e1;">
+        Start with a short intake so we can understand your sites, request volume, platforms, and approval
+        requirements.
+      </p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary btn-cta" href="/contact">Join Now</a>
+        <a class="btn btn-ghost" href={APP_URL} style="color:var(--wordmark-ink-inverse); border-color:var(--border-strong);">Login</a>
+      </div>
     </div>
   </section>
 

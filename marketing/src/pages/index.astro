@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { serviceSchema, faqSchema } from "../schema";
-import { CONTACT } from "../consts";
+import { JOIN_PATH } from "../consts";
 
 const faqs = [
   {
@@ -50,8 +50,8 @@ const schemas = [
         mandatory human approval before anything ships.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book a scoping call</a>
-        <a class="btn btn-ghost" href="/services">see how it works</a>
+        <a class="btn btn-primary btn-cta" href={JOIN_PATH}>Join Now</a>
+        <a class="btn btn-ghost" href="/services">See How It Works</a>
       </div>
       <div class="accent-bar" style="max-width:240px; margin-top:2.5rem;"></div>
     </div>
@@ -127,8 +127,8 @@ const schemas = [
         </div>
       </dl>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/services">explore services</a>
-        <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">read the launch announcement</a>
+        <a class="btn btn-primary" href="/services">Explore Services</a>
+        <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">Read the Launch Announcement</a>
       </div>
     </div>
   </section>

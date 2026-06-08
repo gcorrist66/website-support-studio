@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { serviceSchema, breadcrumbSchema, faqSchema } from "../schema";
-import { CONTACT } from "../consts";
+import { JOIN_PATH } from "../consts";
 
 const lifecycle = [
   { step: "received", desc: "A request enters the desk through a single intake. It is logged, attributed to a site, and given an owner." },
@@ -68,8 +68,8 @@ const schemas = [
         visible, owned, reviewed, and recorded.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book a scoping call</a>
-        <a class="btn btn-ghost" href="/pricing">how engagements are priced</a>
+        <a class="btn btn-primary btn-cta" href={JOIN_PATH}>Join Now</a>
+        <a class="btn btn-ghost" href="/pricing">How Engagements Are Priced</a>
       </div>
     </div>
   </section>

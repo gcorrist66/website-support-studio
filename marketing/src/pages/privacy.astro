@@ -39,8 +39,7 @@ const schemas = [
       <p>
         Website Support Studio ("WSS", "we", "us") is a managed website operations and support platform
         operated by {ORG.legalName}, a limited liability company organized in the {ORG.jurisdiction}. Our
-        principal address is {ORG.address.street}, {ORG.address.locality}, {ORG.address.region}
-        {" "}{ORG.address.postalCode}, {ORG.address.countryName}. {ORG.legalName} is the data controller for
+        principal place of business is in {ORG.address.locality}, {ORG.address.region}. {ORG.legalName} is the data controller for
         personal information described in this policy. For platform data submitted by our customers, we may
         act as a processor on the customer's behalf under our service agreement.
       </p>
@@ -151,9 +150,8 @@ const schemas = [
       <h2>14. Contact</h2>
       <p>
         Questions or requests regarding this policy or your personal information can be sent to
-        {" "}{ORG.legalName} at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>, or by mail to
-        {" "}{ORG.address.street}, {ORG.address.locality}, {ORG.address.region} {ORG.address.postalCode},
-        {" "}{ORG.address.countryName}.
+        {" "}{ORG.legalName} at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Our principal place
+        of business is in {ORG.address.locality}, {ORG.address.region}.
       </p>
     </div>
   </section>

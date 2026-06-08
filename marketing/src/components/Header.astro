@@ -1,6 +1,6 @@
 ---
 import LogoLockup from "./LogoLockup.astro";
-import { NAV, CONTACT } from "../consts";
+import { NAV, APP_URL, JOIN_PATH } from "../consts";
 
 const current = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
@@ -18,7 +18,8 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
           </a>
         ))
       }
-      <a class="btn btn-primary" href={CONTACT.bookingUrl} target="_blank" rel="noopener">book_a_call</a>
+      <a class="btn btn-ghost" href={APP_URL}>Login</a>
+      <a class="btn btn-primary btn-cta" href={JOIN_PATH}>Join Now</a>
     </nav>
   </div>
 </header>
