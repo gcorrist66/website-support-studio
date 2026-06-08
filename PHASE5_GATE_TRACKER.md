@@ -1,13 +1,25 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5H (Ticket Closure Flow)
+- Current focus: Phase 5 MMVP local checkpoint (complete)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
 - Customer communication: persistence-only (local), no provider/email integration
 - Mutations: full local lifecycle — create + triage + draft + request-approval + approval-decision + send (local-only) + close — implemented locally
+
+## 0) Phase 5 MMVP Local Checkpoint
+- Status: complete (local only) — not pushed, not deployed
+- Branch: `phase3-local-foundation`
+- Latest commit at checkpoint: `9dbcffa Add Phase 5H ticket closure flow`
+- Full lifecycle (create → triage → draft → request-approval → approve/reject → send (local-only) → close) implemented and validated locally.
+- Evidence: see `PHASE5_MMVP_LOCAL_CHECKPOINT.md`. All standard validators pass; all guarded
+  Supabase validators (`draft-reply`, `request-approval`, `approval-decision`, `send-reply`,
+  `close-ticket`) pass sequentially under the dev guard and self-clean.
+- Intentionally not built: auth, API routes, real email/communication provider, customer portal, deploy/push.
+- Recommended next step: secured API route + auth boundary, then a real provider behind the
+  existing local-only send seam (`sendPersistedCustomerReplyLocalOnly`).
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
