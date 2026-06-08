@@ -138,9 +138,43 @@ plus the dev-apply evidence commit.
 - Diagnosed: complete · Fixed Locally: complete · Committed: complete (6N commit)
 - File: `PHASE6_AUTH_LINKAGE_CHECKPOINT.md`, this tracker.
 
+## Phase 6O — Local Supabase Auth Session Adapter
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6O commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/auth/supabaseAuthSessionAdapter.ts` — `SupabaseAuthPrincipal` (type shape only),
+  `SupabaseAuthSessionAdapterOptions`, `normalizeSupabaseAuthPrincipal`, `assertSupabaseAuthPrincipal`,
+  `assertAuthAdapterGuard`, `mapAuthPrincipalToOperatorLookup`, `resolveOperatorSessionFromAuthPrincipal`,
+  `createUnauthenticatedSessionResult`, `createAuthenticatedOperatorSessionResult`. Pure TS; bridges a
+  verified `auth.uid()` → `operators.auth_user_id` → `OperatorSession` via the existing
+  `resolveSessionFromAuthUser`. Linkage source of truth is auth_user_id (never email). No Supabase Auth
+  runtime/login, no service-role, no secrets.
+
+## Phase 6P — Adapter Validation
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6P commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `scripts/validate-supabase-auth-adapter.mjs` (`npm run validate:supabase-auth-adapter`) — PASS (20 checks):
+  valid principal → auth_user_id lookup; invalid UUID / missing principal / email-only / unlinked rejected;
+  linked active resolves; suspended/archived/invited do not create active sessions; expired principal
+  rejected; resolved session works with capability guards; no login UI / middleware / routes / RLS /
+  service-role / Supabase Auth runtime.
+
+## Phase 6P-DB — Dev Adapter DB Validation (performed)
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6P commit)
+- Pushed/Deployed/Verified/Closed: not complete (dev only; production untouched)
+- File: `scripts/validate-supabase-auth-adapter-db.mjs` (`npm run validate:supabase-auth-adapter-db`, guarded) — PASS (7 checks).
+  Ran against Supabase dev (ref `vrtfbbrwrxyljchywmzy`): linked a seeded operator to a SYNTHETIC
+  auth_user_id, resolved an `OperatorSession` through the adapter from a synthetic principal, verified
+  capability flags (gary approve/reject), confirmed an unlinked principal is unauthenticated, then
+  cleared the link and preserved rows; RLS remained disabled. No real auth users, no magic links, no
+  login; dev left clean (0 linked operators).
+
+## Phase 6Q — Checkpoint
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6Q commit)
+- File: `PHASE6_SUPABASE_AUTH_ADAPTER_CHECKPOINT.md`, this tracker.
+
 ## Safety Posture (unchanged)
 - No push, no deploy, no Vercel trigger.
 - No RLS enabled, no login UI, no public API routes, no customer portal, no email provider.
 - No production data changes; no secrets committed; no service-role key in client code.
-- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage is a reversible
-  metadata test only (no real Supabase Auth users, no magic links, no credentials).
+- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage/adapter checks are
+  reversible metadata tests only (no real Supabase Auth users, no magic links, no credentials).

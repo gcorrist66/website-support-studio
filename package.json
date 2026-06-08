@@ -37,6 +37,8 @@
     "validate:operator-session": "node scripts/validate-operator-session.mjs",
     "validate:auth-linkage": "node scripts/validate-auth-linkage.mjs",
     "validate:auth-linkage-db": "node scripts/validate-auth-linkage-db.mjs",
+    "validate:supabase-auth-adapter": "node scripts/validate-supabase-auth-adapter.mjs",
+    "validate:supabase-auth-adapter-db": "node scripts/validate-supabase-auth-adapter-db.mjs",
     "seed:operators-dev": "node scripts/seed-operators-dev.mjs"
   },
   "dependencies": {
