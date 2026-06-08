@@ -74,6 +74,11 @@ type ReadOnlyTicketDetailProps = {
   // eslint-disable-next-line no-unused-vars
   onDraftTextChange?: (_draftBody: string) => void;
   onDraft?: () => Promise<void>;
+  canRequestApproval?: boolean;
+  isApprovalRequestInProgress?: boolean;
+  approvalRequestMessage?: string;
+  approvalRequestError?: string;
+  onRequestApproval?: () => Promise<void>;
 };
 
 export function ReadOnlyTicketDetail({
@@ -90,6 +95,11 @@ export function ReadOnlyTicketDetail({
   draftError,
   onDraftTextChange,
   onDraft,
+  canRequestApproval = false,
+  isApprovalRequestInProgress = false,
+  approvalRequestMessage,
+  approvalRequestError,
+  onRequestApproval,
 }: ReadOnlyTicketDetailProps) {
   const hasTriageAction = typeof onTriage === "function";
   const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
@@ -106,6 +116,20 @@ export function ReadOnlyTicketDetail({
       return;
     }
     await onTriage();
+  };
+
+  const hasApprovalRequestAction = typeof onRequestApproval === "function";
+  const approvalRequestDisabled =
+    !hasApprovalRequestAction || !canRequestApproval || isApprovalRequestInProgress;
+  const approvalRequestLabel = isApprovalRequestInProgress
+    ? "Requesting approval..."
+    : "Request Gary Approval";
+
+  const handleRequestApproval = async () => {
+    if (approvalRequestDisabled) {
+      return;
+    }
+    await onRequestApproval();
   };
 
   return (
@@ -207,7 +231,22 @@ export function ReadOnlyTicketDetail({
         >
           {isDraftInProgress ? "Drafting reply..." : canDraft ? "Draft Reply" : "Draft Reply (disabled)"}
         </button>
-        <p className="placeholder-meta">Send/approval/close controls are still not enabled in this phase.</p>
+        <div className="phase4c-actions">
+          <button
+            type="button"
+            className="phase4a-action"
+            disabled={approvalRequestDisabled}
+            onClick={handleRequestApproval}
+          >
+            {approvalRequestLabel}
+          </button>
+        </div>
+        {!canRequestApproval && (
+          <p className="placeholder-meta">Request Gary Approval: Not active for this ticket state</p>
+        )}
+        <p className="placeholder-meta">Send/close controls are still not enabled in this phase.</p>
+        {approvalRequestMessage && <p className="phase5b-success">{approvalRequestMessage}</p>}
+        {approvalRequestError && <p className="phase5b-error">{approvalRequestError}</p>}
         {draftMessage && <p className="phase5b-success">{draftMessage}</p>}
         {draftError && <p className="phase5b-error">{draftError}</p>}
         {triageMessage && <p className="phase5b-success">{triageMessage}</p>}

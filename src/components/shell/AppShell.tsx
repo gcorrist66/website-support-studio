@@ -4,7 +4,7 @@ import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
 import { CreateTicketForm } from "../tickets/CreateTicketForm";
 import { ActorRole } from "../../domain/ticketStatus";
-import { handleDraftReply, handleTriageTicket } from "../../handlers/ticketWorkflowHandlers";
+import { handleDraftReply, handleRequestApproval, handleTriageTicket } from "../../handlers/ticketWorkflowHandlers";
 import {
   getReadOnlyApprovalQueue,
   getReadOnlyModeLabel,
@@ -35,6 +35,9 @@ export function AppShell() {
   const [draftMessage, setDraftMessage] = useState("");
   const [draftError, setDraftError] = useState("");
   const [draftInProgress, setDraftInProgress] = useState(false);
+  const [approvalRequestMessage, setApprovalRequestMessage] = useState("");
+  const [approvalRequestError, setApprovalRequestError] = useState("");
+  const [approvalRequestInProgress, setApprovalRequestInProgress] = useState(false);
 
   const loadReadOnlyData = async (modeOverride?: string) => {
     const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
@@ -215,9 +218,57 @@ export function AppShell() {
     setDraftInProgress(false);
   };
 
+  const handleRequestApprovalAction = async () => {
+    if (readOnlyMode !== "supabase-dev-readonly") {
+      setApprovalRequestError("Request approval is only available in guarded Supabase-dev data mode.");
+      return;
+    }
+
+    if (!selectedTicket?.workflowId) {
+      setApprovalRequestError("No workflow identifier available for this ticket.");
+      return;
+    }
+
+    setApprovalRequestError("");
+    setApprovalRequestMessage("");
+    setApprovalRequestInProgress(true);
+
+    const result = handleRequestApproval({
+      tenantContext: {
+        agencyId: selectedTicket.tenantContext.agencyId,
+        clientId: selectedTicket.tenantContext.clientId,
+        siteId: selectedTicket.tenantContext.siteId,
+      },
+      actorContext: {
+        actorRole: ActorRole.CS_AGENT,
+        actorReference: "phase5e-ui-operator",
+      },
+      ticketId: selectedTicket.workflowId,
+      requestNotes: "Manual CS approval request from phase-5E UI",
+    });
+
+    if (result.status === "error") {
+      setApprovalRequestError(result.error);
+      setApprovalRequestMessage("");
+      setApprovalRequestInProgress(false);
+      return;
+    }
+
+    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
+    setSelectedTicket(refreshed);
+    setAuditTimeline(timeline);
+    setApprovalRequestMessage(`Gary approval requested for ticket ${selectedTicket.id}.`);
+    setApprovalRequestInProgress(false);
+  };
+
   const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
   const canDraftReplySelected =
     readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "triaged" && Boolean(selectedTicket.workflowId);
+  const canRequestApprovalSelected =
+    readOnlyMode === "supabase-dev-readonly" &&
+    selectedTicket.status === "reply_drafted" &&
+    Boolean(selectedTicket.workflowId);
 
   return (
     <div className="phase4a-shell">
@@ -228,7 +279,7 @@ export function AppShell() {
           <p>Phase 5A Live Read-Only Data Integration</p>
         </div>
             <span className="status-pill">
-              {getReadOnlyModeLabel()} · Triage-only phase (send/approval/close disabled)
+              {getReadOnlyModeLabel()} · Triage/draft/approval-request phase (send/close disabled)
             </span>
           </header>
 
@@ -257,7 +308,8 @@ export function AppShell() {
               <li>Live read-only mode is safe-read only and requires WSS_ALLOW_SUPABASE_VALIDATION=dev guard.</li>
                 <li>Planned workflow: draft → approval → send → close.</li>
                 <li>Phase 5C enables triage action (received → triaged) in guarded workflow execution.</li>
-                <li>Send/approval/close actions are not available in this phase.</li>
+                <li>Phase 5E enables request approval (reply_drafted → awaiting_gary_approval) in guarded workflow execution.</li>
+                <li>Send/close actions are not available in this phase.</li>
             </ul>
           </section>
 
@@ -363,6 +415,11 @@ export function AppShell() {
             draftError={draftError}
             onDraftTextChange={setDraftText}
             onDraft={handleDraftReplyAction}
+            canRequestApproval={canRequestApprovalSelected}
+            isApprovalRequestInProgress={approvalRequestInProgress}
+            approvalRequestMessage={approvalRequestMessage}
+            approvalRequestError={approvalRequestError}
+            onRequestApproval={handleRequestApprovalAction}
           />
 
           <section className="phase4a-card">
@@ -406,7 +463,7 @@ export function AppShell() {
             <li>Read-only data mode: {readOnlyMode}.</li>
             <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
             <li>Route files: not introduced in this phase.</li>
-            <li>Live writes/mutations: triage-only in guarded mode; other actions disabled.</li>
+            <li>Live writes/mutations: triage/draft/approval-request in guarded mode; send/close actions disabled.</li>
             <li>Auth/email/provider: not added.</li>
           </ul>
         </section>

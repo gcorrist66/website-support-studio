@@ -1,13 +1,13 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5D (Draft Reply Flow)
+- Current focus: Phase 5E (Request Approval Flow)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
 - Customer communication: not implemented
-- Mutations: create + triage-only path implemented locally
+- Mutations: create + triage + draft + request-approval path implemented locally
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
@@ -229,6 +229,66 @@
 - No auth/auth provider wiring
 - No customer portal
 - No customer communication/send/approve/close/write UI actions
+- No service role key in browser code (guarded/placeholder checks still in place)
+
+## 7) Phase 5E — Request Approval Flow
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Scope
+- Only `reply_drafted → awaiting_gary_approval` is implemented.
+- Not implemented: approve, reject, send, close, auth, API routes, customer communication, email provider.
+
+### Evidence
+- Request-approval action wired through existing service/handler layers:
+  - `src/services/ticketWorkflowService.ts: requestPersistedApproval` persists the pending approval + `approval_requested` audit via `markReplyReadyForApproval` (CS-agent/internal actor only).
+  - `src/handlers/ticketWorkflowHandlers.ts: handleRequestApproval` validates tenant/actor context and the allowed guard role before requesting approval.
+- Added UI request-approval action:
+  - `src/components/tickets/ReadOnlyTicketDetail.tsx` exposes `Request Gary Approval`, enabled only when eligible (reply_drafted in guarded mode).
+  - When ineligible the action is disabled with copy `Not active for this ticket state`.
+  - No Approve / Reject / Send / Close controls were added.
+  - `src/components/shell/AppShell.tsx` wires the action in guarded Supabase-dev mode (`canRequestApprovalSelected = reply_drafted`), shows status/error messaging, and refreshes detail/audit after success.
+- Boundary update:
+  - `scripts/validate-readonly-data.mjs` now permits `handleRequestApproval` usage in the UI shell only, while still blocking create/approve/reject/send/close/block/unblock handlers and API routes.
+- Added request-approval validator:
+  - `scripts/validate-request-approval.mjs`
+  - npm script `validate:request-approval`
+- Validation proofs (all pass):
+  - reply_drafted → awaiting_gary_approval succeeds
+  - triaged → awaiting_gary_approval fails (`invalid_reply_draft_state`)
+  - unauthorized actor (SITE_USER) fails
+  - pending approval row exists (status = pending)
+  - approval_requested audit event exists
+  - no communication rows created
+  - no approved/rejected decision created
+  - cleanup removes created rows
+- Validation outcomes:
+  - `npm run lint` PASS
+  - `npm run typecheck` PASS
+  - `npm run build` PASS
+  - `npm run validate:domain` PASS
+  - `npm run validate:e2e` PASS
+  - `npm run validate:phase2a` PASS
+  - `npm run validate:persistence` PASS
+  - `npm run validate:contracts` PASS
+  - `npm run validate:handlers` PASS
+  - `npm run validate:route-boundary` PASS
+  - `npm run validate:ui-boundary` PASS
+  - `npm run validate:readonly-data` PASS
+  - `npm run validate:draft-reply` PASS (guarded dev env)
+  - `npm run validate:request-approval` PASS (guarded dev env)
+
+### Controls preserved in Phase 5E
+- No API routes added
+- No auth/auth provider wiring
+- No customer portal
+- No approve / reject / send / close UI actions or handlers wired into the UI
+- No customer communication / email provider wiring
 - No service role key in browser code (guarded/placeholder checks still in place)
 
 ## 3) Previous Gate Notes

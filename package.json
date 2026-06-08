@@ -24,7 +24,8 @@
     "validate:readonly-data": "node scripts/validate-readonly-data.mjs",
     "validate:create-ticket": "node scripts/validate-create-ticket.mjs",
     "validate:triage-ticket": "node scripts/validate-triage-ticket.mjs",
-    "validate:draft-reply": "node scripts/validate-draft-reply.mjs"
+    "validate:draft-reply": "node scripts/validate-draft-reply.mjs",
+    "validate:request-approval": "node scripts/validate-request-approval.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
