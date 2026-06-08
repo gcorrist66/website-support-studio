@@ -79,6 +79,12 @@ type ReadOnlyTicketDetailProps = {
   approvalRequestMessage?: string;
   approvalRequestError?: string;
   onRequestApproval?: () => Promise<void>;
+  canDecideApproval?: boolean;
+  isApprovalDecisionInProgress?: boolean;
+  approvalDecisionMessage?: string;
+  approvalDecisionError?: string;
+  onApproveReply?: () => Promise<void>;
+  onRejectReply?: () => Promise<void>;
 };
 
 export function ReadOnlyTicketDetail({
@@ -100,6 +106,12 @@ export function ReadOnlyTicketDetail({
   approvalRequestMessage,
   approvalRequestError,
   onRequestApproval,
+  canDecideApproval = false,
+  isApprovalDecisionInProgress = false,
+  approvalDecisionMessage,
+  approvalDecisionError,
+  onApproveReply,
+  onRejectReply,
 }: ReadOnlyTicketDetailProps) {
   const hasTriageAction = typeof onTriage === "function";
   const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
@@ -130,6 +142,25 @@ export function ReadOnlyTicketDetail({
       return;
     }
     await onRequestApproval();
+  };
+
+  const hasApproveAction = typeof onApproveReply === "function";
+  const hasRejectAction = typeof onRejectReply === "function";
+  const approveDisabled = !hasApproveAction || !canDecideApproval || isApprovalDecisionInProgress;
+  const rejectDisabled = !hasRejectAction || !canDecideApproval || isApprovalDecisionInProgress;
+
+  const handleApproveReply = async () => {
+    if (approveDisabled) {
+      return;
+    }
+    await onApproveReply();
+  };
+
+  const handleRejectReply = async () => {
+    if (rejectDisabled) {
+      return;
+    }
+    await onRejectReply();
   };
 
   return (
@@ -244,7 +275,30 @@ export function ReadOnlyTicketDetail({
         {!canRequestApproval && (
           <p className="placeholder-meta">Request Gary Approval: Not active for this ticket state</p>
         )}
+        <div className="phase4c-actions">
+          <button
+            type="button"
+            className="phase4a-action"
+            disabled={approveDisabled}
+            onClick={handleApproveReply}
+          >
+            {isApprovalDecisionInProgress ? "Processing decision..." : "Approve Reply"}
+          </button>
+          <button
+            type="button"
+            className="phase4a-action"
+            disabled={rejectDisabled}
+            onClick={handleRejectReply}
+          >
+            {isApprovalDecisionInProgress ? "Processing decision..." : "Reject Reply"}
+          </button>
+        </div>
+        {!canDecideApproval && (
+          <p className="placeholder-meta">Approve Reply / Reject Reply: Not active for this ticket state</p>
+        )}
         <p className="placeholder-meta">Send/close controls are still not enabled in this phase.</p>
+        {approvalDecisionMessage && <p className="phase5b-success">{approvalDecisionMessage}</p>}
+        {approvalDecisionError && <p className="phase5b-error">{approvalDecisionError}</p>}
         {approvalRequestMessage && <p className="phase5b-success">{approvalRequestMessage}</p>}
         {approvalRequestError && <p className="phase5b-error">{approvalRequestError}</p>}
         {draftMessage && <p className="phase5b-success">{draftMessage}</p>}

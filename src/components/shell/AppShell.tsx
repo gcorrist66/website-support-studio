@@ -4,7 +4,13 @@ import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
 import { CreateTicketForm } from "../tickets/CreateTicketForm";
 import { ActorRole } from "../../domain/ticketStatus";
-import { handleDraftReply, handleRequestApproval, handleTriageTicket } from "../../handlers/ticketWorkflowHandlers";
+import {
+  handleApproveReply,
+  handleDraftReply,
+  handleRejectReply,
+  handleRequestApproval,
+  handleTriageTicket,
+} from "../../handlers/ticketWorkflowHandlers";
 import {
   getReadOnlyApprovalQueue,
   getReadOnlyModeLabel,
@@ -38,6 +44,9 @@ export function AppShell() {
   const [approvalRequestMessage, setApprovalRequestMessage] = useState("");
   const [approvalRequestError, setApprovalRequestError] = useState("");
   const [approvalRequestInProgress, setApprovalRequestInProgress] = useState(false);
+  const [approvalDecisionMessage, setApprovalDecisionMessage] = useState("");
+  const [approvalDecisionError, setApprovalDecisionError] = useState("");
+  const [approvalDecisionInProgress, setApprovalDecisionInProgress] = useState(false);
 
   const loadReadOnlyData = async (modeOverride?: string) => {
     const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
@@ -262,12 +271,87 @@ export function AppShell() {
     setApprovalRequestInProgress(false);
   };
 
+  const runApprovalDecision = async (decision: "approve" | "reject") => {
+    if (readOnlyMode !== "supabase-dev-readonly") {
+      setApprovalDecisionError("Approval decisions are only available in guarded Supabase-dev data mode.");
+      return;
+    }
+
+    if (!selectedTicket?.workflowId) {
+      setApprovalDecisionError("No workflow identifier available for this ticket.");
+      return;
+    }
+
+    setApprovalDecisionError("");
+    setApprovalDecisionMessage("");
+    setApprovalDecisionInProgress(true);
+
+    const tenantContext = {
+      agencyId: selectedTicket.tenantContext.agencyId,
+      clientId: selectedTicket.tenantContext.clientId,
+      siteId: selectedTicket.tenantContext.siteId,
+    };
+    const actorContext = {
+      actorRole: ActorRole.GARY_APPROVER,
+      actorReference: "phase5f-ui-approver",
+    };
+    // The handler resolves the latest pending approval server-side; approvalId is advisory here.
+    const approvalId = selectedTicket.workflowId;
+
+    const result =
+      decision === "approve"
+        ? handleApproveReply({
+            tenantContext,
+            actorContext,
+            ticketId: selectedTicket.workflowId,
+            approvalId,
+            approvalNotes: "Approved by Gary from phase-5F UI",
+          })
+        : handleRejectReply({
+            tenantContext,
+            actorContext,
+            ticketId: selectedTicket.workflowId,
+            approvalId,
+            rejectionNotes: "Returned for rework by Gary from phase-5F UI",
+          });
+
+    if (result.status === "error") {
+      setApprovalDecisionError(result.error);
+      setApprovalDecisionMessage("");
+      setApprovalDecisionInProgress(false);
+      return;
+    }
+
+    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
+    setSelectedTicket(refreshed);
+    setAuditTimeline(timeline);
+    setApprovalDecisionMessage(
+      decision === "approve"
+        ? `Reply approved for ticket ${selectedTicket.id}.`
+        : `Reply rejected for ticket ${selectedTicket.id}.`,
+    );
+    setApprovalDecisionInProgress(false);
+  };
+
+  const handleApproveReplyAction = async () => {
+    await runApprovalDecision("approve");
+  };
+
+  const handleRejectReplyAction = async () => {
+    await runApprovalDecision("reject");
+  };
+
   const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
   const canDraftReplySelected =
     readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "triaged" && Boolean(selectedTicket.workflowId);
   const canRequestApprovalSelected =
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "reply_drafted" &&
+    Boolean(selectedTicket.workflowId);
+  const canDecideApprovalSelected =
+    readOnlyMode === "supabase-dev-readonly" &&
+    selectedTicket.status === "awaiting_gary_approval" &&
     Boolean(selectedTicket.workflowId);
 
   return (
@@ -420,6 +504,12 @@ export function AppShell() {
             approvalRequestMessage={approvalRequestMessage}
             approvalRequestError={approvalRequestError}
             onRequestApproval={handleRequestApprovalAction}
+            canDecideApproval={canDecideApprovalSelected}
+            isApprovalDecisionInProgress={approvalDecisionInProgress}
+            approvalDecisionMessage={approvalDecisionMessage}
+            approvalDecisionError={approvalDecisionError}
+            onApproveReply={handleApproveReplyAction}
+            onRejectReply={handleRejectReplyAction}
           />
 
           <section className="phase4a-card">

@@ -108,9 +108,10 @@ function hasDisabledMutationControls(text) {
 
 function hasNoMutationHandlerInUI(text, filePath = "") {
   if (/[\\/]components[\\/]shell[\\/]AppShell\.tsx$/.test(filePath)) {
-    const allowedMutationHandlerUse = /handleTriageTicket|handleDraftReply|handleRequestApproval/.test(text);
+    const allowedMutationHandlerUse =
+      /handleTriageTicket|handleDraftReply|handleRequestApproval|handleApproveReply|handleRejectReply/.test(text);
     const disallowedHandlerUse =
-      /handleCreateTicket|handleApproveReply|handleRejectReply|handleSendApprovedReply|handleCloseTicket|handleBlockTicket|handleUnblockTicket/.test(
+      /handleCreateTicket|handleSendApprovedReply|handleCloseTicket|handleBlockTicket|handleUnblockTicket/.test(
         text,
       );
     if (allowedMutationHandlerUse && !disallowedHandlerUse) {

@@ -288,6 +288,11 @@ function getLatestDraftReplyId(session: ServiceSession): string | undefined {
   return session.persistedDrafts.at(-1)?.draftId;
 }
 
+function collectDecidedApproval(ticketId: string) {
+  const latest = getApprovals(ticketId).at(-1);
+  return latest ? [latest] : [];
+}
+
 export function createPersistedTicket(input: CreatePersistedTicketInput): Ticket {
   const { agency, client, site, tenant } = defaultTenantContext(input.tenant ?? {});
 
@@ -502,16 +507,19 @@ export function approvePersistedReply(
   });
 
   const newAudits = filterNewById(getAuditTrail(ticketId), session.persistedAuditIds, "id");
-  const newApprovals = filterNewById(getApprovals(ticketId), session.persistedApprovalIds, "approvalId");
+  // The pending approval row was already persisted during request-approval, so it is
+  // filtered out by filterNewById. An approval decision mutates that same row, so upsert
+  // the latest approval explicitly to land the approved/rejected decision in storage.
+  const decidedApprovals = collectDecidedApproval(ticketId);
 
   persistMutation(session, ticket, {
     draftReplyId: getLatestDraftReplyId(session),
     audits: newAudits,
-    approvals: newApprovals,
+    approvals: decidedApprovals,
   });
 
   markIds(session.persistedAuditIds, newAudits.map((event) => event.id));
-  markIds(session.persistedApprovalIds, newApprovals.map((approval) => approval.approvalId));
+  markIds(session.persistedApprovalIds, decidedApprovals.map((approval) => approval.approvalId));
 
   return ticket;
 }
@@ -534,16 +542,17 @@ export function rejectPersistedReply(
   });
 
   const newAudits = filterNewById(getAuditTrail(ticketId), session.persistedAuditIds, "id");
-  const newApprovals = filterNewById(getApprovals(ticketId), session.persistedApprovalIds, "approvalId");
+  // See approvePersistedReply: upsert the decided approval row so the rejected decision persists.
+  const decidedApprovals = collectDecidedApproval(ticketId);
 
   persistMutation(session, ticket, {
     draftReplyId: getLatestDraftReplyId(session),
     audits: newAudits,
-    approvals: newApprovals,
+    approvals: decidedApprovals,
   });
 
   markIds(session.persistedAuditIds, newAudits.map((event) => event.id));
-  markIds(session.persistedApprovalIds, newApprovals.map((approval) => approval.approvalId));
+  markIds(session.persistedApprovalIds, decidedApprovals.map((approval) => approval.approvalId));
 
   return ticket;
 }

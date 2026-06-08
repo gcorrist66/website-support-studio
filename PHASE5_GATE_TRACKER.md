@@ -1,13 +1,13 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5E (Request Approval Flow)
+- Current focus: Phase 5F (Gary Approval Decision Flow)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
 - Customer communication: not implemented
-- Mutations: create + triage + draft + request-approval path implemented locally
+- Mutations: create + triage + draft + request-approval + approval-decision (approve/reject) path implemented locally
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
@@ -289,6 +289,84 @@
 - No customer portal
 - No approve / reject / send / close UI actions or handlers wired into the UI
 - No customer communication / email provider wiring
+- No service role key in browser code (guarded/placeholder checks still in place)
+
+## 8) Phase 5F — Gary Approval Decision Flow
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Scope
+- Implemented only the approval-decision transitions:
+  - `awaiting_gary_approval → approved_to_send` (Approve Reply)
+  - `awaiting_gary_approval → reply_drafted` (Reject Reply, current deterministic state-machine route)
+    - Reject transiently passes through `blocked` then auto-unblocks back to `reply_drafted`,
+      matching the existing `rejectDraftReply` state machine. No new state route was introduced.
+- Not implemented: send email, customer communication, close ticket, auth, API routes, customer portal, deployment, push.
+
+### Evidence
+- Persistence fix (required for decision durability):
+  - `src/services/ticketWorkflowService.ts: approvePersistedReply` / `rejectPersistedReply` now upsert the
+    decided approval row (via new `collectDecidedApproval`) instead of `filterNewById`. The pending approval
+    row was already persisted during request-approval, so the prior filter would have excluded the decision
+    update and left the row `pending`. The decision now lands as `approved`/`rejected`.
+- Handlers (already present, reused): `handleApproveReply` / `handleRejectReply`
+  - Validate tenant/actor context and allowed guard role.
+  - Enforce Gary/Human approver gate: only `gary_approver` or `agency_admin` may approve/reject.
+- Approve path: status → `approved_to_send`, approval row → `approved`, `approval_granted` audit, no communication rows, no send.
+- Reject path: approval row → `rejected`, `approval_rejected` audit, no communication rows, ticket returns to `reply_drafted`.
+- UI approval-decision controls:
+  - `src/components/tickets/ReadOnlyTicketDetail.tsx` exposes `Approve Reply` and `Reject Reply`, enabled only when
+    eligible (awaiting_gary_approval in guarded mode); otherwise disabled with copy `Not active for this ticket state`.
+  - No Send Reply / Send Email / Close Ticket controls were added.
+  - `src/components/shell/AppShell.tsx` wires the decisions in guarded Supabase-dev mode using the `gary_approver`
+    actor (`canDecideApprovalSelected = awaiting_gary_approval`), shows status/error messaging, and refreshes detail/audit.
+- Boundary update:
+  - `scripts/validate-readonly-data.mjs` now permits `handleApproveReply` / `handleRejectReply` in the UI shell only,
+    while still blocking create/send/close/block/unblock handlers and API routes.
+- Added approval-decision validator:
+  - `scripts/validate-approval-decision.mjs`
+  - npm script `validate:approval-decision`
+- Validation proofs (all pass, guarded dev env):
+  - awaiting_gary_approval → approved_to_send succeeds
+  - approval row becomes approved
+  - approval_granted audit exists
+  - approve creates no communication rows; no send occurs
+  - awaiting_gary_approval rejection path succeeds (routes to reply_drafted)
+  - approval row becomes rejected
+  - approval_rejected audit exists
+  - reject creates no communication rows
+  - non-Gary actor (cs_agent) cannot approve or reject
+  - non-awaiting_gary_approval ticket cannot be approved
+  - cleanup removes created rows; database left clean
+- Validation outcomes:
+  - `npm run lint` PASS
+  - `npm run typecheck` PASS
+  - `npm run build` PASS
+  - `npm run validate:domain` PASS
+  - `npm run validate:e2e` PASS
+  - `npm run validate:phase2a` PASS
+  - `npm run validate:persistence` PASS
+  - `npm run validate:contracts` PASS
+  - `npm run validate:handlers` PASS
+  - `npm run validate:route-boundary` PASS
+  - `npm run validate:ui-boundary` PASS
+  - `npm run validate:readonly-data` PASS
+  - `npm run validate:draft-reply` PASS (guarded dev env)
+  - `npm run validate:request-approval` PASS (guarded dev env)
+  - `npm run validate:approval-decision` PASS (guarded dev env)
+  - Note: the guarded Supabase validators contend on the shared dev DB if run concurrently; run them sequentially.
+
+### Controls preserved in Phase 5F
+- No API routes added
+- No auth/auth provider wiring
+- No customer portal
+- No send reply / send email / customer communication wiring
+- No close ticket UI action or handler wired into the UI
 - No service role key in browser code (guarded/placeholder checks still in place)
 
 ## 3) Previous Gate Notes
