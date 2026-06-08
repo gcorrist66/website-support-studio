@@ -45,6 +45,8 @@
     "validate:auth-pipeline-db": "node scripts/validate-auth-pipeline-db.mjs",
     "validate:auth-plans": "node scripts/validate-auth-plans.mjs",
     "validate:login-shell": "node scripts/validate-login-shell.mjs",
+    "validate:dev-session-read": "node scripts/validate-dev-session-read.mjs",
+    "validate:dev-session-read-db": "node scripts/validate-dev-session-read-db.mjs",
     "seed:operators-dev": "node scripts/seed-operators-dev.mjs"
   },
   "dependencies": {

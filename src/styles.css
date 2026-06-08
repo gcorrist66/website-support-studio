@@ -246,6 +246,18 @@ body {
   margin-top: 0.5rem;
 }
 
+.phase7-session-read {
+  border-left: 3px solid #14b8a6;
+}
+
+.phase7-session-read-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  margin: 0.5rem 0;
+  background: #f8fafc;
+}
+
 button {
   border: 1px solid #9ca3af;
   background: #f1f5f9;

@@ -39,6 +39,14 @@ import {
 } from "../../auth/localAuthMode";
 import { LoginShell } from "../auth/LoginShell";
 import { buildLoginShellState, type LoginShellStatus } from "../../auth/loginShellState";
+import {
+  createDisabledSessionReadState,
+  createExistingSessionShapeReadState,
+  createSyntheticSessionReadState,
+  describeDevSessionReadState,
+  DEV_SESSION_READ_MODE_OPTIONS,
+  type DevSupabaseSessionReadMode,
+} from "../../auth/devSupabaseSessionRead";
 
 export function AppShell() {
   const [searchText, setSearchText] = useState("");
@@ -53,6 +61,8 @@ export function AppShell() {
   const [adapterPrincipalId, setAdapterPrincipalId] = useState("");
   const [viewMode, setViewMode] = useState<"workspace" | "auth_simulator">("workspace");
   const [loginShellStatus, setLoginShellStatus] = useState<LoginShellStatus>("loading");
+  const [sessionReadMode, setSessionReadMode] = useState<DevSupabaseSessionReadMode>("disabled");
+  const [sessionReadPrincipalId, setSessionReadPrincipalId] = useState("");
   const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
   const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
   const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
@@ -516,6 +526,24 @@ export function AppShell() {
   // In workspace view it always shows (current behavior). No real protection — visualization only.
   const showWorkspace = viewMode === "workspace" || (viewMode === "auth_simulator" && loginShellState.canAccessWorkspace);
 
+  // Phase 7H: dev-only session-read preview. Feeds a plain (synthetic / existing-shape) session into
+  // the existing read path → principal → pipeline → operator session → flags. READ-ONLY: no real auth,
+  // no redirects, no writes, no operator linking. Resolves against the in-memory dev preview rows.
+  const devSessionReadState = useMemo(() => {
+    const id = sessionReadPrincipalId.trim();
+    if (sessionReadMode === "synthetic_session") {
+      return createSyntheticSessionReadState(
+        { id, expiresAtIso: "2999-01-01T00:00:00.000Z" },
+        DEV_PREVIEW_OPERATOR_ROWS,
+      );
+    }
+    if (sessionReadMode === "existing_session_shape") {
+      const session = id ? { user: { id }, expires_at: 32503680000 } : null;
+      return createExistingSessionShapeReadState(session, DEV_PREVIEW_OPERATOR_ROWS);
+    }
+    return createDisabledSessionReadState();
+  }, [sessionReadMode, sessionReadPrincipalId]);
+
   // An action is offered only when BOTH the ticket-state is eligible (guarded dev mode) AND the
   // current operator role has the capability to see/perform it.
   const canTriageSelected =
@@ -705,6 +733,82 @@ export function AppShell() {
               <li>Send reply: {capabilities.canSeeSendReply ? "visible" : "hidden"}</li>
               <li>Close ticket: {capabilities.canSeeCloseTicket ? "visible" : "hidden"}</li>
               <li>Operator admin: {capabilities.canSeeOperatorAdmin ? "visible" : "hidden"}</li>
+            </ul>
+          </section>
+
+          <section className="phase4a-card phase7-session-read">
+            <h2>Development Session Read Preview</h2>
+            <p className="placeholder-meta">
+              Read-only preview of the real session-read path (session → principal → pipeline → operator session →
+              capability flags). No real sign-in, no redirect, no writes, no operator linking — it consumes a plain
+              session-like object and resolves against the in-memory dev preview rows only.
+            </p>
+            <fieldset className="phase6-auth-mode">
+              <legend>Session read mode</legend>
+              {DEV_SESSION_READ_MODE_OPTIONS.map((option) => (
+                <label key={option.value}>
+                  <input
+                    type="radio"
+                    name="wss-session-read-mode"
+                    value={option.value}
+                    checked={sessionReadMode === option.value}
+                    onChange={() => setSessionReadMode(option.value)}
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </fieldset>
+
+            {sessionReadMode !== "disabled" && (
+              <div className="phase6-adapter-preview">
+                <label className="phase6-operator-switcher">
+                  Principal preset
+                  <select value={sessionReadPrincipalId} onChange={(event) => setSessionReadPrincipalId(event.target.value)}>
+                    <option value="">— none —</option>
+                    {DEV_ADAPTER_PRINCIPAL_PRESETS.map((preset) => (
+                      <option key={preset.principalId} value={preset.principalId}>
+                        {preset.label} ({preset.principalId})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="phase6-operator-switcher">
+                  Synthetic session principal id
+                  <input
+                    type="text"
+                    value={sessionReadPrincipalId}
+                    onChange={(event) => setSessionReadPrincipalId(event.target.value)}
+                    placeholder="synthetic uuid (dev only)"
+                  />
+                </label>
+              </div>
+            )}
+
+            <div className="phase7-session-read-panel" role="status" aria-live="polite">
+              <p className="placeholder-meta">Mode: {describeDevSessionReadState(devSessionReadState.mode)}</p>
+              <p className="placeholder-meta">
+                Principal extracted: {devSessionReadState.principal ? devSessionReadState.principal.id : "none"}
+              </p>
+              <p className="placeholder-meta">
+                Operator session:{" "}
+                {devSessionReadState.adapterResult?.session
+                  ? `resolved — ${devSessionReadState.adapterResult.session.displayName} · role ${devSessionReadState.adapterResult.session.role}`
+                  : "not resolved"}
+              </p>
+              {sessionReadMode !== "disabled" && sessionReadPrincipalId.trim() && !devSessionReadState.adapterResult?.session && (
+                <p className="placeholder-meta">No linked operator for this session principal.</p>
+              )}
+            </div>
+
+            <ul className="phase6-capability-list">
+              <li>Create ticket: {devSessionReadState.capabilityFlags.canSeeCreateTicket ? "visible" : "hidden"}</li>
+              <li>Triage: {devSessionReadState.capabilityFlags.canSeeTriage ? "visible" : "hidden"}</li>
+              <li>Draft reply: {devSessionReadState.capabilityFlags.canSeeDraftReply ? "visible" : "hidden"}</li>
+              <li>Request approval: {devSessionReadState.capabilityFlags.canSeeRequestApproval ? "visible" : "hidden"}</li>
+              <li>Approve / Reject: {devSessionReadState.capabilityFlags.canSeeApproveReply ? "visible" : "hidden"}</li>
+              <li>Send reply: {devSessionReadState.capabilityFlags.canSeeSendReply ? "visible" : "hidden"}</li>
+              <li>Close ticket: {devSessionReadState.capabilityFlags.canSeeCloseTicket ? "visible" : "hidden"}</li>
+              <li>Operator admin: {devSessionReadState.capabilityFlags.canSeeOperatorAdmin ? "visible" : "hidden"}</li>
             </ul>
           </section>
 

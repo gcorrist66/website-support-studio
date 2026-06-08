@@ -80,10 +80,50 @@ Starting commit: `1bf98f4`. Session commit: the Phase 7 auth-planning commit.
 - Diagnosed: complete · Fixed Locally: complete (`PHASE7_LOGIN_SHELL_CHECKPOINT.md`) · Committed: complete
 - Pushed/Deployed/Production Verified/Closed: not complete
 
+## Phase 7G — Dev Session Read Abstraction
+- Diagnosed: complete · Fixed Locally: complete (`src/auth/devSupabaseSessionRead.ts`) · Committed: complete
+- Pushed/Deployed/Production Verified/Closed: not complete
+- `DevSupabaseSessionReadMode` (disabled | synthetic_session | existing_session_shape) +
+  `createDisabled/Synthetic/ExistingSessionShapeReadState`, `resolveDevSessionReadPipeline`,
+  `describeDevSessionReadState`. Read-only; reuses `getSessionPrincipal` + auth pipeline; consumes plain
+  session-like objects only; no auth flows, redirects, writes, user creation, network, service-role, or
+  Supabase client runtime.
+
+## Phase 7H — UI Session-Read Preview
+- Diagnosed: complete · Fixed Locally: complete (`src/components/shell/AppShell.tsx`, `styles.css`) · Committed: complete
+- Pushed/Deployed/Production Verified/Closed: not complete
+- "Development Session Read Preview" card: mode selector (Disabled / Synthetic Session / Existing Session
+  Shape) + a synthetic principal id (preset + free text). Shows principal extracted, operator session
+  resolved (+ role/name) or "No linked operator for this session principal.", and capability flags. No
+  real sign-in, no login button, no signup/password/magic link, no redirect, no writes, no linking.
+
+## Phase 7I — Validation
+- Diagnosed: complete · Fixed Locally: complete (`scripts/validate-dev-session-read.mjs`) · Committed: complete
+- Pushed/Deployed/Production Verified/Closed: not complete
+- `npm run validate:dev-session-read` — PASS (16 checks): disabled → no session; synthetic/existing
+  session → principal; pipeline consumes the read result; unlinked principal → no operator session;
+  linked synthetic operator resolves; no DB writes; no auth creation/sign-in/redirect/writes/supabase
+  runtime in the module; no signup/password/magic-link wording; no login UI / middleware / API routes /
+  RLS / service-role.
+
+## Phase 7I-DB — Dev Session-Read DB Validation (performed)
+- Diagnosed: complete · Fixed Locally: complete (`scripts/validate-dev-session-read-db.mjs`) · Committed: complete
+- Pushed/Deployed/Production Verified/Closed: not complete (dev only; production untouched)
+- `npm run validate:dev-session-read-db` (guarded) — PASS (7 checks). Ran against Supabase dev
+  (ref `vrtfbbrwrxyljchywmzy`): linked a seeded operator to a SYNTHETIC auth_user_id, ran the dev
+  session-read path with a SYNTHETIC session, verified the OperatorSession + capability flags (cs_agent),
+  confirmed nothing was linked by the read, cleared the link and preserved rows; RLS remained disabled.
+  No real auth users, no sign-in; dev left clean (0 linked).
+
+## Phase 7J — Dev Session-Read Checkpoint
+- Diagnosed: complete · Fixed Locally: complete (`PHASE7_DEV_SESSION_READ_CHECKPOINT.md`) · Committed: complete
+- Pushed/Deployed/Production Verified/Closed: not complete
+
 ## Safety Posture (unchanged)
 - No push, no deploy, no Vercel trigger.
 - No real login, no auth pages, no route middleware, no RLS, no public API routes, no customer portal,
-  no email provider, no real Supabase Auth users, no magic links. The Phase 7B–7D login shell is a
-  local state SIMULATOR only (no real auth, no redirects, no protection).
+  no email provider, no real Supabase Auth users, no magic links. The Phase 7B–7H login shell + session
+  read are local SIMULATOR/READ-ONLY previews (no real auth, no redirects, no protection, no writes).
 - No production data changes; no secrets committed; no service-role key in client code.
-- No existing validation weakened; MMVP workflow unchanged.
+- No existing validation weakened; MMVP workflow unchanged. Dev session-read DB check is a reversible
+  metadata test only (no real auth users, no sign-in, no RLS).
