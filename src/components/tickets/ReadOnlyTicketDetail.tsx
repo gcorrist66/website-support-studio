@@ -213,7 +213,10 @@ export function ReadOnlyTicketDetail({
     <section className="phase4a-card">
       <h2>Read-only ticket detail</h2>
       <p className="placeholder-meta">
-        Mock data fallback available · No customer communication, approval, or close actions are enabled.
+        Mock data fallback available · Workflow actions appear only when eligible for the ticket&apos;s current state, and run only in guarded Supabase dev mode.
+      </p>
+      <p className="placeholder-meta">
+        Reply send is persistence-only: a sent reply is recorded locally and no real email is delivered. Approval is required before send, and close requires a sent_to_customer ticket.
       </p>
 
       <article className="phase4c-detail-card">
@@ -262,17 +265,23 @@ export function ReadOnlyTicketDetail({
 
       <article className="phase4c-section">
         <h4>Audit timeline</h4>
-        <div className="placeholder-table">
-          {ticket.auditTimeline.map((event) => (
-            <div key={event.id} className="placeholder-row">
-              <div>
-                <strong>{event.eventType}</strong> · {event.occurredAt}
+        {ticket.auditTimeline.length === 0 ? (
+          <p className="placeholder-meta phase7-empty-state" role="status">
+            No audit events recorded for this ticket yet.
+          </p>
+        ) : (
+          <div className="placeholder-table">
+            {ticket.auditTimeline.map((event) => (
+              <div key={event.id} className="placeholder-row">
+                <div>
+                  <strong>{event.eventType}</strong> · {event.occurredAt}
+                </div>
+                <div className="placeholder-meta">{event.summary}</div>
+                <div className="placeholder-meta">actor: {event.actor}</div>
               </div>
-              <div className="placeholder-meta">{event.summary}</div>
-              <div className="placeholder-meta">actor: {event.actor}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </article>
 
       <article className="phase4c-section">

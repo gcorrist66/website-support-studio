@@ -56,6 +56,15 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
       </p>
       <p className="placeholder-meta">Filter results: {tickets.length} ticket(s)</p>
 
+      {tickets.length === 0 ? (
+        <div className="phase7-empty-state" role="status">
+          <p>No tickets match the current filters.</p>
+          <p className="placeholder-meta">
+            Adjust or clear the search and filters above. In mock-data mode this list shows local sample tickets;
+            in guarded Supabase dev mode it reflects read-only data.
+          </p>
+        </div>
+      ) : (
       <div className="placeholder-table" role="table" aria-label="Mock ticket queue">
         <article className="phase4b-header-row">
           <span>Ticket</span>
@@ -109,6 +118,7 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
           </article>
         ))}
       </div>
+      )}
     </section>
   );
 }

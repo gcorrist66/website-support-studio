@@ -126,6 +126,46 @@ body {
   font-size: 0.9rem;
 }
 
+.phase7-empty-state {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 0.85rem 1rem;
+  margin: 0.5rem 0;
+  color: #475569;
+}
+
+.phase7-status-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0;
+}
+
+.phase7-status-list > div {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.phase7-status-list dt {
+  font-weight: 600;
+  color: #334155;
+}
+
+.phase7-status-list dd {
+  margin: 0;
+  color: #475569;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 720px) {
+  .phase7-status-list > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+
 button {
   border: 1px solid #9ca3af;
   background: #f1f5f9;

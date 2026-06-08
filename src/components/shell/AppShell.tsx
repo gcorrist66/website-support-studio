@@ -23,6 +23,7 @@ import {
   getReadOnlyDataMode,
 } from "../../data/readOnlyTicketData";
 import { auditTrail, getTicketDetail, ticketQueue, type MockApprovalItem, type MockAuditEvent, type MockTicketQueueItem } from "../../ui/mockData";
+import { filterTickets, getSearchFilterSummary, type TicketSearchFilters } from "../../search/ticketSearch";
 
 export function AppShell() {
   const [searchText, setSearchText] = useState("");
@@ -31,6 +32,7 @@ export function AppShell() {
   const [clientFilter, setClientFilter] = useState("all");
   const [siteFilter, setSiteFilter] = useState("all");
   const [blockedFilter, setBlockedFilter] = useState("all");
+  const [identityFilter, setIdentityFilter] = useState("all");
   const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
   const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
   const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
@@ -117,24 +119,28 @@ export function AppShell() {
     return Array.from(new Set(ticketQueueData.map((ticket) => ticket.siteName)));
   }, [ticketQueueData]);
 
-  const filteredTickets: MockTicketQueueItem[] = useMemo(() => {
-    const normalizedSearch = searchText.trim().toLowerCase();
-    return ticketQueueData.filter((ticket) => {
-      const statusMatch = statusFilter === "all" || ticket.status === statusFilter;
-      const priorityMatch = priorityFilter === "all" || ticket.priority === priorityFilter;
-      const clientMatch = clientFilter === "all" || ticket.clientName === clientFilter;
-      const siteMatch = siteFilter === "all" || ticket.siteName === siteFilter;
-      const blockedMatch =
-        blockedFilter === "all" ||
-        (blockedFilter === "blocked" && ticket.status === "blocked") ||
-        (blockedFilter === "not-blocked" && ticket.status !== "blocked");
-      const searchMatch =
-        normalizedSearch.length === 0 ||
-        `${ticket.id} ${ticket.title} ${ticket.clientName} ${ticket.siteName}`.toLowerCase().includes(normalizedSearch);
+  const searchFilters: TicketSearchFilters = useMemo(
+    () => ({
+      searchText,
+      status: statusFilter,
+      priority: priorityFilter,
+      clientName: clientFilter,
+      siteName: siteFilter,
+      blocked: blockedFilter,
+      identityConfidence: identityFilter,
+    }),
+    [searchText, statusFilter, priorityFilter, clientFilter, siteFilter, blockedFilter, identityFilter],
+  );
 
-      return statusMatch && priorityMatch && clientMatch && siteMatch && blockedMatch && searchMatch;
-    });
-  }, [searchText, statusFilter, priorityFilter, clientFilter, siteFilter, blockedFilter, ticketQueueData]);
+  const filteredTickets: MockTicketQueueItem[] = useMemo(
+    () => filterTickets(ticketQueueData, searchFilters),
+    [ticketQueueData, searchFilters],
+  );
+
+  const searchSummary = useMemo(
+    () => getSearchFilterSummary(searchFilters, filteredTickets.length),
+    [searchFilters, filteredTickets.length],
+  );
 
   useEffect(() => {
     if (filteredTickets.length > 0 && !filteredTickets.some((ticket) => ticket.id === selectedTicketId)) {
@@ -511,21 +517,38 @@ export function AppShell() {
 
         <main className="phase4a-main">
           <section className="phase4a-card">
-            <h2>Dashboard Placeholder</h2>
-            <p>Read-only workspace for internal operator planning and local validation.</p>
-            <ul>
-            <li>
-                {readOnlyMode === "supabase-dev-readonly"
-                  ? "Live read-only data is allowed only in guarded dev mode."
-                  : "Queue views are in mock data mode until guarded dev env is supplied."}
-              </li>
-              <li>Live read-only mode is safe-read only and requires WSS_ALLOW_SUPABASE_VALIDATION=dev guard.</li>
-                <li>Planned workflow: draft → approval → send → close.</li>
-                <li>Phase 5C enables triage action (received → triaged) in guarded workflow execution.</li>
-                <li>Phase 5E enables request approval (reply_drafted → awaiting_gary_approval) in guarded workflow execution.</li>
-                <li>Phase 5G enables send reply (approved_to_send → sent_to_customer) as local-only persistence in guarded mode.</li>
-                <li>Phase 5H enables close ticket (sent_to_customer → closed) with a required closure note in guarded mode.</li>
-            </ul>
+            <h2>Workspace status</h2>
+            <p>Read-only internal operator workspace. Data mode and available actions are shown below.</p>
+            <dl className="phase7-status-list">
+              <div>
+                <dt>Data mode</dt>
+                <dd>
+                  {readOnlyMode === "supabase-dev-readonly"
+                    ? "Supabase dev read-only mode — live data is read-only and requires the WSS_ALLOW_SUPABASE_VALIDATION=dev guard."
+                    : "Mock data mode — local sample data only, until the guarded dev environment is supplied."}
+                </dd>
+              </div>
+              <div>
+                <dt>Workflow mode</dt>
+                <dd>
+                  {readOnlyMode === "supabase-dev-readonly"
+                    ? "Local operator workflow mode — triage → draft → request approval → approve/reject → send (local-only) → close, each gated by ticket-state eligibility."
+                    : "Workflow actions are inactive in mock mode; they activate only in guarded Supabase dev mode."}
+                </dd>
+              </div>
+              <div>
+                <dt>Public exposure</dt>
+                <dd>
+                  No live public actions are exposed: no authentication, no public API routes, no real email delivery, and no customer portal.
+                </dd>
+              </div>
+              <div>
+                <dt>Reply delivery</dt>
+                <dd>
+                  Persistence-only. A sent reply is recorded locally; no real email is delivered. Approval is required before send.
+                </dd>
+              </div>
+            </dl>
           </section>
 
           <CreateTicketForm />
@@ -534,9 +557,10 @@ export function AppShell() {
             <h2>Search and Filters</h2>
             <p className="placeholder-meta">
               {readOnlyMode === "supabase-dev-readonly"
-                ? "All results are loaded from read-only guarded Supabase for this phase."
-                : "Mock-data only mode until guarded dev env is supplied."}
+                ? "All results are loaded from read-only guarded Supabase for this phase. Search and filtering are read-only."
+                : "Mock-data only mode until guarded dev env is supplied. Search and filtering are read-only."}
             </p>
+            <p className="placeholder-meta" role="status" aria-live="polite">{searchSummary}</p>
             <div className="phase4d-filter-grid">
               <label>
                 Search
@@ -544,7 +568,7 @@ export function AppShell() {
                   type="search"
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
-                  placeholder="Search by ticket id, title, client, or site"
+                  placeholder="Search by ticket #, title, submitter, client, or site"
                 />
               </label>
 
@@ -608,6 +632,16 @@ export function AppShell() {
                   <option value="not-blocked">Not blocked</option>
                 </select>
               </label>
+
+              <label>
+                Identity
+                <select value={identityFilter} onChange={(event) => setIdentityFilter(event.target.value)}>
+                  <option value="all">All</option>
+                  <option value="known">known</option>
+                  <option value="claimed">claimed</option>
+                  <option value="unknown">unknown</option>
+                </select>
+              </label>
             </div>
           </section>
 
@@ -656,38 +690,61 @@ export function AppShell() {
           />
 
           <section className="phase4a-card">
-            <h2>Audit Trail Placeholder</h2>
-            <div className="placeholder-table">
-              {auditTimeline.map((event) => (
-                <article key={event.id} className="placeholder-row">
-                  <div>
-                    <strong>{event.eventType}</strong> for {event.ticketId}
-                  </div>
-                  <div className="placeholder-meta">
-                    {event.summary} · actor: {event.actor} · {event.occurredAt}
-                  </div>
-                  <button type="button" disabled>
-                    View details (read-only)
-                  </button>
-                </article>
-              ))}
-            </div>
+            <h2>Audit Trail</h2>
+            {auditTimeline.length === 0 ? (
+              <p className="placeholder-meta phase7-empty-state" role="status">
+                No audit events to display for the current selection.
+              </p>
+            ) : (
+              <div className="placeholder-table">
+                {auditTimeline.map((event) => (
+                  <article key={event.id} className="placeholder-row">
+                    <div>
+                      <strong>{event.eventType}</strong> for {event.ticketId}
+                    </div>
+                    <div className="placeholder-meta">
+                      {event.summary} · actor: {event.actor} · {event.occurredAt}
+                    </div>
+                    <button type="button" disabled>
+                      View details (read-only)
+                    </button>
+                  </article>
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="phase4a-card">
-            <h2>Approval Queue Placeholder</h2>
-            <div className="placeholder-table">
-              {(approvalQueue ?? []).map((item) => (
-                <article key={item.id} className="placeholder-row">
-                  <div>
-                    <strong>{item.id}</strong> ({item.ticketId})
-                  </div>
-                  <div className="placeholder-meta">
-                    Requested by {item.requestBy} · state: {item.state} · {item.submittedAt}
-                  </div>
-                </article>
-              ))}
-            </div>
+            <h2>Approval Queue</h2>
+            {(approvalQueue ?? []).length === 0 ? (
+              <p className="placeholder-meta phase7-empty-state" role="status">
+                No approval records are awaiting review.
+              </p>
+            ) : (
+              <div className="placeholder-table">
+                {(approvalQueue ?? []).map((item) => (
+                  <article key={item.id} className="placeholder-row">
+                    <div>
+                      <strong>{item.id}</strong> ({item.ticketId})
+                    </div>
+                    <div className="placeholder-meta">
+                      Requested by {item.requestBy} · state: {item.state} · {item.submittedAt}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="phase4a-card">
+            <h2>Communication Records</h2>
+            <p className="placeholder-meta phase7-empty-state" role="status">
+              No communication records are surfaced in the read-only UI yet.
+            </p>
+            <p className="placeholder-meta">
+              Replies are persistence-only: when a reply is sent it is recorded locally as a communication row
+              with no provider and no real email delivery. A read-only view of these records is a later phase.
+            </p>
           </section>
 
           <section className="phase4a-card">

@@ -28,7 +28,9 @@
     "validate:request-approval": "node scripts/validate-request-approval.mjs",
     "validate:approval-decision": "node scripts/validate-approval-decision.mjs",
     "validate:send-reply": "node scripts/validate-send-reply.mjs",
-    "validate:close-ticket": "node scripts/validate-close-ticket.mjs"
+    "validate:close-ticket": "node scripts/validate-close-ticket.mjs",
+    "validate:auth-boundary": "node scripts/validate-auth-boundary.mjs",
+    "validate:search-boundary": "node scripts/validate-search-boundary.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
