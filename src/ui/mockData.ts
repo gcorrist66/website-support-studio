@@ -1,5 +1,6 @@
 export type MockTicketQueueItem = {
   id: string;
+  workflowId?: string;
   title: string;
   status:
     | "received"
@@ -40,6 +41,7 @@ export type MockAuditEvent = {
 
 export type MockTicketDetail = {
   id: string;
+  workflowId?: string;
   summary: string;
   customerRequest: string;
   status:
@@ -70,7 +72,8 @@ export type MockTicketDetail = {
 
 export const ticketQueue: MockTicketQueueItem[] = [
   {
-    id: "TKT-LOCAL-1001",
+  id: "TKT-LOCAL-1001",
+    workflowId: "TKT-LOCAL-1001",
     title: "Checkout button on campaign page fails",
     status: "received",
     priority: "medium",
@@ -85,6 +88,7 @@ export const ticketQueue: MockTicketQueueItem[] = [
   },
   {
     id: "TKT-LOCAL-1002",
+    workflowId: "TKT-LOCAL-1002",
     title: "FAQ section shows stale pricing",
     status: "triaged",
     priority: "high",
@@ -98,6 +102,7 @@ export const ticketQueue: MockTicketQueueItem[] = [
   },
   {
     id: "TKT-LOCAL-1003",
+    workflowId: "TKT-LOCAL-1003",
     title: "Webhook not firing after checkout",
     status: "blocked",
     priority: "urgent",
@@ -168,6 +173,7 @@ export const auditTrail: MockAuditEvent[] = [
 export const ticketDetails: MockTicketDetail[] = [
   {
     id: "TKT-LOCAL-1001",
+    workflowId: "TKT-LOCAL-1001",
     summary: "Checkout button on campaign page fails",
     customerRequest:
       "Customer reports that the checkout button fails intermittently on desktop Safari and requires local investigation before reply can be prepared.",
@@ -191,6 +197,7 @@ export const ticketDetails: MockTicketDetail[] = [
   },
   {
     id: "TKT-LOCAL-1002",
+    workflowId: "TKT-LOCAL-1002",
     summary: "FAQ section shows stale pricing",
     customerRequest:
       "Customer states that the pricing card on the FAQ page shows stale values compared with the current plan table.",
@@ -215,6 +222,7 @@ export const ticketDetails: MockTicketDetail[] = [
   },
   {
     id: "TKT-LOCAL-1003",
+    workflowId: "TKT-LOCAL-1003",
     summary: "Webhook not firing after checkout",
     customerRequest:
       "Webhook notifications appear delayed or absent after successful checkout events and may impact downstream fulfillment.",

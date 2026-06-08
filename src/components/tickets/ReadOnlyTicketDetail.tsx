@@ -61,15 +61,43 @@ function approvalLabel(status: MockTicketDetail["approvalStatus"]) {
 
 type ReadOnlyTicketDetailProps = {
   ticket: ReturnType<typeof getTicketDetail>;
+  canTriage?: boolean;
+  isTriageInProgress?: boolean;
+  triageMessage?: string;
+  triageError?: string;
+  onTriage?: () => Promise<void>;
 };
 
-export function ReadOnlyTicketDetail({ ticket }: ReadOnlyTicketDetailProps) {
+export function ReadOnlyTicketDetail({
+  ticket,
+  canTriage = false,
+  isTriageInProgress = false,
+  triageMessage,
+  triageError,
+  onTriage,
+}: ReadOnlyTicketDetailProps) {
+  const hasTriageAction = typeof onTriage === "function";
+  const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
+  const triageLabel = isTriageInProgress
+    ? "Triaging..."
+    : hasTriageAction
+      ? canTriage
+        ? "Triage Ticket"
+        : "Triage Ticket (not available)"
+      : "Triage Ticket (disabled)";
+
+  const handleTriage = async () => {
+    if (triageDisabled) {
+      return;
+    }
+    await onTriage();
+  };
 
   return (
     <section className="phase4a-card">
       <h2>Read-only ticket detail</h2>
       <p className="placeholder-meta">
-        Mock data fallback available · No live ticket actions enabled · Phase 5A read-only data integration.
+        Mock data fallback available · No customer communication actions enabled · Triaged actions are phase 5C-gated.
       </p>
 
       <article className="phase4c-detail-card">
@@ -80,12 +108,10 @@ export function ReadOnlyTicketDetail({ ticket }: ReadOnlyTicketDetailProps) {
 
         <div className="phase4c-grid">
           <p>
-            <strong>Status:</strong>{" "}
-            <span className={statusClass(ticket.status)}>{ticket.status}</span>
+            <strong>Status:</strong> <span className={statusClass(ticket.status)}>{ticket.status}</span>
           </p>
           <p>
-            <strong>Priority:</strong>{" "}
-            <span className={priorityClass(ticket.priority)}>{ticket.priority}</span>
+            <strong>Priority:</strong> <span className={priorityClass(ticket.priority)}>{ticket.priority}</span>
           </p>
           <p>
             <strong>Identity confidence:</strong>{" "}
@@ -136,19 +162,16 @@ export function ReadOnlyTicketDetail({ ticket }: ReadOnlyTicketDetailProps) {
       <article className="phase4c-section">
         <h4>Local action placeholders</h4>
         <div className="phase4c-actions">
-          <button type="button" className="phase4a-action" disabled>
-            Send to customer (disabled in Phase 5A)
-          </button>
-          <button type="button" className="phase4a-action" disabled>
-            Approve reply (disabled in Phase 5A)
-          </button>
-          <button type="button" className="phase4a-action" disabled>
-            Close ticket (disabled in Phase 5A)
+          <button type="button" className="phase4a-action" disabled={triageDisabled} onClick={handleTriage}>
+            {triageLabel}
           </button>
         </div>
         <p className="placeholder-meta">
-          No mutation actions are active. No live customer send, approval, or close is possible in this phase.
+          No active approval/send/close controls are present in Phase 5C. Only triage is available for received tickets in guarded
+          Supabase mode.
         </p>
+        {triageMessage && <p className="phase5b-success">{triageMessage}</p>}
+        {triageError && <p className="phase5b-error">{triageError}</p>}
       </article>
     </section>
   );

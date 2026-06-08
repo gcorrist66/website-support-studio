@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
 import { CreateTicketForm } from "../tickets/CreateTicketForm";
+import { ActorRole } from "../../domain/ticketStatus";
+import { handleTriageTicket } from "../../handlers/ticketWorkflowHandlers";
 import {
   getReadOnlyApprovalQueue,
   getReadOnlyModeLabel,
@@ -26,6 +28,9 @@ export function AppShell() {
   const [ticketQueueData, setTicketQueueData] = useState<MockTicketQueueItem[]>(ticketQueue);
   const [approvalQueue, setApprovalQueue] = useState<MockApprovalItem[]>([]);
   const [readOnlyMode, setReadOnlyMode] = useState<ReturnType<typeof getReadOnlyDataMode>>("mock");
+  const [triageMessage, setTriageMessage] = useState("");
+  const [triageError, setTriageError] = useState("");
+  const [triageInProgress, setTriageInProgress] = useState(false);
 
   const loadReadOnlyData = async (modeOverride?: string) => {
     const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
@@ -111,6 +116,52 @@ export function AppShell() {
     }
   }, [filteredTickets, selectedTicketId]);
 
+  const handleTriageTicketAction = async () => {
+    if (readOnlyMode !== "supabase-dev-readonly") {
+      setTriageError("Triage is only available in guarded Supabase-dev data mode.");
+      return;
+    }
+
+    if (!selectedTicket?.workflowId) {
+      setTriageError("No workflow identifier available for this ticket.");
+      return;
+    }
+
+    setTriageError("");
+    setTriageMessage("");
+    setTriageInProgress(true);
+
+    const result = handleTriageTicket({
+      tenantContext: {
+        agencyId: selectedTicket.tenantContext.agencyId,
+        clientId: selectedTicket.tenantContext.clientId,
+        siteId: selectedTicket.tenantContext.siteId,
+      },
+      actorContext: {
+        actorRole: ActorRole.CS_AGENT,
+        actorReference: "phase5c-ui-operator",
+      },
+      ticketId: selectedTicket.workflowId,
+      rationale: "Manual CS triage from phase-5C UI",
+    });
+
+    if (result.status === "error") {
+      setTriageError(result.error);
+      setTriageMessage("");
+      setTriageInProgress(false);
+      return;
+    }
+
+    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+    setSelectedTicket(refreshed);
+    setAuditTimeline(timeline);
+    setTriageMessage(`Ticket ${selectedTicket.id} triaged successfully.`);
+    setTriageInProgress(false);
+  };
+
+  const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
+
   return (
     <div className="phase4a-shell">
       <header className="phase4a-header">
@@ -119,8 +170,10 @@ export function AppShell() {
           <h1>Internal Operator Workspace</h1>
           <p>Phase 5A Live Read-Only Data Integration</p>
         </div>
-        <span className="status-pill">{getReadOnlyModeLabel()} · No live ticket actions enabled</span>
-      </header>
+            <span className="status-pill">
+              {getReadOnlyModeLabel()} · Triage-only phase (send/approval/close disabled)
+            </span>
+          </header>
 
       <div className="phase4a-layout">
         <nav className="phase4a-nav" aria-label="Primary">
@@ -139,15 +192,15 @@ export function AppShell() {
             <h2>Dashboard Placeholder</h2>
             <p>Read-only workspace for internal operator planning and local validation.</p>
             <ul>
-              <li>
+            <li>
                 {readOnlyMode === "supabase-dev-readonly"
                   ? "Live read-only data is allowed only in guarded dev mode."
-                  : "Queue views are in mock data mode until read-only dev guards are fully enabled."}
+                  : "Queue views are in mock data mode until guarded dev env is supplied."}
               </li>
               <li>Live read-only mode is safe-read only and requires WSS_ALLOW_SUPABASE_VALIDATION=dev guard.</li>
-              <li>Planned workflow: draft → approval → send → close.</li>
-              <li>All actions currently rendered as disabled placeholders.</li>
-              <li>No live writes, mutations, approvals, or customer sending in this phase.</li>
+                <li>Planned workflow: draft → approval → send → close.</li>
+                <li>Phase 5C enables triage action (received → triaged) in guarded workflow execution.</li>
+                <li>Send/approval/close actions are not available in this phase.</li>
             </ul>
           </section>
 
@@ -239,7 +292,14 @@ export function AppShell() {
             selectedTicketId={selectedTicketId}
             onSelectTicket={setSelectedTicketId}
           />
-          <ReadOnlyTicketDetail ticket={selectedTicket} />
+          <ReadOnlyTicketDetail
+            ticket={selectedTicket}
+            canTriage={canTriageSelected}
+            isTriageInProgress={triageInProgress}
+            triageMessage={triageMessage}
+            triageError={triageError}
+            onTriage={handleTriageTicketAction}
+          />
 
           <section className="phase4a-card">
             <h2>Audit Trail Placeholder</h2>
@@ -253,7 +313,7 @@ export function AppShell() {
                     {event.summary} · actor: {event.actor} · {event.occurredAt}
                   </div>
                   <button type="button" disabled>
-                    View details (disabled in Phase 5A - read-only mode)
+                    View details (read-only)
                   </button>
                 </article>
               ))}
@@ -271,9 +331,6 @@ export function AppShell() {
                   <div className="placeholder-meta">
                     Requested by {item.requestBy} · state: {item.state} · {item.submittedAt}
                   </div>
-                  <button type="button" disabled>
-                    Approve (disabled in Phase 5A - no live approval yet)
-                  </button>
                 </article>
               ))}
             </div>
@@ -282,13 +339,13 @@ export function AppShell() {
           <section className="phase4a-card">
             <h2>System Status / Validation Placeholder</h2>
             <ul>
-              <li>Read-only data mode: {readOnlyMode}.</li>
-              <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
-              <li>Route files: not introduced in this phase.</li>
-              <li>Live writes/mutations: disabled.</li>
-              <li>Auth/email/provider: not added.</li>
-            </ul>
-          </section>
+            <li>Read-only data mode: {readOnlyMode}.</li>
+            <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
+            <li>Route files: not introduced in this phase.</li>
+            <li>Live writes/mutations: triage-only in guarded mode; other actions disabled.</li>
+            <li>Auth/email/provider: not added.</li>
+          </ul>
+        </section>
         </main>
       </div>
     </div>

@@ -1,13 +1,13 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5B (Create Ticket Flow)
+- Current focus: Phase 5C (Triage Flow)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
 - Customer communication: not implemented
-- Mutations: create-only path implemented locally
+- Mutations: create + triage-only path implemented locally
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
@@ -137,6 +137,41 @@
   - No customer portal changes.
   - No API route files introduced.
   - No auth provider wiring.
+
+## 5) Phase 5C — Local Triage Flow
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Evidence
+- Added local triage path in service and handler layers:
+  - `src/services/ticketWorkflowService.ts: triagePersistedTicket` now accepts `actorRole` and applies transition validation.
+  - `src/handlers/ticketWorkflowHandlers.ts` now passes validated actor role into triage service calls.
+- Added UI triage action:
+  - `src/components/tickets/ReadOnlyTicketDetail.tsx` exposes `Triage Ticket` when ineligible state is disabled.
+  - `src/components/shell/AppShell.tsx` wires triage action in guarded Supabase-dev mode and shows triage outcome.
+- Added mapping from read-only queue/detail rows to workflow IDs so UI actions can target persisted ticket rows:
+  - `src/ui/mockData.ts`
+  - `src/data/readOnlyTicketData.ts`
+- Added validation script `scripts/validate-triage-ticket.mjs` covering:
+  - received → triaged succeeds
+  - non-received triage fails
+  - missing tenant context fails
+  - missing actor context fails
+  - unauthorized actor fails
+  - tenant integrity is enforced
+  - `ticket_triaged` audit exists
+  - triage does not create draft/approval/communication rows
+  - cleanup removes test rows
+- Added npm script `validate:triage-ticket`.
+- Local-only validation status:
+  - No send/approval/close controls are present in this phase.
+  - No customer communication providers or API routes added.
+  - Triaged updates are write-only to local/Supabase path as intended.
 
 ## 3) Previous Gate Notes
 - Phase 4D remains the local mock UI baseline.

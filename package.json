@@ -22,7 +22,8 @@
     "validate:route-boundary": "node scripts/validate-route-boundary.mjs",
     "validate:ui-boundary": "node scripts/validate-ui-boundary.mjs",
     "validate:readonly-data": "node scripts/validate-readonly-data.mjs",
-    "validate:create-ticket": "node scripts/validate-create-ticket.mjs"
+    "validate:create-ticket": "node scripts/validate-create-ticket.mjs",
+    "validate:triage-ticket": "node scripts/validate-triage-ticket.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

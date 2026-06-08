@@ -371,6 +371,7 @@ export function createPersistedTicket(input: CreatePersistedTicketInput): Ticket
 
 export function triagePersistedTicket(
   ticketId: string,
+  actorRole: ActorRole,
   actorReference: string,
   rationale?: string,
 ): Ticket {
@@ -380,7 +381,7 @@ export function triagePersistedTicket(
   const ticket = transitionTicket(
     ticketId,
     TicketStatus.TRIAGED,
-    ActorRole.CS_AGENT,
+    actorRole,
     actorReference,
     rationale,
   );

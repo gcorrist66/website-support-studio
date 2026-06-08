@@ -190,6 +190,7 @@ export function handleTriageTicket(request: TriageTicketRequest): HandlerResult<
 
     const ticket = triagePersistedTicket(
       request.ticketId,
+      request.actorContext.actorRole,
       request.actorContext.actorReference,
       request.rationale,
     );

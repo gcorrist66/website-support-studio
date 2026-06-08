@@ -278,6 +278,7 @@ export async function getReadOnlyTicketQueue(): Promise<MockTicketQueueItem[]> {
 
       return {
         id: row.ticket_number ?? `ticket-${row.id}`,
+        workflowId: row.id,
         title: row.title,
         status: safeNormalizeStatus(String(row.status)),
         priority: safeNormalizePriority(String(row.priority)),
@@ -382,6 +383,7 @@ export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTic
 
   return {
     id: ticketData.ticket_number,
+    workflowId: ticketData.id,
     summary: ticketData.title,
     customerRequest: ticketData.description ?? "No request text available in read-only mode.",
     status: safeNormalizeStatus(ticketData.status),
