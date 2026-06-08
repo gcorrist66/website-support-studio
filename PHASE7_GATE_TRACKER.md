@@ -134,7 +134,7 @@ Starting commit: `1bf98f4`. Session commit: the Phase 7 auth-planning commit.
 - Local prototype that simulates session source selection + status simulation. Uses local session shape consumed by `createExistingSessionShapeReadState` and maps to login shell state.
 
 ## Phase 7M — Dev Session Integration
-- Diagnosed: complete · Fixed Locally: complete (`src/components/auth/SessionSourcePrototype.tsx`, `src/auth/devSupabaseSessionRead.ts`) · Committed: pending
+- Diagnosed: complete · Fixed Locally: complete (`src/components/auth/SessionSourcePrototype.tsx`, `src/auth/devSupabaseSessionRead.ts`) · Committed: complete
 - Pushed/Deployed/Production Verified/Closed: not complete
 - Confirms local session shape → `getSessionPrincipal` → adapter/pipeline → `LoginShellState` and capability flags. No auth runtime, no writes.
 
