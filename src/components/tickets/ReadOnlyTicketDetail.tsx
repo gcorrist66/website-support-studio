@@ -90,6 +90,14 @@ type ReadOnlyTicketDetailProps = {
   sendReplyMessage?: string;
   sendReplyError?: string;
   onSendReply?: () => Promise<void>;
+  closureNote?: string;
+  canCloseTicket?: boolean;
+  isCloseTicketInProgress?: boolean;
+  closeTicketMessage?: string;
+  closeTicketError?: string;
+  // eslint-disable-next-line no-unused-vars
+  onClosureNoteChange?: (_closureNote: string) => void;
+  onCloseTicket?: () => Promise<void>;
 };
 
 export function ReadOnlyTicketDetail({
@@ -122,6 +130,13 @@ export function ReadOnlyTicketDetail({
   sendReplyMessage,
   sendReplyError,
   onSendReply,
+  closureNote = "",
+  canCloseTicket = false,
+  isCloseTicketInProgress = false,
+  closeTicketMessage,
+  closeTicketError,
+  onClosureNoteChange,
+  onCloseTicket,
 }: ReadOnlyTicketDetailProps) {
   const hasTriageAction = typeof onTriage === "function";
   const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
@@ -181,6 +196,17 @@ export function ReadOnlyTicketDetail({
       return;
     }
     await onSendReply();
+  };
+
+  const hasCloseTicketAction = typeof onCloseTicket === "function";
+  const closeTicketDisabled =
+    !hasCloseTicketAction || !canCloseTicket || isCloseTicketInProgress || !closureNote.trim();
+
+  const handleCloseTicket = async () => {
+    if (closeTicketDisabled) {
+      return;
+    }
+    await onCloseTicket();
   };
 
   return (
@@ -329,7 +355,35 @@ export function ReadOnlyTicketDetail({
         {!canSendReply && (
           <p className="placeholder-meta">Send Reply: Not active for this ticket state</p>
         )}
-        <p className="placeholder-meta">Close controls are still not enabled in this phase.</p>
+        <label htmlFor={`closure-${ticket.id}`} className="phase4c-label">
+          Closure note
+        </label>
+        <textarea
+          id={`closure-${ticket.id}`}
+          className="phase4a-textarea"
+          rows={3}
+          value={closureNote}
+          onChange={(event) => {
+            onClosureNoteChange?.(event.target.value);
+          }}
+          disabled={isCloseTicketInProgress || !canCloseTicket}
+          placeholder={canCloseTicket ? "Closure note (required to close)" : "Close is only available for sent tickets in guarded mode"}
+        />
+        <div className="phase4c-actions">
+          <button
+            type="button"
+            className="phase4a-action"
+            disabled={closeTicketDisabled}
+            onClick={handleCloseTicket}
+          >
+            {isCloseTicketInProgress ? "Closing ticket..." : "Close Ticket"}
+          </button>
+        </div>
+        {!canCloseTicket && (
+          <p className="placeholder-meta">Close Ticket: Not active for this ticket state</p>
+        )}
+        {closeTicketMessage && <p className="phase5b-success">{closeTicketMessage}</p>}
+        {closeTicketError && <p className="phase5b-error">{closeTicketError}</p>}
         {sendReplyMessage && <p className="phase5b-success">{sendReplyMessage}</p>}
         {sendReplyError && <p className="phase5b-error">{sendReplyError}</p>}
         {approvalDecisionMessage && <p className="phase5b-success">{approvalDecisionMessage}</p>}

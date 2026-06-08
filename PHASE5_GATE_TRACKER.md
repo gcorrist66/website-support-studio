@@ -1,13 +1,13 @@
 # WSS Phase 5 Gate Tracker
 
 ## 1) Current Phase Status
-- Current focus: Phase 5G (Customer Communication — local-only send)
+- Current focus: Phase 5H (Ticket Closure Flow)
 - Authority: local UI read-only proof only
 - Deployment status: not deployed
 - Push status: not pushed
 - Auth: not implemented
 - Customer communication: persistence-only (local), no provider/email integration
-- Mutations: create + triage + draft + request-approval + approval-decision + send (local-only) path implemented locally
+- Mutations: full local lifecycle — create + triage + draft + request-approval + approval-decision + send (local-only) + close — implemented locally
 
 ## 2) Phase 5A — Live Read-Only Supabase Data Integration
 - Diagnosed: complete
@@ -444,6 +444,80 @@
 - No customer portal
 - No real email send and no provider integration (Resend/SendGrid/SMTP/etc.) — persistence-only
 - No close ticket UI action or handler wired into the UI
+- No service role key in browser code (guarded/placeholder checks still in place)
+
+## 10) Phase 5H — Ticket Closure Flow
+- Diagnosed: complete
+- Fixed Locally: complete
+- Committed: complete
+- Pushed: not complete
+- Deployed: not complete
+- Production Verified: not complete
+- Closed: not complete
+
+### Scope
+- Implemented only `sent_to_customer → closed` (Close Ticket).
+- Close requires a closure note, an internal actor context, and `sent_to_customer` status.
+- Not implemented: auth, API routes, customer portal, deployment, push, additional communication providers.
+
+### Evidence
+- Handlers/service/domain reused (already present): `handleCloseTicket` → `closePersistedTicket` →
+  domain `closeTicket`.
+  - Only `sent_to_customer` tickets may close (state machine: `SENT_TO_CUSTOMER → CLOSED`,
+    authorized for cs_agent / agency_admin / gary_approver). `closed` is terminal.
+  - Closing sets status `closed`, stores `closure_note`, sets `closed_at`, and emits a
+    `ticket_closed` audit event. No communication row is created by close; close does not send
+    email, reopen the ticket, or auto-close after send.
+- UI close action:
+  - `src/components/tickets/ReadOnlyTicketDetail.tsx` exposes a closure-note field and a
+    `Close Ticket` action, enabled only when eligible (sent_to_customer in guarded mode and a
+    non-empty closure note); otherwise disabled with copy `Not active for this ticket state`.
+  - `src/components/shell/AppShell.tsx` wires the close in guarded Supabase-dev mode
+    (`canCloseTicketSelected = sent_to_customer`) with a required closure note, shows status/error
+    messaging, and refreshes detail/audit.
+- Boundary update:
+  - `scripts/validate-readonly-data.mjs` now permits `handleCloseTicket` in the UI shell only,
+    while still blocking create/block/unblock handlers and API routes.
+- Added close validator:
+  - `scripts/validate-close-ticket.mjs`
+  - npm script `validate:close-ticket`
+- Validation proofs (all pass, guarded dev env):
+  - sent_to_customer → closed succeeds
+  - closure_note persisted
+  - closed_at set
+  - ticket_closed audit exists
+  - no communication row created by close (communication count unchanged across close)
+  - closed ticket cannot transition out (second close rejected as terminal)
+  - missing closure note fails (and persists nothing)
+  - non-sent_to_customer status fails (approved_to_send close rejected as invalid transition)
+  - unauthorized actor fails (and persists nothing)
+  - cleanup removes created rows; database left clean
+- Validation outcomes:
+  - `npm run lint` PASS
+  - `npm run typecheck` PASS
+  - `npm run build` PASS
+  - `npm run validate:domain` PASS
+  - `npm run validate:e2e` PASS
+  - `npm run validate:phase2a` PASS
+  - `npm run validate:persistence` PASS
+  - `npm run validate:contracts` PASS
+  - `npm run validate:handlers` PASS
+  - `npm run validate:route-boundary` PASS
+  - `npm run validate:ui-boundary` PASS
+  - `npm run validate:readonly-data` PASS
+  - `npm run validate:draft-reply` PASS (guarded dev env)
+  - `npm run validate:request-approval` PASS (guarded dev env)
+  - `npm run validate:approval-decision` PASS (guarded dev env)
+  - `npm run validate:send-reply` PASS (guarded dev env)
+  - `npm run validate:close-ticket` PASS (guarded dev env)
+  - Note: run the guarded Supabase validators sequentially; concurrent runs contend on the shared dev DB.
+
+### Controls preserved in Phase 5H
+- No API routes added
+- No auth/auth provider wiring
+- No customer portal
+- No email send and no provider integration (close creates no communication row)
+- No ticket reopen and no auto-close after send
 - No service role key in browser code (guarded/placeholder checks still in place)
 
 ## 3) Previous Gate Notes

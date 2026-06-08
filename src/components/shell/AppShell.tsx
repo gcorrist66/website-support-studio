@@ -6,6 +6,7 @@ import { CreateTicketForm } from "../tickets/CreateTicketForm";
 import { ActorRole } from "../../domain/ticketStatus";
 import {
   handleApproveReply,
+  handleCloseTicket,
   handleDraftReply,
   handleRejectReply,
   handleRequestApproval,
@@ -52,6 +53,10 @@ export function AppShell() {
   const [sendReplyMessage, setSendReplyMessage] = useState("");
   const [sendReplyError, setSendReplyError] = useState("");
   const [sendReplyInProgress, setSendReplyInProgress] = useState(false);
+  const [closureNote, setClosureNote] = useState("");
+  const [closeTicketMessage, setCloseTicketMessage] = useState("");
+  const [closeTicketError, setCloseTicketError] = useState("");
+  const [closeTicketInProgress, setCloseTicketInProgress] = useState(false);
 
   const loadReadOnlyData = async (modeOverride?: string) => {
     const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
@@ -408,6 +413,57 @@ export function AppShell() {
     setSendReplyInProgress(false);
   };
 
+  const handleCloseTicketAction = async () => {
+    if (readOnlyMode !== "supabase-dev-readonly") {
+      setCloseTicketError("Close ticket is only available in guarded Supabase-dev data mode.");
+      return;
+    }
+
+    if (!selectedTicket?.workflowId) {
+      setCloseTicketError("No workflow identifier available for this ticket.");
+      return;
+    }
+
+    const normalizedClosureNote = closureNote.trim();
+    if (!normalizedClosureNote) {
+      setCloseTicketError("Closure note is required.");
+      return;
+    }
+
+    setCloseTicketError("");
+    setCloseTicketMessage("");
+    setCloseTicketInProgress(true);
+
+    const result = handleCloseTicket({
+      tenantContext: {
+        agencyId: selectedTicket.tenantContext.agencyId,
+        clientId: selectedTicket.tenantContext.clientId,
+        siteId: selectedTicket.tenantContext.siteId,
+      },
+      actorContext: {
+        actorRole: ActorRole.CS_AGENT,
+        actorReference: "phase5h-ui-operator",
+      },
+      ticketId: selectedTicket.workflowId,
+      closureNote: normalizedClosureNote,
+    });
+
+    if (result.status === "error") {
+      setCloseTicketError(result.error);
+      setCloseTicketMessage("");
+      setCloseTicketInProgress(false);
+      return;
+    }
+
+    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
+    setSelectedTicket(refreshed);
+    setAuditTimeline(timeline);
+    setCloseTicketMessage(`Ticket ${selectedTicket.id} closed.`);
+    setClosureNote("");
+    setCloseTicketInProgress(false);
+  };
+
   const canTriageSelected = readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received";
   const canDraftReplySelected =
     readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "triaged" && Boolean(selectedTicket.workflowId);
@@ -423,6 +479,10 @@ export function AppShell() {
     readOnlyMode === "supabase-dev-readonly" &&
     selectedTicket.status === "approved_to_send" &&
     Boolean(selectedTicket.workflowId);
+  const canCloseTicketSelected =
+    readOnlyMode === "supabase-dev-readonly" &&
+    selectedTicket.status === "sent_to_customer" &&
+    Boolean(selectedTicket.workflowId);
 
   return (
     <div className="phase4a-shell">
@@ -433,7 +493,7 @@ export function AppShell() {
           <p>Phase 5A Live Read-Only Data Integration</p>
         </div>
             <span className="status-pill">
-              {getReadOnlyModeLabel()} · Triage/draft/approval/send phase (close disabled)
+              {getReadOnlyModeLabel()} · Full local workflow phase (triage → close)
             </span>
           </header>
 
@@ -464,7 +524,7 @@ export function AppShell() {
                 <li>Phase 5C enables triage action (received → triaged) in guarded workflow execution.</li>
                 <li>Phase 5E enables request approval (reply_drafted → awaiting_gary_approval) in guarded workflow execution.</li>
                 <li>Phase 5G enables send reply (approved_to_send → sent_to_customer) as local-only persistence in guarded mode.</li>
-                <li>Close ticket action is not available in this phase.</li>
+                <li>Phase 5H enables close ticket (sent_to_customer → closed) with a required closure note in guarded mode.</li>
             </ul>
           </section>
 
@@ -586,6 +646,13 @@ export function AppShell() {
             sendReplyMessage={sendReplyMessage}
             sendReplyError={sendReplyError}
             onSendReply={handleSendReplyAction}
+            closureNote={closureNote}
+            canCloseTicket={canCloseTicketSelected}
+            isCloseTicketInProgress={closeTicketInProgress}
+            closeTicketMessage={closeTicketMessage}
+            closeTicketError={closeTicketError}
+            onClosureNoteChange={setClosureNote}
+            onCloseTicket={handleCloseTicketAction}
           />
 
           <section className="phase4a-card">
@@ -629,7 +696,7 @@ export function AppShell() {
             <li>Read-only data mode: {readOnlyMode}.</li>
             <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
             <li>Route files: not introduced in this phase.</li>
-            <li>Live writes/mutations: triage/draft/approval/send (local-only, no provider) in guarded mode; close action disabled.</li>
+            <li>Live writes/mutations: triage/draft/approval/send (local-only, no provider)/close in guarded mode.</li>
             <li>Auth/email/provider: not added.</li>
           </ul>
         </section>
