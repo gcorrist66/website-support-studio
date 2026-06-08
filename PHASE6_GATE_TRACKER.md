@@ -217,9 +217,48 @@ plus the dev-apply evidence commit.
 - Diagnosed: complete · Fixed Locally: complete · Committed: complete (6U commit)
 - File: `PHASE6_LOCAL_AUTH_MODE_CHECKPOINT.md`, this tracker.
 
+## Phase 6V — Local Supabase Auth Client Wrapper
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6V commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/auth/supabaseAuthClientWrapper.ts` — `SupabaseSessionLike`, `SupabaseUserLike`;
+  `getSessionPrincipal`, `extractPrincipalFromSession`, `extractPrincipalFromUser`,
+  `createSyntheticSession`, `createSyntheticUser`. Read-only mapping of an already-verified session/user
+  shape → `SupabaseAuthPrincipal`. No login/signup/logout/password reset/magic link/OTP, no auth user
+  creation, no DB writes, no Supabase client runtime, no network, no secrets.
+
+## Phase 6W — Local Auth Pipeline
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6W commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `src/auth/authPipeline.ts` — `resolveOperatorSessionFromSession`,
+  `resolveOperatorSessionFromUser`, `resolveCapabilityFlagsFromSession`. Pure pipeline
+  Session → Principal → Auth Adapter → Operator Session → Capability Flags. No login, redirects,
+  middleware, writes, or auth creation.
+
+## Phase 6X — Auth Pipeline Validation
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6X commit)
+- Pushed/Deployed/Verified/Closed: not complete
+- File: `scripts/validate-auth-pipeline.mjs` (`npm run validate:auth-pipeline`) — PASS (15 checks):
+  valid session → principal; principal → operator lookup; linked operator → session; capability flags
+  resolve; invalid session / missing user / email-only rejected; no DB writes / no mutation; no auth
+  creation / no supabase runtime; no login UI / route middleware / API routes / RLS / service-role.
+
+## Phase 6X-DB — Dev Auth Pipeline DB Validation (performed)
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6X commit)
+- Pushed/Deployed/Verified/Closed: not complete (dev only; production untouched)
+- File: `scripts/validate-auth-pipeline-db.mjs` (`npm run validate:auth-pipeline-db`, guarded) — PASS (7 checks).
+  Ran against Supabase dev (ref `vrtfbbrwrxyljchywmzy`): linked a seeded operator to a SYNTHETIC
+  auth_user_id, ran the FULL pipeline from a SYNTHETIC session (session→principal→adapter→operator
+  session), verified capability flags (gary), confirmed nothing was linked by the pipeline, cleared the
+  link and preserved rows; RLS remained disabled. No real auth users, no login; dev left clean (0 linked).
+
+## Phase 6Y — Checkpoint
+- Diagnosed: complete · Fixed Locally: complete · Committed: complete (6Y commit)
+- File: `PHASE6_AUTH_PIPELINE_CHECKPOINT.md`, this tracker.
+
 ## Safety Posture (unchanged)
 - No push, no deploy, no Vercel trigger.
 - No RLS enabled, no login UI, no public API routes, no customer portal, no email provider.
 - No production data changes; no secrets committed; no service-role key in client code.
-- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage/adapter/auth-mode
-  checks are reversible metadata tests only (no real Supabase Auth users, no magic links, no credentials).
+- No existing validation weakened; MMVP workflow unchanged. Dev auth_user_id linkage/adapter/auth-mode/
+  pipeline checks are reversible metadata tests only (no real Supabase Auth users, no magic links, no
+  credentials, no Supabase Auth runtime).

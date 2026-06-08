@@ -41,6 +41,8 @@
     "validate:supabase-auth-adapter-db": "node scripts/validate-supabase-auth-adapter-db.mjs",
     "validate:local-auth-mode": "node scripts/validate-local-auth-mode.mjs",
     "validate:local-auth-mode-db": "node scripts/validate-local-auth-mode-db.mjs",
+    "validate:auth-pipeline": "node scripts/validate-auth-pipeline.mjs",
+    "validate:auth-pipeline-db": "node scripts/validate-auth-pipeline-db.mjs",
     "seed:operators-dev": "node scripts/seed-operators-dev.mjs"
   },
   "dependencies": {
