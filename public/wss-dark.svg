@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 949 254" width="949" height="254" role="img" aria-label="WSS">
+  <rect width="949" height="254" fill="#0B1220"/>
+  <text x="28" y="204"
+        font-family='"JetBrains Mono", "SF Mono", Menlo, Consolas, monospace'
+        font-size="180"
+        font-weight="800"
+        letter-spacing="-4"
+        style="font-feature-settings:'kern' 1;">
+    <tspan fill="#64748B">&lt;</tspan><tspan fill="#F1F5F9">wss</tspan><tspan fill="#64748B" dx="0.12em">/&gt;</tspan>
+  </text>
+</svg>

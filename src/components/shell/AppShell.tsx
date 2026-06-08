@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { LogoLockup } from "../brand/LogoLockup";
+import { MonoLabel } from "../brand/MonoLabel";
 import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
 import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
 import { CreateTicketForm } from "../tickets/CreateTicketForm";
@@ -579,25 +581,29 @@ export function AppShell() {
   return (
     <div className="phase4a-shell">
       <header className="phase4a-header">
-        <div>
-          <p className="brand-kicker">Website Support Studio</p>
-          <h1>Internal Operator Workspace</h1>
-          <p>Phase 5A Live Read-Only Data Integration</p>
+        <div style={{ display: "grid", gap: 6 }}>
+          <LogoLockup size={32} variant="dark" />
+          <h1 style={{ color: "var(--wordmark-ink-inverse)" }}>
+            <MonoLabel text="internal operator workspace" />
+          </h1>
+          <p className="brand-kicker">
+            <MonoLabel text="phase 5a live read only data integration" />
+          </p>
         </div>
-            <span className="status-pill">
-              {getReadOnlyModeLabel()} · Full local workflow phase (triage → close)
-            </span>
-          </header>
+        <span className="status-pill">
+          <MonoLabel text={getReadOnlyModeLabel()} /> · <MonoLabel text="full local workflow phase" />
+        </span>
+      </header>
 
       <div className="phase4a-layout">
         <nav className="phase4a-nav" aria-label="Primary">
-          <h2>Navigation</h2>
+          <h2><MonoLabel text="navigation" /></h2>
           <ul>
-            <li>Dashboard</li>
-            <li>Tickets</li>
-            <li>Approvals</li>
-            <li>Audit Trail</li>
-            <li>System Status</li>
+            <li><MonoLabel text="dashboard" /></li>
+            <li><MonoLabel text="tickets" /></li>
+            <li><MonoLabel text="approvals" /></li>
+            <li><MonoLabel text="audit trail" /></li>
+            <li><MonoLabel text="system status" /></li>
           </ul>
         </nav>
 
