@@ -57,14 +57,34 @@ function formatDate(iso: string | null): string {
 }
 
 function formatCapacity(value: number | null): string {
-  return value === null ? "Not tracked yet" : `${value}`;
+  return value === null ? "not tracked yet" : `${value}`;
 }
 
 function safeSiteLabel(site: CustomerSite | SiteOption | null | undefined): string {
   if (!site) {
     return "not linked yet";
   }
+  if ("url" in site && typeof site.url === "string" && site.url.trim().length > 0) {
+    return `${site.name} (${site.url})`;
+  }
   return site.name;
+}
+
+function getCapacityEffortExamples(): Array<{ title: string; examples: string }> {
+  return [
+    {
+      title: "Low effort",
+      examples: "content update, image swap, typo fix",
+    },
+    {
+      title: "Medium effort",
+      examples: "plugin update, landing page change, form adjustment",
+    },
+    {
+      title: "High effort",
+      examples: "bug fix, multi-step site change, layout repair",
+    },
+  ];
 }
 
 function getPlanNote(summary: CustomerWorkspaceSummary): string {
@@ -150,7 +170,7 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
   if (result) {
     return (
       <section className="customer-card customer-card-wide">
-        <h2>Website support request sent</h2>
+        <h2>Support request sent</h2>
         <p className="customer-copy">
           Your request is now in the internal support queue and a human will review it.
         </p>
@@ -173,10 +193,13 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
 
   return (
     <section className="customer-card customer-card-wide">
-      <h2>Send website support request</h2>
+      <h2>Send support request</h2>
       <p className="customer-copy">
-        Use this for website changes, fixes, and support requests. This goes into the internal WSS queue.
-        Product feedback uses the separate form below.
+        Use this for work on your website. This goes into the internal support queue. Product feedback
+        uses the separate form below and is for improving website_support_studio itself.
+      </p>
+      <p className="customer-smallprint">
+        Examples: content updates, image swaps, plugin updates, landing page changes, and bug fixes.
       </p>
 
       <form className="customer-form" onSubmit={onSubmit}>
@@ -289,7 +312,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
       <section className="customer-card customer-card-wide">
         <h2>Product feedback sent</h2>
         <p className="customer-copy">
-          Thanks. This was routed into the internal product-feedback queue for Corriston Consulting / WSS.
+          Thanks. This was routed into the internal product-feedback queue for Corriston Consulting / website_support_studio.
         </p>
         <p className="customer-copy">
           <strong>Request ID:</strong> {result.ticket_number}
@@ -298,8 +321,8 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
           <strong>Status:</strong> {result.status}
         </p>
         <p className="customer-smallprint">
-          Use this form for feedback, feature requests, bug reports, and product ideas. Use the support
-          request form above for website fixes and support.
+          Use this form for feedback, feature requests, bug reports, and product ideas about
+          website_support_studio. Use the support request form above for work on your website.
         </p>
         <button className="auth-btn auth-btn-green" type="button" onClick={reset}>
           send more feedback
@@ -312,7 +335,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
     <section className="customer-card customer-card-wide">
       <h2>Send product feedback</h2>
       <p className="customer-copy">
-        Use this for feedback, feature requests, bug reports, or anything else about Website Support Studio.
+        Use this for feedback, feature requests, bug reports, or anything else about website_support_studio.
         For website fixes and support, use the request form above.
       </p>
 
@@ -425,12 +448,18 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
       <section className="customer-hero">
         <div>
           <LogoLockup size={30} />
-          <p className="customer-kicker">customer workspace</p>
+          <p className="customer-kicker">website_support_studio customer workspace</p>
           <h1>your account at a glance</h1>
           <p className="customer-copy">
-            Everything important is in one place: who you are logged in as, what plan you are on, how
+            Everything important is in one place: who you are logged in as, what plan you bought, how
             much support capacity you have, and how to reach us.
           </p>
+          {summary.planName !== "Plan not found" ? (
+            <p className="customer-smallprint">
+              You are on {summary.planName} at {formatMoney(summary.monthlyUsd)} with{" "}
+              {formatCapacity(summary.capacityIncluded)} Capacity Units each month.
+            </p>
+          ) : null}
         </div>
         <button className="auth-btn auth-btn-ghost customer-logout" type="button" onClick={() => { void signOut(); }}>
           log out
@@ -439,7 +468,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
 
       <div className="customer-grid">
         <section className="customer-card">
-          <h2>Account profile</h2>
+          <h2>Account summary</h2>
           <dl className="customer-definition-list">
             <div>
               <dt>Logged in email</dt>
@@ -450,46 +479,25 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
               <dd>customer</dd>
             </div>
             <div>
-              <dt>Organization</dt>
+              <dt>Company</dt>
               <dd>{summary.orgName}</dd>
             </div>
             <div>
-              <dt>Current site</dt>
+              <dt>Website</dt>
               <dd>{safeSiteLabel(currentSite)}</dd>
             </div>
-          </dl>
-          <p className="customer-smallprint">
-            If you need to switch accounts, log out and sign in with the same email you used at checkout.
-          </p>
-        </section>
-
-        <section className="customer-card">
-          <h2>Billing and plan</h2>
-          <dl className="customer-definition-list">
             <div>
               <dt>Current plan</dt>
               <dd>{summary.planName}</dd>
             </div>
             <div>
-              <dt>Monthly price</dt>
-              <dd>{formatMoney(summary.monthlyUsd)}</dd>
-            </div>
-            <div>
               <dt>Subscription status</dt>
               <dd>{summary.subscriptionStatus ? summary.subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
             </div>
-            <div>
-              <dt>Renewal / trial</dt>
-              <dd>{getPlanNote(summary)}</dd>
-            </div>
           </dl>
           <p className="customer-smallprint">
-            Need to change your plan? Contact Corriston Consulting. If the plan looks wrong, sign out and
-            use the checkout email again.
+            If you need to switch accounts, log out and sign in with the same email you used at checkout.
           </p>
-          <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
-            contact Corriston Consulting
-          </a>
         </section>
 
         <section className="customer-card">
@@ -511,38 +519,75 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
               <dd>{formatCapacity(summary.capacityRemaining)}</dd>
             </div>
           </dl>
+          <ul className="customer-bullet-list">
+            {getCapacityEffortExamples().map((item) => (
+              <li key={item.title}>
+                <strong>{item.title}:</strong> {item.examples}
+              </li>
+            ))}
+          </ul>
           <p className="customer-smallprint">
-            Usage tracking is not connected yet, so the used and remaining values are shown as a safe
-            placeholder.
+            When you run out, requests wait until the next monthly refresh or until additional Capacity
+            Units are added. Need more? Contact Corriston Consulting.
           </p>
+          <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
+            contact Corriston Consulting
+          </a>
         </section>
 
         <section className="customer-card">
-          <h2>Support status</h2>
+          <h2>Plan and billing</h2>
           <dl className="customer-definition-list">
             <div>
-              <dt>Onboarding</dt>
-              <dd>
-                {summary.onboardingStatus === null
-                  ? "not available"
-                  : summary.onboardingStatus === "complete"
-                    ? "complete"
-                    : "in progress"}
-              </dd>
+              <dt>Current plan</dt>
+              <dd>{summary.planName}</dd>
             </div>
             <div>
-              <dt>Website count</dt>
-              <dd>{summary.websiteCount === null ? "not available" : summary.websiteCount}</dd>
+              <dt>Monthly price</dt>
+              <dd>{formatMoney(summary.monthlyUsd)}</dd>
             </div>
             <div>
-              <dt>Primary contact</dt>
-              <dd>{summary.primaryContactEmail ?? "not available"}</dd>
+              <dt>Subscription status</dt>
+              <dd>{summary.subscriptionStatus ? summary.subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
             </div>
             <div>
-              <dt>Support email</dt>
-              <dd>{summary.supportEmail ?? "not available"}</dd>
+              <dt>Renewal / trial</dt>
+              <dd>{getPlanNote(summary)}</dd>
             </div>
           </dl>
+          <p className="customer-smallprint">
+            Need to change your plan or add more Capacity Units? Contact Corriston Consulting. If the plan
+            looks wrong, sign out and use the checkout email again.
+          </p>
+          <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
+            contact Corriston Consulting
+          </a>
+        </section>
+
+        <section className="customer-card">
+          <h2>How support works</h2>
+          <p className="customer-copy">
+            Support request means work on your website. Product feedback means improving
+            website_support_studio itself.
+          </p>
+          <ul className="customer-bullet-list">
+            <li>
+              <strong>Support request:</strong> content updates, image swaps, plugin updates, landing
+              page changes, and bug fixes.
+            </li>
+            <li>
+              <strong>Product feedback:</strong> ideas, confusion, feature requests, or bug reports about
+              website_support_studio.
+            </li>
+            <li>
+              <strong>After you submit:</strong> you get a request ID and the item enters the internal
+              queue for review.
+            </li>
+          </ul>
+          <p className="customer-smallprint">
+            Onboarding status is still tracked in the account summary above so you can tell whether setup is
+            complete.
+          </p>
         </section>
       </div>
 

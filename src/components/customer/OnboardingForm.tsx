@@ -163,8 +163,8 @@ export function OnboardingForm() {
         <div className="auth-card">
           <h1 className="auth-title">you're all set</h1>
           <p className="auth-meta">
-            onboarding is complete. your website project workspace is ready, and you can submit your
-            first website request now.
+            onboarding is complete. your website_support_studio workspace is ready. you can submit website
+            requests and product feedback from there now.
           </p>
           <button className="auth-btn auth-btn-green" type="button" onClick={() => navigate("/", { replace: true })}>
             go to workspace
