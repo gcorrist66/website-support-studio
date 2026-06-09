@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Label from "../../components/Label.astro";
 import { breadcrumbSchema } from "../../schema";
 
 const articles = (await getCollection("articles", ({ data }) => !data.draft)).sort(
@@ -30,7 +31,7 @@ const schemas = [
 >
   <section class="section">
     <div class="container">
-      <p class="kicker">articles</p>
+      <p class="kicker"><Label text="_articles" /></p>
       <h1>Operational thinking on website reliability</h1>
       <p class="lede" style="margin-top:1rem;">
         Announcements and field notes on running revenue-critical websites as operations — visibility,
@@ -42,7 +43,7 @@ const schemas = [
           articles.map((a) => (
             <a class="card" href={`/articles/${a.slug}`} style="text-decoration:none; color:inherit; display:block;">
               <div class="accent-bar" style="max-width:60px; margin-bottom:1rem;" />
-              <p class="kicker" style="margin-bottom:0.5rem;">{a.data.category.toLowerCase().replace(/\s+/g, "_")}</p>
+              <p class="kicker" style="margin-bottom:0.5rem; font-size:0.82rem;"><Label text={`_${a.data.category.toLowerCase().replace(/\s+/g, "_")}`} /></p>
               <h3 style="margin-top:0;">{a.data.title}</h3>
               <p style="color:var(--text-muted); font-size:0.9rem;">{a.data.summary}</p>
               <p style="color:var(--text-subtle); font-size:0.8rem; margin-top:0.75rem;">

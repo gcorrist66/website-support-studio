@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
 ---
 
 <BaseLayout
@@ -10,13 +11,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 >
   <section class="section">
     <div class="container" style="max-width:620px; text-align:center;">
-      <p class="kicker">error_404</p>
+      <p class="kicker"><Label text="_error_404" /></p>
       <h1>This page could not be found.</h1>
       <p class="lede" style="margin:1rem auto;">
         The page you requested doesn't exist or may have moved.
       </p>
       <div class="hero-actions" style="justify-content:center;">
-        <a class="btn btn-primary" href="/">Return Home</a>
+        <a class="btn btn-ghost" href="/">Return Home</a>
         <a class="btn btn-ghost" href="/services">View Services</a>
       </div>
     </div>

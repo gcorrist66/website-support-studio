@@ -1,16 +1,18 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import Faq from "../components/Faq.astro";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "../schema";
 import { PLANS, ADDONS, CHECKOUT_URL, CONTACT } from "../consts";
 
 const faqs = [
   {
-    q: "How much does Website Support Studio cost?",
+    q: "How much does it cost?",
     a: "Operations is $399/month (1 website, 50 Capacity Units). Growth is $899/month (up to 5 websites, 150 Capacity Units). Enterprise is custom capacity and onboarding — contact us for a quote.",
   },
   {
     q: "What is a Capacity Unit?",
-    a: "Capacity Units measure the effort of each request. Every plan includes a monthly allotment of Capacity Units. You can add top-ups (50, 100, or 250 Capacity Units) at any time, and DNS assistance is available as a $100 one-time add-on.",
+    a: "Capacity Units measure the effort of each request. Every plan includes a monthly allotment. You can add top-ups (50, 100, or 250 Capacity Units) at any time, and DNS assistance is available as a $100 one-time add-on.",
   },
   {
     q: "How do I get started?",
@@ -45,7 +47,7 @@ const schemas = [
 >
   <section class="section">
     <div class="container">
-      <p class="kicker">pricing</p>
+      <p class="kicker"><Label text="_pricing" /></p>
       <h1>Plans priced in Capacity Units.</h1>
       <p class="lede" style="margin-top:1rem;">
         Every plan is a managed website operations desk with a monthly allotment of Capacity Units.
@@ -56,15 +58,15 @@ const schemas = [
 
   <section class="section" id="plans" style="background:var(--surface-muted);">
     <div class="container">
-      <p class="kicker">plans</p>
+      <p class="kicker"><Label text="_plans" /></p>
       <div class="grid grid-3" style="margin-top:2rem; align-items:start;">
         {
           PLANS.map((plan) => (
             <div class="card" style={("recommended" in plan && plan.recommended) ? "border:2px solid var(--brand-blue);" : ""}>
               {("recommended" in plan && plan.recommended) && (
-                <p class="kicker" style="color:var(--brand-blue); margin-bottom:0.5rem;">most_common</p>
+                <p class="kicker" style="margin-bottom:0.5rem;"><Label text="_most_common" /></p>
               )}
-              <h3 style="margin-top:0;">{plan.name}</h3>
+              <h3 style="margin-top:0;"><Label text={`_${plan.name.toLowerCase()}`} /></h3>
               <p style="margin:0.25rem 0 0;">
                 <span style="font-size:1.9rem; font-weight:800; letter-spacing:-0.03em;">{plan.price}</span>
                 <span style="color:var(--text-muted);">{plan.cadence}</span>
@@ -75,7 +77,7 @@ const schemas = [
                 {plan.points.map((p) => <li style="margin-bottom:0.4rem;">{p}</li>)}
               </ul>
               {plan.cta === "checkout" ? (
-                <button class="btn btn-green" type="button" data-plan={plan.key} style="width:100%; justify-content:center;">join now</button>
+                <button class="btn btn-green btn-cta" type="button" data-plan={plan.key} style="width:100%; justify-content:center;"><Label text="_join_now" /></button>
               ) : (
                 <a class="btn btn-ghost" href="/contact" style="width:100%; justify-content:center;">contact sales</a>
               )}
@@ -93,7 +95,7 @@ const schemas = [
   <!-- Capacity Units explainer -->
   <section class="section">
     <div class="container" style="max-width:820px;">
-      <p class="kicker">capacity_units</p>
+      <p class="kicker"><Label text="_capacity_units" /></p>
       <h2>How Capacity Units work</h2>
       <p class="lede" style="margin-top:0.75rem;">
         Capacity Units measure the effort of each request, so you always know what's included. Your plan
@@ -117,10 +119,10 @@ const schemas = [
 
   <section class="section" style="background:var(--surface-muted);">
     <div class="container" style="max-width:820px;">
-      <p class="kicker">questions</p>
+      <p class="kicker"><Label text="_questions" /></p>
       <h2>Frequently asked questions</h2>
-      <div class="faq" style="margin-top:1.5rem;">
-        {faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      <div style="margin-top:1.5rem;">
+        <Faq items={faqs} />
       </div>
     </div>
   </section>
@@ -135,7 +137,7 @@ const schemas = [
         window.location.href = "/contact";
         return;
       }
-      const original = btn.textContent;
+      const original = btn.innerHTML;
       btn.setAttribute("disabled", "true");
       btn.textContent = "redirecting…";
       try {
@@ -154,7 +156,7 @@ const schemas = [
         window.location.href = "/contact";
       } finally {
         btn.removeAttribute("disabled");
-        btn.textContent = original;
+        btn.innerHTML = original;
       }
     });
   </script>

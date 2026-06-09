@@ -1,5 +1,6 @@
 ---
 import LogoLockup from "./LogoLockup.astro";
+import Label from "./Label.astro";
 import { NAV, APP_URL, JOIN_PATH } from "../consts";
 
 const current = Astro.url.pathname.replace(/\/$/, "") || "/";
@@ -14,12 +15,12 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
       {
         NAV.map((item) => (
           <a href={item.href} aria-current={current === item.href ? "page" : undefined}>
-            {item.label}
+            <Label text={`_${item.label}`} />
           </a>
         ))
       }
-      <a class="btn btn-ghost" href={APP_URL}>Login</a>
-      <a class="btn btn-primary btn-cta" href={JOIN_PATH}>Join Now</a>
+      <a class="btn btn-ghost" href={APP_URL}><Label text="_login" /></a>
+      <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
     </nav>
   </div>
 </header>

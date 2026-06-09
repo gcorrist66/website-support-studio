@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
 import { breadcrumbSchema } from "../schema";
-import { CONTACT, ORG, SITE_NAME } from "../consts";
+import { CONTACT, SITE_NAME } from "../consts";
 import { ID } from "../schema";
 
 const schemas = [
@@ -34,38 +35,27 @@ const schemas = [
 >
   <section class="section">
     <div class="container" style="max-width:760px;">
-      <p class="kicker">contact</p>
+      <p class="kicker"><Label text="_contact" /></p>
       <h1>Let's scope your website operations.</h1>
       <p class="lede" style="margin-top:1rem;">
-        Tell us about your sites and request volume, and we'll confirm scope and pricing for the right tier.
-        Start with a short intake — it takes only a few minutes.
+        Tell us about your sites and request volume. We'll confirm the right plan and get you onboarded —
+        it takes only a few minutes to start.
       </p>
 
       <div class="grid grid-2" style="margin-top:2.5rem;">
         <div class="card">
-          <h3 style="margin-top:0;">start_intake</h3>
-          <p style="color:var(--text-muted);">Review the engagement tiers and start a short intake so we can confirm scope, sites, and expected request volume.</p>
-          <a class="btn btn-primary btn-cta" href="/pricing">Join Now</a>
+          <h3 style="margin-top:0;"><Label text="_start_intake" /></h3>
+          <p style="color:var(--text-muted);">Pick a plan and check out — your account and a short onboarding follow right after.</p>
+          <a class="btn btn-green btn-cta" href="/pricing"><Label text="_join_now" /></a>
           <p style="margin:0.85rem 0 0; font-size:0.82rem; color:var(--text-subtle);">
             Prefer to talk first? <a href={CONTACT.bookingUrl} target="_blank" rel="noopener">Schedule an intro call</a>.
           </p>
         </div>
         <div class="card">
-          <h3 style="margin-top:0;">email_us</h3>
+          <h3 style="margin-top:0;"><Label text="_email_us" /></h3>
           <p style="color:var(--text-muted);">Prefer to write first? Send the details and we'll respond with next steps.</p>
           <a class="btn btn-ghost" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
         </div>
-      </div>
-
-      <div class="card" style="margin-top:1.5rem;">
-        <h3 style="margin-top:0;">operated_by</h3>
-        <p style="margin:0; color:var(--text);">{ORG.legalName}</p>
-        <p style="margin:0.25rem 0 0; color:var(--text-muted);">
-          {ORG.address.locality}, {ORG.address.region}
-        </p>
-        <p style="margin:0.75rem 0 0;">
-          <a href={CONTACT.linkedin} target="_blank" rel="noopener">linkedin</a>
-        </p>
       </div>
     </div>
   </section>

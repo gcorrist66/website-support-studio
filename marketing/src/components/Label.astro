@@ -1,0 +1,22 @@
+---
+/**
+ * Brand label — renders any underscore-bearing string with every underscore in the
+ * WSS blue accent (the brand tell). Splits on "_" and wraps each separator in
+ * <span class="us">. Use for nav, kickers, CTAs, plan markers, and FAQ questions.
+ *
+ *   <Label text="_join_now" />   ->   _join_now  (underscores in brand blue)
+ */
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const parts = text.split("_");
+---
+{
+  parts.map((p, i) => (
+    <>
+      {i > 0 && <span class="us">_</span>}
+      {p}
+    </>
+  ))
+}

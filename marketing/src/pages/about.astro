@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
 import { breadcrumbSchema, personSchema, faqSchema } from "../schema";
 import { ORG, JOIN_PATH } from "../consts";
 
@@ -32,7 +33,7 @@ const schemas = [
 >
   <section class="section">
     <div class="container" style="max-width:760px;">
-      <p class="kicker">about</p>
+      <p class="kicker"><Label text="_about" /></p>
       <h1>Built from real operational experience.</h1>
       <p class="lede" style="margin-top:1rem;">
         Website Support Studio did not start as a product idea. It started as an operational reality at
@@ -70,7 +71,7 @@ const schemas = [
       </p>
 
       <div class="hero-actions" style="margin-top:2rem;">
-        <a class="btn btn-primary btn-cta" href={JOIN_PATH}>Join Now</a>
+        <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
         <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">Read the Launch Announcement</a>
       </div>
 

@@ -82,6 +82,13 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Brand tell — every underscore on the site renders in the WSS blue accent.
+   Emitted by <Label>/<Faq>/LogoLockup as <span class="us">_</span>. Color is the
+   accent; weight inherits from context so the logo wordmark stays at full weight. */
+.us {
+  color: var(--wordmark-accent);
+}
+
 h1,
 h2,
 h3,
@@ -126,18 +133,28 @@ main {
   min-height: 60vh;
 }
 
-/* snake_case kicker label — the brand voice for section eyebrows */
+/* snake_case kicker label — the brand voice for section eyebrows.
+   Treated as a system marker: larger, bolder, and ink-dark so the underscore
+   accent reads as a deliberate label rather than a faint caption. */
 .kicker {
   display: inline-block;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.98rem;
+  font-weight: 700;
   letter-spacing: 0;
-  color: var(--text-muted);
+  color: var(--text-strong);
   text-transform: lowercase;
-  margin: 0 0 0.75rem;
+  margin: 0 0 1rem;
 }
 .kicker .us {
   color: var(--wordmark-accent);
+}
+
+/* Service request marker — a snake_case label naming a thing a customer can request. */
+.marker {
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--text-strong);
+  margin: 0;
 }
 
 /* Lede / summary block — supports answer-engine readability */
@@ -218,7 +235,7 @@ main {
   font-weight: 700;
   padding: 0.85rem 1.6rem;
   position: relative;
-  box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--brand-blue) 55%, transparent);
+  box-shadow: 0 6px 18px -6px rgba(11, 18, 32, 0.28);
 }
 .btn-cta::after {
   content: "";
@@ -240,14 +257,14 @@ main {
 .btn-cta:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
-  box-shadow: 0 12px 26px -8px color-mix(in srgb, var(--brand-blue) 70%, transparent);
+  box-shadow: 0 12px 26px -8px rgba(11, 18, 32, 0.34);
 }
 .btn-cta:active {
   transform: translateY(0);
-  box-shadow: 0 4px 12px -6px color-mix(in srgb, var(--brand-blue) 55%, transparent);
+  box-shadow: 0 4px 12px -6px rgba(11, 18, 32, 0.28);
 }
 .btn-cta:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--brand-blue) 45%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--cta-green) 50%, transparent);
   outline-offset: 2px;
 }
 
@@ -332,15 +349,15 @@ main {
 }
 @media (min-width: 720px) {
   .footer-inner {
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
   }
 }
 .footer-col h4 {
-  font-size: 0.78rem;
-  color: var(--text-muted);
+  font-size: 0.9rem;
+  color: var(--text-strong);
   text-transform: lowercase;
-  margin: 0 0 0.75rem;
-  font-weight: 600;
+  margin: 0 0 0.85rem;
+  font-weight: 700;
 }
 .footer-col a,
 .footer-col p {
