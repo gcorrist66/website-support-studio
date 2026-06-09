@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
 import { resolveMyIdentity, type Identity } from "../../data/identity";
 import { AppShell } from "../shell/AppShell";
+import { CustomerRequest } from "../customer/CustomerRequest";
 import { WorkspaceSetupRequired } from "./WorkspaceSetupRequired";
 
 function Screen({ title, body }: { title?: string; body: string }) {
@@ -68,12 +69,8 @@ export function IdentityGate() {
 
   if (identity.kind === "customer") {
     if (identity.onboardingStatus === "complete") {
-      return (
-        <Screen
-          title="you're all set"
-          body="your website support studio account is active. your workspace is being prepared."
-        />
-      );
+      // Onboarded customer → minimal request submission (not a dashboard).
+      return <CustomerRequest />;
     }
     // onboarding_required → redirecting to /onboarding (operators never land here).
     return <Screen body="taking you to onboarding…" />;
