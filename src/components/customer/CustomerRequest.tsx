@@ -69,7 +69,7 @@ function safeSiteLabel(site: CustomerSite | SiteOption | null | undefined): stri
 
 function getPlanNote(summary: CustomerWorkspaceSummary): string {
   if (!summary.subscriptionStatus) {
-    return "We could not load subscription details yet.";
+    return "Plan details are still loading.";
   }
   if (summary.subscriptionStatus === "trialing") {
     return summary.currentPeriodEnd ? `Trial ends on ${formatDate(summary.currentPeriodEnd)}.` : "Trialing right now.";
@@ -84,6 +84,20 @@ function getPlanNote(summary: CustomerWorkspaceSummary): string {
     return "Subscription is canceled.";
   }
   return `Status: ${summary.subscriptionStatus.replaceAll("_", " ")}.`;
+}
+
+function formatRequestError(message: string): string {
+  if (message === "submit_failed") {
+    return "We couldn't submit this request. Please check the website selection and try again.";
+  }
+  return message;
+}
+
+function formatFeedbackError(message: string): string {
+  if (message === "submit_failed") {
+    return "We couldn't send this feedback. Please check the website selection and try again.";
+  }
+  return message;
 }
 
 function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
@@ -118,7 +132,8 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
       });
       setResult(response);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not submit your request.");
+      const message = err instanceof Error ? err.message : "submit_failed";
+      setError(formatRequestError(message));
     } finally {
       setSubmitting(false);
     }
@@ -136,12 +151,18 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
     return (
       <section className="customer-card customer-card-wide">
         <h2>Website support request sent</h2>
-        <p className="customer-copy">Your request is in the queue and a human will review it.</p>
+        <p className="customer-copy">
+          Your request is now in the internal support queue and a human will review it.
+        </p>
         <p className="customer-copy">
           <strong>Request ID:</strong> {result.ticket_number}
         </p>
         <p className="customer-copy">
           <strong>Status:</strong> {result.status}
+        </p>
+        <p className="customer-smallprint">
+          Keep the request ID if you need to reference this item later. Product feedback should go in the
+          separate feedback form below.
         </p>
         <button className="auth-btn auth-btn-green" type="button" onClick={reset}>
           send another request
@@ -155,6 +176,7 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
       <h2>Send website support request</h2>
       <p className="customer-copy">
         Use this for website changes, fixes, and support requests. This goes into the internal WSS queue.
+        Product feedback uses the separate form below.
       </p>
 
       <form className="customer-form" onSubmit={onSubmit}>
@@ -171,7 +193,7 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
         <label className="auth-field">
           <span className="auth-label">website *</span>
           {sites.length === 0 ? (
-            <span className="auth-meta">no website on file yet.</span>
+            <span className="auth-meta">No website is linked yet. Finish onboarding first or contact Corriston Consulting.</span>
           ) : (
             <select className="auth-input" value={siteId} onChange={(e: ChangeEvent<HTMLSelectElement>) => setSiteId(e.target.value)}>
               {sites.map((site) => (
@@ -247,7 +269,8 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
       });
       setResult(response);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not send your feedback.");
+      const message = err instanceof Error ? err.message : "submit_failed";
+      setError(formatFeedbackError(message));
     } finally {
       setSubmitting(false);
     }
@@ -265,12 +288,18 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
     return (
       <section className="customer-card customer-card-wide">
         <h2>Product feedback sent</h2>
-        <p className="customer-copy">Thanks. This was routed into the internal WSS follow-up queue.</p>
+        <p className="customer-copy">
+          Thanks. This was routed into the internal product-feedback queue for Corriston Consulting / WSS.
+        </p>
         <p className="customer-copy">
           <strong>Request ID:</strong> {result.ticket_number}
         </p>
         <p className="customer-copy">
           <strong>Status:</strong> {result.status}
+        </p>
+        <p className="customer-smallprint">
+          Use this form for feedback, feature requests, bug reports, and product ideas. Use the support
+          request form above for website fixes and support.
         </p>
         <button className="auth-btn auth-btn-green" type="button" onClick={reset}>
           send more feedback
@@ -284,6 +313,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
       <h2>Send product feedback</h2>
       <p className="customer-copy">
         Use this for feedback, feature requests, bug reports, or anything else about Website Support Studio.
+        For website fixes and support, use the request form above.
       </p>
 
       <form className="customer-form" onSubmit={onSubmit}>
@@ -429,7 +459,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             </div>
           </dl>
           <p className="customer-smallprint">
-            If you need to switch accounts, use log out and sign in with the correct email.
+            If you need to switch accounts, log out and sign in with the same email you used at checkout.
           </p>
         </section>
 
@@ -454,7 +484,8 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             </div>
           </dl>
           <p className="customer-smallprint">
-            Need to change your plan? Contact Corriston Consulting.
+            Need to change your plan? Contact Corriston Consulting. If the plan looks wrong, sign out and
+            use the checkout email again.
           </p>
           <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
             contact Corriston Consulting
@@ -481,7 +512,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             </div>
           </dl>
           <p className="customer-smallprint">
-            Usage tracking is not connected yet, so the usage and remaining values are shown as a safe
+            Usage tracking is not connected yet, so the used and remaining values are shown as a safe
             placeholder.
           </p>
         </section>
@@ -491,7 +522,13 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
           <dl className="customer-definition-list">
             <div>
               <dt>Onboarding</dt>
-              <dd>{summary.onboardingStatus ? summary.onboardingStatus.replaceAll("_", " ") : "complete"}</dd>
+              <dd>
+                {summary.onboardingStatus === null
+                  ? "not available"
+                  : summary.onboardingStatus === "complete"
+                    ? "complete"
+                    : "in progress"}
+              </dd>
             </div>
             <div>
               <dt>Website count</dt>
@@ -517,7 +554,8 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
       {loading ? <p className="customer-loading">Loading your account…</p> : null}
       {!loading && sites.length === 0 ? (
         <p className="customer-loading">
-          No websites are linked yet. If this looks wrong, contact Corriston Consulting.
+          No websites are linked yet. If you just signed up, finish onboarding or sign out and use the
+          checkout email again.
         </p>
       ) : null}
     </div>

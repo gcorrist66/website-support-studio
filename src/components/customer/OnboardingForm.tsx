@@ -9,6 +9,7 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LogoLockup } from "../brand/LogoLockup";
+import { useAuth } from "../../auth/AuthProvider";
 import { completePaidOnboarding } from "../../data/customerOnboarding";
 import { resolveMyIdentity } from "../../data/identity";
 
@@ -36,6 +37,7 @@ const EMPTY: FormState = {
 
 export function OnboardingForm() {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [phase, setPhase] = useState<Phase>("loading");
   const [orgId, setOrgId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -95,10 +97,19 @@ export function OnboardingForm() {
       if (res.onboarding_status === "complete") {
         setPhase("done");
       } else {
-        setError("please fill the required fields (company, website, primary contact email).");
+        setError("we could not finish setup yet. please check the required fields and try again.");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "something went wrong");
+      const message = err instanceof Error ? err.message : "onboarding_failed";
+      if (message === "not_org_owner") {
+        setError("this account cannot complete onboarding. sign out and use the checkout email.");
+      } else if (message === "org_not_found") {
+        setError("we could not find the paid workspace for this account yet. sign out and try again.");
+      } else if (message === "onboarding_failed") {
+        setError("we could not save your setup. check the required fields and try again.");
+      } else {
+        setError(message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -120,10 +131,27 @@ export function OnboardingForm() {
         <div className="auth-card">
           <h1 className="auth-title">no active plan found</h1>
           <p className="auth-meta">
-            we couldn't find a paid plan for your account. if you just paid, use the same email you
-            checked out with. otherwise, choose a plan to get started.
+            we couldn't link a paid plan to this sign-in yet. if you just checked out, use the same email
+            you used at checkout and try again after signing out.
           </p>
-          <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/pricing">view plans</a>
+          <p className="auth-meta">
+            if you still do not see your plan, contact Corriston Consulting and we will check the customer
+            record.
+          </p>
+          <div className="auth-actions">
+            <button
+              className="auth-btn auth-btn-ghost"
+              type="button"
+              onClick={() => {
+                void signOut();
+              }}
+            >
+              sign out and try again
+            </button>
+            <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
+              contact Corriston Consulting
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -135,9 +163,12 @@ export function OnboardingForm() {
         <div className="auth-card">
           <h1 className="auth-title">you're all set</h1>
           <p className="auth-meta">
-            onboarding is complete. your workspace is being prepared and your team can start submitting
-            requests soon.
+            onboarding is complete. your workspace is ready, and you can continue into the customer
+            workspace now.
           </p>
+          <button className="auth-btn auth-btn-green" type="button" onClick={() => navigate("/", { replace: true })}>
+            go to workspace
+          </button>
         </div>
       </div>
     );
@@ -148,7 +179,10 @@ export function OnboardingForm() {
       <form className="auth-card" onSubmit={onSubmit}>
         <LogoLockup size={30} />
         <h1 className="auth-title">complete your setup</h1>
-        <p className="auth-subtitle">tell us about your website so we can start operating it.</p>
+        <p className="auth-subtitle">use the same email you checked out with, then tell us about the website.</p>
+        <p className="auth-meta">
+          this step creates your workspace and first site record so the customer workspace can open next.
+        </p>
 
         <label className="auth-field">
           <span className="auth-label">company *</span>

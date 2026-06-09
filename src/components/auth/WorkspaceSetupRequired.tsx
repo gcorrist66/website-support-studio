@@ -15,11 +15,16 @@ export function WorkspaceSetupRequired() {
       <div className="auth-card">
         <h1 className="auth-title">workspace setup required</h1>
         <p className="auth-meta">
-          you're signed in{user?.email ? ` as ${user.email}` : ""}, but no workspace is linked to this
-          account yet.
+          you're signed in{user?.email ? ` as ${user.email}` : ""}, but this sign-in is not linked to a
+          customer workspace yet.
         </p>
         <p className="auth-meta">
-          customer onboarding is not enabled in this environment, and no account records have been created.
+          if you just checked out, make sure you use the same email at login. if you meant to switch
+          accounts, sign out and try the correct email again.
+        </p>
+        <p className="auth-meta">
+          if this keeps happening after checkout, contact Corriston Consulting so we can check the
+          customer record.
         </p>
         <button
           className="auth-btn auth-btn-ghost"
@@ -28,7 +33,7 @@ export function WorkspaceSetupRequired() {
             void signOut();
           }}
         >
-          sign out
+          sign out and try another account
         </button>
       </div>
     </div>
