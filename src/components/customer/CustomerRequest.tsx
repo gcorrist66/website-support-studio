@@ -170,7 +170,7 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
   if (result) {
     return (
       <section className="customer-card customer-card-wide">
-        <h2>Support request sent</h2>
+        <h2>SUPPORT REQUEST</h2>
         <p className="customer-copy">
           Your request is now in the internal support queue and a human will review it.
         </p>
@@ -193,7 +193,7 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
 
   return (
     <section className="customer-card customer-card-wide">
-      <h2>Send support request</h2>
+      <h2>SUPPORT REQUEST</h2>
       <p className="customer-copy">
         Use this for work on your website. This goes into the internal support queue. Product feedback
         uses the separate form below and is for improving website_support_studio itself.
@@ -310,7 +310,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
   if (result) {
     return (
       <section className="customer-card customer-card-wide">
-        <h2>Product feedback sent</h2>
+        <h2>FEEDBACK</h2>
         <p className="customer-copy">
           Thanks. This was routed into the internal product-feedback queue for Corriston Consulting / website_support_studio.
         </p>
@@ -333,7 +333,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
 
   return (
     <section className="customer-card customer-card-wide">
-      <h2>Send product feedback</h2>
+      <h2>FEEDBACK</h2>
       <p className="customer-copy">
         Use this for feedback, feature requests, bug reports, or anything else about website_support_studio.
         For website fixes and support, use the request form above.
@@ -454,6 +454,14 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             Everything important is in one place: who you are logged in as, what plan you bought, how
             much support capacity you have, and how to reach us.
           </p>
+          <ul className="customer-section-strip" aria-label="workspace sections">
+            <li>PROFILE</li>
+            <li>PLAN</li>
+            <li>CAPACITY</li>
+            <li>SUPPORT</li>
+            <li>FEEDBACK</li>
+            <li>LOGOUT</li>
+          </ul>
           {summary.planName !== "Plan not found" ? (
             <p className="customer-smallprint">
               You are on {summary.planName} at {formatMoney(summary.monthlyUsd)} with{" "}
@@ -468,7 +476,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
 
       <div className="customer-grid">
         <section className="customer-card">
-          <h2>Account summary</h2>
+          <h2>PROFILE</h2>
           <dl className="customer-definition-list">
             <div>
               <dt>Logged in email</dt>
@@ -501,9 +509,13 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
         </section>
 
         <section className="customer-card">
-          <h2>Capacity Units</h2>
+          <h2>CAPACITY</h2>
           <p className="customer-copy">
             Capacity Units are the monthly support allowance included with your plan.
+          </p>
+          <p className="customer-smallprint">
+            Capacity education: a low-effort request uses fewer units; a medium-effort request uses more;
+            a high-effort request uses the most.
           </p>
           <dl className="customer-definition-list">
             <div>
@@ -530,13 +542,17 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             When you run out, requests wait until the next monthly refresh or until additional Capacity
             Units are added. Need more? Contact Corriston Consulting.
           </p>
+          <p className="customer-smallprint">
+            Replenishment: additional Capacity Units can be added at any time by contacting Corriston
+            Consulting.
+          </p>
           <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
             contact Corriston Consulting
           </a>
         </section>
 
         <section className="customer-card">
-          <h2>Plan and billing</h2>
+          <h2>PLAN</h2>
           <dl className="customer-definition-list">
             <div>
               <dt>Current plan</dt>
@@ -565,7 +581,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
         </section>
 
         <section className="customer-card">
-          <h2>How support works</h2>
+          <h2>SUPPORT</h2>
           <p className="customer-copy">
             Support request means work on your website. Product feedback means improving
             website_support_studio itself.

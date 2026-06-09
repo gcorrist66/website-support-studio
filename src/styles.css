@@ -806,6 +806,26 @@ pre {
   line-height: 1.65;
 }
 
+.customer-section-strip {
+  margin: 0.8rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  list-style: none;
+}
+
+.customer-section-strip li {
+  border: 1px solid rgba(44, 59, 101, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.55rem;
+}
+
 .customer-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
