@@ -2,9 +2,16 @@
 /**
  * Brand label — renders any underscore-bearing string with every underscore in the
  * WSS blue accent (the brand tell). Splits on "_" and wraps each separator in
- * <span class="us">. Use for nav, kickers, CTAs, plan markers, and FAQ questions.
+ * <span class="us">. The whole label is one inline span so the underscore always
+ * *touches* the word, even inside flex containers like `.btn` (whose gap would
+ * otherwise space the parts apart).
  *
- *   <Label text="_join_now" />   ->   _join_now  (underscores in brand blue)
+ * A <wbr> before each underscore gives long snake_case labels (e.g. FAQ questions,
+ * long kickers) clean break opportunities at segment boundaries on small screens —
+ * so "_now" wraps as a unit and nothing overflows. overflow-wrap:anywhere is the
+ * fallback for a single segment longer than the viewport.
+ *
+ *   <Label text="_join_now" />   ->   _join_now  (blue underscores, touching, wrappable)
  */
 interface Props {
   text: string;
@@ -12,11 +19,4 @@ interface Props {
 const { text } = Astro.props;
 const parts = text.split("_");
 ---
-{
-  parts.map((p, i) => (
-    <>
-      {i > 0 && <span class="us">_</span>}
-      {p}
-    </>
-  ))
-}
+<span style="overflow-wrap:anywhere;">{parts.map((p, i) => (<>{i > 0 && <><wbr /><span class="us">_</span></>}{p}</>))}</span>

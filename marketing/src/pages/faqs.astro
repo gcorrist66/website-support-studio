@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import Faq from "../components/Faq.astro";
+import { breadcrumbSchema, faqSchema } from "../schema";
+import { FAQ_GROUPS, ALL_FAQS } from "../faqs";
+
+// The single source of truth for FAQ structured data lives here, on /faqs.
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "FAQs", path: "/faqs" },
+  ]),
+  faqSchema(ALL_FAQS),
+];
+---
+
+<BaseLayout
+  title="FAQs"
+  description="Every question about Website Support Studio in one place — how requests work, response times, Capacity Units, the platforms we support, code and SEO changes, approvals, and pricing."
+  path="/faqs"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="container" style="max-width:820px;">
+      <p class="kicker"><Label text="_questions" /></p>
+      <h1>questions, answered.</h1>
+      <p class="lede" style="margin-top:1rem;">
+        Everything about requests, capacity, platforms, and approvals — in one place.
+      </p>
+
+      {
+        FAQ_GROUPS.map((group) => (
+          <div style="margin-top:2.5rem;">
+            <p class="kicker" style="margin-bottom:0.75rem;"><Label text={group.marker} /></p>
+            <Faq items={group.items} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

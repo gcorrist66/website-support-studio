@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
 import { breadcrumbSchema } from "../schema";
 import { ORG, CONTACT, SUBPROCESSORS, LEGAL_EFFECTIVE_DATE } from "../consts";
 
@@ -20,10 +21,10 @@ const schemas = [
   <section class="section">
     <div class="prose">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">home</a><span class="sep">/</span><span>privacy_policy</span>
+        <a href="/">home</a><span class="sep">/</span><span><Label text="privacy_policy" /></span>
       </nav>
-      <p class="kicker">legal</p>
-      <h1>Privacy Policy</h1>
+      <p class="kicker"><Label text="_legal" /></p>
+      <h1><Label text="privacy_policy" /></h1>
       <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
 
       <div class="summary" style="margin:1.5rem 0;">

@@ -8,8 +8,10 @@ interface Props {
   size?: number;
   text?: string;
   markOnly?: boolean;
+  /** Brand-test variant: prepend a leading blue underscore -> _website_support_studio */
+  lead?: boolean;
 }
-const { size = 30, text = "website support studio", markOnly = false } = Astro.props;
+const { size = 30, text = "website support studio", markOnly = false, lead = false } = Astro.props;
 const gap = size * 0.05;
 const cell = (size - gap) / 2;
 const radius = size * 0.07;
@@ -34,6 +36,7 @@ const words = text.split(" ");
   {
     !markOnly && (
       <span class="wordmark">
+        {lead && <span class="us">_</span>}
         {words.map((w, i) => (
           <>
             {i > 0 && <span class="us">_</span>}

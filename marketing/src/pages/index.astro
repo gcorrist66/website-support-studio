@@ -1,27 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
-import { serviceSchema, faqSchema } from "../schema";
+import { serviceSchema } from "../schema";
 import { JOIN_PATH } from "../consts";
-
-const faqs = [
-  {
-    q: "What is Website Support Studio?",
-    a: "Website Support Studio is a managed website operations and support platform for organizations with revenue-critical websites. It consolidates website, marketing, and operations requests into a single desk with defined response workflows, operational visibility, and a mandatory human approval before any change goes live. It is operated by Corriston Consulting, LLC.",
-  },
-  {
-    q: "Who is Website Support Studio for?",
-    a: "Enterprise organizations and teams — marketing leadership, marketing operations, digital teams, and IT stakeholders — whose websites are tied to revenue. It is not designed for freelancers, hobbyists, or local mom-and-pop businesses.",
-  },
-  {
-    q: "How is this different from an agency or adding headcount?",
-    a: "Agencies rotate staff and can deprioritize accounts; internal teams are usually already overloaded. Website Support Studio provides an operator-led website operations workflow, managed by Corriston Consulting, LLC, inside a defined, auditable process — so every request is visible, owned, tracked, reviewed, and recorded, without you having to staff and supervise the work.",
-  },
-  {
-    q: "Does Website Support Studio change our website automatically?",
-    a: "No. Every customer-facing change passes through a mandatory human approval gate, and the platform records who approved each change and when.",
-  },
-];
 
 const schemas = [
   serviceSchema({
@@ -30,7 +11,6 @@ const schemas = [
       "Managed website operations and support for organizations with revenue-critical websites: single-desk intake, defined response workflows, operational visibility, and human-approved execution.",
     path: "/",
   }),
-  faqSchema(faqs),
 ];
 ---
 
@@ -44,7 +24,7 @@ const schemas = [
   <section class="hero">
     <div class="container">
       <p class="kicker"><Label text="_managed_website_operations" /></p>
-      <h1>Run your revenue-critical website as operations, not as a backlog of favors.</h1>
+      <h1>run your revenue-critical website as operations, not as a backlog of favors.</h1>
       <p class="lede">
         Website Support Studio is a managed operations and support desk for organizations whose websites
         drive revenue. One place for every request, a defined workflow from intake to closure, and a
@@ -73,7 +53,7 @@ const schemas = [
   <!-- The problem -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container">
-      <p class="kicker"><Label text="_the_problem" /></p>
+      <p class="kicker"><Label text="_problem" /></p>
       <h2>Websites generate revenue. Their support rarely matches their importance.</h2>
       <div class="grid grid-3" style="margin-top:2rem;">
         <div class="card">
@@ -104,11 +84,17 @@ const schemas = [
     </div>
   </section>
 
-  <!-- The approach -->
+  <!-- The approach — expanded around the _daemon concept -->
   <section class="section">
     <div class="container">
-      <p class="kicker"><Label text="_the_approach" /></p>
-      <h2>One operating model, built on four commitments.</h2>
+      <p class="kicker"><Label text="_approach" /></p>
+      <h2>One operating model, run like a daemon.</h2>
+      <div class="summary" style="max-width:780px; margin-top:1rem;">
+        <strong><Label text="_daemon" />.</strong> Think of Website Support Studio as a daemon for your
+        website — an always-on operational process that watches one queue, picks up every request, and runs
+        it through the same disciplined lifecycle. It doesn't sleep, it doesn't lose tickets, and it never
+        ships without sign-off. The four commitments below are how that daemon runs.
+      </div>
       <dl class="deflist grid grid-2" style="margin-top:2rem;">
         <div class="card">
           <dt>Operational visibility</dt>
@@ -134,21 +120,17 @@ const schemas = [
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- Questions → single source of truth at /faqs -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container" style="max-width:820px;">
       <p class="kicker"><Label text="_questions" /></p>
-      <h2>Frequently asked questions</h2>
-      <div class="faq" style="margin-top:1.5rem;">
-        {
-          faqs.map((f) => (
-            <details>
-              <summary>{f.q}</summary>
-              <p>{f.a}</p>
-            </details>
-          ))
-        }
-      </div>
+      <h2>Questions, answered.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        How requests work, response times, platforms, approvals, and pricing — all in one place.
+      </p>
+      <p style="margin-top:1.25rem;">
+        <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
+      </p>
     </div>
   </section>
 </BaseLayout>

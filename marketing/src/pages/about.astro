@@ -1,19 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
-import { breadcrumbSchema, personSchema, faqSchema } from "../schema";
+import { breadcrumbSchema, personSchema } from "../schema";
 import { ORG, JOIN_PATH } from "../consts";
-
-const faqs = [
-  {
-    q: "Who operates Website Support Studio?",
-    a: "Website Support Studio is operated by Corriston Consulting, LLC, a Florida limited liability company based in Tampa. The platform grew out of the firm's own internal operating model for website support.",
-  },
-  {
-    q: "Why was Website Support Studio built?",
-    a: "The same pattern appeared across client after client: capable teams, important websites, and no shared system for getting website work done reliably. Corriston Consulting built an internal operating model — single intake, defined workflow, mandatory approval, complete record — and productized it as Website Support Studio.",
-  },
-];
 
 const schemas = [
   personSchema({ name: ORG.founder, jobTitle: "Founder, Corriston Consulting, LLC", path: "/about" }),
@@ -21,7 +10,6 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
   ]),
-  faqSchema(faqs),
 ];
 ---
 
@@ -34,7 +22,7 @@ const schemas = [
   <section class="section">
     <div class="container" style="max-width:760px;">
       <p class="kicker"><Label text="_about" /></p>
-      <h1>Built from real operational experience.</h1>
+      <h1>built from real operational experience.</h1>
       <p class="lede" style="margin-top:1rem;">
         Website Support Studio did not start as a product idea. It started as an operational reality at
         Corriston Consulting, LLC.
@@ -75,9 +63,12 @@ const schemas = [
         <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">Read the Launch Announcement</a>
       </div>
 
-      <div class="faq" style="margin-top:3rem;">
-        <h2>Frequently asked questions</h2>
-        {faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      <div style="margin-top:3rem;">
+        <p class="kicker"><Label text="_questions" /></p>
+        <h2>Questions, answered.</h2>
+        <p style="margin-top:0.75rem;">
+          <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
+        </p>
       </div>
     </div>
   </section>

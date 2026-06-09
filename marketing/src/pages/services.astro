@@ -1,8 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
-import Faq from "../components/Faq.astro";
-import { serviceSchema, breadcrumbSchema, faqSchema } from "../schema";
+import { serviceSchema, breadcrumbSchema } from "../schema";
 import { JOIN_PATH } from "../consts";
 
 const lifecycle = [
@@ -32,23 +31,12 @@ const offerings = [
   { key: "configuration_help", desc: "Settings, redirects, and integration configuration." },
 ];
 
-const faqs = [
-  { q: "Who is this for?", a: "Organizations with revenue-critical websites — marketing, marketing-operations, digital, and IT teams who need website changes done reliably without staffing and supervising the work themselves. It is not built for hobby sites or one-off freelance tasks." },
-  { q: "How do requests work?", a: "You submit a request from your account. It enters one desk, gets an owner and a status, moves through triage and drafting, passes a mandatory human approval gate, and is delivered and closed — with every step recorded." },
-  { q: "How fast are responses?", a: "Requests are acknowledged on the next business day and prioritized by urgency. Urgent production issues are routed through an expedited path while still passing the approval gate." },
-  { q: "What counts as a request?", a: "A single, scoped piece of work — a content edit, a form fix, a tracking repair, a CMS change. Larger initiatives like full redesigns or custom application builds are scoped as separate engagements." },
-  { q: "What is a Capacity Unit?", a: "Capacity Units measure the effort of a request. Each plan includes a monthly allotment; a simple change costs fewer units, more involved work costs more." },
-  { q: "What happens if I run out?", a: "Your allotment refreshes every month. In a busy month you can add a top-up — 50, 100, or 250 Capacity Units — at any time from your account." },
-  { q: "Do you work with WordPress?", a: "Yes. WordPress content, page, and configuration changes are a core request type." },
-  { q: "Do you work with Webflow?", a: "Yes. Webflow updates — content, pages, and CMS collections — are supported." },
-  { q: "Do you work with custom sites?", a: "Yes, for content, configuration, and front-end changes. Deep custom application development is scoped as a separate engagement." },
-  { q: "Do you make code changes?", a: "We make scoped front-end and configuration changes — markup, templates, tracking, and schema. Large feature builds and backend development are scoped separately." },
-  { q: "Do you provide SEO support?", a: "Yes — on-page SEO updates, metadata, schema markup, and technical fixes. Full SEO strategy engagements are scoped separately." },
-  { q: "Do you manage tracking and analytics?", a: "Yes. Tag and analytics verification, tracking repairs, and GA4 / Tag Manager configuration are common requests." },
-  { q: "Can you help with forms and integrations?", a: "Yes — form fixes, field changes, and common integrations such as form-to-CRM or email. Complex custom integrations are scoped separately." },
-  { q: "Is every change reviewed?", a: "Yes. No customer-facing change ships without a mandatory human approval, recorded with the approver and a timestamp." },
-  { q: "Who approves changes?", a: "An authorized approver on the operations side signs off before anything goes live, and the approval is recorded in the request's audit trail." },
-  { q: "Do you offer custom plans?", a: "Yes. Enterprise covers custom capacity, site coverage, onboarding, and commercial terms — contact us to scope it." },
+// What the customer actually receives back — outcomes, not just process.
+const deliverables = [
+  { title: "the change, made live", desc: "The requested edit, fix, or configuration is completed and published to your site — done for you, not just advised." },
+  { title: "a confirmation", desc: "You're notified when the work ships, with a closure note describing exactly what changed." },
+  { title: "a reviewed, recorded approval", desc: "Every change carries a mandatory human sign-off and a per-request audit trail: who approved what, and when." },
+  { title: "a single point of ownership", desc: "One desk owns the request end to end — no chasing, no hand-offs lost between inboxes." },
 ];
 
 const schemas = [
@@ -62,20 +50,19 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
   ]),
-  faqSchema(faqs),
 ];
 ---
 
 <BaseLayout
   title="Services"
-  description="What you can request from Website Support Studio's managed operations desk — content, landing pages, forms, tracking, SEO, CMS, Webflow, and WordPress changes — and the human-approved workflow every request follows."
+  description="What you receive from Website Support Studio's managed operations desk — completed changes, confirmation, and a recorded approval — plus what you can request (content, forms, tracking, SEO, CMS, Webflow, WordPress) and the workflow every request follows."
   path="/services"
   schemas={schemas}
 >
   <section class="section">
     <div class="container">
       <p class="kicker"><Label text="_services" /></p>
-      <h1>A managed operations desk for revenue-critical websites.</h1>
+      <h1>a managed operations desk for revenue-critical websites.</h1>
       <p class="lede" style="margin-top:1rem;">
         Website Support Studio is a service, not software you are left to run. An operator-led support
         process, managed by Corriston Consulting, runs inside a defined workflow so every request is
@@ -88,14 +75,36 @@ const schemas = [
     </div>
   </section>
 
-  <!-- Service offering — what a customer can actually request -->
+  <!-- What you receive — the outcome the customer is actually buying -->
   <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <p class="kicker"><Label text="_what_you_receive" /></p>
+      <h2>Every request comes back as a finished outcome.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        You're not buying advice or a tool to operate yourself — you're buying the completed work, delivered
+        and accounted for.
+      </p>
+      <div class="grid grid-2" style="margin-top:2rem;">
+        {
+          deliverables.map((d) => (
+            <div class="card">
+              <h3 style="margin-top:0;">{d.title}</h3>
+              <p style="margin:0.4rem 0 0; color:var(--text-muted);">{d.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Service offering — what a customer can actually request -->
+  <section class="section">
     <div class="container">
       <p class="kicker"><Label text="_what_you_can_request" /></p>
       <h2>The kinds of work you can send to the desk.</h2>
       <p class="lede" style="margin-top:0.75rem;">
         Submit a request from your account and it enters the workflow below. These are the everyday changes
-        the desk handles — pick a plan and start sending work.
+        the desk handles.
       </p>
       <div class="grid grid-3" style="margin-top:2rem;">
         {
@@ -115,7 +124,7 @@ const schemas = [
   </section>
 
   <!-- Response workflow (kept) -->
-  <section class="section">
+  <section class="section" style="background:var(--surface-muted);">
     <div class="container">
       <p class="kicker"><Label text="_response_workflow" /></p>
       <h2>Every request follows the same defined lifecycle.</h2>
@@ -136,13 +145,17 @@ const schemas = [
     </div>
   </section>
 
-  <section class="section" style="background:var(--surface-muted);">
+  <!-- Questions → single source of truth at /faqs -->
+  <section class="section">
     <div class="container" style="max-width:820px;">
       <p class="kicker"><Label text="_questions" /></p>
-      <h2>Frequently asked questions</h2>
-      <div style="margin-top:1.5rem;">
-        <Faq items={faqs} />
-      </div>
+      <h2>Questions, answered.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        Platforms, code changes, SEO, tracking, approvals, and more — all in one place.
+      </p>
+      <p style="margin-top:1.25rem;">
+        <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
+      </p>
     </div>
   </section>
 </BaseLayout>
