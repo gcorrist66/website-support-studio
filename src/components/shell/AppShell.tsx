@@ -42,6 +42,7 @@ import {
 import { LoginShell } from "../auth/LoginShell";
 import { SessionSourcePrototype } from "../auth/SessionSourcePrototype";
 import { buildLoginShellState, type LoginShellStatus } from "../../auth/loginShellState";
+import { OperatorPilotStatusCard } from "../operator/OperatorPilotStatusCard";
 import {
   createDisabledSessionReadState,
   createExistingSessionShapeReadState,
@@ -690,6 +691,7 @@ export function AppShell() {
     selectedTicket.status === "sent_to_customer" &&
     Boolean(selectedTicket.workflowId) &&
     capabilities.canSeeCloseTicket;
+  const showPilotStatusCard = Boolean(selectedTicket?.tenantContext?.clientId);
 
   return (
     <div className="phase4a-shell">
@@ -715,6 +717,14 @@ export function AppShell() {
         </nav>
 
         <main className="phase4a-main">
+          {showPilotStatusCard ? (
+            <OperatorPilotStatusCard
+              clientId={selectedTicket.tenantContext.clientId}
+              customerLabel={selectedTicket.tenantContext.clientName}
+              siteLabel={selectedTicket.tenantContext.siteName}
+            />
+          ) : null}
+
           {showDevelopmentPrototype ? (
             <>
               <section className="phase4a-card phase7-auth-view">

@@ -209,6 +209,124 @@ body {
   color: var(--text-strong);
 }
 
+.pilot-status-card {
+  border-color: rgba(214, 210, 197, 0.95);
+}
+
+.pilot-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.pilot-status-kicker {
+  margin: 0 0 0.2rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-subtle);
+}
+
+.pilot-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.pilot-status-badge-blue {
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue-text);
+  border-color: rgba(0, 38, 166, 0.14);
+}
+
+.pilot-status-badge-amber {
+  background: var(--tone-amber-bg);
+  color: var(--tone-amber-text);
+  border-color: rgba(122, 84, 16, 0.15);
+}
+
+.pilot-status-badge-mulberry {
+  background: var(--tone-mulberry-bg);
+  color: var(--tone-mulberry-text);
+  border-color: rgba(92, 28, 73, 0.16);
+}
+
+.pilot-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.pilot-status-grid div {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.8rem;
+}
+
+.pilot-status-grid dt {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-subtle);
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+}
+
+.pilot-status-grid dd {
+  margin: 0.25rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  word-break: break-word;
+}
+
+.pilot-status-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pilot-status-summary-item {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: rgba(244, 243, 238, 0.95);
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pilot-status-actions {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.pilot-status-bundle {
+  width: 100%;
+  min-height: 9rem;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.pilot-status-copy-state {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
 .phase4a-card p {
   font-size: 0.88rem;
   line-height: 1.6;
