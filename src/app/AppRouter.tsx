@@ -23,15 +23,18 @@ import { OnboardingForm } from "../components/customer/OnboardingForm";
 import { AuthProvider, useAuth } from "../auth/AuthProvider";
 
 function HomeRoute() {
-  const { enabled, session } = useAuth();
+  const { enabled, loading, session } = useAuth();
   // Real auth ON + signed-in user: resolve identity and route — operator → console,
   // customer → onboarding/all-set, unknown → setup. Operators are never routed into
   // customer onboarding; customers never reach operator tooling.
   if (enabled && session) {
     return <IdentityGate />;
   }
+  if (enabled) {
+    return <LoginPage />;
+  }
   // Default / dev path (flag off): preserve the existing operator console exactly.
-  return <AppShell />;
+  return loading ? <LoginPage /> : <AppShell />;
 }
 
 function OnboardingRoute() {
