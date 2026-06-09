@@ -53,3 +53,48 @@ export async function submitCustomerRequest(input: SubmitRequestInput): Promise<
   }
   return data as SubmitRequestResult;
 }
+
+export type FeedbackCategory = "feedback" | "feature_request" | "bug_report" | "other";
+
+const FEEDBACK_CATEGORY_LABELS: Record<FeedbackCategory, string> = {
+  feedback: "Feedback",
+  feature_request: "Feature request",
+  bug_report: "Bug report",
+  other: "Other",
+};
+
+const FEEDBACK_PRIORITY_BY_CATEGORY: Record<FeedbackCategory, string> = {
+  feedback: "low",
+  feature_request: "normal",
+  bug_report: "high",
+  other: "normal",
+};
+
+export interface SubmitCustomerFeedbackInput {
+  siteId: string;
+  category: FeedbackCategory;
+  subject: string;
+  details: string;
+}
+
+export async function submitCustomerFeedback(
+  input: SubmitCustomerFeedbackInput,
+): Promise<SubmitRequestResult> {
+  const categoryLabel = FEEDBACK_CATEGORY_LABELS[input.category];
+  const title = `Product feedback: ${categoryLabel}${input.subject.trim() ? ` - ${input.subject.trim()}` : ""}`;
+  const description = [
+    "Internal product feedback for Corriston Consulting / WSS.",
+    `Category: ${categoryLabel}`,
+    "",
+    input.details.trim(),
+  ]
+    .filter((line, index, lines) => !(index === lines.length - 1 && line.length === 0))
+    .join("\n");
+
+  return submitCustomerRequest({
+    siteId: input.siteId,
+    title,
+    description,
+    priority: FEEDBACK_PRIORITY_BY_CATEGORY[input.category],
+  });
+}

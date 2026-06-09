@@ -694,16 +694,16 @@ export function AppShell() {
     <div className="phase4a-shell">
       <header className="phase4a-header">
         <div style={{ display: "grid", gap: 6 }}>
-          <LogoLockup size={32} variant="dark" />
-          <h1 style={{ color: "var(--wordmark-ink-inverse)" }}>
-            <MonoLabel text="internal operator workspace" />
+          <LogoLockup size={32} variant="light" />
+          <h1 style={{ color: "var(--text-strong)" }}>
+            <MonoLabel text="operator workspace" />
           </h1>
           <p className="brand-kicker">
-            <MonoLabel text="phase 5a live read only data integration" />
+            <MonoLabel text="live workspace" />
           </p>
         </div>
         <span className="status-pill">
-          <MonoLabel text={getReadOnlyModeLabel()} /> · <MonoLabel text="full local workflow phase" />
+          <MonoLabel text={getReadOnlyModeLabel()} />
         </span>
       </header>
 
@@ -935,7 +935,7 @@ export function AppShell() {
 
           <section className="phase4a-card">
             <h2>Workspace status</h2>
-            <p>Read-only internal operator workspace. Data mode and available actions are shown below.</p>
+            <p>Operator workspace. Data mode and available actions are shown below.</p>
             <dl className="phase7-status-list">
               <div>
                 <dt>Data mode</dt>

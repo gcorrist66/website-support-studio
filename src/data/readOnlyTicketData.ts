@@ -266,8 +266,8 @@ export function getReadOnlyDataMode(): ReadOnlyDataMode {
 
 export function getReadOnlyModeLabel(): string {
   return getReadOnlyDataMode() === "supabase-dev-readonly"
-    ? "Live read-only data (Supabase dev, guarded)"
-    : "Mock data mode (dev guard not enabled)";
+    ? "Operator workspace"
+    : "Workspace preview";
 }
 
 export async function getReadOnlyTicketQueue(): Promise<MockTicketQueueItem[]> {

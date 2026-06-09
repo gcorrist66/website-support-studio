@@ -69,8 +69,8 @@ export function IdentityGate() {
 
   if (identity.kind === "customer") {
     if (identity.onboardingStatus === "complete") {
-      // Onboarded customer → minimal request submission (not a dashboard).
-      return <CustomerRequest />;
+      // Onboarded customer → customer workspace with account, billing, and support actions.
+      return <CustomerRequest identity={identity} />;
     }
     // onboarding_required → redirecting to /onboarding (operators never land here).
     return <Screen body="taking you to onboarding…" />;
