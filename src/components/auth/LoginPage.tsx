@@ -20,6 +20,9 @@ export function LoginPage() {
         <LogoLockup size={34} />
         <h1 className="auth-title">login</h1>
         <p className="auth-subtitle">sign in to access your website support studio account.</p>
+        <p className="auth-meta">
+          use the same email you used at checkout. customer onboarding should not use an operator/admin email.
+        </p>
 
         {ready ? (
           <div className="auth-actions">
