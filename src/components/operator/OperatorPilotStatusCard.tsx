@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { createEmptyOperatorPilotStatus, loadOperatorPilotStatus, type OperatorPilotStatus } from "../../data/operatorPilotStatus";
+import {
+  createEmptyOperatorPilotStatus,
+  loadOperatorPilotStatus,
+  type OperatorPilotStatus,
+  type OperatorTimelineEvent,
+} from "../../data/operatorPilotStatus";
 
 function formatValue(value: string | number | boolean | null): string {
   if (value === null) {
@@ -10,6 +15,22 @@ function formatValue(value: string | number | boolean | null): string {
     return value ? "true" : "false";
   }
   return String(value);
+}
+
+function formatDateTime(value: string | null): string {
+  if (!value) {
+    return "not available";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
 }
 
 function formatClaimStatus(status: OperatorPilotStatus): string {
@@ -93,6 +114,7 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
   const mismatch = useMemo(() => formatMismatchLabel(status), [status]);
   const claimStatus = useMemo(() => formatClaimStatus(status), [status]);
   const siteStatus = useMemo(() => formatSiteStatus(status.siteCount), [status.siteCount]);
+  const timelineEvents = status.timeline ?? [];
   const ownerMemberCount = status.orgMemberCount ?? 0;
   const bundle = useMemo(
     () =>
@@ -189,6 +211,37 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
           <dd>{status.siteCount ?? 0}</dd>
         </div>
       </dl>
+
+      <div className="pilot-timeline-section">
+        <div className="pilot-timeline-section-header">
+          <div>
+            <h3>Customer timeline</h3>
+            <p className="placeholder-meta">
+              Operational view of the customer lifecycle. Read-only and ordered by the key pilot events Gary checks
+              manually.
+            </p>
+          </div>
+          <span className="pilot-timeline-count">{timelineEvents.length} events</span>
+        </div>
+
+        <ol className="pilot-timeline">
+          {timelineEvents.map((event: OperatorTimelineEvent) => (
+            <li className="pilot-timeline-item" key={event.key}>
+              <div className="pilot-timeline-marker" aria-hidden="true" />
+              <div className="pilot-timeline-body">
+                <div className="pilot-timeline-topline">
+                  <strong className="pilot-timeline-label">{event.label}</strong>
+                  <span className="pilot-timeline-time">{formatDateTime(event.timestamp)}</span>
+                </div>
+                <p className="pilot-timeline-meta">
+                  {event.source} · {event.field} · {event.reliability} reliability
+                </p>
+                {event.note ? <p className="pilot-timeline-note">{event.note}</p> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
 
       <div className="pilot-status-summary">
         <span className="pilot-status-summary-item">Claim status: {claimStatus}</span>

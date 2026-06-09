@@ -17,6 +17,17 @@ export interface OperatorPilotStatus {
   onboardingStatus: string | null;
   orgMemberCount: number | null;
   siteCount: number | null;
+  timeline: OperatorTimelineEvent[];
+}
+
+export interface OperatorTimelineEvent {
+  key: string;
+  label: string;
+  timestamp: string | null;
+  source: string;
+  field: string;
+  reliability: "high" | "medium" | "low";
+  note: string | null;
 }
 
 const EMPTY_STATUS: OperatorPilotStatus = {
@@ -30,6 +41,7 @@ const EMPTY_STATUS: OperatorPilotStatus = {
   onboardingStatus: null,
   orgMemberCount: null,
   siteCount: null,
+  timeline: [],
 };
 
 export function createEmptyOperatorPilotStatus(): OperatorPilotStatus {
@@ -62,6 +74,22 @@ export async function loadOperatorPilotStatus(clientId: string): Promise<Operato
     onboardingStatus: typeof row.onboarding_status === "string" ? row.onboarding_status : null,
     orgMemberCount: typeof row.org_member_count === "number" ? row.org_member_count : null,
     siteCount: typeof row.site_count === "number" ? row.site_count : null,
+    timeline: Array.isArray(row.timeline)
+      ? row.timeline.map((item, index) => {
+          const entry = item as Record<string, unknown>;
+          return {
+            key: typeof entry.key === "string" ? entry.key : `timeline-${index}`,
+            label: typeof entry.label === "string" ? entry.label : "Event",
+            timestamp: typeof entry.timestamp === "string" ? entry.timestamp : null,
+            source: typeof entry.source === "string" ? entry.source : "not available",
+            field: typeof entry.field === "string" ? entry.field : "not available",
+            reliability:
+              entry.reliability === "high" || entry.reliability === "medium" || entry.reliability === "low"
+                ? entry.reliability
+                : "low",
+            note: typeof entry.note === "string" ? entry.note : null,
+          };
+        })
+      : [],
   };
 }
-
