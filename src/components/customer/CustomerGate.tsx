@@ -66,8 +66,8 @@ export function CustomerGate() {
         <div className="auth-card">
           <h1 className="auth-title">you're all set</h1>
           <p className="auth-meta">
-            your website support studio account is active and onboarding is complete. your workspace is being
-            prepared.
+            your website support studio account is active and onboarding is complete. you can open the
+            customer workspace now.
           </p>
         </div>
       </div>

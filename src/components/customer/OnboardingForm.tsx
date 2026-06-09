@@ -106,7 +106,7 @@ export function OnboardingForm() {
       } else if (message === "org_not_found") {
         setError("we could not find the paid workspace for this account yet. sign out and try again.");
       } else if (message === "onboarding_failed") {
-        setError("we could not save your setup. check the required fields and try again.");
+        setError("we could not save your setup. please check the form and try again.");
       } else {
         setError(message);
       }
@@ -178,7 +178,7 @@ export function OnboardingForm() {
     <div className="auth-screen">
       <form className="auth-card" onSubmit={onSubmit}>
         <LogoLockup size={30} />
-        <h1 className="auth-title">complete your setup</h1>
+        <h1 className="auth-title">finish onboarding</h1>
         <p className="auth-subtitle">use the same email you checked out with, then tell us about the website.</p>
         <p className="auth-meta">
           this step creates your workspace and first site record so the customer workspace can open next.

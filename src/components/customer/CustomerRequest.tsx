@@ -118,7 +118,7 @@ function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!siteId) {
-      setError("Please select a website.");
+      setError("Choose the website this request is about.");
       return;
     }
     setSubmitting(true);
@@ -255,7 +255,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!siteId) {
-      setError("Please select a website.");
+      setError("Choose the website this feedback is about.");
       return;
     }
     setSubmitting(true);

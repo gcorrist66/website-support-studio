@@ -21,7 +21,8 @@ export function LoginPage() {
         <h1 className="auth-title">login</h1>
         <p className="auth-subtitle">sign in to access your website support studio account.</p>
         <p className="auth-meta">
-          use the same email you used at checkout. customer onboarding should not use an operator/admin email.
+          use the same email you used at checkout so we can match the right customer workspace. customer
+          onboarding should not use an operator/admin email.
         </p>
 
         {ready ? (
