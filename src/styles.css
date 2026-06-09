@@ -862,6 +862,20 @@ pre {
   color: var(--text-strong);
 }
 
+.customer-bullet-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.customer-bullet-list strong {
+  color: var(--text-strong);
+}
+
 .customer-smallprint {
   margin: 0;
   font-size: 0.78rem;

@@ -83,7 +83,7 @@ export async function submitCustomerFeedback(
   const categoryLabel = FEEDBACK_CATEGORY_LABELS[input.category];
   const title = `Product feedback: ${categoryLabel}${input.subject.trim() ? ` - ${input.subject.trim()}` : ""}`;
   const description = [
-    "Internal product feedback for Corriston Consulting / WSS.",
+    "Internal product feedback for Corriston Consulting / website_support_studio.",
     `Category: ${categoryLabel}`,
     "",
     input.details.trim(),

@@ -57,7 +57,7 @@ export function LoginPage() {
         )}
 
         <p className="auth-meta auth-footnote">
-          new to website support studio?{" "}
+          new to website_support_studio?{" "}
           <a href="https://websitesupportstudio.com/pricing">join now</a>
         </p>
       </div>
