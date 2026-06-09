@@ -57,12 +57,12 @@ function formatDate(iso: string | null): string {
 }
 
 function formatCapacity(value: number | null): string {
-  return value === null ? "not tracked yet" : `${value}`;
+  return value === null ? "Not tracked yet" : `${value}`;
 }
 
 function safeSiteLabel(site: CustomerSite | SiteOption | null | undefined): string {
   if (!site) {
-    return "not set";
+    return "not linked yet";
   }
   return site.name;
 }
@@ -331,7 +331,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
         <label className="auth-field">
           <span className="auth-label">website *</span>
           {sites.length === 0 ? (
-            <span className="auth-meta">no website on file yet.</span>
+            <span className="auth-meta">No website is linked yet. Finish onboarding first or contact Corriston Consulting.</span>
           ) : (
             <select className="auth-input" value={siteId} onChange={(e: ChangeEvent<HTMLSelectElement>) => setSiteId(e.target.value)}>
               {sites.map((site) => (
