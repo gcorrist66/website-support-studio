@@ -498,3 +498,27 @@ pre {
   padding: 0.6rem 0.8rem;
   font-size: 0.85rem;
 }
+
+/* Onboarding form fields (Stage B). */
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.auth-label {
+  font-size: 0.8rem;
+  color: var(--text-muted, #64748b);
+}
+.auth-input {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border-strong, #d6d2c5);
+  border-radius: 8px;
+  background: var(--surface-elevated, #ffffff);
+  color: var(--text-strong, #0b1220);
+}
+.auth-input:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 1px;
+}

@@ -1,66 +1,32 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "../schema";
-import { APP_URL } from "../consts";
-
-// Enterprise engagements are scoped and priced per organization — no public
-// figures. Tiers describe scope and accountability, not a price list.
-const tiers = [
-  {
-    name: "Desk",
-    summary: "Managed intake and operational visibility.",
-    points: [
-      "Single-desk request intake",
-      "Triage and classification within the support process",
-      "Status tracking and operational visibility",
-      "Expert recommendations and guidance",
-    ],
-  },
-  {
-    name: "Operations",
-    summary: "Managed execution with human-approved changes.",
-    recommended: true,
-    points: [
-      "Everything in Desk",
-      "Approved website and CMS changes",
-      "Image swaps, link and form fixes, page updates",
-      "Mandatory human approval on every change",
-      "Per-request audit trail",
-    ],
-  },
-  {
-    name: "Growth",
-    summary: "Multi-site operations and expanded delivery.",
-    points: [
-      "Everything in Operations",
-      "Coverage across multiple sites",
-      "Staging and draft change support",
-      "Expanded implementation and platform support",
-      "Operational reporting",
-    ],
-  },
-];
+import { PLANS, ADDONS, CHECKOUT_URL, CONTACT } from "../consts";
 
 const faqs = [
   {
     q: "How much does Website Support Studio cost?",
-    a: "Engagements are scoped and priced per organization based on the number of sites and request volume involved. We provide a quote after a short scoping conversation.",
+    a: "Operations is $399/month (1 website, 50 Capacity Units). Growth is $899/month (up to 5 websites, 150 Capacity Units). Enterprise is custom capacity and onboarding — contact us for a quote.",
   },
   {
-    q: "Why isn't pricing published?",
-    a: "Enterprise engagements vary by site count, request volume, platforms, and required response posture. Publishing a single figure would misrepresent the work, so we scope and quote each organization directly.",
+    q: "What is a Capacity Unit?",
+    a: "Capacity Units measure the effort of each request. Every plan includes a monthly allotment of Capacity Units. You can add top-ups (50, 100, or 250 Capacity Units) at any time, and DNS assistance is available as a $100 one-time add-on.",
   },
   {
-    q: "How do I get a quote?",
-    a: "Book a scoping call or email us. We confirm scope, sites, and expected request volume, then provide pricing for the appropriate tier.",
+    q: "How do I get started?",
+    a: "Choose Operations or Growth and check out securely. You'll create your account and complete a short onboarding right after payment. For Enterprise, contact us and we'll scope custom capacity and onboarding.",
+  },
+  {
+    q: "Is every change reviewed?",
+    a: "Yes. Every customer-facing change passes through a mandatory human approval before it ships, and each request carries an audit trail.",
   },
 ];
 
 const schemas = [
   serviceSchema({
-    name: "Website Support Studio — Engagement Tiers",
+    name: "Website Support Studio — Plans",
     description:
-      "Managed website operations and support, scoped and priced per organization across Desk, Operations, and Growth tiers.",
+      "Managed website operations and support. Operations $399/month (1 site, 50 Capacity Units); Growth $899/month (up to 5 sites, 150 Capacity Units); Enterprise custom.",
     path: "/pricing",
   }),
   breadcrumbSchema([
@@ -73,72 +39,83 @@ const schemas = [
 
 <BaseLayout
   title="Pricing"
-  description="Website Support Studio engagements are scoped and priced per organization across Desk, Operations, and Growth tiers. Book a scoping call for a quote."
+  description="Website Support Studio plans: Operations $399/month (1 website, 50 Capacity Units), Growth $899/month (up to 5 websites, 150 Capacity Units), and custom Enterprise. Capacity top-ups and DNS assistance available."
   path="/pricing"
   schemas={schemas}
 >
   <section class="section">
     <div class="container">
       <p class="kicker">pricing</p>
-      <h1>Scoped per organization. Priced after a short conversation.</h1>
+      <h1>Plans priced in Capacity Units.</h1>
       <p class="lede" style="margin-top:1rem;">
-        Enterprise engagements vary by site count, request volume, platforms, and required response posture.
-        We scope and quote each organization directly rather than publishing a single figure that would
-        misrepresent the work.
+        Every plan is a managed website operations desk with a monthly allotment of Capacity Units.
+        Pick a plan, check out securely, and create your account.
       </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary btn-cta" href="#engagement_tiers">Join Now</a>
-        <a class="btn btn-ghost" href={APP_URL}>Login</a>
-      </div>
     </div>
   </section>
 
-  <section class="section" id="engagement_tiers" style="background:var(--surface-muted);">
+  <section class="section" id="plans" style="background:var(--surface-muted);">
     <div class="container">
-      <p class="kicker">engagement_tiers</p>
-      <h2>Three tiers, by scope and accountability.</h2>
+      <p class="kicker">plans</p>
       <div class="grid grid-3" style="margin-top:2rem; align-items:start;">
         {
-          tiers.map((t) => (
-            <div class="card" style={t.recommended ? "border:2px solid var(--brand-blue);" : ""}>
-              {t.recommended && (
+          PLANS.map((plan) => (
+            <div class="card" style={("recommended" in plan && plan.recommended) ? "border:2px solid var(--brand-blue);" : ""}>
+              {("recommended" in plan && plan.recommended) && (
                 <p class="kicker" style="color:var(--brand-blue); margin-bottom:0.5rem;">most_common</p>
               )}
-              <h3 style="margin-top:0;">{t.name}</h3>
-              <p style="color:var(--text-muted); font-size:0.9rem;">{t.summary}</p>
-              <p style="font-weight:700; color:var(--text-strong); margin:1rem 0 0.5rem;">Contact for pricing</p>
-              <ul style="padding-left:1.1rem; margin:0.75rem 0 0; color:var(--text);">
-                {t.points.map((p) => <li style="margin-bottom:0.4rem;">{p}</li>)}
+              <h3 style="margin-top:0;">{plan.name}</h3>
+              <p style="margin:0.25rem 0 0;">
+                <span style="font-size:1.9rem; font-weight:800; letter-spacing:-0.03em;">{plan.price}</span>
+                <span style="color:var(--text-muted);">{plan.cadence}</span>
+              </p>
+              <p style="color:var(--text-muted); font-size:0.9rem; margin:0.5rem 0 0;">{plan.sites} · {plan.cu}</p>
+              <p style="margin:0.75rem 0 0;">{plan.blurb}</p>
+              <ul style="padding-left:1.1rem; margin:1rem 0 1.25rem; color:var(--text);">
+                {plan.points.map((p) => <li style="margin-bottom:0.4rem;">{p}</li>)}
               </ul>
+              {plan.cta === "checkout" ? (
+                <button class="btn btn-green" type="button" data-plan={plan.key} style="width:100%; justify-content:center;">join now</button>
+              ) : (
+                <a class="btn btn-ghost" href="/contact" style="width:100%; justify-content:center;">contact sales</a>
+              )}
             </div>
           ))
         }
       </div>
-      <p style="margin-top:1.5rem; color:var(--text-muted); max-width:62ch;">
-        All tiers operate inside the same defined response workflow with a mandatory human approval gate.
-        Tiers differ in the scope of execution and the number of sites covered, not in the level of
-        accountability.
+      <p style="margin-top:1.25rem; color:var(--text-muted); max-width:62ch;">
+        All plans operate inside the same defined response workflow with a mandatory human approval gate.
+        Plans differ in monthly Capacity Units and the number of websites covered.
       </p>
     </div>
   </section>
 
-  <!-- Strong conversion CTA -->
-  <section class="section" id="contact" style="background:var(--surface-dark);">
-    <div class="container" style="max-width:760px; text-align:center;">
-      <div class="accent-bar" style="max-width:200px; margin:0 auto 1.5rem;"></div>
-      <h2 style="color:var(--wordmark-ink-inverse);">Ready to move website support into an operating model?</h2>
-      <p class="lede" style="margin:1rem auto 1.75rem; color:#cbd5e1;">
-        Start with a short intake so we can understand your sites, request volume, platforms, and approval
-        requirements.
-      </p>
-      <div class="hero-actions" style="justify-content:center;">
-        <a class="btn btn-primary btn-cta" href="/contact">Join Now</a>
-        <a class="btn btn-ghost" href={APP_URL} style="color:var(--wordmark-ink-inverse); border-color:var(--border-strong);">Login</a>
-      </div>
-    </div>
-  </section>
-
+  <!-- Capacity Units explainer -->
   <section class="section">
+    <div class="container" style="max-width:820px;">
+      <p class="kicker">capacity_units</p>
+      <h2>How Capacity Units work</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        Capacity Units measure the effort of each request, so you always know what's included. Your plan
+        refreshes its allotment every month. Need more in a busy month? Add a top-up anytime.
+      </p>
+      <div class="grid grid-2" style="margin-top:1.5rem;">
+        {
+          ADDONS.map((a) => (
+            <div class="card">
+              <h3 style="margin-top:0;">{a.name}</h3>
+              <p style="color:var(--text-muted); margin:0;">{a.note}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p style="margin-top:1rem; color:var(--text-muted); font-size:0.9rem;">
+        Top-ups and DNS assistance are available to active customers from your account after you join.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-muted);">
     <div class="container" style="max-width:820px;">
       <p class="kicker">questions</p>
       <h2>Frequently asked questions</h2>
@@ -147,4 +124,38 @@ const schemas = [
       </div>
     </div>
   </section>
+
+  <script is:inline define:vars={{ CHECKOUT_URL, fallback: CONTACT.email }}>
+    document.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-plan]");
+      if (!btn) return;
+      e.preventDefault();
+      const plan = btn.getAttribute("data-plan");
+      if (!CHECKOUT_URL) {
+        window.location.href = "/contact";
+        return;
+      }
+      const original = btn.textContent;
+      btn.setAttribute("disabled", "true");
+      btn.textContent = "redirecting…";
+      try {
+        const res = await fetch(CHECKOUT_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ plan }),
+        });
+        const data = await res.json();
+        if (data && data.url) {
+          window.location.href = data.url;
+          return;
+        }
+        window.location.href = "/contact";
+      } catch (_) {
+        window.location.href = "/contact";
+      } finally {
+        btn.removeAttribute("disabled");
+        btn.textContent = original;
+      }
+    });
+  </script>
 </BaseLayout>

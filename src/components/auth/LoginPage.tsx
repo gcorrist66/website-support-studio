@@ -19,7 +19,7 @@ export function LoginPage() {
       <div className="auth-card">
         <LogoLockup size={34} />
         <h1 className="auth-title">login</h1>
-        <p className="auth-subtitle">sign in to the website support studio operator workspace.</p>
+        <p className="auth-subtitle">sign in to access your website support studio account.</p>
 
         {ready ? (
           <div className="auth-actions">
@@ -31,15 +31,6 @@ export function LoginPage() {
               }}
             >
               continue with google
-            </button>
-            <button
-              className="auth-btn auth-btn-green"
-              type="button"
-              onClick={() => {
-                void signInWithOAuth("github");
-              }}
-            >
-              continue with github
             </button>
             {error ? (
               <p className="auth-error" role="alert">

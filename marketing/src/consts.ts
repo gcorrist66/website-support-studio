@@ -39,6 +39,71 @@ export const APP_URL = "https://app.websitesupportstudio.com";
 // Primary conversion destination for the public "Join Now" CTA.
 export const JOIN_PATH = "/pricing";
 
+// ---- Billing / checkout (Stage A) -------------------------------------------
+// create-checkout-session Edge Function URL (public). Set at build via env:
+//   PUBLIC_WSS_CHECKOUT_URL=https://<project-ref>.supabase.co/functions/v1/create-checkout-session
+export const CHECKOUT_URL =
+  (import.meta as { env?: Record<string, string> }).env?.PUBLIC_WSS_CHECKOUT_URL ?? "";
+
+export const PLANS = [
+  {
+    key: "operations",
+    name: "Operations",
+    price: "$399",
+    cadence: "/month",
+    sites: "1 website",
+    cu: "50 Capacity Units / month",
+    blurb: "Managed website operations for a single revenue-critical site.",
+    points: [
+      "Single-desk request intake",
+      "Operator-led support with mandatory human approval",
+      "Per-request audit trail",
+      "50 Capacity Units each month",
+    ],
+    cta: "checkout" as const,
+  },
+  {
+    key: "growth",
+    name: "Growth",
+    price: "$899",
+    cadence: "/month",
+    sites: "up to 5 websites",
+    cu: "150 Capacity Units / month",
+    blurb: "Operations across a portfolio of sites with more monthly capacity.",
+    recommended: true,
+    points: [
+      "Everything in Operations",
+      "Coverage across up to 5 websites",
+      "150 Capacity Units each month",
+      "Operational reporting",
+    ],
+    cta: "checkout" as const,
+  },
+  {
+    key: "enterprise",
+    name: "Enterprise",
+    price: "Custom",
+    cadence: "",
+    sites: "custom",
+    cu: "Custom capacity",
+    blurb: "Custom capacity, coverage, and onboarding for larger estates.",
+    points: [
+      "Everything in Growth",
+      "Custom Capacity Units and site coverage",
+      "Custom onboarding and SLAs",
+      "Dedicated commercial terms",
+    ],
+    cta: "contact" as const,
+  },
+] as const;
+
+export const ADDONS = [
+  { key: "topup_50", name: "50 Capacity Units", note: "Top-up" },
+  { key: "topup_100", name: "100 Capacity Units", note: "Top-up" },
+  { key: "topup_250", name: "250 Capacity Units", note: "Top-up" },
+  { key: "dns", name: "DNS Assistance", note: "$100 one-time" },
+] as const;
+
 // ---- Sub-processors / vendors actually in the stack -------------------------
 // Used to keep the privacy, cookie, and sub-processor disclosures truthful.
 export const SUBPROCESSORS = [

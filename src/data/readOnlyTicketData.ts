@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
+import { getAuthClient } from "../auth/realAuthClient";
+
 import {
   approvalQueue,
   auditTrail,
@@ -227,6 +229,15 @@ function approvalStateFromEvents(events: SupabaseAuditRow[]): MockTicketDetail["
 }
 
 function createSupabaseClient() {
+  // Prefer the real authenticated client: when an operator is logged in (real auth enabled),
+  // their session scopes every read by RLS to their agency. This is what powers the operator
+  // console (queue / tickets / approvals / audit) on real data.
+  const authed = getAuthClient();
+  if (authed) {
+    return authed;
+  }
+
+  // Dev fallback: anonymous read-only client guarded by the dev env flags.
   const env = getValidationEnv();
   const url = getEnvValue(["WSS_SUPABASE_URL", "VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLIC_URL"], env);
   const anonKey = getEnvValue(["WSS_SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY"], env);
@@ -245,6 +256,11 @@ function createSupabaseClient() {
 }
 
 export function getReadOnlyDataMode(): ReadOnlyDataMode {
+  // A real authenticated (operator) session reads live, RLS-scoped data; otherwise fall back to
+  // the dev anon path when the dev guard is set, else mock.
+  if (getAuthClient()) {
+    return "supabase-dev-readonly";
+  }
   return assertBrowserMode() ? "supabase-dev-readonly" : "mock";
 }
 

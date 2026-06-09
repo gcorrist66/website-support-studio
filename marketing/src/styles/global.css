@@ -193,6 +193,24 @@ main {
   background: var(--surface-muted);
 }
 
+/* Green conversion CTA (Stage A): the WSS "join now" purchase action. Blue remains brand
+   identity / links; green signals the paid action. AA-large contrast with white bold text. */
+:root {
+  --cta-green: #16a34a;
+  --cta-green-hover: #128a3e;
+}
+.btn-green {
+  background: var(--cta-green);
+  color: #fff;
+  border-color: var(--cta-green);
+  font-weight: 700;
+}
+.btn-green:hover {
+  background: var(--cta-green-hover);
+  border-color: var(--cta-green-hover);
+  filter: none;
+}
+
 /* Emphasised conversion CTA — restrained "pop" using the existing palette only.
    A brand-blue lift/shadow plus a thin amber→cyan→mulberry→blue accent underline. */
 .btn-cta {

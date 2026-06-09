@@ -1,34 +1,48 @@
 /**
- * Phase A — Routing foundation (feature-flagged auth, existing console preserved).
+ * Routing foundation (feature-flagged auth, existing console preserved).
  *
  * Routes:
- *   /               → HomeRoute: existing operator console by default; a safe
- *                     "workspace setup required" placeholder ONLY when real auth
- *                     is enabled and a real user is signed in (no console, no data).
- *   /login          → real login page (or a disabled state when the flag is off).
+ *   /               → HomeRoute: existing operator console by default; for a real
+ *                     authenticated session, CustomerGate (Stage B) claims the paid
+ *                     org and routes to onboarding / all-set / setup-required.
+ *   /login          → Google-only login (or a disabled state when the flag is off).
  *   /auth/callback  → OAuth return handler.
+ *   /onboarding     → customer onboarding completion (Stage B).
  *   *               → redirect to /.
  *
- * The AuthProvider wraps everything but, with the flag off, produces no session
- * and never calls Supabase — so the operator console behaves exactly as before.
+ * With the flag off, AuthProvider produces no session and never calls Supabase — the
+ * operator console behaves exactly as before.
  */
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "../components/shell/AppShell";
 import { AuthCallback } from "../components/auth/AuthCallback";
 import { LoginPage } from "../components/auth/LoginPage";
-import { WorkspaceSetupRequired } from "../components/auth/WorkspaceSetupRequired";
+import { IdentityGate } from "../components/auth/IdentityGate";
+import { OnboardingForm } from "../components/customer/OnboardingForm";
 import { AuthProvider, useAuth } from "../auth/AuthProvider";
 
 function HomeRoute() {
   const { enabled, session } = useAuth();
-  // Real auth ON + signed-in user: Phase A does not resolve or onboard, so never
-  // show the operator console to a real session — show the safe placeholder.
+  // Real auth ON + signed-in user: resolve identity and route — operator → console,
+  // customer → onboarding/all-set, unknown → setup. Operators are never routed into
+  // customer onboarding; customers never reach operator tooling.
   if (enabled && session) {
-    return <WorkspaceSetupRequired />;
+    return <IdentityGate />;
   }
-  // Default / dev path: preserve the existing operator console exactly.
+  // Default / dev path (flag off): preserve the existing operator console exactly.
   return <AppShell />;
+}
+
+function OnboardingRoute() {
+  const { enabled, loading, session } = useAuth();
+  if (!enabled) {
+    return <Navigate to="/" replace />;
+  }
+  if (!loading && !session) {
+    return <Navigate to="/login" replace />;
+  }
+  return <OnboardingForm />;
 }
 
 export function AppRouter() {
@@ -39,6 +53,7 @@ export function AppRouter() {
           <Route path="/" element={<HomeRoute />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/onboarding" element={<OnboardingRoute />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

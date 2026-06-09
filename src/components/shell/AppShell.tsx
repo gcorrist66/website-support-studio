@@ -24,6 +24,7 @@ import {
   getReadOnlyTicketQueue,
   getReadOnlyDataMode,
 } from "../../data/readOnlyTicketData";
+import { operatorWorkflow } from "../../data/operatorWorkflow";
 import { auditTrail, getTicketDetail, ticketQueue, type MockApprovalItem, type MockAuditEvent, type MockTicketQueueItem } from "../../ui/mockData";
 import { filterTickets, getSearchFilterSummary, type TicketSearchFilters } from "../../search/ticketSearch";
 import {
@@ -196,6 +197,23 @@ export function AppShell() {
     setTriageMessage("");
     setTriageInProgress(true);
 
+    if (operatorWorkflow.isLive()) {
+      try {
+        await operatorWorkflow.triage(selectedTicket.workflowId, "Manual CS triage from operator console");
+      } catch (e) {
+        setTriageError(e instanceof Error ? e.message : "Triage failed.");
+        setTriageInProgress(false);
+        return;
+      }
+      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+      setSelectedTicket(refreshed);
+      setAuditTimeline(timeline);
+      setTriageMessage(`Ticket ${selectedTicket.id} triaged successfully.`);
+      setTriageInProgress(false);
+      return;
+    }
+
     const result = handleTriageTicket({
       tenantContext: {
         agencyId: selectedTicket.tenantContext.agencyId,
@@ -246,6 +264,24 @@ export function AppShell() {
     setDraftMessage("");
     setDraftInProgress(true);
 
+    if (operatorWorkflow.isLive()) {
+      try {
+        await operatorWorkflow.draftReply(selectedTicket.workflowId, normalizedDraftText);
+      } catch (e) {
+        setDraftError(e instanceof Error ? e.message : "Draft failed.");
+        setDraftInProgress(false);
+        return;
+      }
+      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+      setSelectedTicket(refreshed);
+      setAuditTimeline(timeline);
+      setDraftMessage(`Draft created for ticket ${selectedTicket.id}.`);
+      setDraftText("");
+      setDraftInProgress(false);
+      return;
+    }
+
     const result = handleDraftReply({
       tenantContext: {
         agencyId: selectedTicket.tenantContext.agencyId,
@@ -291,6 +327,23 @@ export function AppShell() {
     setApprovalRequestMessage("");
     setApprovalRequestInProgress(true);
 
+    if (operatorWorkflow.isLive()) {
+      try {
+        await operatorWorkflow.requestApproval(selectedTicket.workflowId);
+      } catch (e) {
+        setApprovalRequestError(e instanceof Error ? e.message : "Request approval failed.");
+        setApprovalRequestInProgress(false);
+        return;
+      }
+      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+      setSelectedTicket(refreshed);
+      setAuditTimeline(timeline);
+      setApprovalRequestMessage(`Gary approval requested for ticket ${selectedTicket.id}.`);
+      setApprovalRequestInProgress(false);
+      return;
+    }
+
     const result = handleRequestApproval({
       tenantContext: {
         agencyId: selectedTicket.tenantContext.agencyId,
@@ -334,6 +387,31 @@ export function AppShell() {
     setApprovalDecisionError("");
     setApprovalDecisionMessage("");
     setApprovalDecisionInProgress(true);
+
+    if (operatorWorkflow.isLive()) {
+      try {
+        if (decision === "approve") {
+          await operatorWorkflow.approve(selectedTicket.workflowId, "Approved by Gary from operator console");
+        } else {
+          await operatorWorkflow.reject(selectedTicket.workflowId, "Returned for rework by Gary");
+        }
+      } catch (e) {
+        setApprovalDecisionError(e instanceof Error ? e.message : "Approval decision failed.");
+        setApprovalDecisionInProgress(false);
+        return;
+      }
+      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+      setSelectedTicket(refreshed);
+      setAuditTimeline(timeline);
+      setApprovalDecisionMessage(
+        decision === "approve"
+          ? `Reply approved for ticket ${selectedTicket.id}.`
+          : `Reply rejected for ticket ${selectedTicket.id}.`,
+      );
+      setApprovalDecisionInProgress(false);
+      return;
+    }
 
     const tenantContext = {
       agencyId: selectedTicket.tenantContext.agencyId,
@@ -406,6 +484,23 @@ export function AppShell() {
     setSendReplyMessage("");
     setSendReplyInProgress(true);
 
+    if (operatorWorkflow.isLive()) {
+      try {
+        await operatorWorkflow.send(selectedTicket.workflowId);
+      } catch (e) {
+        setSendReplyError(e instanceof Error ? e.message : "Send failed.");
+        setSendReplyInProgress(false);
+        return;
+      }
+      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+      setSelectedTicket(refreshed);
+      setAuditTimeline(timeline);
+      setSendReplyMessage(`Reply sent for ticket ${selectedTicket.id}.`);
+      setSendReplyInProgress(false);
+      return;
+    }
+
     // The send handler validates the approval id, draft id, and recipient email against
     // persisted state, so resolve them read-only before issuing the local-only send.
     const sendContext = await getReadOnlySendContext(selectedTicket.workflowId);
@@ -472,6 +567,23 @@ export function AppShell() {
     setCloseTicketError("");
     setCloseTicketMessage("");
     setCloseTicketInProgress(true);
+
+    if (operatorWorkflow.isLive()) {
+      try {
+        await operatorWorkflow.close(selectedTicket.workflowId, normalizedClosureNote);
+      } catch (e) {
+        setCloseTicketError(e instanceof Error ? e.message : "Close failed.");
+        setCloseTicketInProgress(false);
+        return;
+      }
+      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
+      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
+      setSelectedTicket(refreshed);
+      setAuditTimeline(timeline);
+      setCloseTicketMessage(`Ticket ${selectedTicket.id} closed.`);
+      setCloseTicketInProgress(false);
+      return;
+    }
 
     const result = handleCloseTicket({
       tenantContext: {
