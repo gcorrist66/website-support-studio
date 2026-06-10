@@ -534,3 +534,114 @@ Smallest safe surface — **no dashboard redesign**:
 
 **Design-only / not built this session:** the panel + data module (would be production code) are
 specified here, not written; only the read RPC migration is drafted (and unapplied).
+
+---
+---
+
+# Part IV — V2.4 Capacity Accounting (design + draft)
+
+**Added:** 2026-06-09 · **Branch:** `v2-foundation` · **Status:** DESIGN + DRAFT MIGRATION (not applied).
+**Draft migration:** `supabase/migrations/20260613000000_v2_4_capacity_ledger.sql`.
+
+**The question:** how do Capacity Units (CU) interact with support requests, website projects, project
+milestones, project deliverables, and website operations?
+
+**The one-line answer:** *CU is the currency of **subscription support**. Fixed-price **projects** are
+paid in money (`projects.price_cents`), not CU.* A request consumes CU only when the work is
+subscription-funded.
+
+## IV.1 — Capacity Audit (Phase 1)
+
+| | State |
+|---|---|
+| **Exists** | `subscriptions.monthly_cu` (plan allotment) + `wss_plan_monthly_cu()` / `sites_limit`, set at provisioning. `PLANS`: Operations 50 CU, Growth 150 CU. Top-ups 50/100/250 (prices TBD), DNS $100. |
+| **Assumed (docs, not built)** | CU consumed **at operator approval** (human gate preserved); operator classifies **Low/Med/High** at triage; monthly replenish on `invoice.paid`; **no rollover**. A `capacity_ledger` is sketched in `MMVP_IMPLEMENTATION_PLAN.md`. |
+| **Undefined (this fills it)** | No ledger, no used/remaining tracking, no consume logic, no effort field on tickets, no CU↔project rule. `capacityUsed/Remaining` are placeholder `null`/`0`. Projects carry `price_cents` only — **no CU coupling**. |
+
+## IV.2 — Capacity Accounting Rules (Phase 2, FINAL)
+
+| Work | Consumes CU? | How it's recorded |
+|---|---|---|
+| **Support request** (orphan, `tickets.project_id IS NULL`) | **Yes** | debit `support_consume`, amount = `cu_cost(effort_level)`, posted **at approval** |
+| **Project request** (ticket linked, in scope) | **No** | covered by `price_cents`; no debit (optional informational note only) |
+| **Included project work** (in-scope milestones/deliverables) | **No** | paid by the project price |
+| **Out-of-scope project work** ("overage") | **Yes, if routed to the plan** | operator flags it; debit `project_overage` (carries `project_id` + `effort_level`) — or a money change-order if the customer has no plan |
+| **Website operations** (`project_type = 'ongoing_ops'`) | **Yes (default)** | treated as subscription support — its requests consume CU like normal support, unless structured as a separate money retainer |
+
+**Effort → CU (the single source of truth = `cu_cost()`):** default **Low = 1, Medium = 3, High = 8**
+— *proposal, pending Gary's confirmation*. Centralised in one SQL function so re-pricing is a one-line change.
+
+**Consume timing:** at the **approval gate** (`approved_to_send` / send), never at submit — preserving the
+human-in-the-loop principle and ensuring a customer is only charged for work actually delivered.
+
+**Decision rule (mental model):** does this request bill against the **plan** or against a **project's
+price**? Plan → debit CU. Project (in scope) → nothing. Project (overage, routed to plan) → debit CU.
+
+## IV.3 — Capacity Ledger Design (Phase 3)
+
+Append-only `capacity_ledger`, `amount_cu` is a **signed delta** (credits +, debits −). The base plan
+allotment stays the source of truth on `subscriptions.monthly_cu`; the ledger records **movements on top**
+(so a fresh org with no rows simply has Included = `monthly_cu`).
+
+| Field (task → column) | Notes |
+|---|---|
+| **source** → `source` | `monthly_grant \| topup \| support_consume \| project_overage \| adjustment \| refund` |
+| **request** → `ticket_id` | the request that moved CU (nullable, FK → tickets) |
+| **project** → `project_id` | set on project-related entries (nullable, FK → projects) |
+| **amount** → `amount_cu` | signed int (+credit / −debit), non-zero |
+| **reason** → `reason` | human-readable explanation |
+| **timestamp** → `occurred_at` / `created_at` | |
+| (scoping) | `agency_id`, `client_id`, `subscription_id`, `period_start/period_end` — period scoping enforces no-rollover |
+| (classification) | `effort_level` on consume entries; `created_by` (operator email / `system`) |
+
+Also added in the draft: **`tickets.effort_level`** (nullable enum `low\|medium\|high`) — the operator's
+classification, drives both the consume amount and the "pending" estimate.
+
+**RLS:** operator-only at the table level (governance record). Customers never read the raw ledger —
+they get a summary via `get_my_capacity()`.
+
+## IV.4 — Customer Visibility (Phase 4) — *no accounting complexity*
+
+`get_my_capacity()` returns four calm numbers + the period:
+
+| Customer sees | Computed as |
+|---|---|
+| **Included** | `subscriptions.monthly_cu` + period credits (topups/grants/refunds) |
+| **Used** | period debits (support_consume + project_overage) |
+| **Remaining** | `Included − Used` (floored at 0) |
+| **Pending** | Σ `cu_cost(effort)` over the org's **open** subscription requests not yet consumed |
+
+Presentation: "**32 of 50 used · 18 remaining · 2 pending**" with a bar. No sources, no ledger rows, no
+project-vs-support breakdown, no money. Project work simply never appears as CU usage (it's paid for).
+
+## IV.5 — Operator Visibility (Phase 5) — *full accounting*
+
+Operators read the raw `capacity_ledger` (RLS-scoped to their agency). For each entry they see **what**
+consumed CU (`ticket_id` + title), **why** (`source` + `reason` + `effort_level`), and **whether it was
+project or support work** (`source` = `support_consume` vs `project_overage`, and `project_id` presence).
+A per-org rollup (included / used / remaining / pending + recent entries) supports answering billing
+questions and spotting overage. Posting is via `operator_post_capacity_entry()` until the auto-hook lands.
+
+## IV.6 — Integration & Rollout
+
+- **Deferred (one live-RPC change):** auto-post a `support_consume` debit when an operator approves/sends a
+  reply on an orphan support ticket (`cu_cost(ticket.effort_level)`). This edits the live support flow, so
+  it lands as a careful lockstep change **after** the ledger is proven on dev — **not** in this draft.
+  Until then operators post entries manually via `operator_post_capacity_entry()`.
+- **Renewal:** on `invoice.paid`, the new period's Included resets from the plan; prior period's unused CU
+  does **not** roll over (period scoping). Webhook wiring is a follow-up.
+- **App-side (specified, not written):** swap the `buildCapacityModel` placeholder (used = 0) for
+  `get_my_capacity()`; add an operator ledger view. Production code untouched this session.
+- **Apply order (dev only, coordinated window):** V2.0 → V2.2 → V2.3 → V2.4. Verify: a fresh org shows
+  Included = `monthly_cu`, Used 0; posting a `support_consume` moves Used/Remaining; a customer sees no
+  project work as CU; the raw ledger is invisible to customers.
+
+## IV.7 — Risks
+
+| Risk | Severity | Mitigation |
+|---|---|---|
+| Auto-consume hook touches the live approval RPC | High | Deferred; ledger proven on dev first; lockstep deploy. |
+| `cu_cost` numbers not yet confirmed by Gary | Med | Single function; placeholder default clearly flagged; one-line re-price. |
+| "Out-of-scope vs in-scope" is a human judgment | Med | Operator-flagged `project_overage`; reason recorded; auditable. |
+| Double-counting (consumed + still "pending") | Low | `pending` excludes tickets that already have a `support_consume` entry. |
+| Period boundaries / no-rollover correctness | Med | Period scoped to subscription dates; verify renewal on dev. |
