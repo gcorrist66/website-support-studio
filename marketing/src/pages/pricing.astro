@@ -8,7 +8,7 @@ const schemas = [
   serviceSchema({
     name: "Website Support Studio — Plans",
     description:
-      "Managed website operations and support. Operations $399/month (1 site, 50 Capacity Units); Growth $899/month (up to 5 sites, 150 Capacity Units); Enterprise custom.",
+      "Managed website operations and support. Operations $399/month with limited founder pricing at $199.50/month (1 site, 50 Capacity Units); Growth $899/month (up to 5 sites, 150 Capacity Units); Enterprise custom.",
     path: "/pricing",
   }),
   breadcrumbSchema([
@@ -20,7 +20,7 @@ const schemas = [
 
 <BaseLayout
   title="Pricing"
-  description="Website Support Studio plans: Operations $399/month (1 website, 50 Capacity Units), Growth $899/month (up to 5 websites, 150 Capacity Units), and custom Enterprise. Capacity top-ups and DNS assistance available."
+  description="Website Support Studio plans: Operations $399/month with limited founder pricing at $199.50/month (1 website, 50 Capacity Units), Growth $899/month (up to 5 websites, 150 Capacity Units), and custom Enterprise. Capacity top-ups and DNS assistance available."
   path="/pricing"
   schemas={schemas}
 >
@@ -33,6 +33,10 @@ const schemas = [
         Pick a plan, check out securely, and start your website project. After purchase, you create
         your account and complete a short onboarding.
       </p>
+      <p class="kicker" style="margin-top:1rem;"><Label text="_founder_pricing" /></p>
+      <p class="lede" style="margin-top:0.35rem;">
+        Founder pricing is 50% off Operations and available only for a limited number of new customers.
+      </p>
     </div>
   </section>
 
@@ -43,6 +47,7 @@ const schemas = [
         {
           PLANS.map((plan) => {
             const featured = "recommended" in plan && plan.recommended;
+            const isOperations = plan.key === "operations";
             return (
               <div>
                 {featured && (
@@ -50,16 +55,40 @@ const schemas = [
                 )}
                 <div class="card" style={featured ? "border:2px solid var(--brand-blue);" : ""}>
                   <h3 style="margin-top:0;"><Label text={`_${plan.name.toLowerCase()}`} /></h3>
-                  <p style="margin:0.25rem 0 0;">
-                    <span style="font-size:1.9rem; font-weight:800; letter-spacing:-0.03em;">{plan.price}</span>
-                    <span style="color:var(--text-muted);">{plan.cadence}</span>
-                  </p>
+                  {isOperations ? (
+                    <div style="margin:0.25rem 0 0; display:grid; gap:0.45rem;">
+                      <p style="margin:0;">
+                        <span style="font-size:1.9rem; font-weight:800; letter-spacing:-0.03em;">{plan.price}</span>
+                        <span style="color:var(--text-muted);">{plan.cadence}</span>
+                      </p>
+                      <p style="margin:0; color:var(--text-muted); font-size:0.9rem;">
+                        founder price: <strong style="color:var(--text-strong);">{plan.founderPrice}</strong> {plan.cadence} · {plan.founderDiscountLabel}
+                      </p>
+                      <p style="margin:0; color:var(--text-subtle); font-size:0.82rem;">
+                        {plan.founderAvailability}
+                      </p>
+                    </div>
+                  ) : (
+                    <p style="margin:0.25rem 0 0;">
+                      <span style="font-size:1.9rem; font-weight:800; letter-spacing:-0.03em;">{plan.price}</span>
+                      <span style="color:var(--text-muted);">{plan.cadence}</span>
+                    </p>
+                  )}
                   <p style="color:var(--text-muted); font-size:0.9rem; margin:0.5rem 0 0;">{plan.sites} · {plan.cu}</p>
-                  <p style="margin:0.75rem 0 0;">{plan.blurb}</p>
+                  <p style="margin:0.75rem 0 0;">{isOperations ? plan.founderBlurb : plan.blurb}</p>
                   <ul style="padding-left:1.1rem; margin:1rem 0 1.25rem; color:var(--text);">
                     {plan.points.map((p) => <li style="margin-bottom:0.4rem;">{p}</li>)}
                   </ul>
-                  {plan.cta === "checkout" ? (
+                  {isOperations ? (
+                    <div style="display:grid; gap:0.65rem;">
+                      <button class="btn btn-green btn-cta" type="button" data-plan={plan.key} style="width:100%; justify-content:center;">
+                        <Label text="_join_now" />
+                      </button>
+                      <button class="btn btn-ghost" type="button" data-plan={plan.founderPlanKey} style="width:100%; justify-content:center;">
+                        <Label text="_founder_price" />
+                      </button>
+                    </div>
+                  ) : plan.cta === "checkout" ? (
                     <button class="btn btn-green btn-cta" type="button" data-plan={plan.key} style="width:100%; justify-content:center;"><Label text="_join_now" /></button>
                   ) : (
                     <a class="btn btn-ghost" href="/contact" style="width:100%; justify-content:center;">contact sales</a>
