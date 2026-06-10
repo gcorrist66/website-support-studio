@@ -50,9 +50,9 @@ type ReadOnlyTicketQueueProps = {
 export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket }: ReadOnlyTicketQueueProps) {
   return (
     <section className="phase4a-card">
-      <h2>Read-only local queue</h2>
+      <h2>Support queue</h2>
       <p>
-        Read-only mode · No live ticket actions enabled · All row action controls are disabled in this phase.
+        Read-only in this environment · no live ticket actions are enabled here.
       </p>
       <p className="placeholder-meta">Filter results: {tickets.length} ticket(s)</p>
 
@@ -60,12 +60,12 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
         <div className="phase7-empty-state" role="status">
           <p>No tickets match the current filters.</p>
           <p className="placeholder-meta">
-            Adjust or clear the search and filters above. In mock-data mode this list shows local sample tickets;
-            in guarded Supabase dev mode it reflects read-only data.
+            Adjust or clear the search and filters above. In sample data mode this list shows local tickets;
+            in guarded read-only mode it reflects live data without writes.
           </p>
         </div>
       ) : (
-      <div className="placeholder-table" role="table" aria-label="Mock ticket queue">
+      <div className="placeholder-table" role="table" aria-label="Support queue">
         <article className="phase4b-header-row">
           <span>Ticket</span>
           <span>Status</span>
@@ -106,7 +106,7 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
                 onClick={() => onSelectTicket(ticket.id)}
                 data-selected={selectedTicketId === ticket.id ? "true" : "false"}
               >
-                {selectedTicketId === ticket.id ? "Selected" : "View details (read-only)"}
+                {selectedTicketId === ticket.id ? "Selected" : "View details"}
               </button>
 
               {ticket.blockedReason ? (

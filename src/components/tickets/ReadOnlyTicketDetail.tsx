@@ -211,9 +211,9 @@ export function ReadOnlyTicketDetail({
 
   return (
     <section className="phase4a-card">
-      <h2>Read-only ticket detail</h2>
+      <h2>Ticket detail</h2>
       <p className="placeholder-meta">
-        Mock data fallback available · Workflow actions appear only when eligible for the ticket&apos;s current state, and run only in guarded Supabase dev mode.
+        Sample data fallback available · workflow actions appear only when eligible for the ticket&apos;s current state and run only in guarded read-only mode.
       </p>
       <p className="placeholder-meta">
         Reply send is persistence-only: a sent reply is recorded locally and no real email is delivered. Approval is required before send, and close requires a sent_to_customer ticket.

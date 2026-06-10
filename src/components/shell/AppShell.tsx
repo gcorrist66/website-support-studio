@@ -52,6 +52,29 @@ import {
   type DevSupabaseSessionReadMode,
 } from "../../auth/devSupabaseSessionRead";
 
+function formatOperatorDateTime(value: string): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(parsed);
+}
+
+function getUniqueCount(items: Array<{ clientId?: string; siteId?: string }>, key: "clientId" | "siteId"): number {
+  return new Set(
+    items.map((item) => item[key]).filter((value): value is string => typeof value === "string" && value.trim().length > 0),
+  ).size;
+}
+
+function getRecentItems(items: MockTicketQueueItem[], limit = 3): MockTicketQueueItem[] {
+  return [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, limit);
+}
+
 export function AppShell() {
   const showDevelopmentPrototype =
     typeof import.meta !== "undefined" ? (import.meta as { env?: { DEV?: boolean } }).env?.DEV ?? false : false;
@@ -177,6 +200,26 @@ export function AppShell() {
     () => getSearchFilterSummary(searchFilters, filteredTickets.length),
     [searchFilters, filteredTickets.length],
   );
+
+  const operatorSummary = useMemo(() => {
+    const activeTickets = ticketQueueData.filter((ticket) => ticket.status !== "closed");
+    const blockedTickets = activeTickets.filter((ticket) => ticket.status === "blocked");
+    const urgentTickets = activeTickets.filter(
+      (ticket) => ticket.priority === "urgent" || ticket.priority === "critical",
+    );
+    const recentTickets = getRecentItems(ticketQueueData);
+
+    return {
+      activeCustomers: getUniqueCount(activeTickets, "clientId"),
+      openRequests: activeTickets.length,
+      pendingApprovals: approvalQueue.length,
+      activeProjects: getUniqueCount(activeTickets, "siteId"),
+      waitingOnUs: Math.max(activeTickets.length - blockedTickets.length, 0),
+      waitingOnCustomer: blockedTickets.length,
+      recentTickets,
+      atRiskTickets: blockedTickets.length > 0 ? blockedTickets : urgentTickets,
+    };
+  }, [approvalQueue, ticketQueueData]);
 
   useEffect(() => {
     if (filteredTickets.length > 0 && !filteredTickets.some((ticket) => ticket.id === selectedTicketId)) {
@@ -699,7 +742,7 @@ export function AppShell() {
         <div style={{ display: "grid", gap: 6 }}>
           <LogoLockup size={32} variant="light" />
           <h1 className="phase4a-header-title">Operator Console</h1>
-          <p className="brand-kicker phase4a-header-kicker">Live Support Queue</p>
+          <p className="brand-kicker phase4a-header-kicker">Operational command center</p>
         </div>
         <span className="status-pill">{getReadOnlyModeLabel()}</span>
       </header>
@@ -708,32 +751,96 @@ export function AppShell() {
         <nav className="phase4a-nav" aria-label="Primary">
           <h2>Navigation</h2>
           <ul>
-            <li>Dashboard</li>
-            <li>Tickets</li>
+            <li>Overview</li>
+            <li>Queue</li>
             <li>Approvals</li>
-            <li>Audit Trail</li>
-            <li>System Status</li>
+            <li>Activity</li>
+            <li>Health</li>
           </ul>
         </nav>
 
         <main className="phase4a-main">
-          {showPilotStatusCard ? (
-            <OperatorPilotStatusCard
-              clientId={selectedTicket.tenantContext.clientId}
-              customerLabel={selectedTicket.tenantContext.clientName}
-              siteLabel={selectedTicket.tenantContext.siteName}
-            />
-          ) : null}
+          <section className="phase4a-card operator-overview-card">
+            <div className="operator-overview-header">
+              <div>
+                <p className="pilot-status-kicker">operator overview</p>
+                <h2>Business status</h2>
+                <p className="placeholder-meta">
+                  The first screen is the business state: who is active, what needs attention, and what changed
+                  recently.
+                </p>
+              </div>
+              <span className="pilot-status-badge pilot-status-badge-blue">live queue</span>
+            </div>
+
+            <div className="operator-overview-grid">
+              <article className="operator-overview-metric">
+                <p className="operator-overview-label">Active customers</p>
+                <p className="operator-overview-value">{operatorSummary.activeCustomers}</p>
+                <p className="operator-overview-note">customers with open work in the queue</p>
+              </article>
+              <article className="operator-overview-metric">
+                <p className="operator-overview-label">Open requests</p>
+                <p className="operator-overview-value">{operatorSummary.openRequests}</p>
+                <p className="operator-overview-note">requests waiting on action or follow-up</p>
+              </article>
+              <article className="operator-overview-metric">
+                <p className="operator-overview-label">Pending approvals</p>
+                <p className="operator-overview-value">{operatorSummary.pendingApprovals}</p>
+                <p className="operator-overview-note">items waiting on Gary approval</p>
+              </article>
+              <article className="operator-overview-metric">
+                <p className="operator-overview-label">Active projects</p>
+                <p className="operator-overview-value">{operatorSummary.activeProjects}</p>
+                <p className="operator-overview-note">sites with current work in motion</p>
+              </article>
+              <article className="operator-overview-metric">
+                <p className="operator-overview-label">Workload</p>
+                <p className="operator-overview-value">
+                  {operatorSummary.waitingOnUs} / {operatorSummary.waitingOnCustomer}
+                </p>
+                <p className="operator-overview-note">waiting on us / waiting on customer</p>
+              </article>
+              <article className="operator-overview-metric">
+                <p className="operator-overview-label">What’s new</p>
+                <ul className="operator-mini-list">
+                  {operatorSummary.recentTickets.map((ticket) => (
+                    <li key={ticket.id}>
+                      <strong>{ticket.id}</strong> {ticket.title}
+                      <span className="operator-mini-list-meta">
+                        {ticket.clientName} · {formatOperatorDateTime(ticket.updatedAt)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+
+            <div className="operator-risk-band">
+              <p className="operator-risk-label">What is at risk</p>
+              {operatorSummary.atRiskTickets.length > 0 ? (
+                <ul className="operator-risk-list">
+                  {operatorSummary.atRiskTickets.slice(0, 3).map((ticket) => (
+                    <li key={ticket.id}>
+                      <strong>{ticket.id}</strong> {ticket.title} · {ticket.priority}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="placeholder-meta">No blocked or urgent tickets are currently visible.</p>
+              )}
+            </div>
+          </section>
 
           {showDevelopmentPrototype ? (
             <>
               <section className="phase4a-card phase7-auth-view">
-                <h2>Auth View (Development)</h2>
+                <h2>Development tools</h2>
                 <p className="placeholder-meta">
-                  Visualize future auth transitions locally. No real auth, no redirects, no route protection — a preview only.
+                  Local-only view of auth transitions. No real auth, no redirects, and no route protection.
                 </p>
                 <fieldset className="phase6-auth-mode">
-                  <legend>View</legend>
+                  <legend>Preview mode</legend>
                   <label>
                     <input
                       type="radio"
@@ -742,7 +849,7 @@ export function AppShell() {
                       checked={viewMode === "workspace"}
                       onChange={() => setViewMode("workspace")}
                     />
-                    Operator Workspace
+                    Operator workspace
                   </label>
                   <label>
                     <input
@@ -752,10 +859,10 @@ export function AppShell() {
                       checked={viewMode === "auth_simulator"}
                       onChange={() => setViewMode("auth_simulator")}
                     />
-                    Auth State Simulator
+                    Auth state preview
                   </label>
                 </fieldset>
-                <p className="placeholder-meta">Current simulated auth state: {loginShellState.label}</p>
+                <p className="placeholder-meta">Current preview state: {loginShellState.label}</p>
               </section>
 
               {viewMode === "auth_simulator" && (
@@ -765,14 +872,14 @@ export function AppShell() {
               {showWorkspace && (
                 <>
                   <section className="phase4a-card phase6-operator-card">
-                    <h2>Operator Preview</h2>
+                    <h2>Operator access preview</h2>
                     <p className="placeholder-meta">
-                      Local capability preview only - this is NOT a sign-in and performs no credential check. It previews
-                      role-based action visibility from a synthetic in-memory operator session. No production auth behavior.
+                      Local capability preview only. This is not a sign-in and performs no credential check. It previews
+                      role-based action visibility from a synthetic in-memory operator session.
                     </p>
 
                     <fieldset className="phase6-auth-mode">
-                      <legend>Development Auth Mode</legend>
+                      <legend>Access mode</legend>
                       <label>
                         <input
                           type="radio"
@@ -781,7 +888,7 @@ export function AppShell() {
                           checked={authMode === "dev_role_switcher"}
                           onChange={() => setAuthMode("dev_role_switcher")}
                         />
-                        Dev Role Switcher
+                        Role switcher
                       </label>
                       <label>
                         <input
@@ -791,7 +898,7 @@ export function AppShell() {
                           checked={authMode === "adapter_principal"}
                           onChange={() => setAuthMode("adapter_principal")}
                         />
-                        Adapter Principal Preview
+                        Principal mapping preview
                       </label>
                     </fieldset>
 
@@ -813,7 +920,7 @@ export function AppShell() {
                       <div className="phase6-adapter-preview">
                         <p className="placeholder-meta">
                           Resolves an operator session via the adapter from a supplied synthetic auth principal id
-                          (id only - no real auth user, no DB writes). The linkage source of truth is auth_user_id.
+                          (id only). The linkage source of truth is auth_user_id.
                         </p>
                         <label className="phase6-operator-switcher">
                           Principal preset
@@ -832,14 +939,14 @@ export function AppShell() {
                             type="text"
                             value={adapterPrincipalId}
                             onChange={(event) => setAdapterPrincipalId(event.target.value)}
-                            placeholder="synthetic uuid (dev only)"
+                            placeholder="synthetic uuid"
                           />
                         </label>
                         <p className="placeholder-meta" role="status">
                           {operatorSession
                             ? `Resolved operator session: ${operatorSession.displayName} · role ${operatorSession.role}`
                             : adapterPrincipalId.trim()
-                              ? "No linked operator for this principal in dev."
+                              ? "No linked operator for this principal in the preview."
                               : "Enter or select a synthetic auth principal id to preview the adapter result."}
                         </p>
                       </div>
@@ -847,7 +954,7 @@ export function AppShell() {
 
                     <p className="placeholder-meta">
                       {operatorSession
-                        ? `Active operator (dev): ${operatorSession.displayName} · role ${operatorSession.role}`
+                        ? `Active operator preview: ${operatorSession.displayName} · role ${operatorSession.role}`
                         : "No operator session — operator actions are hidden."}
                     </p>
                     <ul className="phase6-capability-list">
@@ -863,11 +970,10 @@ export function AppShell() {
                   </section>
 
                   <section className="phase4a-card phase7-session-read">
-                    <h2>Session Read Preview</h2>
+                    <h2>Session mapping preview</h2>
                     <p className="placeholder-meta">
-                      Read-only preview of the real session-read path (session → principal → pipeline → operator session →
-                      capability flags). No real sign-in, no redirect, no writes, no operator linking — it consumes a plain
-                      session-like object and resolves against the in-memory dev preview rows only.
+                      Read-only preview of the session path (session → principal → pipeline → operator session →
+                      capability flags). No real sign-in, no redirect, no writes, no operator linking.
                     </p>
                     <fieldset className="phase6-auth-mode">
                       <legend>Session read mode</legend>
@@ -904,7 +1010,7 @@ export function AppShell() {
                             type="text"
                             value={sessionReadPrincipalId}
                             onChange={(event) => setSessionReadPrincipalId(event.target.value)}
-                            placeholder="synthetic uuid (dev only)"
+                            placeholder="synthetic uuid"
                           />
                         </label>
                       </div>
@@ -917,7 +1023,7 @@ export function AppShell() {
                       </p>
                       <p className="placeholder-meta">
                         Operator session:{" "}
-                        {devSessionReadState.adapterResult?.session
+                          {devSessionReadState.adapterResult?.session
                           ? `resolved — ${devSessionReadState.adapterResult.session.displayName} · role ${devSessionReadState.adapterResult.session.role}`
                           : "not resolved"}
                       </p>
@@ -941,23 +1047,23 @@ export function AppShell() {
                   <SessionSourcePrototype />
 
                   <section className="phase4a-card">
-                    <h2>Console Status</h2>
-                    <p>Operator console. Data mode and available actions are shown below.</p>
+                    <h2>Operational state</h2>
+                    <p>Data mode and available actions are shown below.</p>
                     <dl className="phase7-status-list">
                       <div>
                         <dt>Data mode</dt>
                         <dd>
                           {readOnlyMode === "supabase-dev-readonly"
-                            ? "Supabase dev read-only mode — live data is read-only and requires the WSS_ALLOW_SUPABASE_VALIDATION=dev guard."
-                            : "Mock data mode — local sample data only, until the guarded dev environment is supplied."}
+                            ? "Guarded read-only mode — live data is visible, but writes stay disabled."
+                            : "Local sample data mode — sample tickets are shown until guarded dev data is available."}
                         </dd>
                       </div>
                       <div>
                         <dt>Workflow mode</dt>
                         <dd>
                           {readOnlyMode === "supabase-dev-readonly"
-                            ? "Local operator workflow mode — triage → draft → request approval → approve/reject → send (local-only) → close, each gated by ticket-state eligibility."
-                            : "Workflow actions are inactive in mock mode; they activate only in guarded Supabase dev mode."}
+                            ? "Workflow mode — triage → draft → request approval → approve/reject → send (local-only) → close."
+                            : "Workflow actions are inactive until guarded read-only data is available."}
                         </dd>
                       </div>
                       <div>
@@ -976,11 +1082,10 @@ export function AppShell() {
                   </section>
 
                   <section className="phase4a-card">
-                    <h2>System Status / Validation Placeholder</h2>
+                    <h2>Environment guardrails</h2>
                     <ul>
                       <li>Read-only data mode: {readOnlyMode}.</li>
-                      <li>Live read-only mode is intentionally guarded by explicit environment flags.</li>
-                      <li>Route files: not introduced in this phase.</li>
+                      <li>Guarded read-only data is enabled only by explicit environment flags.</li>
                       <li>Live writes/mutations: triage/draft/approval/send (local-only, no provider)/close in guarded mode.</li>
                       <li>Auth/email/provider: not added.</li>
                     </ul>
@@ -1005,8 +1110,8 @@ export function AppShell() {
             <h2>Search and Filters</h2>
             <p className="placeholder-meta">
               {readOnlyMode === "supabase-dev-readonly"
-                ? "All results are loaded from read-only guarded Supabase for this phase. Search and filtering are read-only."
-                : "Mock-data only mode until guarded dev env is supplied. Search and filtering are read-only."}
+                ? "All results are loaded from guarded read-only data. Search and filtering are read-only."
+                : "Local sample data mode until guarded read-only data is available. Search and filtering are read-only."}
             </p>
             <p className="placeholder-meta" role="status" aria-live="polite">{searchSummary}</p>
             <div className="phase4d-filter-grid">
@@ -1194,6 +1299,14 @@ export function AppShell() {
               with no provider and no real email delivery. A read-only view of these records is a later phase.
             </p>
           </section>
+
+          {showPilotStatusCard ? (
+            <OperatorPilotStatusCard
+              clientId={selectedTicket.tenantContext.clientId}
+              customerLabel={selectedTicket.tenantContext.clientName}
+              siteLabel={selectedTicket.tenantContext.siteName}
+            />
+          ) : null}
 
         </main>
       </div>

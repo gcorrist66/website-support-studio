@@ -267,7 +267,7 @@ export function SessionSourcePrototype() {
 
   return (
     <section className="phase4a-card phase7-session-prototype">
-      <h2>Local Session Source Prototype</h2>
+      <h2>Session mapping preview</h2>
       <p className="placeholder-meta">
         This card simulates a local sign-in source and feeds a session-like object into the existing read path:
         {' '}<code>session → principal → auth pipeline → operator session → capability flags.</code>
@@ -390,9 +390,7 @@ export function SessionSourcePrototype() {
           <div className="phase7-session-prototype-route-card" role="status" aria-live="polite">
             {routeAllowed ? (
               <>
-                <p className="phase4c-summary">
-                  Route is accessible in this prototype session.
-                </p>
+                <p className="phase4c-summary">Route is accessible in this preview session.</p>
                 <p className="placeholder-meta">
                   {protectedRoute === "workspace"
                     ? "Protected workspace route is visible and editable."
@@ -402,7 +400,7 @@ export function SessionSourcePrototype() {
               </>
             ) : (
               <p className="placeholder-meta phase7-empty-state">
-                Access denied for this route with the current prototype session state.
+                Access denied for this route with the current preview session state.
               </p>
             )}
           </div>
@@ -410,7 +408,7 @@ export function SessionSourcePrototype() {
       </div>
 
       <p className="placeholder-meta">
-        Local prototype status: {sessionShellState.canAccessWorkspace ? "Workspace-capable" : "Workspace hidden"} · Route capable: {routeAllowed ? "yes" : "no"}
+        Local preview status: {sessionShellState.canAccessWorkspace ? "Workspace-capable" : "Workspace hidden"} · Route capable: {routeAllowed ? "yes" : "no"}
       </p>
     </section>
   );

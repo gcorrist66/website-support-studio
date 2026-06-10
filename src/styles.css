@@ -209,6 +209,110 @@ body {
   color: var(--text-strong);
 }
 
+.operator-overview-card {
+  gap: 1rem;
+}
+
+.operator-overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.operator-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.operator-overview-metric {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.operator-overview-label {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.operator-overview-value {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-strong);
+}
+
+.operator-overview-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.operator-mini-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.operator-mini-list strong {
+  color: var(--text-strong);
+}
+
+.operator-mini-list-meta {
+  display: block;
+  margin-top: 0.12rem;
+  color: var(--text-subtle);
+  font-size: 0.72rem;
+}
+
+.operator-risk-band {
+  border: 1px solid rgba(168, 52, 137, 0.16);
+  background: linear-gradient(135deg, rgba(244, 218, 236, 0.55) 0%, rgba(255, 255, 255, 0.92) 100%);
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.operator-risk-label {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--tone-mulberry-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+}
+
+.operator-risk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.operator-risk-list strong {
+  color: var(--text-strong);
+}
+
 .pilot-status-card {
   border-color: rgba(214, 210, 197, 0.95);
 }
@@ -428,17 +532,23 @@ body {
 }
 
 @media (max-width: 860px) {
+  .operator-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .pilot-status-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
+  .operator-overview-grid,
   .pilot-status-grid,
   .phase4a-layout {
     grid-template-columns: 1fr;
   }
 
+  .operator-overview-header,
   .pilot-timeline-section-header,
   .pilot-timeline-topline {
     flex-direction: column;
