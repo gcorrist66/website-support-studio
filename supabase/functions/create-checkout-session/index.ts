@@ -60,16 +60,18 @@ Deno.serve(async (req) => {
       price = PLAN_PRICE.operations_founder;
       const founderCoupon = await stripe.coupons.create({
         percent_off: 50,
-        duration: "once",
+        duration: "repeating",
+        duration_in_months: 6,
         max_redemptions: 1,
         metadata: {
           plan: "operations",
           pricing_tier: "founder",
+          discount_duration_months: "6",
         },
       });
       discounts = [{ coupon: founderCoupon.id }];
       allowPromotionCodes = false;
-      metadata = { plan: "operations", pricing_tier: "founder", kind: "plan" };
+      metadata = { plan: "operations", pricing_tier: "founder", discount_duration_months: "6", kind: "plan" };
     } else if (body.plan && PLAN_PRICE[body.plan]) {
       mode = "subscription";
       price = PLAN_PRICE[body.plan];

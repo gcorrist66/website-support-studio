@@ -8,7 +8,7 @@ const schemas = [
   serviceSchema({
     name: "Website Support Studio — Plans",
     description:
-      "Managed website operations and support. Operations $399/month with limited founder pricing at $199.50/month (1 site, 50 Capacity Units); Growth $899/month (up to 5 sites, 150 Capacity Units); Enterprise custom.",
+      "Managed website operations and support. Operations is $399/month with founder pricing at $199.50/month for the first 6 months for the first 25 customers; Growth is $899/month (up to 5 sites, 150 Capacity Units); Enterprise custom.",
     path: "/pricing",
   }),
   breadcrumbSchema([
@@ -20,7 +20,7 @@ const schemas = [
 
 <BaseLayout
   title="Pricing"
-  description="Website Support Studio plans: Operations $399/month with limited founder pricing at $199.50/month (1 website, 50 Capacity Units), Growth $899/month (up to 5 websites, 150 Capacity Units), and custom Enterprise. Capacity top-ups and DNS assistance available."
+  description="Website Support Studio plans: Operations $399/month with founder pricing at $199.50/month for the first 6 months for the first 25 customers, Growth $899/month, and custom Enterprise. Capacity top-ups available."
   path="/pricing"
   schemas={schemas}
 >
@@ -35,8 +35,8 @@ const schemas = [
       </p>
       <p class="kicker" style="margin-top:1rem;"><Label text="_founder_pricing" /></p>
       <p class="lede" style="margin-top:0.35rem;">
-        Founder pricing is {FOUNDER_PRICING.discountPercent}% off Operations for the first {FOUNDER_PRICING.totalSpots} customers.
-        <strong>{FOUNDER_PRICING.spotsLeft} founder spots left.</strong>
+        Founder pricing is {FOUNDER_PRICING.discountPercent}% off Operations for your first {FOUNDER_PRICING.discountMonths} months.
+        Then the plan moves to the standard {PLANS[0].price}{PLANS[0].cadence}. <strong>{FOUNDER_PRICING.spotsLeft} founder spots remaining.</strong>
       </p>
     </div>
   </section>
@@ -65,16 +65,17 @@ const schemas = [
                         <span class="founder-badge"><Label text="_founder_pricing" /></span>
                         <span class="founder-spots">{FOUNDER_PRICING.spotsLeft} of {FOUNDER_PRICING.totalSpots} spots left</span>
                       </div>
-                      <p class="founder-discount">{plan.founderDiscountLabel} for the first {FOUNDER_PRICING.totalSpots} customers</p>
+                      <p class="founder-discount">{plan.founderDiscountLabel} for your first {FOUNDER_PRICING.discountMonths} months</p>
                       <p class="founder-price-line">
                         <span class="founder-price">{plan.founderPrice}</span>
                         <span class="founder-cadence">{plan.cadence}</span>
                       </p>
                       <p class="founder-regular">
-                        regularly <s>{plan.price}{plan.cadence}</s>
+                        for {FOUNDER_PRICING.discountMonths} months, then <strong>{plan.price}{plan.cadence}</strong>
                       </p>
+                      <p class="founder-regular">regularly <s>{plan.price}{plan.cadence}</s></p>
                       <p class="founder-note">
-                        _join_now uses founder checkout automatically while spots remain.
+                        limited to the first {FOUNDER_PRICING.totalSpots} customers. _join_now uses founder checkout automatically while spots remain.
                       </p>
                     </div>
                   ) : (

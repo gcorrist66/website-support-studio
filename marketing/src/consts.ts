@@ -52,6 +52,7 @@ export const FOUNDER_PRICING = {
   totalSpots: 25,
   spotsLeft: 17,
   discountPercent: 50,
+  discountMonths: 6,
   appliesTo: ["operations"],
 } as const;
 
@@ -62,13 +63,13 @@ export const PLANS = [
     price: "$399",
     founderPrice: "$199.50",
     founderDiscountLabel: "50% off",
-    founderAvailability: "limited founder pricing",
+    founderAvailability: "17 founder spots remaining",
     founderPlanKey: "operations_founder",
     cadence: "/month",
     sites: "1 website",
     cu: "50 Capacity Units / month",
     blurb: "Managed website operations for a single revenue-critical site.",
-    founderBlurb: "Same Operations plan at founder pricing for a limited number of new customers.",
+    founderBlurb: "Same Operations plan at founder pricing for the first 6 months, then standard pricing after the founder period ends.",
     points: [
       "Single-desk request intake",
       "Operator-led support with mandatory human approval",

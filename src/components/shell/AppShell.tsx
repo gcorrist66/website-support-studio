@@ -92,6 +92,9 @@ const ACCOUNT_SUMMARY = {
   website: "northcoast.example",
   currentPlan: "operations",
   billingStatus: "active",
+  founderPricingStatus: "founder pricing active",
+  founderPricingMessage:
+    "50% off for the first 6 months. founder pricing runs for the first 6 months, then standard pricing becomes $399/month. We show this clearly so there are no surprise billing changes.",
   creditsIncluded: 40,
   creditsUsed: 22,
   creditsRemaining: 18,
@@ -1509,6 +1512,17 @@ export function AppShell() {
                         <MonoLabel text="billing_status" />
                       </dt>
                       <dd>{ACCOUNT_SUMMARY.billingStatus}</dd>
+                    </div>
+                    <div className="wss-founder-status-row">
+                      <dt>
+                        <MonoLabel text="founder_status" />
+                      </dt>
+                      <dd>
+                        <strong>
+                          <MonoLabel text={ACCOUNT_SUMMARY.founderPricingStatus} />
+                        </strong>
+                        <span>{ACCOUNT_SUMMARY.founderPricingMessage}</span>
+                      </dd>
                     </div>
                     <div>
                       <dt>
