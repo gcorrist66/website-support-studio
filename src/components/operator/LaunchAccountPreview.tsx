@@ -50,7 +50,7 @@ function formatPlanNote(account: Pick<CustomerAccount, "subscriptionStatus" | "c
 }
 
 function formatEffortExamples(label: string, examples: string[]): string {
-  return `${label}: ${examples.join(", ")}`;
+  return `${label.toLowerCase()}: ${examples.join(", ")}`;
 }
 
 export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: LaunchAccountPreviewProps) {
