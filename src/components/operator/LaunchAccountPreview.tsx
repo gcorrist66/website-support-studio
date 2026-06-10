@@ -249,7 +249,7 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
             <MonoLabel text="replenishment" />
           </h2>
           <p className="customer-copy">
-            {account?.replenishment.refresh ?? "Your Capacity Units refresh at the start of each billing period."}
+            {account?.replenishment.refresh ?? "your capacity units refresh at the start of each billing period."}
           </p>
           <p className="customer-smallprint">
             need more capacity_units? additional capacity_units can be added at any time. contact

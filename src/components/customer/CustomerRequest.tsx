@@ -652,10 +652,10 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
           <h2>Replenishment</h2>
           <p className="customer-copy">
             {account?.replenishment.refresh ??
-              "Your Capacity Units refresh at the start of each billing period."}
+              "your capacity units refresh at the start of each billing period."}
           </p>
           <p className="customer-smallprint">
-            Need more Capacity Units in a busy month? Additional Capacity Units are available by
+            need more capacity units in a busy month? additional capacity units are available by
             contacting Corriston Consulting.
           </p>
           <p className="customer-smallprint">

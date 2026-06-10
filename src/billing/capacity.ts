@@ -75,7 +75,7 @@ export const USAGE_TRACKING = {
 
 /** Replenishment / top-up messaging, derived from the plan + add-on catalog (no Stripe IDs). */
 export const REPLENISHMENT = {
-  refresh: "Your Capacity Units refresh at the start of each billing period.",
+  refresh: "your capacity units refresh at the start of each billing period.",
   topups: [ADDONS.topup_50, ADDONS.topup_100, ADDONS.topup_250].map((a) => ({
     key: a.key,
     name: a.name,
