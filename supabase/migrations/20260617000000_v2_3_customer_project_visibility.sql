@@ -14,8 +14,9 @@
 --   => `projects`, `project_milestones`, `project_deliverables` stay OPERATOR-ONLY at the table level.
 --      Customer reads flow exclusively through get_my_projects(). No new customer table policy is added.
 --
--- Exposes (safe): project identity, status, payment_status, target date, price; milestones (+progress,
--- +next); READY deliverables only (delivered/accepted — never operator WIP); linked request summaries.
+-- Exposes (safe): project identity, status, payment_status, target date, price; website_url, platform,
+-- access_status + a derived needs_from_you (MVP); milestones (+progress, +next); READY deliverables only
+-- (delivered/accepted — never operator WIP); linked request summaries.
 -- Never exposes: intake_notes, stripe ids, project_audit_events, draft replies/approvals, other tenants.
 
 create or replace function public.get_my_projects()
@@ -45,11 +46,36 @@ begin
         'payment_status', p.payment_status,      -- the customer's own money state (safe)
         'price_cents', p.price_cents,            -- what they bought (their own price)
         'currency', p.currency,
+        'website_url', p.website_url,            -- MVP: their site (safe — they own it)
+        'platform', p.platform,                  -- MVP: 'wordpress' | 'shopify' | 'wix' | 'other'
+        'access_status', p.access_status,        -- MVP: guided website-access lifecycle state
         'target_delivery_date', p.target_delivery_date,
         'delivered_at', p.delivered_at,
         'closed_at', p.closed_at,
         'created_at', p.created_at,
         'action_needed', (p.status = 'waiting_on_customer'),
+        'needs_from_you', (   -- MVP: derived, customer-safe asks (access + assets + waiting prompt)
+          select coalesce(jsonb_agg(x.msg order by x.ord), '[]'::jsonb)
+          from (
+            select 1 as ord, case p.access_status
+                when 'access_needed' then 'Grant website access so we can begin'
+                when 'access_requested' then 'Grant website access (we''ve sent instructions)'
+                when 'blocked' then 'Website access is blocked — please re-check the invite'
+              end as msg
+            where p.access_status in ('access_needed', 'access_requested', 'blocked')
+            union all
+            select 2, 'Send your content & assets'
+            where exists (
+              select 1 from public.project_milestones m
+              where m.project_id = p.id and m.status not in ('done', 'skipped')
+                and (m.title ilike '%content%' or m.title ilike '%assets%')
+            )
+            union all
+            select 3, 'Respond to our latest question'
+            where p.status = 'waiting_on_customer'
+          ) x
+          where x.msg is not null
+        ),
         'next_milestone', (
           select jsonb_build_object('id', m.id, 'title', m.title, 'status', m.status, 'due_at', m.due_at)
           from public.project_milestones m

@@ -16,13 +16,15 @@ import {
   getReadOnlyTicketDetail,
   getReadOnlyTicketQueue,
 } from "../../data/readOnlyTicketData";
+import { OperatorProjectsSection } from "../operator/OperatorProjectsSection";
 
-type ConsoleSection = "overview" | "board" | "requests" | "profile" | "website_access" | "activity" | "health";
+type ConsoleSection = "overview" | "board" | "projects" | "requests" | "profile" | "website_access" | "activity" | "health";
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
 
 const SECTION_ORDER: ConsoleSection[] = [
   "overview",
   "board",
+  "projects",
   "requests",
   "profile",
   "website_access",
@@ -672,6 +674,8 @@ export function AppShell() {
               </div>
             </section>
           ) : null}
+
+          {section === "projects" ? <OperatorProjectsSection /> : null}
 
           {section === "board" ? (
             <section className="wss-panel">

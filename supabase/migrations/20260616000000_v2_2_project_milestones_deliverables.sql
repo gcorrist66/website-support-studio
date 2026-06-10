@@ -295,6 +295,57 @@ begin
   return jsonb_build_object('ticket_id', p_ticket_id, 'request_kind', v_kind::text);
 end; $$;
 
+-- 7e. Milestone templates (Website Project MVP) -----------------------------
+-- Atomically seed an ordered milestone plan for a project. Template is taken from p_template if given,
+-- else derived from project_type (rebuild→redesign, fix/update→cleanup, else→new_website). Refuses to
+-- double-seed (raises if the project already has milestones) so a second click can't duplicate the plan.
+create or replace function public.operator_apply_milestone_template(
+  p_project_id uuid,
+  p_template text default null
+) returns jsonb language plpgsql security definer set search_path = public as $$
+declare ctx record; v_type text; v_template text; v_titles text[]; v_count int;
+begin
+  ctx := public.app_operator_project_ctx(p_project_id);
+
+  if exists (select 1 from public.project_milestones m where m.project_id = p_project_id) then
+    raise exception 'template_already_applied' using errcode = '22023';
+  end if;
+
+  select project_type::text into v_type from public.projects where id = p_project_id;
+
+  v_template := lower(nullif(btrim(coalesce(p_template, '')), ''));
+  if v_template is null then
+    v_template := case
+      when v_type = 'rebuild' then 'redesign'
+      when v_type in ('fix', 'update') then 'cleanup'
+      else 'new_website'
+    end;
+  end if;
+
+  v_titles := case v_template
+    when 'new_website' then array[
+      'Intake', 'Access received', 'Content & assets received', 'First draft',
+      'Revisions', 'Final review', 'Launch / handoff']
+    when 'redesign' then array[
+      'Intake', 'Access received', 'Content & assets received', 'Design direction',
+      'First draft', 'Revisions', 'Final review', 'Launch']
+    when 'cleanup' then array[
+      'Intake', 'Access received', 'Audit & scope', 'Updates / fixes', 'Review', 'Done / handoff']
+    else null
+  end;
+  if v_titles is null then raise exception 'invalid_template_%', p_template using errcode = '22023'; end if;
+
+  insert into public.project_milestones (agency_id, client_id, project_id, title, sort_order)
+  select ctx.agency_id, ctx.client_id, p_project_id, t.title, t.ord::int
+  from unnest(v_titles) with ordinality as t(title, ord);
+
+  v_count := array_length(v_titles, 1);
+  perform public.app_project_audit(ctx.agency_id, ctx.client_id, p_project_id, ctx.operator_id, ctx.operator_role,
+    'milestone_template_applied', 'Applied ' || v_template || ' milestone template (' || v_count || ' steps)');
+
+  return jsonb_build_object('project_id', p_project_id, 'template', v_template, 'milestones_created', v_count);
+end; $$;
+
 -- ============================================================================
 -- 8. Grants — internal helpers stay internal; operator RPCs callable by authenticated operators.
 -- ============================================================================
@@ -308,7 +359,8 @@ do $$ declare f text; begin
     'operator_add_deliverable(uuid,text,text,text)',
     'operator_set_deliverable_status(uuid,text)',
     'operator_link_ticket_to_project(text,uuid)',
-    'operator_set_ticket_kind(text,text)'
+    'operator_set_ticket_kind(text,text)',
+    'operator_apply_milestone_template(uuid,text)'
   ] loop
     execute format('revoke all on function public.%s from public, anon;', f);
     execute format('grant execute on function public.%s to authenticated;', f);

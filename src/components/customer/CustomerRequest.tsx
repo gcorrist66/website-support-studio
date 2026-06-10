@@ -26,6 +26,8 @@ import {
   type CustomerSite,
   type CustomerWorkspaceSummary,
 } from "../../data/customerWorkspace";
+import { loadMyProjects, type CustomerProject } from "../../data/customerProjects";
+import { MyWebsiteProjectPanel } from "./MyWebsiteProjectPanel";
 
 const FEEDBACK_CATEGORY_OPTIONS: ReadonlyArray<{ value: FeedbackCategory; label: string; hint: string }> = [
   { value: "feedback", label: "Feedback", hint: "Something that is working well, confusing, or worth improving." },
@@ -406,18 +408,22 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
   const [selectedRequestId, setSelectedRequestId] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingRequests, setLoadingRequests] = useState(true);
+  const [projects, setProjects] = useState<CustomerProject[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
   const currentSite = useMemo(() => sites[0] ?? null, [sites]);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
     setLoadingRequests(true);
+    setLoadingProjects(true);
 
     async function load() {
-      const [workspaceSummary, siteRows, requestRows] = await Promise.all([
+      const [workspaceSummary, siteRows, requestRows, projectRows] = await Promise.all([
         loadCustomerWorkspaceSummary(identity.orgId),
         loadMySites(),
         loadMyRequests(identity.orgId),
+        loadMyProjects(),
       ]);
       if (!active) {
         return;
@@ -425,9 +431,11 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
       setSummary(workspaceSummary);
       setSites(siteRows);
       setRequests(requestRows);
+      setProjects(projectRows);
       setSelectedRequestId(requestRows[0]?.ticketId ?? "");
       setLoading(false);
       setLoadingRequests(false);
+      setLoadingProjects(false);
     }
 
     load().catch(() => {
@@ -435,9 +443,11 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
         setSummary(createEmptyCustomerWorkspaceSummary());
         setSites([]);
         setRequests([]);
+        setProjects([]);
         setSelectedRequestId("");
         setLoading(false);
         setLoadingRequests(false);
+        setLoadingProjects(false);
       }
     });
 
@@ -572,6 +582,8 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
           </a>
         </section>
       </div>
+
+      <MyWebsiteProjectPanel projects={projects} loading={loadingProjects} />
 
       <div className="customer-grid">
         <RecentRequestsPanel
