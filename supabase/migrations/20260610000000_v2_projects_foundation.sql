@@ -3,7 +3,10 @@
 -- WSS 1.5 models recurring support work (subscriptions → tickets). It has no concept of a one-time,
 -- fixed-price website project (e.g. a $500 build). This migration adds that, additively:
 --   * A new `projects` table (tenant-keyed exactly like tickets: agency_id/client_id, site_id nullable
---     because a brand-new website has no site yet).
+--     because a brand-new website has no site yet). Delivery lifecycle in `status`
+--     (intake → scoping → in_progress → waiting_on_customer → in_review → delivered → closed, plus
+--     blocked/cancelled); money state is the orthogonal `payment_status` (unpaid=Lead, paid=Purchased);
+--     `target_delivery_date` powers the operator "overdue" view. See WSS_V2_FOUNDATION_PLAN.md Part II.
 --   * A new `project_audit_events` governance trail (mirrors ticket_audit_events; free-text event_type
 --     so it never couples to the support audit enum).
 --   * OPERATOR-ONLY RLS. No customer policy → customers are denied by default (customer visibility is a
@@ -29,7 +32,7 @@ exception when duplicate_object then null; end $$;
 
 do $$ begin
   create type public.project_status as enum (
-    'intake', 'scoping', 'in_progress', 'in_review', 'delivered', 'closed', 'blocked', 'cancelled'
+    'intake', 'scoping', 'in_progress', 'waiting_on_customer', 'in_review', 'delivered', 'closed', 'blocked', 'cancelled'
   );
 exception when duplicate_object then null; end $$;
 
@@ -56,6 +59,7 @@ create table if not exists public.projects (
   stripe_checkout_session_id text,
   stripe_payment_intent_id text,
   intake_notes text,
+  target_delivery_date date,
   delivered_at timestamptz,
   closed_at timestamptz,
   created_at timestamptz not null default timezone('utc', now()),
@@ -70,6 +74,7 @@ create table if not exists public.projects (
 create index if not exists projects_agency_id_idx on public.projects (agency_id);
 create index if not exists projects_client_id_idx on public.projects (client_id);
 create index if not exists projects_status_idx on public.projects (status);
+create index if not exists projects_target_delivery_date_idx on public.projects (target_delivery_date);
 
 create table if not exists public.project_audit_events (
   id uuid primary key default gen_random_uuid(),
