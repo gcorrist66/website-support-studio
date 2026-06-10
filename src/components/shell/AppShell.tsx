@@ -163,6 +163,12 @@ const CREDIT_POLICY = [
 ] as const;
 
 const CHECKOUT_FUNCTION_URL = "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/create-checkout-session";
+const APP_LEGAL_LINKS = [
+  { href: "https://websitesupportstudio.com/privacy", label: "privacy_policy" },
+  { href: "https://websitesupportstudio.com/terms", label: "terms_of_service" },
+  { href: "https://websitesupportstudio.com/terms#acceptable-use", label: "acceptable_use" },
+  { href: "https://websitesupportstudio.com/cookies", label: "cookie_policy" },
+] as const;
 
 const WEBSITE_ACCESS_PLATFORMS: Array<{
   key: WebsitePlatformKey;
@@ -2049,6 +2055,27 @@ export function AppShell() {
           </div>
         </div>
       ) : null}
+
+      <footer className="wss-app-footer">
+        <div>
+          <p>
+            © 2026 <MonoLabel text="website_support_studio" />
+          </p>
+          <nav aria-label="legal links">
+            {APP_LEGAL_LINKS.map((link) => (
+              <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+                <MonoLabel text={link.label} />
+              </a>
+            ))}
+          </nav>
+        </div>
+        <p className="wss-app-attribution">
+          <MonoLabel text="a corriston consulting service" />
+          <a href="https://www.corristonconsulting.com" target="_blank" rel="noreferrer">
+            corristonconsulting.com
+          </a>
+        </p>
+      </footer>
 
       <button type="button" className="wss-feedback-launcher" onClick={() => setFeedbackOpen(true)}>
         feedback

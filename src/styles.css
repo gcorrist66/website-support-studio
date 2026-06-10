@@ -1380,6 +1380,48 @@ pre {
   display: grid;
 }
 
+.wss-app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem 0.15rem 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.wss-app-footer p {
+  margin: 0;
+}
+
+.wss-app-footer nav,
+.wss-app-attribution {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.wss-app-footer nav {
+  margin-top: 0.35rem;
+}
+
+.wss-app-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.wss-app-footer a:hover {
+  color: var(--brand-blue);
+}
+
+.wss-app-attribution {
+  justify-content: flex-end;
+  text-align: right;
+}
+
 .wss-panel {
   display: grid;
   gap: 0.85rem;
@@ -2197,6 +2239,16 @@ pre {
 
   .wss-header-actions {
     justify-items: start;
+  }
+
+  .wss-app-footer {
+    display: grid;
+    justify-items: start;
+  }
+
+  .wss-app-attribution {
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .wss-board-shell {
