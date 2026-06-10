@@ -57,9 +57,11 @@ export const FOUNDER_PRICING = {
 } as const;
 
 // ---- Founder Website Package (primary offer) --------------------------------
-// $500 one-time website build. Marketing/messaging only — NO Stripe checkout is
-// wired for this product, so its CTA routes to /contact to start a build. This
-// constant changes no pricing logic; it is content for the marketing site.
+// $500 one-time website build. Stripe Payment Link is wired to a live one-time
+// price ($500.00 USD). The CTA opens the Stripe-hosted checkout page directly;
+// after a successful payment, Stripe redirects the customer to
+// /contact?source=founder-package-paid so we can collect intake details
+// using the existing contact form.
 export const WEBSITE_PACKAGE = {
   name: "Founder Website Package",
   price: "$500",
@@ -78,7 +80,7 @@ export const WEBSITE_PACKAGE = {
     standard: "$399/month from month 8",
   },
   ctaLabel: "_build_my_website",
-  ctaHref: "/contact",
+  ctaHref: "https://buy.stripe.com/5kQ14f8gycXJ4ea4Tt9Zm08",
 } as const;
 
 // ---- Account ownership (the customer owns their own accounts) ----------------
