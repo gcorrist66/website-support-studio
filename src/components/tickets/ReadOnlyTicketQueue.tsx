@@ -52,7 +52,7 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
     <section className="phase4a-card">
       <h2>Support queue</h2>
       <p>
-        Read-only in this environment · no live ticket actions are enabled here.
+        Read-only access in this environment · no live ticket actions are enabled here.
       </p>
       <p className="placeholder-meta">Filter results: {tickets.length} ticket(s)</p>
 
@@ -60,8 +60,8 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
         <div className="phase7-empty-state" role="status">
           <p>No tickets match the current filters.</p>
           <p className="placeholder-meta">
-            Adjust or clear the search and filters above. In sample data mode this list shows local tickets;
-            in guarded read-only mode it reflects live data without writes.
+            Adjust or clear the search and filters above. In demo data mode this list shows local tickets;
+            in read-only access mode it reflects live data without writes.
           </p>
         </div>
       ) : (

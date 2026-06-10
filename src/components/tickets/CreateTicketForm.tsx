@@ -210,12 +210,12 @@ export function CreateTicketForm() {
 
   return (
     <section className="phase5b-card">
-      <h2>Create Ticket (Phase 5B)</h2>
+      <h2>New Support Request</h2>
       <p className="placeholder-meta">
-        Phase 5B write path: Customer Request → Ticket Creation only.
+        Creates a new support request from customer input.
       </p>
       <p className="placeholder-meta">
-        No triage, no drafting, no approval, no communication, and no closure operations are implemented in this phase.
+        This form only creates the request. Triage, replies, approvals, and closure happen elsewhere.
       </p>
 
       <form onSubmit={handleSubmit} className="phase5b-form" noValidate>
@@ -313,7 +313,7 @@ export function CreateTicketForm() {
 
         <div className="phase5b-actions">
           <button type="submit" disabled={isSubmitting} className="phase4a-action">
-            {isSubmitting ? "Creating ticket..." : "Create Ticket"}
+            {isSubmitting ? "Creating request..." : "Create Support Request"}
           </button>
         </div>
       </form>
@@ -327,10 +327,10 @@ export function CreateTicketForm() {
       )}
 
       <p className="placeholder-meta">
-        Validation is local + mock-context-driven; no mutations beyond create-ticket are reachable in this phase.
+        Validation is local; only the create-request path is available here.
       </p>
       <p className="placeholder-meta">
-        Client/site are selected from mock local data to avoid production data usage and keep this a write-path starter.
+        Client/site are selected from local data for this operator view.
       </p>
       <pre className="phase5b-debug-note">
         Tenant context: {tenantContextFromSelection.agencyId} / {tenantContextFromSelection.clientId} / {tenantContextFromSelection.siteId}

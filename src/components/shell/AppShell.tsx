@@ -835,12 +835,12 @@ export function AppShell() {
           {showDevelopmentPrototype ? (
             <>
               <section className="phase4a-card phase7-auth-view">
-                <h2>Development tools</h2>
+                <h2>Access controls</h2>
                 <p className="placeholder-meta">
                   Local-only view of auth transitions. No real auth, no redirects, and no route protection.
                 </p>
                 <fieldset className="phase6-auth-mode">
-                  <legend>Preview mode</legend>
+                  <legend>Mode</legend>
                   <label>
                     <input
                       type="radio"
@@ -859,10 +859,10 @@ export function AppShell() {
                       checked={viewMode === "auth_simulator"}
                       onChange={() => setViewMode("auth_simulator")}
                     />
-                    Auth state preview
+                    Auth state
                   </label>
                 </fieldset>
-                <p className="placeholder-meta">Current preview state: {loginShellState.label}</p>
+                <p className="placeholder-meta">Current state: {loginShellState.label}</p>
               </section>
 
               {viewMode === "auth_simulator" && (
@@ -872,9 +872,9 @@ export function AppShell() {
               {showWorkspace && (
                 <>
                   <section className="phase4a-card phase6-operator-card">
-                    <h2>Operator access preview</h2>
+                    <h2>Operator access</h2>
                     <p className="placeholder-meta">
-                      Local capability preview only. This is not a sign-in and performs no credential check. It previews
+                      Read-only operator access only. This is not a sign-in and performs no credential check. It shows
                       role-based action visibility from a synthetic in-memory operator session.
                     </p>
 
@@ -898,7 +898,7 @@ export function AppShell() {
                           checked={authMode === "adapter_principal"}
                           onChange={() => setAuthMode("adapter_principal")}
                         />
-                        Principal mapping preview
+                        Principal mapping
                       </label>
                     </fieldset>
 
@@ -946,15 +946,15 @@ export function AppShell() {
                           {operatorSession
                             ? `Resolved operator session: ${operatorSession.displayName} · role ${operatorSession.role}`
                             : adapterPrincipalId.trim()
-                              ? "No linked operator for this principal in the preview."
-                              : "Enter or select a synthetic auth principal id to preview the adapter result."}
+                              ? "No linked operator for this principal."
+                              : "Enter or select a synthetic auth principal id to resolve the adapter result."}
                         </p>
                       </div>
                     )}
 
                     <p className="placeholder-meta">
                       {operatorSession
-                        ? `Active operator preview: ${operatorSession.displayName} · role ${operatorSession.role}`
+                        ? `Active operator: ${operatorSession.displayName} · role ${operatorSession.role}`
                         : "No operator session — operator actions are hidden."}
                     </p>
                     <ul className="phase6-capability-list">
@@ -970,9 +970,9 @@ export function AppShell() {
                   </section>
 
                   <section className="phase4a-card phase7-session-read">
-                    <h2>Session mapping preview</h2>
+                    <h2>Session mapping</h2>
                     <p className="placeholder-meta">
-                      Read-only preview of the session path (session → principal → pipeline → operator session →
+                      Read-only view of the session path (session → principal → pipeline → operator session →
                       capability flags). No real sign-in, no redirect, no writes, no operator linking.
                     </p>
                     <fieldset className="phase6-auth-mode">
@@ -1054,8 +1054,8 @@ export function AppShell() {
                         <dt>Data mode</dt>
                         <dd>
                           {readOnlyMode === "supabase-dev-readonly"
-                            ? "Guarded read-only mode — live data is visible, but writes stay disabled."
-                            : "Local sample data mode — sample tickets are shown until guarded dev data is available."}
+                            ? "Read-only data mode — live data is visible, but writes stay disabled."
+                            : "Demo data mode — sample tickets are shown until read-only data is available."}
                         </dd>
                       </div>
                       <div>
@@ -1063,7 +1063,7 @@ export function AppShell() {
                         <dd>
                           {readOnlyMode === "supabase-dev-readonly"
                             ? "Workflow mode — triage → draft → request approval → approve/reject → send (local-only) → close."
-                            : "Workflow actions are inactive until guarded read-only data is available."}
+                            : "Workflow actions are inactive until read-only data is available."}
                         </dd>
                       </div>
                       <div>
@@ -1075,7 +1075,7 @@ export function AppShell() {
                       <div>
                         <dt>Reply delivery</dt>
                         <dd>
-                          Persistence-only. A sent reply is recorded locally; no real email is delivered. Approval is required before send.
+                          Saved locally only. A sent reply is recorded locally; no real email is delivered. Approval is required before send.
                         </dd>
                       </div>
                     </dl>
@@ -1101,7 +1101,7 @@ export function AppShell() {
             <section className="phase4a-card">
               <h2>Create ticket</h2>
               <p className="placeholder-meta phase7-empty-state" role="status">
-                Create ticket is not available for the current operator role.
+                New support requests are hidden for the current operator role.
               </p>
             </section>
           )}
@@ -1110,8 +1110,8 @@ export function AppShell() {
             <h2>Search and Filters</h2>
             <p className="placeholder-meta">
               {readOnlyMode === "supabase-dev-readonly"
-                ? "All results are loaded from guarded read-only data. Search and filtering are read-only."
-                : "Local sample data mode until guarded read-only data is available. Search and filtering are read-only."}
+                ? "All results are loaded from read-only data. Search and filtering are read-only."
+                : "Demo data mode until read-only data is available. Search and filtering are read-only."}
             </p>
             <p className="placeholder-meta" role="status" aria-live="polite">{searchSummary}</p>
             <div className="phase4d-filter-grid">
@@ -1295,8 +1295,8 @@ export function AppShell() {
               No communication records are surfaced in the read-only UI yet.
             </p>
             <p className="placeholder-meta">
-              Replies are persistence-only: when a reply is sent it is recorded locally as a communication row
-              with no provider and no real email delivery. A read-only view of these records is a later phase.
+              Replies are saved locally: when a reply is sent it is recorded locally as a communication row
+              with no provider and no real email delivery. A read-only view of these records comes later.
             </p>
           </section>
 

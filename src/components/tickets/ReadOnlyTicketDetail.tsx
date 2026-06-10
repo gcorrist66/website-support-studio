@@ -145,7 +145,7 @@ export function ReadOnlyTicketDetail({
     : hasTriageAction
       ? canTriage
         ? "Triage Ticket"
-        : "Triage Ticket (not available)"
+        : "Triage Ticket (unavailable)"
       : "Triage Ticket (disabled)";
 
   const handleTriage = async () => {
@@ -213,10 +213,10 @@ export function ReadOnlyTicketDetail({
     <section className="phase4a-card">
       <h2>Ticket detail</h2>
       <p className="placeholder-meta">
-        Sample data fallback available · workflow actions appear only when eligible for the ticket&apos;s current state and run only in guarded read-only mode.
+        Demo data fallback available · workflow actions appear only when eligible for the ticket&apos;s current state and run only in read-only access mode.
       </p>
       <p className="placeholder-meta">
-        Reply send is persistence-only: a sent reply is recorded locally and no real email is delivered. Approval is required before send, and close requires a sent_to_customer ticket.
+        Replies are saved locally: a sent reply is recorded locally and no real email is delivered. Approval is required before send, and close requires a sent_to_customer ticket.
       </p>
 
       <article className="phase4c-detail-card">

@@ -35,14 +35,14 @@ export function LoginShell({ state, status, onSelectStatus }: LoginShellProps) {
 
   return (
     <section className="phase4a-card phase7-login-shell">
-      <h2>Development Login State Simulator</h2>
+      <h2>Login state</h2>
       <p className="placeholder-meta">
-        State simulator only — NOT real authentication. It collects no credentials and sends no email; it
-        only switches between modeled states to visualize what the future workspace will gate on.
+        State display only — not real authentication. It collects no credentials and sends no email; it
+        only switches between modeled states to show what the workspace will gate on.
       </p>
 
       <label className="phase6-operator-switcher">
-        Simulated auth state
+        Session state
         <select value={status} onChange={(event) => onSelectStatus(event.target.value as LoginShellStatus)}>
           {LOGIN_SHELL_STATUS_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -87,7 +87,7 @@ export function LoginShell({ state, status, onSelectStatus }: LoginShellProps) {
         </div>
       ) : (
         <p className="placeholder-meta phase7-empty-state">
-          No operator workspace is shown for this state. Select &quot;Authenticated operator&quot; to preview the workspace.
+          No operator workspace is shown for this state. Select &quot;Authenticated operator&quot; to show the workspace.
         </p>
       )}
     </section>

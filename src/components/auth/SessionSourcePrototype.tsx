@@ -244,7 +244,7 @@ export function SessionSourcePrototype() {
     if (!selectedPreset) {
       const modeAdvice =
         identityMode === "manual"
-          ? "Use a UUID-style principal id to preview the session-read path without credentials."
+          ? "Use a UUID-style principal id to resolve the session-read path without credentials."
           : "Select a preset identity.";
       setSignInError(modeAdvice);
       return;
@@ -267,7 +267,7 @@ export function SessionSourcePrototype() {
 
   return (
     <section className="phase4a-card phase7-session-prototype">
-      <h2>Session mapping preview</h2>
+      <h2>Session mapping</h2>
       <p className="placeholder-meta">
         This card simulates a local sign-in source and feeds a session-like object into the existing read path:
         {' '}<code>session → principal → auth pipeline → operator session → capability flags.</code>
@@ -338,10 +338,10 @@ export function SessionSourcePrototype() {
 
         <div className="phase7-session-prototype-actions">
           <button type="button" disabled={isSigningIn} onClick={() => onSignIn()}>
-            {isSignedOut ? "Preview sign-in" : "Update preview"}
+            {isSignedOut ? "Apply session" : "Update session"}
           </button>
           <button type="button" onClick={() => setIsSignedIn(false)} disabled={isSignedOut}>
-            Sign out preview
+            Clear session
           </button>
         </div>
       </div>
@@ -350,7 +350,7 @@ export function SessionSourcePrototype() {
 
       <div className="phase7-session-read-panel phase7-session-prototype-state" role="status" aria-live="polite">
         <p>
-          <strong>Derived state:</strong>{" "}
+          <strong>Resolved state:</strong>{" "}
           <span className="phase4b-badge">{sessionShellState.label}</span>
         </p>
         <p className="placeholder-meta">{sessionShellState.message}</p>
@@ -390,7 +390,7 @@ export function SessionSourcePrototype() {
           <div className="phase7-session-prototype-route-card" role="status" aria-live="polite">
             {routeAllowed ? (
               <>
-                <p className="phase4c-summary">Route is accessible in this preview session.</p>
+                <p className="phase4c-summary">Route is accessible in this session.</p>
                 <p className="placeholder-meta">
                   {protectedRoute === "workspace"
                     ? "Protected workspace route is visible and editable."
@@ -400,7 +400,7 @@ export function SessionSourcePrototype() {
               </>
             ) : (
               <p className="placeholder-meta phase7-empty-state">
-                Access denied for this route with the current preview session state.
+                Access denied for this route with the current session state.
               </p>
             )}
           </div>
@@ -408,7 +408,7 @@ export function SessionSourcePrototype() {
       </div>
 
       <p className="placeholder-meta">
-        Local preview status: {sessionShellState.canAccessWorkspace ? "Workspace-capable" : "Workspace hidden"} · Route capable: {routeAllowed ? "yes" : "no"}
+        Session status: {sessionShellState.canAccessWorkspace ? "Workspace-capable" : "Workspace hidden"} · Route capable: {routeAllowed ? "yes" : "no"}
       </p>
     </section>
   );
