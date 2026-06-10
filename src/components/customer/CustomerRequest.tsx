@@ -1,21 +1,23 @@
 /**
- * Customer workspace — account, billing, capacity, and request submission.
+ * Customer workspace — profile, requests, capacity, and feedback.
  *
- * This is the authenticated customer experience after onboarding. It keeps the surface simple:
- * account/profile visibility, plan visibility, Capacity Units, a normal support request form, and
- * a separate product-feedback form that routes into the same internal request queue.
+ * This view keeps the support surface small: the account summary stays visible,
+ * request creation happens through a dedicated `_new_request` composer, and recent
+ * requests stay easy to inspect with their uploaded files.
  */
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
 import { LogoLockup } from "../brand/LogoLockup";
 import { useAuth } from "../../auth/AuthProvider";
 import type { Identity } from "../../data/identity";
+import { RequestComposer } from "./RequestComposer";
 import {
   submitCustomerFeedback,
-  submitCustomerRequest,
   type FeedbackCategory,
   type SiteOption,
   type SubmitRequestResult,
+  type CustomerRequestRecord,
+  loadMyRequests,
 } from "../../data/customerRequests";
 import {
   createEmptyCustomerWorkspaceSummary,
@@ -24,8 +26,6 @@ import {
   type CustomerSite,
   type CustomerWorkspaceSummary,
 } from "../../data/customerWorkspace";
-
-const SUPPORT_PRIORITIES = ["low", "normal", "high", "critical"] as const;
 
 const FEEDBACK_CATEGORY_OPTIONS: ReadonlyArray<{ value: FeedbackCategory; label: string; hint: string }> = [
   { value: "feedback", label: "Feedback", hint: "Something that is working well, confusing, or worth improving." },
@@ -53,6 +53,23 @@ function formatDate(iso: string | null): string {
     month: "short",
     day: "numeric",
     year: "numeric",
+  }).format(date);
+}
+
+function formatDateTime(iso: string | null): string {
+  if (!iso) {
+    return "not available";
+  }
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return "not available";
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   }).format(date);
 }
 
@@ -87,6 +104,19 @@ function getCapacityEffortExamples(): Array<{ title: string; examples: string }>
   ];
 }
 
+function getCapacityExplainer(): string {
+  return "Capacity Units are the monthly support allowance included with your plan. Small requests use fewer units; bigger requests use more.";
+}
+
+function getWhatYouBought(summary: CustomerWorkspaceSummary): string {
+  if (summary.planName === "Plan not found") {
+    return "Your plan details will appear here after checkout is linked to this account.";
+  }
+  const price = formatMoney(summary.monthlyUsd);
+  const capacity = formatCapacity(summary.capacityIncluded);
+  return `You bought ${summary.planName} at ${price}. It includes ${capacity} Capacity Units each month for website support.`;
+}
+
 function getPlanNote(summary: CustomerWorkspaceSummary): string {
   if (!summary.subscriptionStatus) {
     return "Plan details are still loading.";
@@ -106,158 +136,11 @@ function getPlanNote(summary: CustomerWorkspaceSummary): string {
   return `Status: ${summary.subscriptionStatus.replaceAll("_", " ")}.`;
 }
 
-function formatRequestError(message: string): string {
-  if (message === "submit_failed") {
-    return "We couldn't submit this request. Please check the website selection and try again.";
-  }
-  return message;
-}
-
 function formatFeedbackError(message: string): string {
   if (message === "submit_failed") {
     return "We couldn't send this feedback. Please check the website selection and try again.";
   }
   return message;
-}
-
-function SupportRequestPanel({ sites }: { sites: CustomerSite[] }) {
-  const [siteId, setSiteId] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<string>("normal");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<SubmitRequestResult | null>(null);
-
-  useEffect(() => {
-    if (sites.length > 0 && !siteId) {
-      setSiteId(sites[0].id);
-    }
-  }, [sites, siteId]);
-
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!siteId) {
-      setError("Choose the website this request is about.");
-      return;
-    }
-    setSubmitting(true);
-    setError(null);
-    try {
-      const response = await submitCustomerRequest({
-        siteId,
-        title,
-        description,
-        priority,
-      });
-      setResult(response);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "submit_failed";
-      setError(formatRequestError(message));
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  function reset() {
-    setResult(null);
-    setTitle("");
-    setDescription("");
-    setPriority("normal");
-    setError(null);
-  }
-
-  if (result) {
-    return (
-      <section className="customer-card customer-card-wide">
-        <h2>Support request sent</h2>
-        <p className="customer-copy">
-          Your request is now in the internal support queue and a human will review it.
-        </p>
-        <p className="customer-copy">
-          <strong>Request ID:</strong> {result.ticket_number}
-        </p>
-        <p className="customer-copy">
-          <strong>Status:</strong> {result.status}
-        </p>
-        <p className="customer-smallprint">
-          Keep the request ID if you need to reference this item later. Product feedback should go in the
-          separate feedback form below.
-        </p>
-        <button className="auth-btn auth-btn-green" type="button" onClick={reset}>
-          send another request
-        </button>
-      </section>
-    );
-  }
-
-  return (
-    <section className="customer-card customer-card-wide">
-      <h2>Send support request</h2>
-      <p className="customer-copy">
-        Use this for work on your website. This goes into the internal support queue. Product feedback
-        uses the separate form below and is for improving website_support_studio itself.
-      </p>
-      <p className="customer-smallprint">
-        Examples: content updates, image swaps, plugin updates, landing page changes, and bug fixes.
-      </p>
-
-      <form className="customer-form" onSubmit={onSubmit}>
-        <label className="auth-field">
-          <span className="auth-label">request summary *</span>
-          <input
-            className="auth-input"
-            value={title}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-            required
-          />
-        </label>
-
-        <label className="auth-field">
-          <span className="auth-label">website *</span>
-          {sites.length === 0 ? (
-            <span className="auth-meta">No website is linked yet. Finish onboarding first or contact Corriston Consulting.</span>
-          ) : (
-            <select className="auth-input" value={siteId} onChange={(e: ChangeEvent<HTMLSelectElement>) => setSiteId(e.target.value)}>
-              {sites.map((site) => (
-                <option key={site.id} value={site.id}>
-                  {site.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </label>
-
-        <label className="auth-field">
-          <span className="auth-label">priority</span>
-          <select className="auth-input" value={priority} onChange={(e: ChangeEvent<HTMLSelectElement>) => setPriority(e.target.value)}>
-            {SUPPORT_PRIORITIES.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="auth-field">
-          <span className="auth-label">details</span>
-          <textarea
-            className="auth-input"
-            rows={5}
-            value={description}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
-            placeholder="What would you like changed or fixed?"
-          />
-        </label>
-
-        {error ? <p className="auth-error" role="alert">{error}</p> : null}
-
-        <button className="auth-btn auth-btn-green" type="submit" disabled={submitting || sites.length === 0}>
-          {submitting ? "submitting…" : "submit request"}
-        </button>
-      </form>
-    </section>
-  );
 }
 
 function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
@@ -312,7 +195,8 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
       <section className="customer-card customer-card-wide">
         <h2>Product feedback sent</h2>
         <p className="customer-copy">
-          Thanks. This was routed into the internal product-feedback queue for Corriston Consulting / website_support_studio.
+          Thanks. This was routed into the internal product-feedback queue for Corriston Consulting /
+          website_support_studio.
         </p>
         <p className="customer-copy">
           <strong>Request ID:</strong> {result.ticket_number}
@@ -322,7 +206,7 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
         </p>
         <p className="customer-smallprint">
           Use this form for feedback, feature requests, bug reports, and product ideas about
-          website_support_studio. Use the support request form above for work on your website.
+          website_support_studio. Use the _new_request launcher for work on your website.
         </p>
         <button className="auth-btn auth-btn-green" type="button" onClick={reset}>
           send more feedback
@@ -333,10 +217,10 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
 
   return (
     <section className="customer-card customer-card-wide">
-      <h2>Send product feedback</h2>
+      <h2>Share product feedback</h2>
       <p className="customer-copy">
         Use this for feedback, feature requests, bug reports, or anything else about website_support_studio.
-        For website fixes and support, use the request form above.
+        Use the _new_request launcher for website work.
       </p>
 
       <form className="customer-form" onSubmit={onSubmit}>
@@ -402,6 +286,114 @@ function ProductFeedbackPanel({ sites }: { sites: CustomerSite[] }) {
   );
 }
 
+function AttachmentPreview({ attachment }: { attachment: CustomerRequestRecord["attachments"][number] }) {
+  const isImage = attachment.mimeType.startsWith("image/");
+  return (
+    <article className="customer-request-attachment-card">
+      {isImage ? (
+        <img src={attachment.publicUrl} alt={attachment.fileName} className="customer-request-thumbnail" />
+      ) : (
+        <div className="customer-request-file-mark">{attachment.mimeType.split("/").at(-1) ?? "file"}</div>
+      )}
+      <div className="customer-request-attachment-body">
+        <strong>{attachment.fileName}</strong>
+        <span>{formatDateTime(attachment.createdAt)}</span>
+        <div className="customer-request-attachment-actions">
+          <a href={attachment.publicUrl} target="_blank" rel="noreferrer">open</a>
+          <a href={attachment.publicUrl} download={attachment.fileName}>download</a>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function RecentRequestsPanel({
+  requests,
+  selectedRequestId,
+  onSelectRequest,
+}: {
+  requests: CustomerRequestRecord[];
+  selectedRequestId: string;
+  onSelectRequest: (requestId: string) => void;
+}) {
+  const selectedRequest = useMemo(
+    () => requests.find((request) => request.ticketId === selectedRequestId) ?? requests[0] ?? null,
+    [requests, selectedRequestId],
+  );
+
+  return (
+    <section className="customer-card customer-card-wide">
+      <h2>recent_requests</h2>
+      <p className="customer-copy">
+        Requests appear here as soon as they are submitted. Attachments stay visible with the request.
+      </p>
+
+      <div className="customer-request-split">
+        <div className="customer-request-list">
+          {requests.length === 0 ? (
+            <p className="customer-loading">No requests yet. Start with _new_request.</p>
+          ) : (
+            requests.map((request) => (
+              <button
+                key={request.ticketId}
+                type="button"
+                className={request.ticketId === selectedRequest?.ticketId ? "customer-request-row is-active" : "customer-request-row"}
+                onClick={() => onSelectRequest(request.ticketId)}
+              >
+                <strong>{request.title}</strong>
+                <span>
+                  {request.siteName} · {request.priority}
+                </span>
+                <span>
+                  {request.status.replaceAll("_", " ")} · {request.attachments.length} attachment{request.attachments.length === 1 ? "" : "s"}
+                </span>
+              </button>
+            ))
+          )}
+        </div>
+
+        <article className="customer-request-detail">
+          {selectedRequest ? (
+            <>
+              <h3>{selectedRequest.title}</h3>
+              <p className="customer-copy">
+                <strong>{selectedRequest.ticketNumber}</strong> · {selectedRequest.siteName}
+              </p>
+              <dl className="customer-definition-list">
+                <div>
+                  <dt>Status</dt>
+                  <dd>{selectedRequest.status.replaceAll("_", " ")}</dd>
+                </div>
+                <div>
+                  <dt>Priority</dt>
+                  <dd>{selectedRequest.priority}</dd>
+                </div>
+                <div>
+                  <dt>Submitted</dt>
+                  <dd>{formatDateTime(selectedRequest.createdAt)}</dd>
+                </div>
+              </dl>
+
+              <h4>Attachments</h4>
+              {selectedRequest.attachments.length === 0 ? (
+                <p className="customer-smallprint">No attachments on this request.</p>
+              ) : (
+                <div className="customer-request-attachments">
+                  {selectedRequest.attachments.map((attachment) => (
+                    <AttachmentPreview key={attachment.id} attachment={attachment} />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="customer-loading">Submit a request to see it here.</p>
+          )}
+        </article>
+      </div>
+    </section>
+  );
+}
+
 type CustomerRequestProps = {
   identity: Extract<Identity, { kind: "customer" }>;
 };
@@ -410,31 +402,42 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
   const { user, signOut } = useAuth();
   const [summary, setSummary] = useState<CustomerWorkspaceSummary>(createEmptyCustomerWorkspaceSummary());
   const [sites, setSites] = useState<CustomerSite[]>([]);
+  const [requests, setRequests] = useState<CustomerRequestRecord[]>([]);
+  const [selectedRequestId, setSelectedRequestId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingRequests, setLoadingRequests] = useState(true);
   const currentSite = useMemo(() => sites[0] ?? null, [sites]);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setLoadingRequests(true);
 
     async function load() {
-      const [workspaceSummary, siteRows] = await Promise.all([
+      const [workspaceSummary, siteRows, requestRows] = await Promise.all([
         loadCustomerWorkspaceSummary(identity.orgId),
         loadMySites(),
+        loadMyRequests(identity.orgId),
       ]);
       if (!active) {
         return;
       }
       setSummary(workspaceSummary);
       setSites(siteRows);
+      setRequests(requestRows);
+      setSelectedRequestId(requestRows[0]?.ticketId ?? "");
       setLoading(false);
+      setLoadingRequests(false);
     }
 
     load().catch(() => {
       if (active) {
         setSummary(createEmptyCustomerWorkspaceSummary());
         setSites([]);
+        setRequests([]);
+        setSelectedRequestId("");
         setLoading(false);
+        setLoadingRequests(false);
       }
     });
 
@@ -443,32 +446,39 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
     };
   }, [identity.orgId]);
 
+  function handleRequestCreated(request: CustomerRequestRecord) {
+    setRequests((current) => [request, ...current.filter((item) => item.ticketId !== request.ticketId)]);
+    setSelectedRequestId(request.ticketId);
+  }
+
   return (
     <div className="customer-shell">
       <section className="customer-hero">
         <div>
           <LogoLockup size={30} />
-          <p className="customer-kicker">website_support_studio customer workspace</p>
-          <h1>your account at a glance</h1>
+          <p className="customer-kicker">website_support_studio customer profile</p>
+          <h1>your profile at a glance</h1>
           <p className="customer-copy">
-            Everything important is in one place: who you are logged in as, what plan you bought, how
-            much support capacity you have, and how to reach us.
+            This page answers the first questions after checkout: who you are, what you bought, what
+            happens next, how support works, and where to send feedback.
           </p>
           {summary.planName !== "Plan not found" ? (
             <p className="customer-smallprint">
-              You are on {summary.planName} at {formatMoney(summary.monthlyUsd)} with{" "}
-              {formatCapacity(summary.capacityIncluded)} Capacity Units each month.
+              {getWhatYouBought(summary)}
             </p>
           ) : null}
         </div>
-        <button className="auth-btn auth-btn-ghost customer-logout" type="button" onClick={() => { void signOut(); }}>
-          log out
-        </button>
+        <div className="customer-hero-actions">
+          <RequestComposer sites={sites} onCreated={handleRequestCreated} />
+          <button className="auth-btn auth-btn-ghost customer-logout" type="button" onClick={() => { void signOut(); }}>
+            log out
+          </button>
+        </div>
       </section>
 
       <div className="customer-grid">
         <section className="customer-card">
-          <h2>Account summary</h2>
+          <h2>your_profile</h2>
           <dl className="customer-definition-list">
             <div>
               <dt>Logged in email</dt>
@@ -496,15 +506,13 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             </div>
           </dl>
           <p className="customer-smallprint">
-            If you need to switch accounts, log out and sign in with the same email you used at checkout.
+            If you need to switch profiles, log out and sign in with the same email you used at checkout.
           </p>
         </section>
 
         <section className="customer-card">
-          <h2>Capacity Units</h2>
-          <p className="customer-copy">
-            Capacity Units are the monthly support allowance included with your plan.
-          </p>
+          <h2>How Capacity Units work</h2>
+          <p className="customer-copy">{getCapacityExplainer()}</p>
           <dl className="customer-definition-list">
             <div>
               <dt>Included this month</dt>
@@ -528,7 +536,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
           </ul>
           <p className="customer-smallprint">
             When you run out, requests wait until the next monthly refresh or until additional Capacity
-            Units are added. Need more? Contact Corriston Consulting.
+            Units are added. Need more? Contact Corriston Consulting to add more support capacity.
           </p>
           <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
             contact Corriston Consulting
@@ -536,7 +544,7 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
         </section>
 
         <section className="customer-card">
-          <h2>Plan and billing</h2>
+          <h2>What you bought</h2>
           <dl className="customer-definition-list">
             <div>
               <dt>Current plan</dt>
@@ -563,40 +571,19 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             contact Corriston Consulting
           </a>
         </section>
-
-        <section className="customer-card">
-          <h2>How support works</h2>
-          <p className="customer-copy">
-            Support request means work on your website. Product feedback means improving
-            website_support_studio itself.
-          </p>
-          <ul className="customer-bullet-list">
-            <li>
-              <strong>Support request:</strong> content updates, image swaps, plugin updates, landing
-              page changes, and bug fixes.
-            </li>
-            <li>
-              <strong>Product feedback:</strong> ideas, confusion, feature requests, or bug reports about
-              website_support_studio.
-            </li>
-            <li>
-              <strong>After you submit:</strong> you get a request ID and the item enters the internal
-              queue for review.
-            </li>
-          </ul>
-          <p className="customer-smallprint">
-            Onboarding status is still tracked in the account summary above so you can tell whether setup is
-            complete.
-          </p>
-        </section>
       </div>
 
       <div className="customer-grid">
-        <SupportRequestPanel sites={sites} />
+        <RecentRequestsPanel
+          requests={requests}
+          selectedRequestId={selectedRequestId}
+          onSelectRequest={setSelectedRequestId}
+        />
         <ProductFeedbackPanel sites={sites} />
       </div>
 
-      {loading ? <p className="customer-loading">Loading your account…</p> : null}
+      {loading ? <p className="customer-loading">Loading your profile…</p> : null}
+      {loadingRequests ? <p className="customer-loading">Loading recent requests…</p> : null}
       {!loading && sites.length === 0 ? (
         <p className="customer-loading">
           No websites are linked yet. If you just signed up, finish onboarding or sign out and use the

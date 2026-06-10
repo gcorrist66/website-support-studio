@@ -6,16 +6,25 @@ import { LogoLockup } from "../brand/LogoLockup";
 import { MonoLabel } from "../brand/MonoLabel";
 import { submitCustomerFeedback, type FeedbackCategory } from "../../data/customerRequests";
 import { loadOperatorPilotStatus, createEmptyOperatorPilotStatus, type OperatorPilotStatus } from "../../data/operatorPilotStatus";
-import { auditTrail, ticketDetails, ticketQueue, type MockAuditEvent, type MockTicketDetail, type MockTicketQueueItem } from "../../ui/mockData";
+import {
+  ticketDetails,
+  ticketQueue,
+  type MockTicketDetail,
+  type MockTicketQueueItem,
+} from "../../ui/mockData";
+import {
+  getReadOnlyTicketDetail,
+  getReadOnlyTicketQueue,
+} from "../../data/readOnlyTicketData";
 
-type ConsoleSection = "overview" | "board" | "requests" | "account" | "website_access" | "activity" | "health";
+type ConsoleSection = "overview" | "board" | "requests" | "profile" | "website_access" | "activity" | "health";
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
 
 const SECTION_ORDER: ConsoleSection[] = [
   "overview",
   "board",
   "requests",
-  "account",
+  "profile",
   "website_access",
   "activity",
   "health",
@@ -135,6 +144,24 @@ function formatPriority(priority: MockTicketQueueItem["priority"]): string {
   return priority;
 }
 
+function formatBytes(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) {
+    return "0 B";
+  }
+  const units = ["B", "KB", "MB", "GB"];
+  let size = value;
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit += 1;
+  }
+  return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
+}
+
+function isImageMimeType(mimeType: string): boolean {
+  return mimeType.startsWith("image/");
+}
+
 function boardLaneForTicket(ticket: MockTicketQueueItem): "new" | "triage" | "waiting_on_us" | "waiting_on_customer" | "review" | "complete" {
   switch (ticket.status) {
     case "received":
@@ -157,10 +184,6 @@ function boardLaneForTicket(ticket: MockTicketQueueItem): "new" | "triage" | "wa
 
 function getTicketDetail(ticketId: string): MockTicketDetail {
   return ticketDetails.find((ticket) => ticket.id === ticketId) ?? ticketDetails[0];
-}
-
-function getRecentEvents(): MockAuditEvent[] {
-  return [...auditTrail].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
 }
 
 function OverviewCard({ title, value, note }: { title: string; value: string; note: string }) {
@@ -370,6 +393,10 @@ export function AppShell() {
   const { signOut } = useAuth();
   const section = getSectionFromPath(location.pathname);
   const feedbackParam = new URLSearchParams(location.search).get("feedback");
+  const [queue, setQueue] = useState<MockTicketQueueItem[]>(ticketQueue);
+  const [requestDetails, setRequestDetails] = useState<Record<string, MockTicketDetail>>(() =>
+    Object.fromEntries(ticketDetails.map((ticket) => [ticket.id, ticket])),
+  );
   const [selectedRequestId, setSelectedRequestId] = useState(ticketQueue[0]?.id ?? "");
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [pilotStatus, setPilotStatus] = useState<OperatorPilotStatus>(createEmptyOperatorPilotStatus());
@@ -382,7 +409,7 @@ export function AppShell() {
 
   useEffect(() => {
     let active = true;
-    const currentClientId = ticketQueue[0]?.clientId ?? "";
+    const currentClientId = queue[0]?.clientId ?? ticketQueue[0]?.clientId ?? "";
     loadOperatorPilotStatus(currentClientId)
       .then((result) => {
         if (active) {
@@ -398,7 +425,77 @@ export function AppShell() {
     return () => {
       active = false;
     };
+  }, [queue]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadQueue() {
+      try {
+        const liveQueue = await getReadOnlyTicketQueue();
+        if (active && liveQueue.length > 0) {
+          setQueue(liveQueue);
+        }
+      } catch {
+        if (active) {
+          setQueue(ticketQueue);
+        }
+      }
+    }
+
+    void loadQueue();
+    const interval = window.setInterval(() => {
+      void loadQueue();
+    }, 15000);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
   }, []);
+
+  useEffect(() => {
+    if (queue.length === 0) {
+      return;
+    }
+    if (!queue.some((ticket) => ticket.id === selectedRequestId)) {
+      setSelectedRequestId(queue[0].id);
+    }
+  }, [queue, selectedRequestId]);
+
+  useEffect(() => {
+    if (!selectedRequestId) {
+      return;
+    }
+
+    let active = true;
+
+    async function loadDetail() {
+      try {
+        const detail = await getReadOnlyTicketDetail(selectedRequestId);
+        if (active) {
+          setRequestDetails((current) => ({
+            ...current,
+            [detail.id]: detail,
+          }));
+        }
+      } catch {
+        if (active) {
+          const fallback = getTicketDetail(selectedRequestId);
+          setRequestDetails((current) => ({
+            ...current,
+            [fallback.id]: fallback,
+          }));
+        }
+      }
+    }
+
+    void loadDetail();
+
+    return () => {
+      active = false;
+    };
+  }, [selectedRequestId]);
 
   useEffect(() => {
     if (feedbackParam === "open" || feedbackParam === "1") {
@@ -407,8 +504,8 @@ export function AppShell() {
   }, [feedbackParam]);
 
   const activeRequests = useMemo(
-    () => ticketQueue.filter((ticket) => ACTIVE_REQUEST_STATUSES.has(ticket.status)),
-    [],
+    () => queue.filter((ticket) => ACTIVE_REQUEST_STATUSES.has(ticket.status)),
+    [queue],
   );
 
   const boardGroups = useMemo(() => {
@@ -421,29 +518,29 @@ export function AppShell() {
       complete: [],
     };
 
-    for (const ticket of ticketQueue) {
+    for (const ticket of queue) {
       lanes[boardLaneForTicket(ticket)].push(ticket);
     }
 
     return lanes;
-  }, []);
+  }, [queue]);
 
   const selectedRequest = useMemo(
-    () => getTicketDetail(selectedRequestId) ?? ticketDetails[0],
-    [selectedRequestId],
+    () => requestDetails[selectedRequestId] ?? getTicketDetail(selectedRequestId) ?? ticketDetails[0],
+    [requestDetails, selectedRequestId],
   );
 
-  const recentEvents = useMemo(() => getRecentEvents(), []);
+  const recentEvents = useMemo(() => [...selectedRequest.auditTimeline].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt)), [selectedRequest]);
 
   const overviewAtRisk = useMemo(
     () =>
-      ticketQueue.find(
+      queue.find(
         (ticket) => ticket.status === "blocked" || ticket.priority === "urgent" || ticket.priority === "critical",
-      ) ?? ticketQueue[0],
-    [],
+      ) ?? queue[0],
+    [queue],
   );
 
-  const siteIdForFeedback = selectedRequest?.tenantContext.siteId ?? ticketQueue[0]?.siteId ?? "SITE-01";
+  const siteIdForFeedback = selectedRequest?.tenantContext.siteId ?? queue[0]?.siteId ?? "SITE-01";
 
   if (location.pathname === "/" || !isSectionPath(location.pathname)) {
     return <Navigate to="/overview" replace />;
@@ -510,13 +607,13 @@ export function AppShell() {
             <section className="wss-panel">
               <SectionHeading
                 eyebrow="overview"
-                title="account summary"
-                description="A compact view of the account, activity, and what needs attention."
+                title="profile summary"
+                description="A compact view of the profile, activity, and what needs attention."
               />
 
               <div className="wss-grid four-up">
                 <OverviewCard
-                  title="account_summary"
+                  title="profile_summary"
                   value={ACCOUNT_SUMMARY.profile}
                   note={`${ACCOUNT_SUMMARY.company} · ${ACCOUNT_SUMMARY.website}`}
                 />
@@ -643,7 +740,7 @@ export function AppShell() {
               <div className="wss-split">
                 <div className="wss-card">
                   <div className="wss-list-picker">
-                    {ticketQueue.map((ticket) => (
+                    {queue.map((ticket) => (
                       <button
                         key={ticket.id}
                         type="button"
@@ -696,17 +793,65 @@ export function AppShell() {
                       <dd>{selectedRequest.submittedBy}</dd>
                     </div>
                   </dl>
+
+                  <p className="wss-copy">{selectedRequest.customerRequest}</p>
+
+                  <div className="wss-request-attachments">
+                    <div className="wss-section-heading">
+                      <h3>
+                        <MonoLabel text="attachments" />
+                      </h3>
+                      <p className="wss-section-description">
+                        Evidence should be visible with the request instead of buried elsewhere.
+                      </p>
+                    </div>
+
+                    {(selectedRequest.attachments ?? []).length === 0 ? (
+                      <p className="wss-empty-state">no attachments on this request</p>
+                    ) : (
+                      <div className="wss-request-attachment-grid">
+                        {(selectedRequest.attachments ?? []).map((attachment) => (
+                          <article key={attachment.id} className="wss-request-attachment-card">
+                            {isImageMimeType(attachment.mimeType) ? (
+                              <img
+                                src={attachment.publicUrl}
+                                alt={attachment.fileName}
+                                className="wss-request-attachment-thumb"
+                              />
+                            ) : (
+                              <div className="wss-request-attachment-mark">
+                                <MonoLabel text={attachment.mimeType.split("/").at(-1) ?? "file"} />
+                              </div>
+                            )}
+                            <div className="wss-request-attachment-meta">
+                              <strong>{attachment.fileName}</strong>
+                              <span>{formatBytes(attachment.fileSizeBytes)}</span>
+                              <span>{formatDateTime(attachment.createdAt)}</span>
+                              <div className="wss-request-attachment-actions">
+                                <a href={attachment.publicUrl} target="_blank" rel="noreferrer">
+                                  open
+                                </a>
+                                <a href={attachment.publicUrl} download={attachment.fileName}>
+                                  download
+                                </a>
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </article>
               </div>
             </section>
           ) : null}
 
-          {section === "account" ? (
+          {section === "profile" ? (
             <section className="wss-panel">
               <SectionHeading
-                eyebrow="account"
-                title="account details"
-                description="The customer account surface lives here, including credits and billing status."
+                eyebrow="profile"
+                title="profile details"
+                description="The customer profile surface lives here, including credits and billing status."
               />
 
               <div className="wss-grid two-up">

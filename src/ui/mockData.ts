@@ -39,6 +39,15 @@ export type MockAuditEvent = {
   occurredAt: string;
 };
 
+export type MockRequestAttachment = {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  publicUrl: string;
+  createdAt: string;
+};
+
 export type MockTicketDetail = {
   id: string;
   workflowId?: string;
@@ -68,6 +77,7 @@ export type MockTicketDetail = {
   approvalStatus: "not_required" | "awaiting_approval" | "approved" | "rejected";
   blockedReason?: string;
   auditTimeline: MockAuditEvent[];
+  attachments?: MockRequestAttachment[];
 };
 
 export const ticketQueue: MockTicketQueueItem[] = [
@@ -194,6 +204,24 @@ export const ticketDetails: MockTicketDetail[] = [
     auditTimeline: auditTrail
       .filter((event) => event.ticketId === "TKT-LOCAL-1001")
       .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt)),
+    attachments: [
+      {
+        id: "ATT-LOCAL-1001",
+        fileName: "checkout-error.png",
+        mimeType: "image/png",
+        fileSizeBytes: 284_192,
+        publicUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop",
+        createdAt: "2026-06-07T10:16:00Z",
+      },
+      {
+        id: "ATT-LOCAL-1002",
+        fileName: "campaign-checkout-notes.pdf",
+        mimeType: "application/pdf",
+        fileSizeBytes: 182_014,
+        publicUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        createdAt: "2026-06-07T10:18:00Z",
+      },
+    ],
   },
   {
     id: "TKT-LOCAL-1002",
@@ -219,6 +247,16 @@ export const ticketDetails: MockTicketDetail[] = [
     auditTimeline: auditTrail
       .filter((event) => event.ticketId === "TKT-LOCAL-1002")
       .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt)),
+    attachments: [
+      {
+        id: "ATT-LOCAL-1003",
+        fileName: "pricing-screenshot.jpg",
+        mimeType: "image/jpeg",
+        fileSizeBytes: 198_401,
+        publicUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&auto=format&fit=crop",
+        createdAt: "2026-06-07T09:52:00Z",
+      },
+    ],
   },
   {
     id: "TKT-LOCAL-1003",
@@ -267,6 +305,7 @@ export const ticketDetails: MockTicketDetail[] = [
         occurredAt: "2026-06-07T09:10:00Z",
       },
     ],
+    attachments: [],
   },
 ];
 
