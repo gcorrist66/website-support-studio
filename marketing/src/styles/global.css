@@ -217,8 +217,8 @@ main {
    links; a lighter mint green signals the paid action. The mint is intentionally light, so
    it pairs with dark ink bold text (high contrast, modern mint-button look). */
 :root {
-  --cta-green: #34d399; /* lighter mint green */
-  --cta-green-hover: #2bbe8a;
+  --cta-green: #b8efd8; /* soft mint green */
+  --cta-green-hover: #9ee6c8;
 }
 .btn-green {
   background: var(--cta-green);

@@ -1,10 +1,19 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../auth/AuthProvider";
 import { LogoLockup } from "../brand/LogoLockup";
 import { MonoLabel } from "../brand/MonoLabel";
-import { submitCustomerFeedback, type FeedbackCategory } from "../../data/customerRequests";
+import {
+  listMySites,
+  removeRequestAttachment,
+  submitCustomerFeedback,
+  submitCustomerRequestWithAttachments,
+  uploadRequestAttachment,
+  type CustomerRequestAttachmentDraft,
+  type FeedbackCategory,
+  type SiteOption,
+} from "../../data/customerRequests";
 import { loadOperatorPilotStatus, createEmptyOperatorPilotStatus, type OperatorPilotStatus } from "../../data/operatorPilotStatus";
 import {
   ticketDetails,
@@ -21,6 +30,14 @@ type ConsoleSection = "overview" | "board" | "requests" | "profile" | "website_a
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
 type CreditTopupKey = "topup_50" | "topup_100" | "topup_250";
 type WebsitePlatformKey = "wordpress" | "shopify" | "webflow" | "squarespace" | "wix" | "custom_other" | "hosting_dns";
+type RequestType = "website_update" | "bug_report" | "urgent_issue" | "question" | "other";
+type RequestUrgency = "normal" | "high" | "urgent";
+type AttachmentState = CustomerRequestAttachmentDraft & {
+  id: string;
+  status: "uploading" | "ready" | "error";
+  previewUrl: string | null;
+  error: string | null;
+};
 
 const SECTION_ORDER: ConsoleSection[] = [
   "overview",
@@ -52,6 +69,22 @@ const FEEDBACK_TABS: Array<{ key: FeedbackTab; label: string; category: Feedback
     hint: "General comments, praise, or process notes.",
   },
 ];
+
+const REQUEST_TYPES: RequestType[] = ["website_update", "bug_report", "urgent_issue", "question", "other"];
+const REQUEST_URGENCIES: RequestUrgency[] = ["normal", "high", "urgent"];
+const ACCEPT_ATTR = ".png,.jpg,.jpeg,.pdf,.doc,.docx,.csv,.txt,.zip,image/png,image/jpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/csv,text/plain,application/zip,application/x-zip-compressed";
+const ACCEPTED_ATTACHMENT_EXTENSIONS = new Set(["png", "jpg", "jpeg", "pdf", "doc", "docx", "csv", "txt", "zip"]);
+const ACCEPTED_ATTACHMENT_MIME_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/csv",
+  "text/plain",
+  "application/zip",
+  "application/x-zip-compressed",
+]);
 
 const ACCOUNT_SUMMARY = {
   profile: "gary",
@@ -268,8 +301,108 @@ function formatBytes(value: number): string {
   return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
 }
 
+function getRandomId(prefix = "req"): string {
+  return typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID()
+    : `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function getExtension(name: string): string {
+  const parts = name.toLowerCase().split(".");
+  return parts.length > 1 ? parts.at(-1) ?? "" : "";
+}
+
+function isAcceptedAttachment(file: File): boolean {
+  const extension = getExtension(file.name);
+  return ACCEPTED_ATTACHMENT_EXTENSIONS.has(extension) || Boolean(file.type && ACCEPTED_ATTACHMENT_MIME_TYPES.has(file.type));
+}
+
+function inferMimeType(file: File): string {
+  if (file.type) {
+    return file.type;
+  }
+  switch (getExtension(file.name)) {
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "pdf":
+      return "application/pdf";
+    case "doc":
+      return "application/msword";
+    case "docx":
+      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    case "csv":
+      return "text/csv";
+    case "txt":
+      return "text/plain";
+    case "zip":
+      return "application/zip";
+    default:
+      return "application/octet-stream";
+  }
+}
+
 function isImageMimeType(mimeType: string): boolean {
   return mimeType.startsWith("image/");
+}
+
+function getAttachmentLabel(mimeType: string): string {
+  if (mimeType === "application/pdf") {
+    return "pdf";
+  }
+  if (mimeType.includes("word")) {
+    return "doc";
+  }
+  if (mimeType === "text/csv") {
+    return "csv";
+  }
+  if (mimeType === "text/plain") {
+    return "txt";
+  }
+  if (mimeType.includes("zip")) {
+    return "zip";
+  }
+  return mimeType.split("/").at(-1) ?? "file";
+}
+
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function urgencyToPriority(urgency: RequestUrgency): MockTicketQueueItem["priority"] {
+  return urgency === "urgent" ? "urgent" : urgency === "high" ? "high" : "normal";
+}
+
+function isElevatedPriority(priority: MockTicketQueueItem["priority"]): boolean {
+  return priority === "high" || priority === "urgent" || priority === "critical";
+}
+
+function encodeRequestDescription(type: RequestType, urgency: RequestUrgency, description: string): string {
+  const flag = urgency === "urgent" ? "\nagent_flag: urgent request - review first" : "";
+  const body = description.trim() || "No extra description provided.";
+  return `request_type: ${type}\nurgency: ${urgency}${flag}\n\n${body}`;
+}
+
+function getFallbackSites(queue: MockTicketQueueItem[]): SiteOption[] {
+  const seen = new Set<string>();
+  return queue.reduce<SiteOption[]>((sites, ticket) => {
+    if (!ticket.siteId || seen.has(ticket.siteId)) {
+      return sites;
+    }
+    seen.add(ticket.siteId);
+    sites.push({ id: ticket.siteId, name: ticket.siteName });
+    return sites;
+  }, []);
+}
+
+function mergeOptimisticRequests(queue: MockTicketQueueItem[], optimistic: MockTicketQueueItem[]): MockTicketQueueItem[] {
+  if (optimistic.length === 0) {
+    return queue;
+  }
+  const liveIds = new Set(queue.map((ticket) => ticket.id));
+  return [...optimistic.filter((ticket) => !liveIds.has(ticket.id)), ...queue];
 }
 
 function boardLaneForTicket(ticket: MockTicketQueueItem): "new" | "triage" | "waiting_on_us" | "waiting_on_customer" | "review" | "complete" {
@@ -521,7 +654,7 @@ function FeedbackModal({
 export function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const section = getSectionFromPath(location.pathname);
   const feedbackParam = new URLSearchParams(location.search).get("feedback");
   const [queue, setQueue] = useState<MockTicketQueueItem[]>(ticketQueue);
@@ -534,6 +667,20 @@ export function AppShell() {
   const [selectedPlatformKey, setSelectedPlatformKey] = useState<WebsitePlatformKey>("wordpress");
   const [topupStatus, setTopupStatus] = useState<string | null>(null);
   const [topupLoading, setTopupLoading] = useState<CreditTopupKey | null>(null);
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [requestType, setRequestType] = useState<RequestType>("website_update");
+  const [requestUrgency, setRequestUrgency] = useState<RequestUrgency>("normal");
+  const [requestTitle, setRequestTitle] = useState("");
+  const [requestDescription, setRequestDescription] = useState("");
+  const [requestSites, setRequestSites] = useState<SiteOption[]>([]);
+  const [requestSiteId, setRequestSiteId] = useState("");
+  const [requestAttachments, setRequestAttachments] = useState<AttachmentState[]>([]);
+  const [requestDraftId, setRequestDraftId] = useState(() => getRandomId("draft"));
+  const [requestDragActive, setRequestDragActive] = useState(false);
+  const [requestSubmitting, setRequestSubmitting] = useState(false);
+  const [requestError, setRequestError] = useState<string | null>(null);
+  const [requestSuccess, setRequestSuccess] = useState<MockTicketDetail | null>(null);
+  const optimisticRequestsRef = useRef<MockTicketQueueItem[]>([]);
 
   useEffect(() => {
     if (!isSectionPath(location.pathname)) {
@@ -568,11 +715,11 @@ export function AppShell() {
       try {
         const liveQueue = await getReadOnlyTicketQueue();
         if (active && liveQueue.length > 0) {
-          setQueue(liveQueue);
+          setQueue(mergeOptimisticRequests(liveQueue, optimisticRequestsRef.current));
         }
       } catch {
         if (active) {
-          setQueue(ticketQueue);
+          setQueue(mergeOptimisticRequests(ticketQueue, optimisticRequestsRef.current));
         }
       }
     }
@@ -618,7 +765,7 @@ export function AppShell() {
           const fallback = getTicketDetail(selectedRequestId);
           setRequestDetails((current) => ({
             ...current,
-            [fallback.id]: fallback,
+            [selectedRequestId]: current[selectedRequestId] ?? fallback,
           }));
         }
       }
@@ -636,6 +783,48 @@ export function AppShell() {
       setFeedbackOpen(true);
     }
   }, [feedbackParam]);
+
+  useEffect(() => {
+    if (!requestModalOpen) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !requestSubmitting) {
+        closeRequestModal();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [requestModalOpen, requestSubmitting]);
+
+  useEffect(() => {
+    if (!requestModalOpen) {
+      return;
+    }
+
+    let active = true;
+    async function loadSites() {
+      const liveSites = await listMySites().catch(() => []);
+      const nextSites = liveSites.length > 0 ? liveSites : getFallbackSites(queue);
+      if (!active) {
+        return;
+      }
+      setRequestSites(nextSites);
+      setRequestSiteId((current) => current || nextSites[0]?.id || "");
+    }
+
+    void loadSites();
+
+    return () => {
+      active = false;
+    };
+  }, [requestModalOpen, queue]);
+
+  useEffect(() => {
+    if (requestType === "urgent_issue") {
+      setRequestUrgency("urgent");
+    }
+  }, [requestType]);
 
   const activeRequests = useMemo(
     () => queue.filter((ticket) => ACTIVE_REQUEST_STATUSES.has(ticket.status)),
@@ -679,7 +868,246 @@ export function AppShell() {
     WEBSITE_ACCESS_PLATFORMS.find((platform) => platform.key === selectedPlatformKey) ?? WEBSITE_ACCESS_PLATFORMS[0];
 
   function openRequestSurface() {
-    navigate("/requests");
+    setRequestModalOpen(true);
+  }
+
+  function closeRequestModal() {
+    if (requestSubmitting) {
+      return;
+    }
+    if (!requestSuccess) {
+      for (const attachment of requestAttachments) {
+        if (attachment.previewUrl) {
+          URL.revokeObjectURL(attachment.previewUrl);
+        }
+        if (attachment.status === "ready" && attachment.storagePath.startsWith("drafts/")) {
+          void removeRequestAttachment(attachment.storagePath);
+        }
+      }
+    }
+    setRequestModalOpen(false);
+    setRequestType("website_update");
+    setRequestUrgency("normal");
+    setRequestTitle("");
+    setRequestDescription("");
+    setRequestSiteId("");
+    setRequestAttachments([]);
+    setRequestDraftId(getRandomId("draft"));
+    setRequestDragActive(false);
+    setRequestSubmitting(false);
+    setRequestError(null);
+    setRequestSuccess(null);
+  }
+
+  async function addRequestFiles(fileList: FileList | File[]) {
+    const files = Array.from(fileList);
+    if (files.length === 0) {
+      return;
+    }
+
+    setRequestError(null);
+    for (const file of files) {
+      const attachmentId = getRandomId("attachment");
+      const previewUrl = URL.createObjectURL(file);
+      const mimeType = inferMimeType(file);
+      const local: AttachmentState = {
+        id: attachmentId,
+        storagePath: "",
+        fileName: file.name,
+        mimeType,
+        fileSizeBytes: file.size,
+        publicUrl: "",
+        status: "uploading",
+        previewUrl,
+        error: null,
+      };
+
+      setRequestAttachments((current) => [...current, local]);
+
+      if (!isAcceptedAttachment(file)) {
+        setRequestAttachments((current) =>
+          current.map((item) =>
+            item.id === attachmentId ? { ...item, status: "error", error: "unsupported file type" } : item,
+          ),
+        );
+        continue;
+      }
+
+      const canUploadNow = Boolean(user) && isUuid(requestSiteId);
+      if (!canUploadNow) {
+        setRequestAttachments((current) =>
+          current.map((item) =>
+            item.id === attachmentId
+              ? {
+                  ...item,
+                  storagePath: `local/${requestDraftId}/${attachmentId}/${file.name}`,
+                  publicUrl: previewUrl,
+                  status: "ready",
+                }
+              : item,
+          ),
+        );
+        continue;
+      }
+
+      try {
+        const uploaded = await uploadRequestAttachment(file, requestDraftId);
+        setRequestAttachments((current) =>
+          current.map((item) =>
+            item.id === attachmentId
+              ? {
+                  ...item,
+                  ...uploaded,
+                  status: "ready",
+                  error: null,
+                }
+              : item,
+          ),
+        );
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "attachment_upload_failed";
+        setRequestAttachments((current) =>
+          current.map((item) =>
+            item.id === attachmentId
+              ? {
+                  ...item,
+                  status: "error",
+                  error: message === "unsupported_attachment_type" ? "unsupported file type" : message,
+                }
+              : item,
+          ),
+        );
+      }
+    }
+  }
+
+  function removeModalAttachment(attachmentId: string) {
+    setRequestAttachments((current) => {
+      const attachment = current.find((item) => item.id === attachmentId);
+      if (attachment?.previewUrl) {
+        URL.revokeObjectURL(attachment.previewUrl);
+      }
+      if (attachment?.status === "ready" && attachment.storagePath.startsWith("drafts/")) {
+        void removeRequestAttachment(attachment.storagePath);
+      }
+      return current.filter((item) => item.id !== attachmentId);
+    });
+  }
+
+  async function submitNewRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!requestSiteId) {
+      setRequestError("choose a website before submitting.");
+      return;
+    }
+    if (!requestTitle.trim()) {
+      setRequestError("add a short title.");
+      return;
+    }
+    if (requestAttachments.some((item) => item.status === "uploading")) {
+      setRequestError("wait for files to finish uploading.");
+      return;
+    }
+    if (requestAttachments.some((item) => item.status === "error")) {
+      setRequestError("remove or replace files with upload errors.");
+      return;
+    }
+
+    const selectedSite = requestSites.find((site) => site.id === requestSiteId) ?? requestSites[0];
+    const readyAttachments = requestAttachments.filter((item) => item.status === "ready" && item.storagePath.length > 0);
+    const priority = urgencyToPriority(requestUrgency);
+    const now = new Date().toISOString();
+    const displayTitle = `${requestType}: ${requestTitle.trim()}`;
+    const encodedDescription = encodeRequestDescription(requestType, requestUrgency, requestDescription);
+    const liveSubmission = Boolean(user) && isUuid(requestSiteId);
+
+    setRequestSubmitting(true);
+    setRequestError(null);
+
+    try {
+      const result = liveSubmission
+        ? await submitCustomerRequestWithAttachments({
+            siteId: requestSiteId,
+            title: displayTitle,
+            description: encodedDescription,
+            priority,
+            attachments: readyAttachments.map((item) => ({
+              storagePath: item.storagePath,
+              fileName: item.fileName,
+              mimeType: item.mimeType,
+              fileSizeBytes: item.fileSizeBytes,
+            })),
+          })
+        : {
+            ticket_id: getRandomId("local-ticket"),
+            ticket_number: `REQ-${Date.now().toString(36).toUpperCase()}`,
+            status: "received",
+          };
+
+      const queueItem: MockTicketQueueItem = {
+        id: result.ticket_number,
+        workflowId: result.ticket_id,
+        title: displayTitle,
+        status: "received",
+        priority,
+        submittedBy: user?.email ?? "customer",
+        updatedAt: now,
+        siteId: selectedSite?.id ?? requestSiteId,
+        siteName: selectedSite?.name ?? "selected_site",
+        clientId: queue[0]?.clientId ?? "CLI-REQUEST",
+        clientName: queue[0]?.clientName ?? ACCOUNT_SUMMARY.company,
+        identityConfidence: liveSubmission ? "claimed" : "unknown",
+      };
+
+      const detail: MockTicketDetail = {
+        id: result.ticket_number,
+        workflowId: result.ticket_id,
+        summary: displayTitle,
+        customerRequest: encodedDescription,
+        status: "received",
+        priority,
+        identityConfidence: queueItem.identityConfidence,
+        tenantContext: {
+          agencyId: queue[0]?.workflowId ?? "AG-REQUEST",
+          agencyName: "website_support_studio",
+          clientId: queueItem.clientId,
+          clientName: queueItem.clientName,
+          siteId: queueItem.siteId,
+          siteName: queueItem.siteName,
+        },
+        submittedBy: queueItem.submittedBy,
+        submittedAt: now,
+        approvalStatus: "not_required",
+        auditTimeline: [
+          {
+            id: getRandomId("audit"),
+            ticketId: result.ticket_number,
+            eventType: "request_received",
+            summary: `${requestType} submitted with ${requestUrgency} urgency.`,
+            actor: queueItem.submittedBy,
+            occurredAt: now,
+          },
+        ],
+        attachments: readyAttachments.map((item) => ({
+          id: item.id,
+          fileName: item.fileName,
+          mimeType: item.mimeType,
+          fileSizeBytes: item.fileSizeBytes,
+          publicUrl: item.publicUrl || item.previewUrl || "",
+          createdAt: now,
+        })),
+      };
+
+      optimisticRequestsRef.current = mergeOptimisticRequests([queueItem], optimisticRequestsRef.current);
+      setQueue((current) => [queueItem, ...current.filter((ticket) => ticket.id !== queueItem.id)]);
+      setRequestDetails((current) => ({ ...current, [queueItem.id]: detail }));
+      setSelectedRequestId(queueItem.id);
+      setRequestSuccess(detail);
+    } catch (err) {
+      setRequestError(err instanceof Error ? err.message : "submit_failed");
+    } finally {
+      setRequestSubmitting(false);
+    }
   }
 
   async function startTopupCheckout(addon: CreditTopupKey) {
@@ -880,7 +1308,7 @@ export function AppShell() {
                           <button
                             key={ticket.id}
                             type="button"
-                            className="wss-board-card"
+                            className={isElevatedPriority(ticket.priority) ? "wss-board-card is-urgent" : "wss-board-card"}
                             onClick={() => {
                               setSelectedRequestId(ticket.id);
                               navigate("/requests");
@@ -893,6 +1321,11 @@ export function AppShell() {
                             <span>
                               priority: {formatPriority(ticket.priority)} · status: <MonoLabel text={ticket.status} />
                             </span>
+                            {isElevatedPriority(ticket.priority) ? (
+                              <span className="wss-priority-flag">
+                                <MonoLabel text={ticket.priority === "urgent" || ticket.priority === "critical" ? "urgent_flag" : "high_priority"} />
+                              </span>
+                            ) : null}
                           </button>
                         ))
                       )}
@@ -918,7 +1351,11 @@ export function AppShell() {
                       <button
                         key={ticket.id}
                         type="button"
-                        className={selectedRequestId === ticket.id ? "wss-request-item is-active" : "wss-request-item"}
+                        className={[
+                          "wss-request-item",
+                          selectedRequestId === ticket.id ? "is-active" : "",
+                          isElevatedPriority(ticket.priority) ? "is-urgent" : "",
+                        ].filter(Boolean).join(" ")}
                         onClick={() => setSelectedRequestId(ticket.id)}
                       >
                         <strong>{ticket.title}</strong>
@@ -928,6 +1365,11 @@ export function AppShell() {
                         <span>
                           <MonoLabel text={ticket.status} /> · {ticket.priority}
                         </span>
+                        {isElevatedPriority(ticket.priority) ? (
+                          <span className="wss-priority-flag">
+                            <MonoLabel text={ticket.priority === "urgent" || ticket.priority === "critical" ? "urgent_flag" : "high_priority"} />
+                          </span>
+                        ) : null}
                       </button>
                     ))}
                   </div>
@@ -938,6 +1380,13 @@ export function AppShell() {
                     title={selectedRequest.summary}
                     description={`${selectedRequest.tenantContext.clientName} / ${selectedRequest.tenantContext.siteName}`}
                   />
+
+                  {isElevatedPriority(selectedRequest.priority) ? (
+                    <div className="wss-urgent-callout">
+                      <MonoLabel text={selectedRequest.priority === "urgent" || selectedRequest.priority === "critical" ? "urgent_flag" : "high_priority"} />
+                      <span>customer service should review this request first.</span>
+                    </div>
+                  ) : null}
 
                   <dl className="wss-detail-grid">
                     <div>
@@ -1148,7 +1597,7 @@ export function AppShell() {
                           <p>{topup.note}</p>
                           <button
                             type="button"
-                            className="wss-primary-button"
+                            className="wss-soft-cta"
                             onClick={() => void startTopupCheckout(topup.key)}
                             disabled={topupLoading !== null}
                           >
@@ -1360,6 +1809,232 @@ export function AppShell() {
           ) : null}
         </main>
       </div>
+
+      {requestModalOpen ? (
+        <div className="wss-modal-backdrop" onClick={closeRequestModal} role="presentation">
+          <div
+            className="wss-modal wss-request-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wss-request-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="wss-modal-header">
+              <div>
+                <p className="wss-card-kicker">
+                  <MonoLabel text="website_support_studio" />
+                </p>
+                <h2 id="wss-request-modal-title">
+                  <MonoLabel text="new_request" />
+                </h2>
+                <p className="wss-section-description">
+                  choose the work type, urgency, website, and attach screenshots or files.
+                </p>
+              </div>
+              <button type="button" className="wss-icon-button" onClick={closeRequestModal} aria-label="close new request">
+                x
+              </button>
+            </div>
+
+            {requestSuccess ? (
+              <div className="wss-modal-success">
+                <p className="wss-section-description">
+                  <MonoLabel text="request_submitted" />
+                </p>
+                <p className="wss-copy">
+                  {requestSuccess.id} is now in the <MonoLabel text="new" /> board column.
+                </p>
+                <div className="wss-modal-actions">
+                  <button
+                    type="button"
+                    className="wss-soft-cta"
+                    onClick={() => {
+                      closeRequestModal();
+                      navigate("/requests");
+                    }}
+                  >
+                    view_request
+                  </button>
+                  <button type="button" className="wss-secondary-button" onClick={closeRequestModal}>
+                    close
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form className="wss-request-form" onSubmit={(event) => void submitNewRequest(event)}>
+                <div className="wss-form-grid">
+                  <label className="wss-field">
+                    <span className="wss-field-label">
+                      <MonoLabel text="request_type" />
+                    </span>
+                    <select
+                      className="wss-input"
+                      value={requestType}
+                      onChange={(event: ChangeEvent<HTMLSelectElement>) => setRequestType(event.target.value as RequestType)}
+                    >
+                      {REQUEST_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="wss-field">
+                    <span className="wss-field-label">
+                      <MonoLabel text="urgency" />
+                    </span>
+                    <select
+                      className="wss-input"
+                      value={requestUrgency}
+                      onChange={(event: ChangeEvent<HTMLSelectElement>) => setRequestUrgency(event.target.value as RequestUrgency)}
+                    >
+                      {REQUEST_URGENCIES.map((urgency) => (
+                        <option key={urgency} value={urgency}>
+                          {urgency}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                {requestUrgency === "urgent" ? (
+                  <div className="wss-urgent-callout">
+                    <MonoLabel text="urgent_flag" />
+                    <span>this request will be flagged for the customer service agent.</span>
+                  </div>
+                ) : null}
+
+                <label className="wss-field">
+                  <span className="wss-field-label">
+                    <MonoLabel text="title" />
+                  </span>
+                  <input
+                    className="wss-input"
+                    value={requestTitle}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => setRequestTitle(event.target.value)}
+                    placeholder="short summary"
+                    required
+                  />
+                </label>
+
+                <label className="wss-field">
+                  <span className="wss-field-label">
+                    <MonoLabel text="description" />
+                  </span>
+                  <textarea
+                    value={requestDescription}
+                    onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setRequestDescription(event.target.value)}
+                    placeholder="what changed, what broke, or what should WSS look at?"
+                  />
+                </label>
+
+                <label className="wss-field">
+                  <span className="wss-field-label">
+                    <MonoLabel text="website_site" />
+                  </span>
+                  <select
+                    className="wss-input"
+                    value={requestSiteId}
+                    onChange={(event: ChangeEvent<HTMLSelectElement>) => setRequestSiteId(event.target.value)}
+                    disabled={requestSites.length === 0}
+                  >
+                    {requestSites.length === 0 ? (
+                      <option value="">no websites available</option>
+                    ) : (
+                      requestSites.map((site) => (
+                        <option key={site.id} value={site.id}>
+                          {site.name}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                </label>
+
+                <div
+                  className={requestDragActive ? "wss-dropzone is-active" : "wss-dropzone"}
+                  onDragOver={(event: DragEvent<HTMLDivElement>) => {
+                    event.preventDefault();
+                    setRequestDragActive(true);
+                  }}
+                  onDragLeave={() => setRequestDragActive(false)}
+                  onDrop={(event: DragEvent<HTMLDivElement>) => {
+                    event.preventDefault();
+                    setRequestDragActive(false);
+                    void addRequestFiles(event.dataTransfer.files);
+                  }}
+                >
+                  <div>
+                    <strong>
+                      <MonoLabel text="attachments" />
+                    </strong>
+                    <p>images, pdf, doc, docx, csv, txt, zip</p>
+                  </div>
+                  <label className="wss-upload-button">
+                    <input
+                      type="file"
+                      multiple
+                      accept={ACCEPT_ATTR}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        if (event.target.files) {
+                          void addRequestFiles(event.target.files);
+                        }
+                        event.target.value = "";
+                      }}
+                    />
+                    attach_files
+                  </label>
+                </div>
+
+                {requestAttachments.length > 0 ? (
+                  <div className="wss-request-attachment-grid">
+                    {requestAttachments.map((attachment) => (
+                      <article key={attachment.id} className="wss-request-attachment-card">
+                        {isImageMimeType(attachment.mimeType) && (attachment.publicUrl || attachment.previewUrl) ? (
+                          <img
+                            src={attachment.publicUrl || attachment.previewUrl || ""}
+                            alt={attachment.fileName}
+                            className="wss-request-attachment-thumb"
+                          />
+                        ) : (
+                          <div className="wss-request-attachment-mark">
+                            <MonoLabel text={getAttachmentLabel(attachment.mimeType)} />
+                          </div>
+                        )}
+                        <div className="wss-request-attachment-meta">
+                          <strong>{attachment.fileName}</strong>
+                          <span>{formatBytes(attachment.fileSizeBytes)}</span>
+                          <span>{attachment.status === "error" ? attachment.error : attachment.status}</span>
+                          <div className="wss-request-attachment-actions">
+                            <button type="button" onClick={() => removeModalAttachment(attachment.id)}>
+                              remove
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : null}
+
+                {requestError ? (
+                  <p className="wss-inline-error" role="alert">
+                    {requestError}
+                  </p>
+                ) : null}
+
+                <div className="wss-modal-actions">
+                  <button type="button" className="wss-secondary-button" onClick={closeRequestModal}>
+                    cancel
+                  </button>
+                  <button type="submit" className="wss-soft-cta" disabled={requestSubmitting || requestSites.length === 0}>
+                    {requestSubmitting ? "submitting" : "submit_request"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      ) : null}
 
       <button type="button" className="wss-feedback-launcher" onClick={() => setFeedbackOpen(true)}>
         feedback

@@ -606,13 +606,12 @@ pre {
 /* ============================================================================
  * Phase A — Auth screens (login / callback / workspace-setup placeholder)
  *
- * CTA is GREEN (the WSS CTA color); brand blue stays for identity/links only.
- * --cta-green is tunable — chosen for AA-large contrast with white bold text.
+ * CTA is a soft mint-green; brand blue stays for identity/links only.
  * ============================================================================ */
 :root {
-  --cta-green: #16a34a;
-  --cta-green-hover: #128a3e;
-  --cta-green-text: #ffffff;
+  --cta-green: #b8efd8;
+  --cta-green-hover: #9ee6c8;
+  --cta-green-text: var(--text-strong);
 }
 
 .auth-screen {
@@ -1286,15 +1285,18 @@ pre {
 }
 
 .wss-sidebar {
+  position: sticky;
+  top: 0.75rem;
+  align-self: start;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
   min-height: 0;
+  max-height: calc(100vh - 1.5rem);
+  overflow: auto;
 }
 
 .wss-nav {
-  position: sticky;
-  top: 0.75rem;
   display: grid;
   gap: 0.45rem;
   padding: 0.85rem;
@@ -1357,18 +1359,18 @@ pre {
   justify-content: center;
   padding: 0.8rem 1rem;
   border-radius: 16px;
-  border: 1px solid #34d399;
-  background: #34d399;
+  border: 1px solid var(--cta-green);
+  background: var(--cta-green);
   color: var(--text-strong);
-  box-shadow: 0 16px 34px rgba(52, 211, 153, 0.26);
+  box-shadow: 0 16px 34px rgba(52, 211, 153, 0.16);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
 }
 
 .wss-sidebar-cta:hover {
-  background: #2bbe8a;
-  border-color: #2bbe8a;
+  background: var(--cta-green-hover);
+  border-color: var(--cta-green-hover);
   transform: translateY(-1px);
 }
 
@@ -1563,9 +1565,26 @@ pre {
   transform: translateY(-1px);
 }
 
+.wss-board-card.is-urgent,
+.wss-request-item.is-urgent {
+  border-color: rgba(168, 52, 137, 0.34);
+  background: linear-gradient(135deg, rgba(244, 177, 66, 0.13), rgba(255, 255, 255, 0.94));
+}
+
 .wss-request-item.is-active {
   border-color: rgba(4, 67, 251, 0.22);
   background: rgba(4, 67, 251, 0.06);
+}
+
+.wss-priority-flag {
+  width: fit-content;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(168, 52, 137, 0.1);
+  color: var(--tone-mulberry-text);
+  border: 1px solid rgba(168, 52, 137, 0.18);
+  font-size: 0.68rem;
+  font-weight: 800;
 }
 
 .wss-split {
@@ -1920,7 +1939,27 @@ pre {
   line-height: 1.5;
 }
 
+.wss-input,
+.wss-field input,
+.wss-field select {
+  width: 100%;
+  min-height: 2.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  padding: 0.75rem 0.85rem;
+  font: inherit;
+}
+
 .wss-field textarea:focus {
+  outline: 2px solid rgba(4, 67, 251, 0.18);
+  border-color: rgba(4, 67, 251, 0.3);
+}
+
+.wss-input:focus,
+.wss-field input:focus,
+.wss-field select:focus {
   outline: 2px solid rgba(4, 67, 251, 0.18);
   border-color: rgba(4, 67, 251, 0.3);
 }
@@ -1941,7 +1980,29 @@ pre {
   color: #ffffff;
 }
 
-.wss-primary-button:disabled {
+.wss-soft-cta {
+  min-height: 2.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--cta-green);
+  background: var(--cta-green);
+  color: var(--text-strong);
+  box-shadow: 0 12px 26px rgba(52, 211, 153, 0.16);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wss-soft-cta:hover {
+  background: var(--cta-green-hover);
+  border-color: var(--cta-green-hover);
+}
+
+.wss-primary-button:disabled,
+.wss-soft-cta:disabled {
   opacity: 0.65;
   cursor: progress;
 }
@@ -1956,6 +2017,79 @@ pre {
   display: flex;
   gap: 0.65rem;
   flex-wrap: wrap;
+}
+
+.wss-request-modal {
+  place-self: center;
+}
+
+.wss-request-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.wss-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.wss-urgent-callout {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border-radius: 16px;
+  border: 1px solid rgba(168, 52, 137, 0.2);
+  background: linear-gradient(135deg, rgba(244, 177, 66, 0.16), rgba(168, 52, 137, 0.08));
+  color: var(--text-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.wss-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px dashed rgba(4, 67, 251, 0.28);
+  background: rgba(4, 67, 251, 0.04);
+}
+
+.wss-dropzone.is-active {
+  border-color: rgba(4, 67, 251, 0.48);
+  background: rgba(4, 67, 251, 0.08);
+}
+
+.wss-dropzone strong,
+.wss-dropzone p {
+  margin: 0;
+}
+
+.wss-dropzone p {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.wss-upload-button {
+  min-height: 2.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+  color: var(--text-strong);
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.wss-upload-button input {
+  display: none;
 }
 
 .wss-feedback-launcher {
@@ -2003,6 +2137,12 @@ pre {
 }
 
 @media (max-width: 860px) {
+  .wss-sidebar {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
   .wss-nav {
     position: static;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2053,6 +2193,22 @@ pre {
 
   .wss-platform-card {
     min-height: 5.5rem;
+  }
+
+  .wss-form-grid,
+  .wss-dropzone {
+    grid-template-columns: 1fr;
+  }
+
+  .wss-dropzone {
+    display: grid;
+    align-items: stretch;
+  }
+
+  .wss-upload-button,
+  .wss-request-form .wss-soft-cta,
+  .wss-request-form .wss-secondary-button {
+    width: 100%;
   }
 
   .wss-request-attachment-grid {
