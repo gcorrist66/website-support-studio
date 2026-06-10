@@ -69,7 +69,7 @@ export const PLANS = [
     sites: "1 website",
     cu: "50 Capacity Units / month",
     blurb: "Managed website operations for a single revenue-critical site.",
-    founderBlurb: "The same Operations plan at a lower introductory rate for the first 6 months.",
+    founderBlurb: "Same Operations plan at founder pricing for the first 6 months, then standard pricing after the founder period ends.",
     points: [
       "Single-desk request intake",
       "Operator-led support with mandatory human approval",
