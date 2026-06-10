@@ -5,7 +5,7 @@
 // this function's env — never in the browser. Price IDs are read from env so no IDs are
 // hardcoded. The marketing "join now" button POSTs here.
 //
-// Body: { plan?: "operations"|"growth", addon?: "topup_50"|"topup_100"|"topup_250"|"dns",
+// Body: { plan?: "operations"|"operations_founder"|"growth", addon?: "topup_50"|"topup_100"|"topup_250"|"dns",
 //         email?: string }
 //   - plan  -> subscription-mode checkout (recurring)
 //   - addon -> payment-mode checkout (one-time); requires an existing customer org context later
@@ -26,6 +26,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
 
 const PLAN_PRICE: Record<string, string | undefined> = {
   operations: Deno.env.get("STRIPE_PRICE_OPERATIONS"),
+  operations_founder: Deno.env.get("STRIPE_PRICE_OPERATIONS"),
   growth: Deno.env.get("STRIPE_PRICE_GROWTH"),
 };
 const ADDON_PRICE: Record<string, string | undefined> = {
@@ -51,8 +52,25 @@ Deno.serve(async (req) => {
     let mode: "subscription" | "payment";
     let price: string | undefined;
     let metadata: Record<string, string> = {};
+    let discounts: Array<{ coupon: string }> | undefined;
+    let allowPromotionCodes = true;
 
-    if (body.plan && PLAN_PRICE[body.plan]) {
+    if (body.plan === "operations_founder" && PLAN_PRICE.operations_founder) {
+      mode = "subscription";
+      price = PLAN_PRICE.operations_founder;
+      const founderCoupon = await stripe.coupons.create({
+        percent_off: 50,
+        duration: "once",
+        max_redemptions: 1,
+        metadata: {
+          plan: "operations",
+          pricing_tier: "founder",
+        },
+      });
+      discounts = [{ coupon: founderCoupon.id }];
+      allowPromotionCodes = false;
+      metadata = { plan: "operations", pricing_tier: "founder", kind: "plan" };
+    } else if (body.plan && PLAN_PRICE[body.plan]) {
       mode = "subscription";
       price = PLAN_PRICE[body.plan];
       metadata = { plan: body.plan, kind: "plan" };
@@ -71,7 +89,8 @@ Deno.serve(async (req) => {
       mode,
       line_items: [{ price, quantity: 1 }],
       customer_email: typeof body.email === "string" && body.email ? body.email : undefined,
-      allow_promotion_codes: true,
+      ...(allowPromotionCodes ? { allow_promotion_codes: true } : {}),
+      ...(discounts ? { discounts } : {}),
       metadata,
       // Carry plan onto the subscription so the webhook can read it on subscription events.
       ...(mode === "subscription" ? { subscription_data: { metadata } } : {}),
