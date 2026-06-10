@@ -1,1429 +1,1104 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 
+import { useAuth } from "../../auth/AuthProvider";
 import { LogoLockup } from "../brand/LogoLockup";
-import { ReadOnlyTicketDetail } from "../tickets/ReadOnlyTicketDetail";
-import { ReadOnlyTicketQueue } from "../tickets/ReadOnlyTicketQueue";
-import { ActorRole } from "../../domain/ticketStatus";
+import { MonoLabel } from "../brand/MonoLabel";
+import { submitCustomerFeedback, type FeedbackCategory } from "../../data/customerRequests";
+import { loadOperatorPilotStatus, createEmptyOperatorPilotStatus, type OperatorPilotStatus } from "../../data/operatorPilotStatus";
 import {
-  handleApproveReply,
-  handleCloseTicket,
-  handleDraftReply,
-  handleRejectReply,
-  handleRequestApproval,
-  handleSendApprovedReply,
-  handleTriageTicket,
-} from "../../handlers/ticketWorkflowHandlers";
+  ticketDetails,
+  ticketQueue,
+  type MockTicketDetail,
+  type MockTicketQueueItem,
+} from "../../ui/mockData";
 import {
-  getReadOnlyApprovalQueue,
-  getReadOnlyModeLabel,
-  getReadOnlySendContext,
-  getReadOnlyTicketAuditTimeline,
   getReadOnlyTicketDetail,
   getReadOnlyTicketQueue,
-  getReadOnlyDataMode,
 } from "../../data/readOnlyTicketData";
-import { operatorWorkflow } from "../../data/operatorWorkflow";
-import { auditTrail, getTicketDetail, ticketQueue, type MockApprovalItem, type MockAuditEvent, type MockTicketQueueItem } from "../../ui/mockData";
-import { filterTickets, getSearchFilterSummary, type TicketSearchFilters } from "../../search/ticketSearch";
-import {
-  DEV_ADAPTER_PRINCIPAL_PRESETS,
-  DEV_OPERATOR_ROLE_OPTIONS,
-  DEV_PREVIEW_OPERATOR_ROWS,
-  type DevOperatorRoleChoice,
-} from "../../auth/devOperatorSession";
-import {
-  createAdapterPrincipalAuthState,
-  createDevRoleSwitcherAuthState,
-  getActiveCapabilityFlags,
-  getActiveOperatorSession,
-  type AuthMode,
-} from "../../auth/localAuthMode";
-import { LoginShell } from "../auth/LoginShell";
-import { SessionSourcePrototype } from "../auth/SessionSourcePrototype";
-import { buildLoginShellState, type LoginShellStatus } from "../../auth/loginShellState";
-import { OperatorPilotStatusCard } from "../operator/OperatorPilotStatusCard";
-import { LaunchAccountPreview } from "../operator/LaunchAccountPreview";
-import { OperatorBoard } from "../operator/OperatorBoard";
-import { OperatorFeedbackSurface } from "../operator/OperatorFeedbackSurface";
-import { CreateTicketForm } from "../tickets/CreateTicketForm";
-import { MonoLabel } from "../brand/MonoLabel";
-import {
-  createDisabledSessionReadState,
-  createExistingSessionShapeReadState,
-  createSyntheticSessionReadState,
-  describeDevSessionReadState,
-  DEV_SESSION_READ_MODE_OPTIONS,
-  type DevSupabaseSessionReadMode,
-} from "../../auth/devSupabaseSessionRead";
 
-function formatOperatorDateTime(value: string): string {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
+type ConsoleSection = "overview" | "board" | "requests" | "profile" | "website_access" | "activity" | "health";
+type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
+
+const SECTION_ORDER: ConsoleSection[] = [
+  "overview",
+  "board",
+  "requests",
+  "profile",
+  "website_access",
+  "activity",
+  "health",
+];
+
+const FEEDBACK_TABS: Array<{ key: FeedbackTab; label: string; category: FeedbackCategory; hint: string }> = [
+  {
+    key: "bug_report",
+    label: "bug_report",
+    category: "bug_report",
+    hint: "Something is broken, confusing, or behaving unexpectedly.",
+  },
+  {
+    key: "feature_request",
+    label: "feature_request",
+    category: "feature_request",
+    hint: "A workflow or capability you want to add.",
+  },
+  {
+    key: "general_feedback",
+    label: "general_feedback",
+    category: "feedback",
+    hint: "General comments, praise, or process notes.",
+  },
+];
+
+const ACCOUNT_SUMMARY = {
+  profile: "gary",
+  company: "north_coast_retail",
+  website: "northcoast.example",
+  currentPlan: "operations",
+  billingStatus: "active",
+  creditsIncluded: 40,
+  creditsUsed: 22,
+  creditsRemaining: 18,
+  lowEffortExplanation: "small edits, content swaps, and quick fixes usually stay within the included allowance.",
+  mediumEffortExplanation: "single-page changes, plugin updates, and structured content work use more capacity.",
+  highEffortExplanation: "multi-step repairs, staging coordination, and broader site changes consume the most capacity.",
+  replenishmentMessaging:
+    "when credits run low, lower-effort requests stay visible while bigger work is queued until replenishment.",
+};
+
+const WEBSITE_ACCESS_GROUPS = [
+  {
+    key: "required",
+    label: "required",
+    tone: "blue",
+    items: [
+      "WordPress admin access for content edits, plugin work, and theme configuration.",
+      "Hosting access when we need deployment controls, file access, or environment settings.",
+      "DNS / domain access when routing, records, or certificate work is part of the request.",
+    ],
+  },
+  {
+    key: "recommended",
+    label: "recommended",
+    tone: "amber",
+    items: [
+      "Theme and plugin access so we can resolve layout or integration issues faster.",
+      "CMS access for page edits, structured content updates, and reusable blocks.",
+      "Staging access so we can verify changes before anything touches production.",
+    ],
+  },
+  {
+    key: "optional",
+    label: "optional",
+    tone: "mulberry",
+    items: [
+      "Backup guidance if you already have a preferred recovery or snapshot routine.",
+      "Design system notes when brand assets or editorial rules are important.",
+      "Analytics or reporting access only if a specific request needs it. Not required for normal support.",
+    ],
+  },
+] as const;
+
+const ACTIVE_REQUEST_STATUSES = new Set<MockTicketQueueItem["status"]>([
+  "received",
+  "triaged",
+  "blocked",
+  "awaiting_gary_approval",
+  "reply_drafted",
+  "approved_to_send",
+]);
+
+function getSectionFromPath(pathname: string): ConsoleSection {
+  const cleaned = pathname.replace(/\/+$/, "");
+  const segment = cleaned.split("/").filter(Boolean)[0];
+  if (segment && SECTION_ORDER.includes(segment as ConsoleSection)) {
+    return segment as ConsoleSection;
+  }
+  return "overview";
+}
+
+function isSectionPath(pathname: string): boolean {
+  return SECTION_ORDER.some((section) => pathname === `/${section}` || pathname.startsWith(`/${section}/`));
+}
+
+function formatDateTime(value: string | null | undefined): string {
+  if (!value) {
+    return "not available";
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
     return value;
   }
   return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(parsed);
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
 }
 
-function getUniqueCount(items: Array<{ clientId?: string; siteId?: string }>, key: "clientId" | "siteId"): number {
-  return new Set(
-    items.map((item) => item[key]).filter((value): value is string => typeof value === "string" && value.trim().length > 0),
-  ).size;
+function formatCount(value: number | null | undefined): string {
+  return value === null || value === undefined ? "not available" : value.toLocaleString("en-US");
 }
 
-function getRecentItems(items: MockTicketQueueItem[], limit = 3): MockTicketQueueItem[] {
-  return [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, limit);
+function formatPriority(priority: MockTicketQueueItem["priority"]): string {
+  return priority;
 }
 
-const CONSOLE_SECTIONS = ["overview", "board", "queue", "feedback", "approvals", "activity", "health"] as const;
-type ConsoleSectionId = (typeof CONSOLE_SECTIONS)[number];
+function formatBytes(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) {
+    return "0 B";
+  }
+  const units = ["B", "KB", "MB", "GB"];
+  let size = value;
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit += 1;
+  }
+  return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
+}
 
-export function AppShell() {
-  const showDevelopmentPrototype =
-    typeof import.meta !== "undefined" ? (import.meta as { env?: { DEV?: boolean } }).env?.DEV ?? false : false;
-  const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
-  const [clientFilter, setClientFilter] = useState("all");
-  const [siteFilter, setSiteFilter] = useState("all");
-  const [blockedFilter, setBlockedFilter] = useState("all");
-  const [identityFilter, setIdentityFilter] = useState("all");
-  const [devOperatorRole, setDevOperatorRole] = useState<DevOperatorRoleChoice>("agency_admin");
-  const [authMode, setAuthMode] = useState<AuthMode>("dev_role_switcher");
-  const [adapterPrincipalId, setAdapterPrincipalId] = useState("");
-  const [viewMode, setViewMode] = useState<"workspace" | "auth_simulator">("workspace");
-  const [loginShellStatus, setLoginShellStatus] = useState<LoginShellStatus>("loading");
-  const [sessionReadMode, setSessionReadMode] = useState<DevSupabaseSessionReadMode>("disabled");
-  const [sessionReadPrincipalId, setSessionReadPrincipalId] = useState("");
-  const [selectedTicketId, setSelectedTicketId] = useState("TKT-LOCAL-1001");
-  const [selectedTicket, setSelectedTicket] = useState(() => getTicketDetail("TKT-LOCAL-1001"));
-  const [activeSection, setActiveSection] = useState<ConsoleSectionId>("overview");
-  const [auditTimeline, setAuditTimeline] = useState<MockAuditEvent[]>([]);
-  const [ticketQueueData, setTicketQueueData] = useState<MockTicketQueueItem[]>(ticketQueue);
-  const [approvalQueue, setApprovalQueue] = useState<MockApprovalItem[]>([]);
-  const [readOnlyMode, setReadOnlyMode] = useState<ReturnType<typeof getReadOnlyDataMode>>("mock");
-  const [triageMessage, setTriageMessage] = useState("");
-  const [triageError, setTriageError] = useState("");
-  const [triageInProgress, setTriageInProgress] = useState(false);
-  const [draftText, setDraftText] = useState("");
-  const [draftMessage, setDraftMessage] = useState("");
-  const [draftError, setDraftError] = useState("");
-  const [draftInProgress, setDraftInProgress] = useState(false);
-  const [approvalRequestMessage, setApprovalRequestMessage] = useState("");
-  const [approvalRequestError, setApprovalRequestError] = useState("");
-  const [approvalRequestInProgress, setApprovalRequestInProgress] = useState(false);
-  const [approvalDecisionMessage, setApprovalDecisionMessage] = useState("");
-  const [approvalDecisionError, setApprovalDecisionError] = useState("");
-  const [approvalDecisionInProgress, setApprovalDecisionInProgress] = useState(false);
-  const [sendReplyMessage, setSendReplyMessage] = useState("");
-  const [sendReplyError, setSendReplyError] = useState("");
-  const [sendReplyInProgress, setSendReplyInProgress] = useState(false);
-  const [closureNote, setClosureNote] = useState("");
-  const [closeTicketMessage, setCloseTicketMessage] = useState("");
-  const [closeTicketError, setCloseTicketError] = useState("");
-  const [closeTicketInProgress, setCloseTicketInProgress] = useState(false);
+function isImageMimeType(mimeType: string): boolean {
+  return mimeType.startsWith("image/");
+}
 
-  const loadReadOnlyData = async (modeOverride?: string) => {
-    const mode = modeOverride === "mock" || modeOverride === "supabase-dev-readonly" ? modeOverride : getReadOnlyDataMode();
-    setReadOnlyMode(mode);
+function boardLaneForTicket(ticket: MockTicketQueueItem): "new" | "triage" | "waiting_on_us" | "waiting_on_customer" | "review" | "complete" {
+  switch (ticket.status) {
+    case "received":
+      return "new";
+    case "triaged":
+      return "triage";
+    case "blocked":
+      return ticket.blockedReason?.toLowerCase().includes("customer") ? "waiting_on_customer" : "waiting_on_us";
+    case "reply_drafted":
+    case "awaiting_gary_approval":
+    case "approved_to_send":
+      return "review";
+    case "sent_to_customer":
+    case "closed":
+      return "complete";
+    default:
+      return "new";
+  }
+}
 
-    const [queue, approvals] = await Promise.all([
-      getReadOnlyTicketQueue(),
-      getReadOnlyApprovalQueue(),
-    ]);
+function getTicketDetail(ticketId: string): MockTicketDetail {
+  return ticketDetails.find((ticket) => ticket.id === ticketId) ?? ticketDetails[0];
+}
 
-    setTicketQueueData(queue);
-    setApprovalQueue(approvals);
-
-    const activeId = queue.find((ticket) => ticket.id === selectedTicketId)?.id ?? queue[0]?.id ?? selectedTicketId;
-    setSelectedTicketId(activeId);
-  };
-
-  useEffect(() => {
-    loadReadOnlyData().catch(() => {
-      setTicketQueueData(ticketQueue);
-      setApprovalQueue([]);
-      setReadOnlyMode("mock");
-    });
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const hydrateDetail = async () => {
-      const [detail, timeline] = await Promise.all([
-        getReadOnlyTicketDetail(selectedTicketId),
-        getReadOnlyTicketAuditTimeline(selectedTicketId),
-      ]);
-
-      if (!cancelled) {
-        setSelectedTicket(detail);
-        setAuditTimeline(timeline);
-      }
-    };
-
-    hydrateDetail().catch(() => {
-      if (!cancelled) {
-        setSelectedTicket(getTicketDetail(selectedTicketId));
-        setAuditTimeline(auditTrail);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedTicketId]);
-
-  const clients = useMemo(() => {
-    return Array.from(new Set(ticketQueueData.map((ticket) => ticket.clientName)));
-  }, [ticketQueueData]);
-
-  const sites = useMemo(() => {
-    return Array.from(new Set(ticketQueueData.map((ticket) => ticket.siteName)));
-  }, [ticketQueueData]);
-
-  const searchFilters: TicketSearchFilters = useMemo(
-    () => ({
-      searchText,
-      status: statusFilter,
-      priority: priorityFilter,
-      clientName: clientFilter,
-      siteName: siteFilter,
-      blocked: blockedFilter,
-      identityConfidence: identityFilter,
-    }),
-    [searchText, statusFilter, priorityFilter, clientFilter, siteFilter, blockedFilter, identityFilter],
+function OverviewCard({ title, value, note }: { title: string; value: string; note: string }) {
+  return (
+    <article className="wss-stat-card">
+      <p className="wss-card-kicker">
+        <MonoLabel text={title} />
+      </p>
+      <strong className="wss-stat-value">{value}</strong>
+      <p className="wss-card-note">{note}</p>
+    </article>
   );
+}
 
-  const filteredTickets: MockTicketQueueItem[] = useMemo(
-    () => filterTickets(ticketQueueData, searchFilters),
-    [ticketQueueData, searchFilters],
+function SectionHeading({
+  title,
+  eyebrow,
+  description,
+}: {
+  title: string;
+  eyebrow?: string;
+  description?: string;
+}) {
+  return (
+    <div className="wss-section-heading">
+      {eyebrow ? (
+        <p className="wss-card-kicker">
+          <MonoLabel text={eyebrow} />
+        </p>
+      ) : null}
+      <h2>
+        <MonoLabel text={title} />
+      </h2>
+      {description ? <p className="wss-section-description">{description}</p> : null}
+    </div>
   );
+}
 
-  const searchSummary = useMemo(
-    () => getSearchFilterSummary(searchFilters, filteredTickets.length),
-    [searchFilters, filteredTickets.length],
-  );
-
-  const operatorSummary = useMemo(() => {
-    const activeTickets = ticketQueueData.filter((ticket) => ticket.status !== "closed");
-    const blockedTickets = activeTickets.filter((ticket) => ticket.status === "blocked");
-    const urgentTickets = activeTickets.filter(
-      (ticket) => ticket.priority === "urgent" || ticket.priority === "critical",
-    );
-    const recentTickets = getRecentItems(ticketQueueData);
-
-    return {
-      activeCustomers: getUniqueCount(activeTickets, "clientId"),
-      openRequests: activeTickets.length,
-      pendingApprovals: approvalQueue.length,
-      activeProjects: getUniqueCount(activeTickets, "siteId"),
-      waitingOnUs: Math.max(activeTickets.length - blockedTickets.length, 0),
-      waitingOnCustomer: blockedTickets.length,
-      recentTickets,
-      atRiskTickets: blockedTickets.length > 0 ? blockedTickets : urgentTickets,
-    };
-  }, [approvalQueue, ticketQueueData]);
+function FeedbackModal({
+  open,
+  onClose,
+  defaultSiteId,
+}: {
+  open: boolean;
+  onClose: () => void;
+  defaultSiteId: string;
+}) {
+  const [tab, setTab] = useState<FeedbackTab>("general_feedback");
+  const [body, setBody] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState<{ ticketNumber: string; ticketId: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (filteredTickets.length > 0 && !filteredTickets.some((ticket) => ticket.id === selectedTicketId)) {
-      setSelectedTicketId(filteredTickets[0].id);
-    }
-  }, [filteredTickets, selectedTicketId]);
-
-  const handleTriageTicketAction = async () => {
-    if (readOnlyMode !== "supabase-dev-readonly") {
-      setTriageError("Triage is only available in guarded Supabase-dev data mode.");
+    if (!open) {
       return;
     }
-
-    if (!selectedTicket?.workflowId) {
-      setTriageError("No workflow identifier available for this ticket.");
-      return;
-    }
-
-    setTriageError("");
-    setTriageMessage("");
-    setTriageInProgress(true);
-
-    if (operatorWorkflow.isLive()) {
-      try {
-        await operatorWorkflow.triage(selectedTicket.workflowId, "Manual CS triage from operator console");
-      } catch (e) {
-        setTriageError(e instanceof Error ? e.message : "Triage failed.");
-        setTriageInProgress(false);
-        return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
       }
-      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-      setSelectedTicket(refreshed);
-      setAuditTimeline(timeline);
-      setTriageMessage(`Ticket ${selectedTicket.id} triaged successfully.`);
-      setTriageInProgress(false);
-      return;
-    }
-
-    const result = handleTriageTicket({
-      tenantContext: {
-        agencyId: selectedTicket.tenantContext.agencyId,
-        clientId: selectedTicket.tenantContext.clientId,
-        siteId: selectedTicket.tenantContext.siteId,
-      },
-      actorContext: {
-        actorRole: ActorRole.CS_AGENT,
-        actorReference: "phase5c-ui-operator",
-      },
-      ticketId: selectedTicket.workflowId,
-      rationale: "Manual CS triage from phase-5C UI",
-    });
-
-    if (result.status === "error") {
-      setTriageError(result.error);
-      setTriageMessage("");
-      setTriageInProgress(false);
-      return;
-    }
-
-    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-    setSelectedTicket(refreshed);
-    setAuditTimeline(timeline);
-    setTriageMessage(`Ticket ${selectedTicket.id} triaged successfully.`);
-    setTriageInProgress(false);
-  };
-
-  const handleDraftReplyAction = async () => {
-    if (readOnlyMode !== "supabase-dev-readonly") {
-      setDraftError("Draft reply is only available in guarded Supabase-dev data mode.");
-      return;
-    }
-
-    if (!selectedTicket?.workflowId) {
-      setDraftError("No workflow identifier available for this ticket.");
-      return;
-    }
-
-    const normalizedDraftText = draftText.trim();
-    if (!normalizedDraftText) {
-      setDraftError("Draft body is required.");
-      return;
-    }
-
-    setDraftError("");
-    setDraftMessage("");
-    setDraftInProgress(true);
-
-    if (operatorWorkflow.isLive()) {
-      try {
-        await operatorWorkflow.draftReply(selectedTicket.workflowId, normalizedDraftText);
-      } catch (e) {
-        setDraftError(e instanceof Error ? e.message : "Draft failed.");
-        setDraftInProgress(false);
-        return;
-      }
-      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-      setSelectedTicket(refreshed);
-      setAuditTimeline(timeline);
-      setDraftMessage(`Draft created for ticket ${selectedTicket.id}.`);
-      setDraftText("");
-      setDraftInProgress(false);
-      return;
-    }
-
-    const result = handleDraftReply({
-      tenantContext: {
-        agencyId: selectedTicket.tenantContext.agencyId,
-        clientId: selectedTicket.tenantContext.clientId,
-        siteId: selectedTicket.tenantContext.siteId,
-      },
-      actorContext: {
-        actorRole: ActorRole.CS_AGENT,
-        actorReference: "phase5d-ui-operator",
-      },
-      ticketId: selectedTicket.workflowId,
-      draftText: normalizedDraftText,
-    });
-
-    if (result.status === "error") {
-      setDraftError(result.error);
-      setDraftMessage("");
-      setDraftInProgress(false);
-      return;
-    }
-
-    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
-    setSelectedTicket(refreshed);
-    setAuditTimeline(timeline);
-    setDraftMessage(`Draft created for ticket ${selectedTicket.id}.`);
-    setDraftText("");
-    setDraftInProgress(false);
-  };
-
-  const handleRequestApprovalAction = async () => {
-    if (readOnlyMode !== "supabase-dev-readonly") {
-      setApprovalRequestError("Request approval is only available in guarded Supabase-dev data mode.");
-      return;
-    }
-
-    if (!selectedTicket?.workflowId) {
-      setApprovalRequestError("No workflow identifier available for this ticket.");
-      return;
-    }
-
-    setApprovalRequestError("");
-    setApprovalRequestMessage("");
-    setApprovalRequestInProgress(true);
-
-    if (operatorWorkflow.isLive()) {
-      try {
-        await operatorWorkflow.requestApproval(selectedTicket.workflowId);
-      } catch (e) {
-        setApprovalRequestError(e instanceof Error ? e.message : "Request approval failed.");
-        setApprovalRequestInProgress(false);
-        return;
-      }
-      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-      setSelectedTicket(refreshed);
-      setAuditTimeline(timeline);
-      setApprovalRequestMessage(`gary approval requested for ticket ${selectedTicket.id}.`);
-      setApprovalRequestInProgress(false);
-      return;
-    }
-
-    const result = handleRequestApproval({
-      tenantContext: {
-        agencyId: selectedTicket.tenantContext.agencyId,
-        clientId: selectedTicket.tenantContext.clientId,
-        siteId: selectedTicket.tenantContext.siteId,
-      },
-      actorContext: {
-        actorRole: ActorRole.CS_AGENT,
-        actorReference: "phase5e-ui-operator",
-      },
-      ticketId: selectedTicket.workflowId,
-      requestNotes: "Manual CS approval request from phase-5E UI",
-    });
-
-    if (result.status === "error") {
-      setApprovalRequestError(result.error);
-      setApprovalRequestMessage("");
-      setApprovalRequestInProgress(false);
-      return;
-    }
-
-    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
-    setSelectedTicket(refreshed);
-    setAuditTimeline(timeline);
-    setApprovalRequestMessage(`gary approval requested for ticket ${selectedTicket.id}.`);
-    setApprovalRequestInProgress(false);
-  };
-
-  const runApprovalDecision = async (decision: "approve" | "reject") => {
-    if (readOnlyMode !== "supabase-dev-readonly") {
-      setApprovalDecisionError("Approval decisions are only available in guarded Supabase-dev data mode.");
-      return;
-    }
-
-    if (!selectedTicket?.workflowId) {
-      setApprovalDecisionError("No workflow identifier available for this ticket.");
-      return;
-    }
-
-    setApprovalDecisionError("");
-    setApprovalDecisionMessage("");
-    setApprovalDecisionInProgress(true);
-
-    if (operatorWorkflow.isLive()) {
-      try {
-        if (decision === "approve") {
-          await operatorWorkflow.approve(selectedTicket.workflowId, "Approved by Gary from operator console");
-        } else {
-          await operatorWorkflow.reject(selectedTicket.workflowId, "Returned for rework by Gary");
-        }
-      } catch (e) {
-        setApprovalDecisionError(e instanceof Error ? e.message : "Approval decision failed.");
-        setApprovalDecisionInProgress(false);
-        return;
-      }
-      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-      setSelectedTicket(refreshed);
-      setAuditTimeline(timeline);
-      setApprovalDecisionMessage(
-        decision === "approve"
-          ? `Reply approved for ticket ${selectedTicket.id}.`
-          : `Reply rejected for ticket ${selectedTicket.id}.`,
-      );
-      setApprovalDecisionInProgress(false);
-      return;
-    }
-
-    const tenantContext = {
-      agencyId: selectedTicket.tenantContext.agencyId,
-      clientId: selectedTicket.tenantContext.clientId,
-      siteId: selectedTicket.tenantContext.siteId,
     };
-    const actorContext = {
-      actorRole: ActorRole.GARY_APPROVER,
-      actorReference: "phase5f-ui-approver",
-    };
-    // The handler resolves the latest pending approval server-side; approvalId is advisory here.
-    const approvalId = selectedTicket.workflowId;
-
-    const result =
-      decision === "approve"
-        ? handleApproveReply({
-            tenantContext,
-            actorContext,
-            ticketId: selectedTicket.workflowId,
-            approvalId,
-            approvalNotes: "Approved by Gary from phase-5F UI",
-          })
-        : handleRejectReply({
-            tenantContext,
-            actorContext,
-            ticketId: selectedTicket.workflowId,
-            approvalId,
-            rejectionNotes: "Returned for rework by Gary from phase-5F UI",
-          });
-
-    if (result.status === "error") {
-      setApprovalDecisionError(result.error);
-      setApprovalDecisionMessage("");
-      setApprovalDecisionInProgress(false);
-      return;
-    }
-
-    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
-    setSelectedTicket(refreshed);
-    setAuditTimeline(timeline);
-    setApprovalDecisionMessage(
-      decision === "approve"
-        ? `Reply approved for ticket ${selectedTicket.id}.`
-        : `Reply rejected for ticket ${selectedTicket.id}.`,
-    );
-    setApprovalDecisionInProgress(false);
-  };
-
-  const handleApproveReplyAction = async () => {
-    await runApprovalDecision("approve");
-  };
-
-  const handleRejectReplyAction = async () => {
-    await runApprovalDecision("reject");
-  };
-
-  const handleSendReplyAction = async () => {
-    if (readOnlyMode !== "supabase-dev-readonly") {
-      setSendReplyError("Send reply is only available in guarded Supabase-dev data mode.");
-      return;
-    }
-
-    if (!selectedTicket?.workflowId) {
-      setSendReplyError("No workflow identifier available for this ticket.");
-      return;
-    }
-
-    setSendReplyError("");
-    setSendReplyMessage("");
-    setSendReplyInProgress(true);
-
-    if (operatorWorkflow.isLive()) {
-      try {
-        await operatorWorkflow.send(selectedTicket.workflowId);
-      } catch (e) {
-        setSendReplyError(e instanceof Error ? e.message : "Send failed.");
-        setSendReplyInProgress(false);
-        return;
-      }
-      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-      setSelectedTicket(refreshed);
-      setAuditTimeline(timeline);
-      setSendReplyMessage(`Reply sent for ticket ${selectedTicket.id}.`);
-      setSendReplyInProgress(false);
-      return;
-    }
-
-    // The send handler validates the approval id, draft id, and recipient email against
-    // persisted state, so resolve them read-only before issuing the local-only send.
-    const sendContext = await getReadOnlySendContext(selectedTicket.workflowId);
-    if (!sendContext) {
-      setSendReplyError("Could not resolve approved approval, draft, or recipient context for this ticket.");
-      setSendReplyInProgress(false);
-      return;
-    }
-
-    const result = handleSendApprovedReply({
-      tenantContext: {
-        agencyId: selectedTicket.tenantContext.agencyId,
-        clientId: selectedTicket.tenantContext.clientId,
-        siteId: selectedTicket.tenantContext.siteId,
-      },
-      actorContext: {
-        actorRole: ActorRole.CS_AGENT,
-        actorReference: "phase5g-ui-operator",
-      },
-      ticketId: selectedTicket.workflowId,
-      draftReplyId: sendContext.draftReplyId,
-      recipientEmail: sendContext.recipientEmail,
-      approvalContext: {
-        approvalId: sendContext.approvalId,
-        approvedByActorReference: sendContext.approvedByActorReference,
-        approvedAt: sendContext.approvedAt,
-      },
-      rationale: "Customer reply recorded as sent (local-only) from phase-5G UI",
-      communicationContext: { channel: "local_only" },
-    });
-
-    if (result.status === "error") {
-      setSendReplyError(result.error);
-      setSendReplyMessage("");
-      setSendReplyInProgress(false);
-      return;
-    }
-
-    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
-    setSelectedTicket(refreshed);
-    setAuditTimeline(timeline);
-    setSendReplyMessage(`Reply recorded as sent (local-only) for ticket ${selectedTicket.id}.`);
-    setSendReplyInProgress(false);
-  };
-
-  const handleCloseTicketAction = async () => {
-    if (readOnlyMode !== "supabase-dev-readonly") {
-      setCloseTicketError("Close ticket is only available in guarded Supabase-dev data mode.");
-      return;
-    }
-
-    if (!selectedTicket?.workflowId) {
-      setCloseTicketError("No workflow identifier available for this ticket.");
-      return;
-    }
-
-    const normalizedClosureNote = closureNote.trim();
-    if (!normalizedClosureNote) {
-      setCloseTicketError("Closure note is required.");
-      return;
-    }
-
-    setCloseTicketError("");
-    setCloseTicketMessage("");
-    setCloseTicketInProgress(true);
-
-    if (operatorWorkflow.isLive()) {
-      try {
-        await operatorWorkflow.close(selectedTicket.workflowId, normalizedClosureNote);
-      } catch (e) {
-        setCloseTicketError(e instanceof Error ? e.message : "Close failed.");
-        setCloseTicketInProgress(false);
-        return;
-      }
-      const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-      const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.id);
-      setSelectedTicket(refreshed);
-      setAuditTimeline(timeline);
-      setCloseTicketMessage(`Ticket ${selectedTicket.id} closed.`);
-      setCloseTicketInProgress(false);
-      return;
-    }
-
-    const result = handleCloseTicket({
-      tenantContext: {
-        agencyId: selectedTicket.tenantContext.agencyId,
-        clientId: selectedTicket.tenantContext.clientId,
-        siteId: selectedTicket.tenantContext.siteId,
-      },
-      actorContext: {
-        actorRole: ActorRole.CS_AGENT,
-        actorReference: "phase5h-ui-operator",
-      },
-      ticketId: selectedTicket.workflowId,
-      closureNote: normalizedClosureNote,
-    });
-
-    if (result.status === "error") {
-      setCloseTicketError(result.error);
-      setCloseTicketMessage("");
-      setCloseTicketInProgress(false);
-      return;
-    }
-
-    const refreshed = await getReadOnlyTicketDetail(selectedTicket.id);
-    const timeline = await getReadOnlyTicketAuditTimeline(selectedTicket.workflowId);
-    setSelectedTicket(refreshed);
-    setAuditTimeline(timeline);
-    setCloseTicketMessage(`Ticket ${selectedTicket.id} closed.`);
-    setClosureNote("");
-    setCloseTicketInProgress(false);
-  };
-
-  // Phase 6R: the local auth mode (dev role switcher OR adapter-principal preview) provides the
-  // operator session that drives UI capability gating. This is a LOCAL preview only — NOT a sign-in.
-  const localAuthState = useMemo(() => {
-    if (authMode === "adapter_principal") {
-      const trimmedId = adapterPrincipalId.trim();
-      const principal = trimmedId ? { id: trimmedId } : null;
-      return createAdapterPrincipalAuthState(principal, DEV_PREVIEW_OPERATOR_ROWS);
-    }
-    return createDevRoleSwitcherAuthState(devOperatorRole);
-  }, [authMode, devOperatorRole, adapterPrincipalId]);
-
-  const operatorSession = getActiveOperatorSession(localAuthState);
-  const capabilities = getActiveCapabilityFlags(localAuthState);
-
-  // Phase 7D: local auth-state simulation. Builds the modeled shell state for the selected status.
-  // The operator-active state reuses a dev operator session so the workspace preview is realistic.
-  // SIMULATOR only — no real auth, no redirects, no route protection.
-  const loginShellState = useMemo(() => {
-    const sampleSession = getActiveOperatorSession(createDevRoleSwitcherAuthState("agency_admin"));
-    return buildLoginShellState(loginShellStatus, sampleSession);
-  }, [loginShellStatus]);
-
-  // In simulator view, the workspace is shown only when the simulated state grants operator access.
-  // In workspace view it always shows (current behavior). No real protection — visualization only.
-  const showWorkspace = viewMode === "workspace" || (viewMode === "auth_simulator" && loginShellState.canAccessWorkspace);
-
-  // Phase 7H: dev-only session-read preview. Feeds a plain (synthetic / existing-shape) session into
-  // the existing read path → principal → pipeline → operator session → flags. READ-ONLY: no real auth,
-  // no redirects, no writes, no operator linking. Resolves against the in-memory dev preview rows.
-  const devSessionReadState = useMemo(() => {
-    const id = sessionReadPrincipalId.trim();
-    if (sessionReadMode === "synthetic_session") {
-      return createSyntheticSessionReadState(
-        { id, expiresAtIso: "2999-01-01T00:00:00.000Z" },
-        DEV_PREVIEW_OPERATOR_ROWS,
-      );
-    }
-    if (sessionReadMode === "existing_session_shape") {
-      const session = id ? { user: { id }, expires_at: 32503680000 } : null;
-      return createExistingSessionShapeReadState(session, DEV_PREVIEW_OPERATOR_ROWS);
-    }
-    return createDisabledSessionReadState();
-  }, [sessionReadMode, sessionReadPrincipalId]);
-
-  // An action is offered only when BOTH the ticket-state is eligible (guarded dev mode) AND the
-  // current operator role has the capability to see/perform it.
-  const canTriageSelected =
-    readOnlyMode === "supabase-dev-readonly" && selectedTicket.status === "received" && capabilities.canSeeTriage;
-  const canDraftReplySelected =
-    readOnlyMode === "supabase-dev-readonly" &&
-    selectedTicket.status === "triaged" &&
-    Boolean(selectedTicket.workflowId) &&
-    capabilities.canSeeDraftReply;
-  const canRequestApprovalSelected =
-    readOnlyMode === "supabase-dev-readonly" &&
-    selectedTicket.status === "reply_drafted" &&
-    Boolean(selectedTicket.workflowId) &&
-    capabilities.canSeeRequestApproval;
-  const canDecideApprovalSelected =
-    readOnlyMode === "supabase-dev-readonly" &&
-    selectedTicket.status === "awaiting_gary_approval" &&
-    Boolean(selectedTicket.workflowId) &&
-    capabilities.canSeeApproveReply &&
-    capabilities.canSeeRejectReply;
-  const canSendReplySelected =
-    readOnlyMode === "supabase-dev-readonly" &&
-    selectedTicket.status === "approved_to_send" &&
-    Boolean(selectedTicket.workflowId) &&
-    capabilities.canSeeSendReply;
-  const canCloseTicketSelected =
-    readOnlyMode === "supabase-dev-readonly" &&
-    selectedTicket.status === "sent_to_customer" &&
-    Boolean(selectedTicket.workflowId) &&
-    capabilities.canSeeCloseTicket;
-  const showPilotStatusCard = Boolean(selectedTicket?.tenantContext?.clientId);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
 
   useEffect(() => {
-    const targets = CONSOLE_SECTIONS.map((id) => document.getElementById(id)).filter(
-      (element): element is HTMLElement => Boolean(element),
-    );
-    if (targets.length === 0 || typeof IntersectionObserver === "undefined") {
+    if (!open) {
+      setTab("general_feedback");
+      setBody("");
+      setSubmitting(false);
+      setSubmitted(null);
+      setError(null);
+    }
+  }, [open]);
+
+  if (!open) {
+    return null;
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!body.trim()) {
+      setError("please add a short note before sending.");
       return;
     }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible?.target.id && CONSOLE_SECTIONS.includes(visible.target.id as ConsoleSectionId)) {
-          setActiveSection(visible.target.id as ConsoleSectionId);
-        }
-      },
-      {
-        rootMargin: "-20% 0px -65% 0px",
-        threshold: [0.15, 0.35, 0.55, 0.75],
-      },
-    );
-
-    targets.forEach((target) => observer.observe(target));
-    return () => observer.disconnect();
-  }, []);
-
-  const navigateToSection = (sectionId: ConsoleSectionId) => {
-    setActiveSection(sectionId);
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    window.history.replaceState(null, "", `#${sectionId}`);
-  };
+    setSubmitting(true);
+    setError(null);
+    try {
+      const selected = FEEDBACK_TABS.find((item) => item.key === tab) ?? FEEDBACK_TABS[2];
+      const result = await submitCustomerFeedback({
+        siteId: defaultSiteId,
+        category: selected.category,
+        subject: selected.label,
+        details: body.trim(),
+      });
+      setSubmitted({
+        ticketId: result.ticket_id,
+        ticketNumber: result.ticket_number,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "feedback_submit_failed");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
-    <div className="phase4a-shell">
-      <header className="phase4a-header">
-        <div style={{ display: "grid", gap: 6 }}>
-          <LogoLockup size={32} variant="light" text="website support studio" />
-          <h1 className="phase4a-header-title">
-            <MonoLabel text="operator console" />
-          </h1>
-          <p className="brand-kicker phase4a-header-kicker">
-            <MonoLabel text="website support studio backend" />
-          </p>
+    <div className="wss-modal-backdrop" onClick={onClose} role="presentation">
+      <div
+        className="wss-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="feedback-modal-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="wss-modal-header">
+          <div>
+            <p className="wss-card-kicker">
+              <MonoLabel text="feedback" />
+            </p>
+            <h2 id="feedback-modal-title">
+              <MonoLabel text="send feedback" />
+            </h2>
+          </div>
+          <button type="button" className="wss-icon-button" onClick={onClose} aria-label="close feedback modal">
+            ×
+          </button>
         </div>
-        <span className="status-pill">{getReadOnlyModeLabel()}</span>
+
+        {submitted ? (
+          <div className="wss-modal-success">
+            <p className="wss-section-description">
+              feedback is in the queue for website_support_studio review.
+            </p>
+            <p className="wss-copy">
+              <strong>request id:</strong> {submitted.ticketNumber} ({submitted.ticketId})
+            </p>
+            <div className="wss-modal-actions">
+              <button
+                type="button"
+                className="wss-primary-button"
+                onClick={() => {
+                  setSubmitted(null);
+                  setBody("");
+                }}
+              >
+                send another
+              </button>
+              <button type="button" className="wss-secondary-button" onClick={onClose}>
+                close
+              </button>
+            </div>
+          </div>
+        ) : (
+          <form className="wss-feedback-form" onSubmit={handleSubmit}>
+            <div className="wss-tab-row" role="tablist" aria-label="feedback categories">
+              {FEEDBACK_TABS.map((item) => (
+                <button
+                  key={item.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === item.key}
+                  className={tab === item.key ? "wss-tab is-active" : "wss-tab"}
+                  onClick={() => setTab(item.key)}
+                >
+                  <MonoLabel text={item.label} />
+                </button>
+              ))}
+            </div>
+
+            <p className="wss-section-description">
+              {FEEDBACK_TABS.find((item) => item.key === tab)?.hint}
+            </p>
+
+            <label className="wss-field">
+              <span className="wss-field-label">
+                <MonoLabel text="message" />
+              </span>
+              <textarea
+                value={body}
+                onChange={(event) => setBody(event.target.value)}
+                rows={6}
+                placeholder="share the issue, idea, or note"
+              />
+            </label>
+
+            {error ? (
+              <p className="wss-inline-error" role="status">
+                {error}
+              </p>
+            ) : null}
+
+            <button type="submit" className="wss-primary-button" disabled={submitting}>
+              {submitting ? "sending…" : "submit"}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function AppShell() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { signOut } = useAuth();
+  const section = getSectionFromPath(location.pathname);
+  const feedbackParam = new URLSearchParams(location.search).get("feedback");
+  const [queue, setQueue] = useState<MockTicketQueueItem[]>(ticketQueue);
+  const [requestDetails, setRequestDetails] = useState<Record<string, MockTicketDetail>>(() =>
+    Object.fromEntries(ticketDetails.map((ticket) => [ticket.id, ticket])),
+  );
+  const [selectedRequestId, setSelectedRequestId] = useState(ticketQueue[0]?.id ?? "");
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [pilotStatus, setPilotStatus] = useState<OperatorPilotStatus>(createEmptyOperatorPilotStatus());
+
+  useEffect(() => {
+    if (!isSectionPath(location.pathname)) {
+      navigate("/overview", { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    let active = true;
+    const currentClientId = queue[0]?.clientId ?? ticketQueue[0]?.clientId ?? "";
+    loadOperatorPilotStatus(currentClientId)
+      .then((result) => {
+        if (active) {
+          setPilotStatus(result);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setPilotStatus(createEmptyOperatorPilotStatus());
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [queue]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadQueue() {
+      try {
+        const liveQueue = await getReadOnlyTicketQueue();
+        if (active && liveQueue.length > 0) {
+          setQueue(liveQueue);
+        }
+      } catch {
+        if (active) {
+          setQueue(ticketQueue);
+        }
+      }
+    }
+
+    void loadQueue();
+    const interval = window.setInterval(() => {
+      void loadQueue();
+    }, 15000);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (queue.length === 0) {
+      return;
+    }
+    if (!queue.some((ticket) => ticket.id === selectedRequestId)) {
+      setSelectedRequestId(queue[0].id);
+    }
+  }, [queue, selectedRequestId]);
+
+  useEffect(() => {
+    if (!selectedRequestId) {
+      return;
+    }
+
+    let active = true;
+
+    async function loadDetail() {
+      try {
+        const detail = await getReadOnlyTicketDetail(selectedRequestId);
+        if (active) {
+          setRequestDetails((current) => ({
+            ...current,
+            [detail.id]: detail,
+          }));
+        }
+      } catch {
+        if (active) {
+          const fallback = getTicketDetail(selectedRequestId);
+          setRequestDetails((current) => ({
+            ...current,
+            [fallback.id]: fallback,
+          }));
+        }
+      }
+    }
+
+    void loadDetail();
+
+    return () => {
+      active = false;
+    };
+  }, [selectedRequestId]);
+
+  useEffect(() => {
+    if (feedbackParam === "open" || feedbackParam === "1") {
+      setFeedbackOpen(true);
+    }
+  }, [feedbackParam]);
+
+  const activeRequests = useMemo(
+    () => queue.filter((ticket) => ACTIVE_REQUEST_STATUSES.has(ticket.status)),
+    [queue],
+  );
+
+  const boardGroups = useMemo(() => {
+    const lanes: Record<ReturnType<typeof boardLaneForTicket>, MockTicketQueueItem[]> = {
+      new: [],
+      triage: [],
+      waiting_on_us: [],
+      waiting_on_customer: [],
+      review: [],
+      complete: [],
+    };
+
+    for (const ticket of queue) {
+      lanes[boardLaneForTicket(ticket)].push(ticket);
+    }
+
+    return lanes;
+  }, [queue]);
+
+  const selectedRequest = useMemo(
+    () => requestDetails[selectedRequestId] ?? getTicketDetail(selectedRequestId) ?? ticketDetails[0],
+    [requestDetails, selectedRequestId],
+  );
+
+  const recentEvents = useMemo(() => [...selectedRequest.auditTimeline].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt)), [selectedRequest]);
+
+  const overviewAtRisk = useMemo(
+    () =>
+      queue.find(
+        (ticket) => ticket.status === "blocked" || ticket.priority === "urgent" || ticket.priority === "critical",
+      ) ?? queue[0],
+    [queue],
+  );
+
+  const siteIdForFeedback = selectedRequest?.tenantContext.siteId ?? queue[0]?.siteId ?? "SITE-01";
+
+  if (location.pathname === "/" || !isSectionPath(location.pathname)) {
+    return <Navigate to="/overview" replace />;
+  }
+
+  return (
+    <div className="wss-shell">
+      <header className="wss-header">
+        <div className="wss-brand">
+          <LogoLockup size={34} text="website support studio" />
+          <div className="wss-brand-copy">
+            <p className="wss-card-kicker">
+              <MonoLabel text="operations console" />
+            </p>
+            <p className="wss-brand-subtitle">
+              website operations, access, requests, activity, and health
+            </p>
+          </div>
+        </div>
+
+        <div className="wss-header-actions">
+          <span className="wss-status-chip">
+            <MonoLabel text="website_support_studio" />
+          </span>
+          <button
+            type="button"
+            className="wss-secondary-button"
+            onClick={() => {
+              void signOut();
+              navigate("/login", { replace: true });
+            }}
+          >
+            logout
+          </button>
+        </div>
       </header>
 
-      <div className="phase4a-layout">
-        <nav className="phase4a-nav" aria-label="Primary">
-          <h2>
-            <MonoLabel text="navigation" />
-          </h2>
-          <ul>
-            {CONSOLE_SECTIONS.map((section) => (
-              <li key={section}>
-                <button
-                  type="button"
-                  data-active={activeSection === section ? "true" : "false"}
-                  aria-current={activeSection === section ? "page" : undefined}
-                  onClick={() => navigateToSection(section)}
-                >
-                  <MonoLabel text={section} />
-                </button>
-              </li>
+      <div className="wss-layout">
+        <aside className="wss-sidebar">
+          <nav className="wss-nav" aria-label="console sections">
+            {SECTION_ORDER.map((item) => (
+              <NavLink
+                key={item}
+                to={`/${item}`}
+                className={({ isActive }) => (isActive ? "wss-nav-link is-active" : "wss-nav-link")}
+              >
+                <MonoLabel text={item} />
+              </NavLink>
             ))}
-          </ul>
-        </nav>
+          </nav>
 
-        <main className="phase4a-main">
-          <LaunchAccountPreview
-            orgId={selectedTicket.tenantContext.clientId}
-            customerLabel={selectedTicket.tenantContext.clientName}
-            siteLabel={selectedTicket.tenantContext.siteName}
-          />
+          <div className="wss-sidebar-note">
+            <p className="wss-card-kicker">
+              <MonoLabel text="quick_state" />
+            </p>
+            <p className="wss-sidebar-text">
+              <strong>{activeRequests.length}</strong> active requests are moving through the console right now.
+            </p>
+          </div>
+        </aside>
 
-          <section id="overview" className="phase4a-card operator-overview-card">
-            <div className="operator-overview-header">
-              <div>
-                <p className="pilot-status-kicker">
-                  <MonoLabel text="overview" />
-                </p>
-                <h2>
-                  <MonoLabel text="business status" />
-                </h2>
-                <p className="placeholder-meta">
-                  the first screen is the business state: who is active, what needs attention, and what changed
-                  recently.
-                </p>
+        <main className="wss-main">
+          {section === "overview" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="overview"
+                title="profile summary"
+                description="A compact view of the profile, activity, and what needs attention."
+              />
+
+              <div className="wss-grid four-up">
+                <OverviewCard
+                  title="profile_summary"
+                  value={ACCOUNT_SUMMARY.profile}
+                  note={`${ACCOUNT_SUMMARY.company} · ${ACCOUNT_SUMMARY.website}`}
+                />
+                <OverviewCard
+                  title="business_status"
+                  value={ACCOUNT_SUMMARY.billingStatus}
+                  note={`current plan: ${ACCOUNT_SUMMARY.currentPlan}`}
+                />
+                <OverviewCard
+                  title="active_requests"
+                  value={String(activeRequests.length)}
+                  note="requests that still need attention from the team."
+                />
+                <OverviewCard
+                  title="credits_summary"
+                  value={`${ACCOUNT_SUMMARY.creditsRemaining} left`}
+                  note={`${ACCOUNT_SUMMARY.creditsIncluded} included · ${ACCOUNT_SUMMARY.creditsUsed} used`}
+                />
               </div>
-              <span className="pilot-status-badge pilot-status-badge-blue">
-                <MonoLabel text="live queue" />
-              </span>
-            </div>
 
-            <div className="operator-overview-grid">
-              <article className="operator-overview-metric">
-                <p className="operator-overview-label">active_customers</p>
-                <p className="operator-overview-value">{operatorSummary.activeCustomers}</p>
-                <p className="operator-overview-note">customers with open work in the queue</p>
-              </article>
-              <article className="operator-overview-metric">
-                <p className="operator-overview-label">open_requests</p>
-                <p className="operator-overview-value">{operatorSummary.openRequests}</p>
-                <p className="operator-overview-note">requests waiting on action or follow-up</p>
-              </article>
-              <article className="operator-overview-metric">
-                <p className="operator-overview-label">pending_approvals</p>
-                <p className="operator-overview-value">{operatorSummary.pendingApprovals}</p>
-                <p className="operator-overview-note">items waiting on gary approval</p>
-              </article>
-              <article className="operator-overview-metric">
-                <p className="operator-overview-label">active_projects</p>
-                <p className="operator-overview-value">{operatorSummary.activeProjects}</p>
-                <p className="operator-overview-note">sites with current work in motion</p>
-              </article>
-              <article className="operator-overview-metric">
-                <p className="operator-overview-label">workload</p>
-                <p className="operator-overview-value">
-                  {operatorSummary.waitingOnUs} / {operatorSummary.waitingOnCustomer}
-                </p>
-                <p className="operator-overview-note">waiting on us / waiting on customer</p>
-              </article>
-              <article className="operator-overview-metric">
-                <p className="operator-overview-label">what_is_new</p>
-                <ul className="operator-mini-list">
-                  {operatorSummary.recentTickets.map((ticket) => (
-                    <li key={ticket.id}>
-                      <strong>{ticket.id}</strong> {ticket.title}
-                      <span className="operator-mini-list-meta">
-                        {ticket.clientName} · {formatOperatorDateTime(ticket.updatedAt)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            </div>
+              <div className="wss-grid two-up">
+                <article className="wss-card">
+                  <SectionHeading
+                    title="whats_new"
+                    description="Recent updates from the console and workflow trail."
+                  />
+                  <ul className="wss-list">
+                    {recentEvents.slice(0, 3).map((event) => (
+                      <li key={event.id}>
+                        <strong>{event.eventType}</strong> on {event.ticketId}
+                        <span>{event.summary}</span>
+                        <small>{formatDateTime(event.occurredAt)}</small>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
 
-            <div className="operator-risk-band">
-              <p className="operator-risk-label">what_is_at_risk</p>
-              {operatorSummary.atRiskTickets.length > 0 ? (
-                <ul className="operator-risk-list">
-                  {operatorSummary.atRiskTickets.slice(0, 3).map((ticket) => (
-                    <li key={ticket.id}>
-                      <strong>{ticket.id}</strong> {ticket.title} · {ticket.priority}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="placeholder-meta">no blocked or urgent tickets are currently visible.</p>
-              )}
-            </div>
-          </section>
-
-          <OperatorBoard
-            tickets={ticketQueueData}
-            selectedTicketId={selectedTicketId}
-            onSelectTicket={setSelectedTicketId}
-          />
-
-          {showDevelopmentPrototype ? (
-            <>
-              <section className="phase4a-card phase7-auth-view">
-                <h2>
-                  <MonoLabel text="access controls" />
-                </h2>
-                <p className="placeholder-meta">
-                  local-only view of auth transitions. no real auth, no redirects, and no route protection.
-                </p>
-                <fieldset className="phase6-auth-mode">
-                  <legend>
-                    <MonoLabel text="mode" />
-                  </legend>
-                  <label>
-                    <input
-                      type="radio"
-                      name="wss-auth-view"
-                      value="workspace"
-                      checked={viewMode === "workspace"}
-                      onChange={() => setViewMode("workspace")}
-                    />
-                    operator_workspace
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="wss-auth-view"
-                      value="auth_simulator"
-                      checked={viewMode === "auth_simulator"}
-                      onChange={() => setViewMode("auth_simulator")}
-                    />
-                    auth_state
-                  </label>
-                </fieldset>
-                <p className="placeholder-meta">current_state: {loginShellState.label}</p>
-              </section>
-
-              {viewMode === "auth_simulator" && (
-                <LoginShell state={loginShellState} status={loginShellStatus} onSelectStatus={setLoginShellStatus} />
-              )}
-
-              {showWorkspace && (
-                <>
-                  <section className="phase4a-card phase6-operator-card">
-                    <h2>
-                      <MonoLabel text="operator access" />
-                    </h2>
-                    <p className="placeholder-meta">
-                      read-only operator access only. this is not a sign-in and performs no credential check. it shows
-                      role-based action visibility from a synthetic in-memory operator session.
-                    </p>
-
-                    <fieldset className="phase6-auth-mode">
-                      <legend>
-                        <MonoLabel text="access mode" />
-                      </legend>
-                      <label>
-                        <input
-                          type="radio"
-                          name="wss-dev-auth-mode"
-                          value="dev_role_switcher"
-                          checked={authMode === "dev_role_switcher"}
-                          onChange={() => setAuthMode("dev_role_switcher")}
-                        />
-                        role_switcher
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          name="wss-dev-auth-mode"
-                          value="adapter_principal"
-                          checked={authMode === "adapter_principal"}
-                          onChange={() => setAuthMode("adapter_principal")}
-                        />
-                        principal_mapping
-                      </label>
-                    </fieldset>
-
-                    {authMode === "dev_role_switcher" ? (
-                      <label className="phase6-operator-switcher">
-                        acting_as
-                        <select
-                          value={devOperatorRole}
-                          onChange={(event) => setDevOperatorRole(event.target.value as DevOperatorRoleChoice)}
-                        >
-                          {DEV_OPERATOR_ROLE_OPTIONS.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    ) : (
-                      <div className="phase6-adapter-preview">
-                        <p className="placeholder-meta">
-                          resolves an operator session via the adapter from a supplied synthetic auth principal id
-                          (id only). the linkage source of truth is auth_user_id.
-                        </p>
-                        <label className="phase6-operator-switcher">
-                          principal_preset
-                          <select value={adapterPrincipalId} onChange={(event) => setAdapterPrincipalId(event.target.value)}>
-                            <option value="">- none -</option>
-                            {DEV_ADAPTER_PRINCIPAL_PRESETS.map((preset) => (
-                              <option key={preset.principalId} value={preset.principalId}>
-                                {preset.label} ({preset.principalId})
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="phase6-operator-switcher">
-                          synthetic_auth_principal_id
-                          <input
-                            type="text"
-                            value={adapterPrincipalId}
-                            onChange={(event) => setAdapterPrincipalId(event.target.value)}
-                            placeholder="synthetic uuid"
-                          />
-                        </label>
-                        <p className="placeholder-meta" role="status">
-                          {operatorSession
-                            ? `resolved_operator_session: ${operatorSession.displayName} · role ${operatorSession.role}`
-                            : adapterPrincipalId.trim()
-                              ? "no linked operator for this principal."
-                              : "enter or select a synthetic auth principal id to resolve the adapter result."}
-                        </p>
-                      </div>
-                    )}
-
-                    <p className="placeholder-meta">
-                      {operatorSession
-                        ? `active_operator: ${operatorSession.displayName} · role ${operatorSession.role}`
-                        : "no operator session — operator actions are hidden."}
-                    </p>
-                    <ul className="phase6-capability-list">
-                      <li>create_ticket: {capabilities.canSeeCreateTicket ? "visible" : "hidden"}</li>
-                      <li>triage: {capabilities.canSeeTriage ? "visible" : "hidden"}</li>
-                      <li>draft_reply: {capabilities.canSeeDraftReply ? "visible" : "hidden"}</li>
-                      <li>request_approval: {capabilities.canSeeRequestApproval ? "visible" : "hidden"}</li>
-                      <li>approve_reject: {capabilities.canSeeApproveReply ? "visible" : "hidden"}</li>
-                      <li>send_reply: {capabilities.canSeeSendReply ? "visible" : "hidden"}</li>
-                      <li>close_ticket: {capabilities.canSeeCloseTicket ? "visible" : "hidden"}</li>
-                      <li>operator_admin: {capabilities.canSeeOperatorAdmin ? "visible" : "hidden"}</li>
-                    </ul>
-                  </section>
-
-                  <section className="phase4a-card phase7-session-read">
-                    <h2>
-                      <MonoLabel text="session mapping" />
-                    </h2>
-                    <p className="placeholder-meta">
-                      read-only view of the session path (session → principal → pipeline → operator session →
-                      capability flags). no real sign-in, no redirect, no writes, no operator linking.
-                    </p>
-                    <fieldset className="phase6-auth-mode">
-                      <legend>
-                        <MonoLabel text="session read mode" />
-                      </legend>
-                      {DEV_SESSION_READ_MODE_OPTIONS.map((option) => (
-                        <label key={option.value}>
-                          <input
-                            type="radio"
-                            name="wss-session-read-mode"
-                            value={option.value}
-                            checked={sessionReadMode === option.value}
-                            onChange={() => setSessionReadMode(option.value)}
-                        />
-                          {option.label}
-                        </label>
-                      ))}
-                    </fieldset>
-
-                    {sessionReadMode !== "disabled" && (
-                      <div className="phase6-adapter-preview">
-                        <label className="phase6-operator-switcher">
-                          principal_preset
-                          <select value={sessionReadPrincipalId} onChange={(event) => setSessionReadPrincipalId(event.target.value)}>
-                            <option value="">- none -</option>
-                            {DEV_ADAPTER_PRINCIPAL_PRESETS.map((preset) => (
-                              <option key={preset.principalId} value={preset.principalId}>
-                                {preset.label} ({preset.principalId})
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="phase6-operator-switcher">
-                          synthetic_session_principal_id
-                          <input
-                            type="text"
-                            value={sessionReadPrincipalId}
-                            onChange={(event) => setSessionReadPrincipalId(event.target.value)}
-                            placeholder="synthetic uuid"
-                          />
-                        </label>
-                      </div>
-                    )}
-
-                    <div className="phase7-session-read-panel" role="status" aria-live="polite">
-                      <p className="placeholder-meta">mode: {describeDevSessionReadState(devSessionReadState.mode)}</p>
-                      <p className="placeholder-meta">
-                        principal_extracted: {devSessionReadState.principal ? devSessionReadState.principal.id : "none"}
+                <article className="wss-card">
+                  <SectionHeading
+                    title="whats_at_risk"
+                    description="The main item that could slow delivery if it is not cleared."
+                  />
+                  {overviewAtRisk ? (
+                    <div className="wss-risk-card">
+                      <strong>{overviewAtRisk.title}</strong>
+                      <p>
+                        {overviewAtRisk.clientName} / {overviewAtRisk.siteName}
                       </p>
-                      <p className="placeholder-meta">
-                        operator_session:{" "}
-                          {devSessionReadState.adapterResult?.session
-                          ? `resolved — ${devSessionReadState.adapterResult.session.displayName} · role ${devSessionReadState.adapterResult.session.role}`
-                          : "not resolved"}
+                      <p>
+                        priority: {overviewAtRisk.priority} · status: {overviewAtRisk.status}
                       </p>
-                      {sessionReadMode !== "disabled" && sessionReadPrincipalId.trim() && !devSessionReadState.adapterResult?.session && (
-                        <p className="placeholder-meta">no linked operator for this session principal.</p>
-                      )}
+                      <p>{overviewAtRisk.blockedReason ?? "This request is active and needs attention."}</p>
                     </div>
-
-                    <ul className="phase6-capability-list">
-                      <li>create_ticket: {devSessionReadState.capabilityFlags.canSeeCreateTicket ? "visible" : "hidden"}</li>
-                      <li>triage: {devSessionReadState.capabilityFlags.canSeeTriage ? "visible" : "hidden"}</li>
-                      <li>draft_reply: {devSessionReadState.capabilityFlags.canSeeDraftReply ? "visible" : "hidden"}</li>
-                      <li>request_approval: {devSessionReadState.capabilityFlags.canSeeRequestApproval ? "visible" : "hidden"}</li>
-                      <li>approve_reject: {devSessionReadState.capabilityFlags.canSeeApproveReply ? "visible" : "hidden"}</li>
-                      <li>send_reply: {devSessionReadState.capabilityFlags.canSeeSendReply ? "visible" : "hidden"}</li>
-                      <li>close_ticket: {devSessionReadState.capabilityFlags.canSeeCloseTicket ? "visible" : "hidden"}</li>
-                      <li>operator_admin: {devSessionReadState.capabilityFlags.canSeeOperatorAdmin ? "visible" : "hidden"}</li>
-                    </ul>
-                  </section>
-
-                  <SessionSourcePrototype />
-
-                  <section id="health" className="phase4a-card">
-                    <h2>
-                      <MonoLabel text="health" />
-                    </h2>
-                    <p>data mode and available actions are shown below.</p>
-                    <dl className="phase7-status-list">
-                      <div>
-                        <dt>data_mode</dt>
-                        <dd>
-                          {readOnlyMode === "supabase-dev-readonly"
-                            ? "read-only data mode — live data is visible, but writes stay disabled."
-                            : "demo data mode — sample tickets are shown until read-only data is available."}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>workflow_mode</dt>
-                        <dd>
-                          {readOnlyMode === "supabase-dev-readonly"
-                            ? "workflow mode — triage → draft → request approval → approve/reject → send (local-only) → close."
-                            : "workflow actions are inactive until read-only data is available."}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>public_exposure</dt>
-                        <dd>
-                          no live public actions are exposed: no authentication, no public api routes, no real email delivery, and no customer portal.
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>reply_delivery</dt>
-                        <dd>
-                          saved locally only. a sent reply is recorded locally; no real email is delivered. approval is required before send.
-                        </dd>
-                      </div>
-                    </dl>
-                  </section>
-
-                  <section className="phase4a-card">
-                    <h2>
-                      <MonoLabel text="environment guardrails" />
-                    </h2>
-                    <ul>
-                      <li>read-only data mode: {readOnlyMode}.</li>
-                      <li>guarded read-only data is enabled only by explicit environment flags.</li>
-                      <li>live writes/mutations: triage/draft/approval/send (local-only, no provider)/close in guarded mode.</li>
-                      <li>auth/email/provider: not added.</li>
-                    </ul>
-                  </section>
-                </>
-              )}
-            </>
+                  ) : null}
+                </article>
+              </div>
+            </section>
           ) : null}
 
-          <section id="queue" className="phase4a-card phase4d-search-panel">
-            <h2>
-              <MonoLabel text="queue" />
-            </h2>
-            {capabilities.canSeeCreateTicket ? (
-              <div className="operator-queue-create">
-                <CreateTicketForm />
-              </div>
-            ) : (
-              <section className="phase4a-card">
-                <h2>
-                  <MonoLabel text="support request" />
-                </h2>
-                <p className="placeholder-meta phase7-empty-state" role="status">
-                  new support requests are hidden for the current operator role.
-                </p>
-              </section>
-            )}
-            <p className="placeholder-meta">
-              {readOnlyMode === "supabase-dev-readonly"
-                ? "all results are loaded from read-only data. search and filtering are read-only."
-                : "demo data mode until read-only data is available. search and filtering are read-only."}
-            </p>
-            <p className="placeholder-meta" role="status" aria-live="polite">
-              {searchSummary}
-            </p>
-            <div className="phase4d-filter-grid">
-              <label>
-                search
-                <input
-                  type="search"
-                  value={searchText}
-                  onChange={(event) => setSearchText(event.target.value)}
-                  placeholder="Search by ticket #, title, submitter, client, or site"
-                />
-              </label>
+          {section === "board" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="board"
+                title="kanban board"
+                description="Read-only status lanes for the current request flow."
+              />
 
-              <label>
-                status
-                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                  <option value="all">All</option>
-                  <option value="received">received</option>
-                  <option value="triaged">triaged</option>
-                  <option value="reply_drafted">reply_drafted</option>
-                  <option value="awaiting_gary_approval">awaiting_gary_approval</option>
-                  <option value="approved_to_send">approved_to_send</option>
-                  <option value="sent_to_customer">sent_to_customer</option>
-                  <option value="blocked">blocked</option>
-                  <option value="closed">closed</option>
-                </select>
-              </label>
-
-              <label>
-                priority
-                <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)}>
-                  <option value="all">All</option>
-                  <option value="low">low</option>
-                  <option value="medium">medium</option>
-                  <option value="high">high</option>
-                  <option value="urgent">urgent</option>
-                  <option value="normal">normal</option>
-                  <option value="critical">critical</option>
-                </select>
-              </label>
-
-              <label>
-                client
-                <select value={clientFilter} onChange={(event) => setClientFilter(event.target.value)}>
-                  <option value="all">All</option>
-                  {clients.map((client) => (
-                    <option key={client} value={client}>
-                      {client}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                site
-                <select value={siteFilter} onChange={(event) => setSiteFilter(event.target.value)}>
-                  <option value="all">All</option>
-                  {sites.map((site) => (
-                    <option key={site} value={site}>
-                      {site}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                blocked
-                <select value={blockedFilter} onChange={(event) => setBlockedFilter(event.target.value)}>
-                  <option value="all">All</option>
-                  <option value="blocked">Blocked only</option>
-                  <option value="not-blocked">Not blocked</option>
-                </select>
-              </label>
-
-              <label>
-                identity
-                <select value={identityFilter} onChange={(event) => setIdentityFilter(event.target.value)}>
-                  <option value="all">All</option>
-                  <option value="known">known</option>
-                  <option value="claimed">claimed</option>
-                  <option value="unknown">unknown</option>
-                </select>
-              </label>
-            </div>
-          </section>
-
-          <ReadOnlyTicketQueue
-            tickets={filteredTickets}
-            selectedTicketId={selectedTicketId}
-            onSelectTicket={setSelectedTicketId}
-          />
-
-          <OperatorFeedbackSurface tickets={ticketQueueData} />
-
-          <section id="approvals" className="phase4a-card">
-            <h2>
-              <MonoLabel text="approvals" />
-            </h2>
-            {(approvalQueue ?? []).length === 0 ? (
-              <p className="placeholder-meta phase7-empty-state" role="status">
-                no approval records are awaiting review.
-              </p>
-            ) : (
-              <div className="placeholder-table">
-                {(approvalQueue ?? []).map((item) => (
-                  <article key={item.id} className="placeholder-row">
-                    <div>
-                      <strong>{item.id}</strong> ({item.ticketId})
+              <div className="wss-board-shell">
+                {[
+                  { key: "new", label: "new" },
+                  { key: "triage", label: "triage" },
+                  { key: "waiting_on_us", label: "waiting_on_us" },
+                  { key: "waiting_on_customer", label: "waiting_on_customer" },
+                  { key: "review", label: "review" },
+                  { key: "complete", label: "complete" },
+                ].map((lane) => (
+                  <article key={lane.key} className="wss-board-column">
+                    <div className="wss-board-column-head">
+                      <h3>
+                        <MonoLabel text={lane.label} />
+                      </h3>
+                      <span>{boardGroups[lane.key as keyof typeof boardGroups].length}</span>
                     </div>
-                    <div className="placeholder-meta">
-                      Requested by {item.requestBy} · state: {item.state} · {item.submittedAt}
+
+                    <div className="wss-board-column-body">
+                      {boardGroups[lane.key as keyof typeof boardGroups].length === 0 ? (
+                        <p className="wss-empty-state">nothing here yet</p>
+                      ) : (
+                        boardGroups[lane.key as keyof typeof boardGroups].map((ticket) => (
+                          <button
+                            key={ticket.id}
+                            type="button"
+                            className="wss-board-card"
+                            onClick={() => {
+                              setSelectedRequestId(ticket.id);
+                              navigate("/requests");
+                            }}
+                          >
+                            <strong>{ticket.title}</strong>
+                            <span>
+                              {ticket.clientName} / {ticket.siteName}
+                            </span>
+                            <span>
+                              priority: {formatPriority(ticket.priority)} · status: <MonoLabel text={ticket.status} />
+                            </span>
+                          </button>
+                        ))
+                      )}
                     </div>
                   </article>
                 ))}
               </div>
-            )}
-          </section>
-
-          <section id="activity" className="phase4a-card">
-            <h2>
-              <MonoLabel text="activity" />
-            </h2>
-            <ReadOnlyTicketDetail
-              ticket={selectedTicket}
-              canTriage={canTriageSelected}
-              isTriageInProgress={triageInProgress}
-              triageMessage={triageMessage}
-              triageError={triageError}
-              onTriage={handleTriageTicketAction}
-              draftText={draftText}
-              canDraft={canDraftReplySelected}
-              isDraftInProgress={draftInProgress}
-              draftMessage={draftMessage}
-              draftError={draftError}
-              onDraftTextChange={setDraftText}
-              onDraft={handleDraftReplyAction}
-              canRequestApproval={canRequestApprovalSelected}
-              isApprovalRequestInProgress={approvalRequestInProgress}
-              approvalRequestMessage={approvalRequestMessage}
-              approvalRequestError={approvalRequestError}
-              onRequestApproval={handleRequestApprovalAction}
-              canDecideApproval={canDecideApprovalSelected}
-              isApprovalDecisionInProgress={approvalDecisionInProgress}
-              approvalDecisionMessage={approvalDecisionMessage}
-              approvalDecisionError={approvalDecisionError}
-              onApproveReply={handleApproveReplyAction}
-              onRejectReply={handleRejectReplyAction}
-              canSendReply={canSendReplySelected}
-              isSendReplyInProgress={sendReplyInProgress}
-              sendReplyMessage={sendReplyMessage}
-              sendReplyError={sendReplyError}
-              onSendReply={handleSendReplyAction}
-              closureNote={closureNote}
-              canCloseTicket={canCloseTicketSelected}
-              isCloseTicketInProgress={closeTicketInProgress}
-              closeTicketMessage={closeTicketMessage}
-              closeTicketError={closeTicketError}
-              onClosureNoteChange={setClosureNote}
-              onCloseTicket={handleCloseTicketAction}
-            />
-
-            <section className="phase4a-card">
-              <h2>
-                <MonoLabel text="audit trail" />
-              </h2>
-              {auditTimeline.length === 0 ? (
-                <p className="placeholder-meta phase7-empty-state" role="status">
-                  no audit events to display for the current selection.
-                </p>
-              ) : (
-                <div className="placeholder-table">
-                  {auditTimeline.map((event) => (
-                    <article key={event.id} className="placeholder-row">
-                      <div>
-                        <strong>{event.eventType}</strong> for {event.ticketId}
-                      </div>
-                      <div className="placeholder-meta">
-                        {event.summary} · actor: {event.actor} · {event.occurredAt}
-                      </div>
-                      <button type="button" disabled>
-                        View details (read-only)
-                      </button>
-                    </article>
-                  ))}
-                </div>
-              )}
             </section>
+          ) : null}
 
-            <section className="phase4a-card">
-              <h2>
-                <MonoLabel text="communication records" />
-              </h2>
-              <p className="placeholder-meta phase7-empty-state" role="status">
-                no communication records are surfaced in the read-only ui yet.
-              </p>
-              <p className="placeholder-meta">
-                replies are saved locally: when a reply is sent it is recorded locally as a communication row
-                with no provider and no real email delivery. a read-only view of these records comes later.
-              </p>
-            </section>
-          </section>
-
-          <section id="health" className="phase4a-card">
-            <h2>
-              <MonoLabel text="health diagnostics" />
-            </h2>
-            {showPilotStatusCard ? (
-              <OperatorPilotStatusCard
-                clientId={selectedTicket.tenantContext.clientId}
-                customerLabel={selectedTicket.tenantContext.clientName}
-                siteLabel={selectedTicket.tenantContext.siteName}
+          {section === "requests" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="requests"
+                title="request list and detail"
+                description="Pick a request on the left and read the operational detail on the right."
               />
-            ) : null}
-          </section>
 
+              <div className="wss-split">
+                <div className="wss-card">
+                  <div className="wss-list-picker">
+                    {queue.map((ticket) => (
+                      <button
+                        key={ticket.id}
+                        type="button"
+                        className={selectedRequestId === ticket.id ? "wss-request-item is-active" : "wss-request-item"}
+                        onClick={() => setSelectedRequestId(ticket.id)}
+                      >
+                        <strong>{ticket.title}</strong>
+                        <span>
+                          {ticket.clientName} / {ticket.siteName}
+                        </span>
+                        <span>
+                          <MonoLabel text={ticket.status} /> · {ticket.priority}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <article className="wss-card">
+                  <SectionHeading
+                    title={selectedRequest.summary}
+                    description={`${selectedRequest.tenantContext.clientName} / ${selectedRequest.tenantContext.siteName}`}
+                  />
+
+                  <dl className="wss-detail-grid">
+                    <div>
+                      <dt>
+                        <MonoLabel text="status" />
+                      </dt>
+                      <dd>
+                        <MonoLabel text={selectedRequest.status} />
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="priority" />
+                      </dt>
+                      <dd>{selectedRequest.priority}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="updated_at" />
+                      </dt>
+                      <dd>{formatDateTime(selectedRequest.submittedAt)}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="submitted_by" />
+                      </dt>
+                      <dd>{selectedRequest.submittedBy}</dd>
+                    </div>
+                  </dl>
+
+                  <p className="wss-copy">{selectedRequest.customerRequest}</p>
+
+                  <div className="wss-request-attachments">
+                    <div className="wss-section-heading">
+                      <h3>
+                        <MonoLabel text="attachments" />
+                      </h3>
+                      <p className="wss-section-description">
+                        Evidence should be visible with the request instead of buried elsewhere.
+                      </p>
+                    </div>
+
+                    {(selectedRequest.attachments ?? []).length === 0 ? (
+                      <p className="wss-empty-state">no attachments on this request</p>
+                    ) : (
+                      <div className="wss-request-attachment-grid">
+                        {(selectedRequest.attachments ?? []).map((attachment) => (
+                          <article key={attachment.id} className="wss-request-attachment-card">
+                            {isImageMimeType(attachment.mimeType) ? (
+                              <img
+                                src={attachment.publicUrl}
+                                alt={attachment.fileName}
+                                className="wss-request-attachment-thumb"
+                              />
+                            ) : (
+                              <div className="wss-request-attachment-mark">
+                                <MonoLabel text={attachment.mimeType.split("/").at(-1) ?? "file"} />
+                              </div>
+                            )}
+                            <div className="wss-request-attachment-meta">
+                              <strong>{attachment.fileName}</strong>
+                              <span>{formatBytes(attachment.fileSizeBytes)}</span>
+                              <span>{formatDateTime(attachment.createdAt)}</span>
+                              <div className="wss-request-attachment-actions">
+                                <a href={attachment.publicUrl} target="_blank" rel="noreferrer">
+                                  open
+                                </a>
+                                <a href={attachment.publicUrl} download={attachment.fileName}>
+                                  download
+                                </a>
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
+          {section === "profile" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="profile"
+                title="profile details"
+                description="The customer profile surface lives here, including credits and billing status."
+              />
+
+              <div className="wss-grid two-up">
+                <article className="wss-card">
+                  <dl className="wss-detail-grid">
+                    <div>
+                      <dt>
+                        <MonoLabel text="profile" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.profile}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="company" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.company}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="website" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.website}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="current_plan" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.currentPlan}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="billing_status" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.billingStatus}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="logout" />
+                      </dt>
+                      <dd>
+                        <button
+                          type="button"
+                          className="wss-secondary-button"
+                          onClick={() => {
+                            void signOut();
+                            navigate("/login", { replace: true });
+                          }}
+                        >
+                          logout
+                        </button>
+                      </dd>
+                    </div>
+                  </dl>
+                </article>
+
+                <article className="wss-card">
+                  <SectionHeading title="credits_summary" description="How the included work is measured." />
+                  <dl className="wss-detail-grid">
+                    <div>
+                      <dt>
+                        <MonoLabel text="credits_included" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.creditsIncluded}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="credits_used" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.creditsUsed}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="credits_remaining" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.creditsRemaining}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="low_effort" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.lowEffortExplanation}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="medium_effort" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.mediumEffortExplanation}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="high_effort" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.highEffortExplanation}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="replenishment" />
+                      </dt>
+                      <dd>{ACCOUNT_SUMMARY.replenishmentMessaging}</dd>
+                    </div>
+                  </dl>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
+          {section === "website_access" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="website_access"
+                title="website access"
+                description="The access model should be clear so customers understand what is required, optional, and recommended."
+              />
+
+              <div className="wss-grid three-up">
+                {WEBSITE_ACCESS_GROUPS.map((group) => (
+                  <article key={group.key} className="wss-card">
+                    <p className={`wss-badge tone-${group.tone}`}>
+                      <MonoLabel text={group.label} />
+                    </p>
+                    <ul className="wss-list">
+                      {group.items.map((item) => (
+                        <li key={item}>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+
+              <article className="wss-card">
+                <SectionHeading
+                  title="backup_guidance"
+                  description="Backups are not a billing or reporting feature. They are simply part of safe website access."
+                />
+                <p className="wss-copy">
+                  We can work more confidently when the site owner can point us to the latest backup, the restore
+                  method, and the place where staging or production changes are tracked.
+                </p>
+              </article>
+            </section>
+          ) : null}
+
+          {section === "activity" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="activity"
+                title="recent activity"
+                description="A concise trail of what happened most recently."
+              />
+
+              <article className="wss-card">
+                <ul className="wss-list">
+                  {recentEvents.slice(0, 8).map((event) => (
+                    <li key={event.id}>
+                      <strong>
+                        <MonoLabel text={event.eventType} />
+                      </strong>
+                      <span>
+                        {event.ticketId} · {event.summary}
+                      </span>
+                      <small>{formatDateTime(event.occurredAt)}</small>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </section>
+          ) : null}
+
+          {section === "health" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="health"
+                title="diagnostics"
+                description="Pilot status and light operational diagnostics live here without taking over the rest of the console."
+              />
+
+              <div className="wss-grid two-up">
+                <article className="wss-card">
+                  <SectionHeading title="pilot_status" />
+                  <dl className="wss-detail-grid">
+                    <div>
+                      <dt>
+                        <MonoLabel text="buyer_email" />
+                      </dt>
+                      <dd>{pilotStatus.buyerEmail ?? "not available"}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="stripe_status" />
+                      </dt>
+                      <dd>{pilotStatus.stripeStatus ?? "not available"}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="wss_status" />
+                      </dt>
+                      <dd>{pilotStatus.wssStatus ?? "not available"}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="owner_claimed" />
+                      </dt>
+                      <dd>{pilotStatus.ownerClaimed === null ? "not available" : pilotStatus.ownerClaimed ? "true" : "false"}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="site_count" />
+                      </dt>
+                      <dd>{formatCount(pilotStatus.siteCount)}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <MonoLabel text="org_member_count" />
+                      </dt>
+                      <dd>{formatCount(pilotStatus.orgMemberCount)}</dd>
+                    </div>
+                  </dl>
+                </article>
+
+                <article className="wss-card">
+                  <SectionHeading title="diagnostic_timeline" />
+                  <ul className="wss-list">
+                    {(pilotStatus.timeline.length > 0 ? pilotStatus.timeline : []).slice(0, 4).map((item) => (
+                      <li key={item.key}>
+                        <strong>{item.label}</strong>
+                        <span>
+                          {item.source} · {item.field} · {item.reliability}
+                        </span>
+                        <small>{formatDateTime(item.timestamp)}</small>
+                        {item.note ? <span>{item.note}</span> : null}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </div>
+            </section>
+          ) : null}
         </main>
       </div>
+
+      <button type="button" className="wss-feedback-launcher" onClick={() => setFeedbackOpen(true)}>
+        feedback
+      </button>
+
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} defaultSiteId={siteIdForFeedback} />
     </div>
   );
 }

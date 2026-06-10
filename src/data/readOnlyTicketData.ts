@@ -11,6 +11,7 @@ import {
   type MockAuditEvent,
   type MockTicketDetail,
   type MockTicketQueueItem,
+  type MockRequestAttachment,
 } from "../ui/mockData";
 
 type ReadOnlyQueueStatus = MockTicketQueueItem["status"];
@@ -190,6 +191,8 @@ interface SupabaseTicketQueueRow {
   identity_confidence: "known" | "claimed" | "unknown";
   submitter_name: string | null;
   blocked_reason: string | null;
+  created_at?: string;
+  updated_at?: string;
   agencies?: JoinedRelation;
   clients?: JoinedRelation;
   sites?: JoinedRelation;
@@ -266,8 +269,8 @@ export function getReadOnlyDataMode(): ReadOnlyDataMode {
 
 export function getReadOnlyModeLabel(): string {
   return getReadOnlyDataMode() === "supabase-dev-readonly"
-    ? "Live support queue"
-    : "Support queue";
+    ? "operations_console"
+    : "operations_console_preview";
 }
 
 export async function getReadOnlyTicketQueue(): Promise<MockTicketQueueItem[]> {
@@ -278,7 +281,7 @@ export async function getReadOnlyTicketQueue(): Promise<MockTicketQueueItem[]> {
   const client = createSupabaseClient();
   const query = await client
     .from("tickets")
-    .select("id,ticket_number,title,status,priority,identity_confidence,submitter_name,blocked_reason,agencies(id,name),clients(id,name),sites(id,name),site_id,client_id")
+    .select("id,ticket_number,title,status,priority,identity_confidence,submitter_name,blocked_reason,created_at,updated_at,agencies(id,name),clients(id,name),sites(id,name),site_id,client_id")
     .order("created_at", { ascending: false });
 
   if (query.error || !query.data) {
@@ -299,7 +302,7 @@ export async function getReadOnlyTicketQueue(): Promise<MockTicketQueueItem[]> {
         status: safeNormalizeStatus(String(row.status)),
         priority: safeNormalizePriority(String(row.priority)),
         submittedBy: row.submitter_name ?? "unknown",
-        updatedAt: new Date().toISOString(),
+        updatedAt: row.updated_at ?? row.created_at ?? new Date().toISOString(),
         siteId: selectTenantId(row.sites, row.site_id ?? "UNKNOWN"),
         siteName: selectTenantName(row.sites, "Unknown site"),
         clientId: selectTenantId(row.clients, row.client_id ?? "UNKNOWN"),
@@ -354,12 +357,23 @@ interface SupabaseTicketDetailRow {
   identity_confidence: "known" | "claimed" | "unknown";
   submitter_name: string | null;
   blocked_reason: string | null;
+  created_at?: string;
   agency_id: string;
   client_id: string;
   site_id: string;
   agencies?: JoinedRelation;
   clients?: JoinedRelation;
   sites?: JoinedRelation;
+}
+
+interface SupabaseAttachmentRow {
+  id: string;
+  ticket_id: string;
+  storage_path: string;
+  file_name: string;
+  mime_type: string;
+  file_size_bytes: number;
+  created_at: string;
 }
 
 export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTicketDetail> {
@@ -371,7 +385,7 @@ export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTic
   const ticketQuery = await client
     .from("tickets")
     .select(
-      "id,ticket_number,title,description,status,priority,identity_confidence,submitter_name,blocked_reason,agency_id,client_id,site_id,agencies(id,name),clients(id,name),sites(id,name)",
+      "id,ticket_number,title,description,status,priority,identity_confidence,submitter_name,blocked_reason,created_at,agency_id,client_id,site_id,agencies(id,name),clients(id,name),sites(id,name)",
     )
     .eq("ticket_number", ticketId)
     .single();
@@ -386,6 +400,11 @@ export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTic
   }
 
   const auditTimeline = await getReadOnlyTicketAuditTimeline(ticketData.id);
+  const attachmentQuery = await client
+    .from("ticket_attachments")
+    .select("id,ticket_id,storage_path,file_name,mime_type,file_size_bytes,created_at")
+    .eq("ticket_id", ticketData.id)
+    .order("created_at", { ascending: true });
   const approvalEventQuery = await client
     .from("ticket_audit_events")
     .select("id,ticket_id,actor_id,event_type,summary,occurred_at")
@@ -396,6 +415,25 @@ export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTic
     : approvalEventQuery.data
         .map((row) => toRecord(row) as unknown as SupabaseAuditRow | undefined)
         .filter((row): row is SupabaseAuditRow => Boolean(row));
+
+  const attachments: MockRequestAttachment[] = attachmentQuery.error || !attachmentQuery.data
+    ? []
+    : attachmentQuery.data
+        .map((row) => {
+          const attachment = toRecord(row) as SupabaseAttachmentRow | undefined;
+          if (!attachment) {
+            return undefined;
+          }
+          return {
+            id: attachment.id,
+            fileName: attachment.file_name,
+            mimeType: attachment.mime_type,
+            fileSizeBytes: Number(attachment.file_size_bytes ?? 0),
+            publicUrl: client.storage.from("request_attachments").getPublicUrl(attachment.storage_path).data.publicUrl,
+            createdAt: attachment.created_at,
+          };
+        })
+        .filter((item): item is MockRequestAttachment => Boolean(item));
 
   return {
     id: ticketData.ticket_number,
@@ -414,10 +452,11 @@ export async function getReadOnlyTicketDetail(ticketId: string): Promise<MockTic
       siteName: selectTenantName(ticketData.sites, ticketData.site_id),
     },
     submittedBy: ticketData.submitter_name ?? "Unknown",
-    submittedAt: new Date().toISOString(),
+    submittedAt: ticketData.created_at ?? new Date().toISOString(),
     approvalStatus: approvalStateFromEvents(events),
     blockedReason: ticketData.blocked_reason ?? undefined,
     auditTimeline,
+    attachments,
   };
 }
 
