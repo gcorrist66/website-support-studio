@@ -60,7 +60,7 @@ website_access; rebase plan).
 | G4 | **Overage policy default**: out-of-scope project work → money change-order vs CU debit | V2.4 rule | operator-flagged `project_overage`; default unset |
 | G5 | **Ongoing-ops funding**: CU-funded support vs separate retainer | V2.4 rule | default = treat as subscription support |
 | G6 | **Does a project price ever debit CU?** (pure revenue vs bundled CU) | V2.0/V2.4 | default: no CU coupling |
-| G7 | **Project intake path**: operator-initiated vs customer self-serve checkout | V2.1 (undesigned) | operator-initiated assumed |
+| G7 | **Project intake path**: operator-initiated vs customer self-serve checkout | V2.1 **designed** (Foundation Plan Part VI): operator-led MVP first, self-serve fast-follow | operator-led MVP (zero new schema) |
 | G8 | **Show project price to customers?** | V2.3 read model | currently included as "their own price" |
 
 ## 3. Open Decisions — Requiring **Real Customers** (validate assumptions)

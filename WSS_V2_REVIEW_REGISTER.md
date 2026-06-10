@@ -53,6 +53,10 @@ Legend: **G** = needs Gary (business) · **Cust** = needs real-customer evidence
 | D11 | **Ongoing-ops funding** | treat as subscription support (CU) unless a retainer | ✅ | ◐ | ✕ | V2.4 | unprofitable ops work |
 | D12 | **Intake path** | operator-initiated first; self-serve later | ✅ | ✅ | ✕ | V2.1 | wrong funnel / friction |
 | D13 | **Customer read mechanism** | **DECIDED:** whitelisting RPC (`get_my_projects`/`get_my_capacity`), not direct RLS | ✕ | ✕ | ✅ | V2.3/V2.4 | column leak (intake_notes/stripe ids) if ever reverted |
+| D14 | **Intake path** (Part VI) | **DECIDED:** operator-led MVP (zero new schema, manual one-time link); self-serve fast-follow | ◐ | ✅ | ✕ | V2.1 | wrong front door / friction |
+| D15 | **A lead = an unpaid project row?** | yes — reuse `projects` (`payment_status=unpaid`), no separate lead table; operator filter on unpaid | ◐ | ✕ | ✕ | V2.1 | board clutter without an unpaid filter |
+| D16 | **Intake storage: notes vs structured** | start with `intake_notes` + existing fields; promote to a `project_intake` table only if volume needs it | ✕ | ◐ | ✕ | V2.1 | reporting/repeatability limits later |
+| D17 | **One-time payment for self-serve** | needs `create-checkout-session` + `stripe-webhook` one-time branches (today subscriptions/add-ons only) | ✅ | ◐ | ✅ | V2.1.1 | webhook change could disturb the live subscription flow |
 
 ◐ = helpful but not blocking.
 

@@ -788,3 +788,128 @@ gap audit as `main` moves.
 **Protecting `CustomerRequest.tsx` / `AppShell.tsx`:** do not carry V2's older versions of these forward.
 Take **main's** versions as the base and re-apply V2 additions as new, separately-mounted panels/tabs
 (a "Your Projects" panel; a "Projects" board tab) so the rebase is additive, not a clobber.
+
+---
+---
+
+# Part VI — V2.1 Project Intake (design)
+
+**Added:** 2026-06-09 · **Branch:** `v2-foundation` · **Status:** DESIGN ONLY (no migration, no code).
+V2 already has Projects, Milestones, Deliverables, Customer visibility, and Capacity accounting. The one
+missing piece is the **front door: how a customer becomes a project.** This part designs it on top of the
+existing `projects` schema — **no new tables are required for the MVP.**
+
+## VI.1 — Intake Lifecycle (Phase 1, FINAL recommendation)
+
+The `projects` row already has **two orthogonal axes** (Part II §3): `payment_status` (money) and `status`
+(delivery). Intake is the choreography of those two axes from first contact to a live project:
+
+```
+                payment_status:  unpaid ───────────────────────────▶ paid ──────────▶
+                       status:   intake ──▶ scoping ──────────────▶ scoping ──▶ in_progress
+stage label:           LEAD       INTAKE      SCOPED/QUOTED          PURCHASED      KICKED OFF
+who acts:              operator   operator/cust   operator           customer        operator
+```
+
+| Stage | `payment_status` | `status` | What happens |
+|---|---|---|---|
+| **Lead** | unpaid | intake | A prospective project exists (contact form / sales touch). A `projects` row is created — *the lead is an unpaid project*, no separate lead table. |
+| **Intake** | unpaid | intake | Project requirements collected (VI.2) into `intake_notes` + existing fields. |
+| **Scoped / Quoted** | unpaid | scoping | Operator sets `price_cents` + `target_delivery_date`, drafts **milestones** (the plan) and deliverable placeholders. |
+| **Purchased** | **paid** | scoping | Customer pays the one-time price → `payment_status = paid`, `stripe_payment_intent_id` recorded. Project becomes **customer-visible**. |
+| **Kicked off** | paid | in_progress | Operator starts work; customer provides access + assets; milestones run to delivered/accepted. |
+
+**Why this shape:** "Lead/Purchased" stay on `payment_status` (not new statuses), so the delivery axis is
+never polluted by sales state. A project row exists from the **lead** moment (reusing
+`operator_create_project`), and becomes a **live, customer-visible** project at **purchase**. This is the
+smallest model that needs **zero new schema**.
+
+## VI.2 — Required Intake Data (Phase 2) → where each field lives
+
+| Intake input | Stored as | New field? |
+|---|---|---|
+| **Project type** (build / redesign / ongoing / fix / migration) | `projects.project_type` (`new_website`=build, `rebuild`=redesign, `ongoing_ops`, `fix`, `update`, `migration`) | ✅ exists |
+| **Website URL** (current or target) | `projects.site_id` if an existing site; else captured in `intake_notes` (a new build has no site yet) | exists / notes |
+| **Platform / CMS** | `org_profiles.cms_platform` (from 1.5 onboarding) — read, don't re-ask; project-specific platform → `intake_notes` | exists (1.5) |
+| **Goals** | `intake_notes` (free text) for MVP | notes |
+| **Assets** (logo, copy, brand) | provided as request attachments / referenced in `intake_notes` | notes/attachments |
+| **Access** | **website_access** (1.5-owned) — consumed by reference, not re-collected (Part V §V.6) | 1.5 |
+| **Timeline** | customer expectation → `intake_notes`; operator commitment → `projects.target_delivery_date` | exists |
+| **Budget** | customer expectation → `intake_notes`; operator price → `projects.price_cents` | exists |
+
+**Schema verdict:** the MVP needs **no migration** — `intake_notes` + existing columns carry it. A future
+**structured intake** (e.g. `project_intake` with `current_url`, `goals`, `budget_expectation_cents`,
+`desired_timeline`) is an *option, not a requirement* — design-only, deferred until volume justifies it.
+
+## VI.3 — Source of Truth per Field (Phase 3) — never re-ask what we know
+
+| Source | Provides | Intake reuses (doesn't re-collect) |
+|---|---|---|
+| **Checkout (Stripe)** | the purchase event → `payment_status`, `stripe_payment_intent_id` / `stripe_checkout_session_id`, the price paid | money state only |
+| **Onboarding (1.5)** | org/company, primary contact, `cms_platform`, `website_count` | org-level facts |
+| **website_access (1.5)** | how WSS reaches the site (access readiness) | access state by reference |
+| **Project intake (V2.1, NEW)** | the *delta*: project_type, goals, current/target URL, assets, timeline + budget expectations, scope notes | this is the only new collection surface |
+
+Principle: **intake collects only what isn't already known.** Org identity and CMS come from onboarding;
+access comes from website_access; payment comes from checkout. Intake adds the project-specific layer.
+
+## VI.4 — Operator Workflow (Phase 4) — when the operator acts
+
+1. **Qualify the lead** — decide to pursue; keep the `projects` row (or `cancelled` if not). *(lead → intake)*
+2. **Capture intake** — record VI.2 inputs into `intake_notes`/fields while talking to the customer.
+3. **Scope** — set `price_cents` + `target_delivery_date`; `operator_set_project_status(... 'scoping')`.
+4. **Create milestones** — `operator_add_milestone` at **scoping**, so a clear plan exists **before** the
+   customer pays (they see the plan at purchase).
+5. **Create deliverable placeholders** — `operator_add_deliverable` (status `pending`) at scoping; mark
+   `delivered`/`accepted` later during `in_progress`.
+6. **Quote / collect payment** — send the one-time payment link (manual today; see VI.6). On payment →
+   `payment_status = paid`.
+7. **Kick off** — `operator_set_project_status(... 'in_progress')`; request access + assets from the customer.
+
+**Timing rule:** milestones exist by **purchase** (so the customer buys a visible plan); deliverables are
+produced during execution; CU accounting (V2.4) does **not** apply to in-scope project work.
+
+## VI.5 — Customer Workflow (Phase 5)
+
+**Pre-purchase (lead/intake):** a lightweight intake touch — operator-led conversation for the MVP, or a
+self-serve "Start a project" form later (VI.6). Minimal asks: project type, current/target URL, goals,
+rough timeline + budget.
+
+**First thing the customer sees (post-purchase, in "Your Projects"):** their project card —
+title, type, **status label** ("Planning" / "In progress"), **what they bought** (price), **target delivery
+date**, the **milestone plan**, and **"what's next."**
+
+| | Customer |
+|---|---|
+| **Required action** | (1) **Grant website access** (website_access connect), (2) **provide assets** (logo/copy/brand), (3) respond to any **"Needs your input"** (`waiting_on_customer`) prompt. These unblock the build. |
+| **Optional** | add notes, submit a project-scoped request, review & **accept** deliverables (sign-off). |
+| **Never asked twice** | org/company, CMS, contact — already known from onboarding. |
+
+## VI.6 — Recommended Intake Model (the front door)
+
+**MVP — operator-led intake (V2.1.0):** uses only existing RPCs + a manual one-time payment link.
+`operator_create_project` (lead) → capture intake → scope + milestones → **manual Stripe one-time link**
+(the path used for the first real $500 customer on corristonconsulting.com) → mark `payment_status=paid`
+→ kick off. **Zero new schema, zero new payment infra.** This is the smallest safe front door and matches
+how WSS sells today.
+
+**Fast-follow — self-serve intake (V2.1.1, future, needs payment infra):**
+a marketing **"Start a project"** CTA → intake form → **one-time** Stripe checkout → `stripe-webhook`
+branch creates/updates the project (`payment_status=paid`, `status=intake`) → operator scopes.
+Requires: a one-time price/payment path in `create-checkout-session` (today it only does subscriptions +
+add-ons) and a one-time branch in `stripe-webhook` that sets project `payment_status` + stripe ids. **Design
+-only — do not implement; only build what is already on main** (per standing constraints). Founder pricing
+and the credit model are subscription-side and unaffected by one-time project payments.
+
+**Recommendation:** ship the operator-led MVP first (no code/payment changes needed beyond the V2 build);
+add self-serve only once project demand is proven and the one-time payment branch is built & dev-verified.
+
+## VI.7 — Risks & Open Decisions (intake-specific)
+
+| Item | Note |
+|---|---|
+| **One-time payment path not built** | today manual; self-serve needs `create-checkout-session` + `stripe-webhook` one-time branches (R: webhook must not disturb the live subscription flow — same caution as Part I risks). |
+| **Is `$500` a standard price?** | open Gary decision (Review Register D4); `price_cents` is per-quote until told otherwise. |
+| **Structured intake vs `intake_notes`** | start with notes; promote to a `project_intake` table only if volume needs it (design-only). |
+| **Lead clutter** | unpaid projects = leads; needs an operator filter (`payment_status='unpaid'`) so the board isn't noisy. |
+| **Self-serve before scoping** | if a customer pays before scope is agreed, operator must scope post-hoc; prefer scope→quote→pay ordering for fixed-price clarity. |
