@@ -170,6 +170,9 @@ create trigger tickets_project_same_org_check
 -- 6. tickets.request_kind — structured category (default 'support', constant default = no row rewrite).
 --    Replaces the title-prefix heuristic. App submit path (submit_customer_request / submitCustomerFeedback)
 --    is updated in lockstep with the V2.3 app change — see WSS_V2_2_IMPLEMENTATION_PLAN.md §6.
+--    RECONCILIATION (2026-06-09): main's later migration 20260614000000_request_attachments.sql has an RPC
+--    (submit_customer_request_with_attachments) that WRITES this column. V2.2 is the PRODUCER of request_kind;
+--    it MUST be applied before that attachments migration. See WSS_V2_FOUNDATION_PLAN.md Part V. (no logic change)
 -- ============================================================================
 alter table public.tickets
   add column if not exists request_kind public.request_kind not null default 'support';

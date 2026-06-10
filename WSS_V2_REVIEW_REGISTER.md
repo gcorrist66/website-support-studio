@@ -40,7 +40,7 @@ Legend: **G** = needs Gary (business) · **Cust** = needs real-customer evidence
 
 | # | Decision | Current recommendation | G | Cust | DEV | Phase | Risk if wrong |
 |---|---|---|:--:|:--:|:--:|---|---|
-| D1 | **Low/Med/High → CU** (`cu_cost`) | default **1 / 3 / 8** (one function) | ✅ | ◐ | ✅ | V2.4 | mispriced capacity → oversell or thin margin |
+| D1 | **Low/Med/High → CU** (`cu_cost`) | **CONFIRMED 1 / 3 / 8** — matches 1.5 credit model | ✓done | ◐ | ✅ | V2.4 | mispriced capacity → oversell or thin margin |
 | D2 | **Project work vs support CU** | in-scope project work burns **no** CU; only orphan support + routed overage do | ✅ | ✕ | ✅ | V2.4 | double-charge or unbilled work |
 | D3 | **Top-up pricing** (50/100/250) | TBD — set in `plans.ts`/Stripe | ✅ | ✕ | ✕ | V2.4/billing | can't sell top-ups / wrong price |
 | D4 | **Is $500 a standard project price?** | treat `price_cents` as per-quote until told otherwise | ✅ | ✅ | ✕ | V2.0/V2.1 | intake built on a wrong pricing model |
@@ -67,7 +67,11 @@ Legend: **G** = needs Gary (business) · **Cust** = needs real-customer evidence
 | R3 | **Cross-tenant** exposure on new tables | **High** | V2.0/V2.2/V2.4 | operator-only RLS + 3 tenant-key guards | dev: customer/anon see 0 rows; cross-org link rejected |
 | R4 | `tickets` column adds cause **lock/rewrite** | Med | V2.2 (`project_id`,`request_kind`), V2.4 (`effort_level`) | all nullable / constant default | apply on a prod-sized copy; observe no rewrite |
 | R5 | `tickets_project_same_org_check` cost on hot path | Med | V2.2 | trigger does work only when `project_id` set | benchmark vs baseline |
-| R6 | `cu_cost` values unset/incorrect | Med | V2.4 | single function; default flagged "pending Gary" | Gary confirm + dev reconciliation of Used/Remaining |
+| R6 | `cu_cost` values unset/incorrect | ~~Med~~ Low | V2.4 | **resolved:** Gary confirmed 1/3/8 (= 1.5 credit model); single function | dev reconciliation of Used/Remaining |
+| R13 | **`request_kind` ownership conflict:** main's `614` attachments RPC *writes* `request_kind` but no main migration *creates* it; only V2.2 does | **High** | main `20260614000000` vs V2.2 | V2.2 is the producer + idempotent guards; **V2.2 must apply before `614`** | confirm with Codex how `614` applied to prod without the column; reconcile enum type |
+| R14 | **Out-of-order migration timestamps:** V2 stamped `610`–`613`, *earlier* than already-applied `614` on prod | **High** | rebase | **renumber V2 to >`20260614000000`** before applying against a DB with `614` | dev apply with renumbered files; no skipped/out-of-order migration |
+| R15 | **Rebase clobber** of `CustomerRequest.tsx` / `AppShell.tsx` (heavily changed on main) | Med | rebase | take main's versions as base; re-mount V2 UI as new panels/tabs; never carry V2's old shells forward | reviewed rebase, not auto-merge |
+| R16 | V2 project-scoped submit must target the **new** `submit_customer_request_with_attachments`, not the old RPC | Med | rebase / V2.2 app change | add `p_project_id`/`p_kind` to the attachments RPC in lockstep | dev: project-scoped submit creates a linked ticket with attachments |
 | R7 | `request_kind` backfill mis-tags a real support ticket | Low | V2.2 | coarse by design; operator-correctable via `operator_set_ticket_kind` | dev: spot-check backfilled rows |
 | R8 | No-rollover / period-boundary errors | Med | V2.4 | period scoped to subscription dates | dev: simulate `invoice.paid` renewal |
 | R9 | `get_my_projects` nested-subquery performance | Low–Med | V2.3 | fine at realistic project counts | benchmark with many projects |

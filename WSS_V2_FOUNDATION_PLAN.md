@@ -575,8 +575,10 @@ subscription-funded.
 | **Out-of-scope project work** ("overage") | **Yes, if routed to the plan** | operator flags it; debit `project_overage` (carries `project_id` + `effort_level`) — or a money change-order if the customer has no plan |
 | **Website operations** (`project_type = 'ongoing_ops'`) | **Yes (default)** | treated as subscription support — its requests consume CU like normal support, unless structured as a separate money retainer |
 
-**Effort → CU (the single source of truth = `cu_cost()`):** default **Low = 1, Medium = 3, High = 8**
-— *proposal, pending Gary's confirmation*. Centralised in one SQL function so re-pricing is a one-line change.
+**Effort → CU (the single source of truth = `cu_cost()`):** **Low = 1, Medium = 3, High = 8** —
+**CONFIRMED** (matches the WSS 1.5 credit-model direction: `low_effort = 1`, `medium_effort = 3`,
+`high_effort = 8`; see Part V). "Credit" (Gary's term) and "Capacity Unit" (customer-facing term) are the
+**same unit**. Centralised in one SQL function so re-pricing stays a one-line change.
 
 **Consume timing:** at the **approval gate** (`approved_to_send` / send), never at submit — preserving the
 human-in-the-loop principle and ensuring a customer is only charged for work actually delivered.
@@ -652,3 +654,137 @@ questions and spotting overage. Posting is via `operator_post_capacity_entry()` 
 | "Out-of-scope vs in-scope" is a human judgment | Med | Operator-flagged `project_overage`; reason recorded; auditable. |
 | Double-counting (consumed + still "pending") | Low | `pending` excludes tickets that already have a `support_consume` entry. |
 | Period boundaries / no-rollover correctness | Med | Period scoped to subscription dates; verify renewal on dev. |
+
+---
+---
+
+# Part V — WSS 1.5 Reconciliation (prebuild audit, 2026-06-09)
+
+`main` advanced **15 commits** after `v2-foundation` diverged (merge-base `dfd89cb`). This part makes V2
+**aware** of that reality. V2 stays parked — no rebase performed, nothing applied, no code changed.
+
+## V.1 — Branch Gap Audit (what landed on main)
+
+| Area | On main (not yet on v2-foundation) |
+|---|---|
+| **Migration** | `20260614000000_request_attachments.sql` — `ticket_attachments` table, `request_attachments` storage bucket + owner policies, `submit_customer_request_with_attachments` RPC |
+| **Customer shell** | routed console (`/overview /board /requests /profile /website_access /activity /health`, `/account`→`/profile`); `RequestComposer.tsx` (request-creation + attachments); floating feedback modal; profile/account cleanup |
+| **Operator shell** | `OperatorBoard.tsx`, `OperatorFeedbackSurface.tsx`, `LaunchAccountPreview.tsx`; `AppShell.tsx`, ticket queue/detail changes |
+| **Data/app** | `src/billing/capacity.ts`, `src/data/customerAccount.ts`, `src/domain/requestKind.ts` (these were authored on `main`); `customerRequests.ts` now calls the attachments RPC |
+| **Pricing** | **founder pricing** (`operations_founder`, $199.50 = 50% off Operations) in `marketing/src/consts.ts` + `create-checkout-session`; **credit model** low/med/high = 1/3/8; top-ups 50/100/250 |
+
+## V.2 — V2 Impact Analysis
+
+| V2 element | Impact from 1.5 | Verdict |
+|---|---|---|
+| `tickets.project_id` (V2.2) | independent of attachments; orphan default unchanged | ✅ no conflict |
+| `tickets.request_kind` (V2.2) | **SHARED:** main's attachments RPC **writes** `request_kind` (literal `'support'`) but **no main migration creates it** — only V2.2 does. V2.2 is the *producer*. | ⚠ ordering + ownership — see V.3 |
+| `tickets.effort_level` (V2.4) | not referenced by any main migration; `src/billing/capacity.ts` (main) uses the same low/med/high model | ✅ aligned |
+| `capacity_ledger` (V2.4) | absent on main; `cu_cost` 1/3/8 == main's credit model | ✅ aligned (V.4) |
+| `get_my_projects()` / `get_my_capacity()` (V2.3/V2.4) | no main equivalent; main's `customerAccount.ts` reads subscriptions only | ✅ complementary |
+| Operator project UI | must mount inside the **new** `OperatorBoard`/`AppShell`, not the old shell | ⚠ rebase target moved |
+| Customer project UI | "Your Projects" panel must mount inside the **new routed customer console** (`/overview`…), not the old `CustomerRequest` | ⚠ rebase target moved |
+| Attachments on project-linked requests | attachments are ticket-level; project link is `tickets.project_id` → linked requests **keep** attachments automatically | ✅ see V.5 |
+| website_access / connect wizard | new `/website_access` route (renders HomeRoute placeholder) | see V.6 |
+| Feedback categorization | main still uses title-prefix (`requestKind.ts`); attachments RPC hard-codes `request_kind='support'`; V2.2 makes it structural | V2.2 supersedes (V.4/V.5) |
+
+## V.3 — Migration Order Review (REVISED — important)
+
+The task's suggested order put *attachments* **before** V2. That is **incorrect**: main's attachments RPC
+references `tickets.request_kind`, which **only V2.2 creates**. With `check_function_bodies` on, the
+attachments `create function` fails if `request_kind` does not yet exist. So:
+
+**Correct combined apply order (fresh dev DB):**
+1. base / production migrations (through `20260609170500`)
+2. **V2.0** projects (`20260610`)
+3. **V2.2** milestones/deliverables + **creates `request_kind`** (`20260611`)
+4. **V2.3** customer visibility (`20260612`)
+5. **V2.4** capacity ledger (`20260613`)
+6. **request attachments** (`20260614`) — *uses* `request_kind`, so it must come **after V2.2**
+
+The natural timestamp order already satisfies this (V2.2 `611` < attachments `614`). V2.2 is defensive
+(`create type` guarded, `add column if not exists`, conditional backfill), so it is **safe even if
+`request_kind` already exists**.
+
+**The real hazard — out-of-order insertion against prod.** Production/`main` already carries `614`. The
+V2 files are stamped **earlier** (`610`–`613`). Applying earlier-stamped migrations *after* a later one is
+already applied is unsafe in a linear migration history (Supabase may skip or error). **Required prebuild
+action: renumber the four V2 migrations to timestamps AFTER `20260614000000`** (e.g. `20260615…`–`20260618…`)
+before applying to any DB that already has `614`. Do this at rebase time, not now.
+
+**OPEN QUESTION for Codex/Gary (not a V2 bug):** on main, `614` writes `request_kind` but no main migration
+creates it. Confirm how `614` was (or will be) applied to prod — was `request_kind` added out-of-band, or
+is `614` pending? V2.2 is the proper producer; if the branches merge, V2.2 must own `request_kind` and the
+column type (enum) must be reconciled with however prod added it (if it did).
+
+## V.4 — Credit Model Alignment (Phase 4)
+
+Gary's decision **matches V2.4 already** — no logic change needed:
+
+| | Gary / 1.5 direction | V2.4 `cu_cost()` |
+|---|---|---|
+| low | 1 credit | `low → 1` ✅ |
+| medium | 3 credits | `medium → 3` ✅ |
+| high | 8 credits | `high → 8` ✅ |
+| top-ups | 50 / 100 / 250 | `REPLENISHMENT` + `ADDONS.topup_50/100/250` ✅ |
+
+Docs updated to mark `cu_cost` **CONFIRMED**. **Terminology:** "credit" (Gary) == "Capacity Unit"
+(shipped 1.5 UI). Recommend a single customer-facing term; the 1.5 UI currently says "Capacity Units".
+Stripe top-up prices remain a Gary input (not implemented here; only implement what is already on main).
+
+## V.5 — Attachment Compatibility (Phase 5)
+
+| Question | Answer |
+|---|---|
+| Do project-linked requests keep attachments? | **Yes.** Attachments hang off the ticket (`ticket_attachments.ticket_id`); linking via `tickets.project_id` doesn't move or drop them. |
+| Do deliverables differ from attachments? | **Yes, fundamentally.** Attachments = customer-uploaded **evidence/supporting files on a request**. Deliverables = operator-produced **project outputs** (live URL, handoff files). |
+| Should attachments stay ticket-level evidence? | **Yes.** Keep them on the ticket; do not promote them to the project. |
+| Should deliverables link to uploaded assets later? | Optional future: a deliverable of `kind='file'` could reference a stored asset — **not now** (design-only). |
+| Does `ticket_attachments` affect V2.2 request linkage? | **No.** Orthogonal — `project_id` is on `tickets`; attachments reference `tickets`. They compose cleanly. |
+
+**Preserved model:** *attachments = evidence/supporting files on requests; deliverables = operator-delivered
+project outputs.* A project view can surface a linked request's attachments read-only, but the two stay
+distinct tables and concepts.
+
+## V.6 — Website Access / Connect Wizard Impact (Phase 6)
+
+`/website_access` is a **new 1.5 customer-console section** (routed, currently a HomeRoute placeholder).
+Its V2 relationship:
+
+- **WSS 1.5:** an access checklist / "connect your website" direction (the customer tells/grants WSS how
+  to reach their site).
+- **V2 project intake:** the same access info is a natural **input to a project** — an operator needs site
+  access to deliver a build/redesign. A future V2.1 intake can *read* website_access state, not own it.
+- **Future connect wizard / credential workflow:** out of scope. **Do not build credential storage** in V2;
+  if access credentials are ever stored, that is its own security-reviewed workstream (encryption, audit),
+  not part of the project layer.
+
+**Recommendation:** treat website_access as a **1.5-owned** capability that V2 *consumes by reference*
+(e.g. "site access ready? y/n" feeding project readiness), never duplicates.
+
+## V.7 — Safe Rebase / Merge Plan (Phase 7)
+
+**When to rebase `v2-foundation` onto `main`:** only when the V2 premise gate opens (real customer demand)
+**and** a dev-proof window is scheduled — not before. Until then, keep V2 parked; periodically re-run this
+gap audit as `main` moves.
+
+**Likely conflicts (review by hand, never auto-merge):**
+- `src/components/customer/CustomerRequest.tsx` and `src/components/shell/AppShell.tsx` — heavily changed on
+  main (routed console, new operator board). The V2 customer/operator project UI must be **re-targeted**
+  onto the new shells, not merged against the old ones.
+- `src/data/customerRequests.ts` — main now uses `submit_customer_request_with_attachments`; V2's planned
+  project-scoped submit (`p_project_id`/`p_kind`) must be added to **that** RPC, not the old one.
+- `src/domain/requestKind.ts` / `src/billing/capacity.ts` — exist on main; V2's structural `request_kind`
+  and ledger wiring extend them (keep the title-prefix parser as a fallback during transition).
+
+**Migrations needing close review at rebase:**
+- **Renumber V2 → after `20260614`** (V.3). Re-verify `request_kind` is created exactly once and the column
+  type is consistent (V2.2 enum vs whatever prod has).
+- Re-run the DEV proof checklist apply-order **including `614`**.
+
+**Never auto-merge:** any migration; `CustomerRequest.tsx`; `AppShell.tsx`; `create-checkout-session`
+(founder pricing lives there). Resolve each deliberately with Codex.
+
+**Protecting `CustomerRequest.tsx` / `AppShell.tsx`:** do not carry V2's older versions of these forward.
+Take **main's** versions as the base and re-apply V2 additions as new, separately-mounted panels/tabs
+(a "Your Projects" panel; a "Projects" board tab) so the rebase is additive, not a clobber.

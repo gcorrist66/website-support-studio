@@ -33,9 +33,19 @@ production-readiness gates. **No migrations were written or applied; static-only
 **Preconditions:** the dev DB must already be at **production's current migration head** (all base
 migrations applied) before the V2 four run. Apply strictly in timestamp order.
 
+**⚠ Reconciliation with `main` (added 2026-06-09 — see Foundation Plan Part V):** `main` now has
+`20260614000000_request_attachments.sql`, whose `submit_customer_request_with_attachments` RPC **writes
+`tickets.request_kind`** — a column **only V2.2 creates**. So **V2.2 must apply before the attachments
+migration**. Revised combined order:
+`base (≤20260609170500) → V2.0(610) → V2.2(611, creates request_kind) → V2.3(612) → V2.4(613) → attachments(614)`.
+The natural timestamp order already satisfies this. **But** prod already carries `614`, and the V2 files are
+stamped *earlier* — applying earlier-stamped migrations after a later applied one is unsafe. **Required at
+rebase: renumber the four V2 migrations to AFTER `20260614000000`.** Do not renumber now (no rebase yet).
+
 **Static findings:** balanced `$$` in all four; no function/trigger name clashes with base (`tickets`
 keeps its base `tickets_block_tenant_key_change`; V2 adds `tickets_project_same_org_check`); three distinct
-tenant-key guards (project / project-child / capacity) — no overlap. **No critical issue → no new migration.**
+tenant-key guards (project / project-child / capacity) — no overlap. **No critical issue in the V2
+migrations.** (Cross-branch `request_kind` ownership is an apply-order/coordination item, not a V2 bug — see Part V.)
 
 ## 3. DEV Verification Checklist
 
@@ -48,6 +58,8 @@ tenant-key guards (project / project-child / capacity) — no overlap. **No crit
 ### 3.1 — Apply order
 - [ ] Base schema present (production head). Then the four V2 migrations apply with **no error**, in order
       `…610 → …611 → …612 → …613`.
+- [ ] Apply the **attachments** migration (`…614`) **after V2.2** and confirm its
+      `submit_customer_request_with_attachments` RPC creates cleanly (it references `request_kind`, created by V2.2).
 - [ ] `request_kind` backfill ran: existing `Product feedback:%` tickets now `request_kind = 'product_feedback'`;
       all others `'support'`.
 - [ ] `tickets` gained `project_id`, `request_kind`, `effort_level` with **no table rewrite / lock** on a

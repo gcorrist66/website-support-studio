@@ -33,7 +33,11 @@ Customer (clients/org)
 | **V2.3** | `get_my_projects()` — one column-whitelisting SECURITY DEFINER read RPC (projects + milestones + ready deliverables + linked requests); project tables stay operator-only | `20260612000000_v2_3_customer_project_visibility.sql` | **yes** (read) |
 | **V2.4** | `capacity_ledger` (signed movements) + `tickets.effort_level` + `cu_cost()`; `operator_post_capacity_entry()`; `get_my_capacity()` (Included/Used/Remaining/Pending) | `20260613000000_v2_4_capacity_ledger.sql` | **yes** (4 numbers) |
 
-**Apply order (dev only, coordinated window):** V2.0 → V2.2 → V2.3 → V2.4.
+**Apply order (dev only, coordinated window):** V2.0 → V2.2 → V2.3 → V2.4 → **request attachments (`614`, on
+main)**. V2.2 creates `request_kind`, which main's attachments RPC writes — so V2.2 precedes `614`. Prod
+already has `614`; **renumber V2 to after `20260614000000` at rebase** (out-of-order hazard). See Foundation
+Plan **Part V** for the full 1.5 reconciliation (credit model 1/3/8 confirmed; attachments vs deliverables;
+website_access; rebase plan).
 
 **Settled principles (do not re-litigate):**
 - Project = money (`price_cents`); subscription support = Capacity Units. A request burns CU only when
