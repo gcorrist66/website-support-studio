@@ -703,13 +703,6 @@ export function AppShell() {
         </div>
 
         <div className="wss-header-actions">
-          <button
-            type="button"
-            className="wss-primary-button wss-new-request-button"
-            onClick={openRequestSurface}
-          >
-            <MonoLabel text="_new request" />
-          </button>
           <span className="wss-status-chip">
             <MonoLabel text="website_support_studio" />
           </span>
@@ -739,6 +732,15 @@ export function AppShell() {
               </NavLink>
             ))}
           </nav>
+
+          <button
+            type="button"
+            className="wss-sidebar-cta"
+            onClick={openRequestSurface}
+            aria-label="new request"
+          >
+            <MonoLabel text="_new_request" />
+          </button>
 
           <div className="wss-sidebar-note">
             <p className="wss-card-kicker">
@@ -1327,15 +1329,6 @@ export function AppShell() {
           ) : null}
         </main>
       </div>
-
-      <button
-        type="button"
-        className="wss-new-request-fab"
-        onClick={openRequestSurface}
-        aria-label="new request"
-      >
-        <MonoLabel text="_new request" />
-      </button>
 
       <button type="button" className="wss-feedback-launcher" onClick={() => setFeedbackOpen(true)}>
         feedback
