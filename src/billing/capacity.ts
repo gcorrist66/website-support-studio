@@ -57,7 +57,7 @@ export const EFFORT_LEVEL_ORDER: EffortLevel[] = ["low", "medium", "high"];
 /** Short plain-language explanation of what a Capacity Unit is (mirrors the marketing FAQ). */
 export const CAPACITY_EXPLAINER =
   "capacity units measure the effort of each request. low_effort = 1 credit, medium_effort = 3 credits, " +
-  "and high_effort = 8 credits. your allotment refreshes every month.";
+  "and high_effort = 8 credits. monthly capacity units refresh each month and do not roll over.";
 
 /**
  * How usage is tracked today. Flip `automated` to true (and remove the pilot note) when a real CU
@@ -73,7 +73,7 @@ export const USAGE_TRACKING = {
 
 /** Replenishment / top-up messaging, derived from the plan + add-on catalog (no Stripe IDs). */
 export const REPLENISHMENT = {
-  refresh: "your capacity units refresh at the start of each billing period.",
+  refresh: "monthly capacity units refresh at the start of each billing period and do not roll over.",
   topups: [ADDONS.topup_50, ADDONS.topup_100, ADDONS.topup_250].map((a) => ({
     key: a.key,
     name: a.name,
@@ -81,7 +81,7 @@ export const REPLENISHMENT = {
   })),
   dns: { name: ADDONS.dns.name, priceUsd: ADDONS.dns.priceUsd },
   note:
-    "need more in a busy month? add a discounted top-up (50, 100, or 250 capacity units) anytime from your account. bigger work may use more credits, and project work may be priced separately.",
+    "need more in a busy month? add a discounted top-up (50, 100, or 250 capacity units) anytime from your account. purchased top-ups stay on your account until used, roll over, and are used after monthly credits run out. bigger work may use more credits, and project work may be priced separately.",
 };
 
 /** Build a single human-readable billing/replenishment line for a plan. */

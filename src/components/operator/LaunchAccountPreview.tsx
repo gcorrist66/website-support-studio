@@ -211,7 +211,8 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
             <MonoLabel text="credits capacity" />
           </h2>
           <p className="customer-copy">
-            capacity_units are the monthly support allowance included with your plan.
+            capacity_units are the monthly support allowance included with your plan. monthly
+            capacity_units refresh each month and do not roll over.
           </p>
           <p className="customer-smallprint">
             {capacity?.trackingNote ?? "usage is being tracked manually during the pilot."}
@@ -249,11 +250,12 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
             <MonoLabel text="replenishment" />
           </h2>
           <p className="customer-copy">
-            {account?.replenishment.refresh ?? "your capacity units refresh at the start of each billing period."}
+            {account?.replenishment.refresh ??
+              "monthly capacity_units refresh at the start of each billing period and do not roll over."}
           </p>
           <p className="customer-smallprint">
-            need more capacity_units? additional capacity_units can be added at any time. contact
-            Corriston Consulting.
+            need more capacity_units? purchased top-ups stay on the account until used, roll over,
+            and are used after monthly capacity_units run out.
           </p>
           <p className="customer-smallprint">
             {account?.replenishment.note ??

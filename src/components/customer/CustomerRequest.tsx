@@ -108,6 +108,14 @@ function getCapacityExplainer(): string {
   return "Capacity Units are the monthly support allowance included with your plan. low_effort uses 1 credit, medium_effort uses 3 credits, and high_effort uses 8 credits.";
 }
 
+function getCapacityPolicy(): string[] {
+  return [
+    "Monthly Capacity Units refresh each month and do not roll over.",
+    "Purchased top-up credits stay on your account until used.",
+    "Top-up credits do roll over and are used after your monthly credits run out.",
+  ];
+}
+
 function getWhatYouBought(summary: CustomerWorkspaceSummary): string {
   if (summary.planName === "Plan not found") {
     return "Your plan details will appear here after checkout is linked to this account.";
@@ -534,9 +542,14 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
               </li>
             ))}
           </ul>
+          <ul className="customer-bullet-list">
+            {getCapacityPolicy().map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
           <p className="customer-smallprint">
-            Credits refresh monthly. Bigger work may use more credits, project work may be priced
-            separately, and active customers can buy discounted top-ups for busy months.
+            Bigger work may use more credits, project work may be priced separately, and active
+            customers can buy discounted top-ups for busy months.
           </p>
           <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
             contact Corriston Consulting

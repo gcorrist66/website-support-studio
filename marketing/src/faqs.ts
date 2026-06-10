@@ -47,8 +47,8 @@ export const FAQ_GROUPS: FaqGroup[] = [
     marker: "_pricing",
     items: [
       { q: "How much does it cost?", a: "Operations is $399/month (1 website, 50 Capacity Units). Growth is $899/month (up to 5 websites, 150 Capacity Units). Enterprise is custom capacity and onboarding — contact us for a quote." },
-      { q: "What is a Capacity Unit?", a: "Capacity Units measure the effort of each request. Every plan includes a monthly allotment; a simple change costs fewer units, more involved work costs more." },
-      { q: "What happens if I run out?", a: "Your allotment refreshes every month. In a busy month you can add a top-up — 50, 100, or 250 Capacity Units — at any time from your account. DNS assistance is available as a $100 one-time add-on." },
+      { q: "What is a Capacity Unit?", a: "Capacity Units measure the effort of each request. Every plan includes a monthly allotment; a simple change costs fewer units, more involved work costs more. Monthly Capacity Units refresh each month and do not roll over." },
+      { q: "What happens if I run out?", a: "In a busy month you can add a top-up — 50, 100, or 250 Capacity Units — at any time from your account. Purchased top-up credits stay on your account until used, do roll over, and are used after your monthly credits run out. DNS assistance is available as a $100 one-time add-on." },
       { q: "How do I get started?", a: "Choose Operations or Growth and check out securely. You'll create your account, complete a short onboarding, and submit your first website request right after payment. For Enterprise, contact us and we'll scope custom capacity and onboarding." },
       { q: "Do you offer custom plans?", a: "Yes. Enterprise covers custom capacity, site coverage, onboarding, and commercial terms — contact us to scope it." },
     ],

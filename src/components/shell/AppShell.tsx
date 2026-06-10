@@ -66,7 +66,7 @@ const ACCOUNT_SUMMARY = {
   mediumEffortExplanation: "single-page changes, plugin updates, form adjustments, and structured content work.",
   highEffortExplanation: "multi-step repairs, staging coordination, layout fixes, and broader site changes.",
   replenishmentMessaging:
-    "credits refresh monthly. bigger work may use more credits, project work may be priced separately, and active customers can buy discounted top-ups.",
+    "monthly credits refresh each month and do not roll over. purchased top-ups stay on the account until used, roll over, and are used after monthly credits run out.",
 };
 
 const CREDIT_EFFORTS = [
@@ -97,10 +97,34 @@ const CREDIT_TOPUPS: Array<{
   price: string;
   note: string;
 }> = [
-  { key: "topup_50", label: "50_credits", credits: 50, price: "$150", note: "$3.00 / credit for busy months." },
-  { key: "topup_100", label: "100_credits", credits: 100, price: "$275", note: "$2.75 / credit with a simple volume discount." },
-  { key: "topup_250", label: "250_credits", credits: 250, price: "$625", note: "$2.50 / credit for larger bursts of work." },
+  {
+    key: "topup_50",
+    label: "50_credits",
+    credits: 50,
+    price: "$150",
+    note: "$3.00 / credit. purchased credits roll over and are used after monthly credits.",
+  },
+  {
+    key: "topup_100",
+    label: "100_credits",
+    credits: 100,
+    price: "$275",
+    note: "$2.75 / credit. purchased credits roll over and are used after monthly credits.",
+  },
+  {
+    key: "topup_250",
+    label: "250_credits",
+    credits: 250,
+    price: "$625",
+    note: "$2.50 / credit. purchased credits roll over and are used after monthly credits.",
+  },
 ];
+
+const CREDIT_POLICY = [
+  "monthly capacity units refresh each month and do not roll over.",
+  "purchased top-up credits stay on the account until used.",
+  "top-up credits roll over and are used after the monthly allocation is exhausted.",
+] as const;
 
 const CHECKOUT_FUNCTION_URL = "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/create-checkout-session";
 
@@ -1107,6 +1131,13 @@ export function AppShell() {
                       title="buy_more_credits"
                       description="Discounted top-ups are available for active customers when a month gets busy."
                     />
+                    <ul className="wss-list">
+                      {CREDIT_POLICY.map((item) => (
+                        <li key={item}>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                     <div className="wss-topup-grid">
                       {CREDIT_TOPUPS.map((topup) => (
                         <article key={topup.key} className="wss-topup-card">
