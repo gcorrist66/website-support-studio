@@ -189,7 +189,8 @@ begin
   from public.projects p where p.id = p_project_id;
   if agency_id is null then raise exception 'project_not_found' using errcode = 'P0001'; end if;
   select o.id, o.email, o.role::text into operator_id, operator_email, operator_role
-  from public.operators o where o.auth_user_id = v_uid and o.agency_id = agency_id and o.status = 'active';
+  from public.operators o
+  where o.auth_user_id = v_uid and o.agency_id = app_operator_project_ctx.agency_id and o.status = 'active';
   if operator_id is null then raise exception 'not_authorized_operator' using errcode = '42501'; end if;
 end;
 $$;
