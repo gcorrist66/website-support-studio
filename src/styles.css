@@ -1327,6 +1327,19 @@ pre {
   color: var(--brand-blue);
 }
 
+.wss-nav-label {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  text-transform: lowercase;
+}
+
+.wss-nav-underscore {
+  color: var(--brand-blue);
+}
+
 .wss-sidebar-note {
   border-radius: 18px;
   border: 1px solid var(--border);
@@ -1792,6 +1805,29 @@ pre {
   color: var(--text-strong);
 }
 
+.wss-new-request-button {
+  box-shadow: 0 14px 34px rgba(4, 67, 251, 0.22);
+  white-space: nowrap;
+}
+
+.wss-new-request-fab {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 61;
+  display: none;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(4, 67, 251, 0.22);
+  background: linear-gradient(135deg, rgba(4, 67, 251, 0.96), rgba(4, 67, 251, 0.82));
+  color: #ffffff;
+  box-shadow: 0 18px 40px rgba(4, 67, 251, 0.28);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .wss-modal-actions {
   display: flex;
   gap: 0.65rem;
@@ -1878,6 +1914,15 @@ pre {
 
   .wss-header-actions {
     justify-items: start;
+  }
+
+  .wss-new-request-button {
+    display: none;
+  }
+
+  .wss-new-request-fab {
+    display: inline-flex;
+    align-items: center;
   }
 
   .wss-board-shell {

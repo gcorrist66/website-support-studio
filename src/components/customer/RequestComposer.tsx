@@ -259,7 +259,7 @@ export function RequestComposer({
         aria-label="new request"
       >
         <span className="customer-new-request-launcher-label">
-          <MonoLabel text="new request" />
+          <MonoLabel text="_new request" />
         </span>
         <span className="customer-new-request-launcher-short">_new_request</span>
       </button>

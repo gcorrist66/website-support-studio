@@ -24,10 +24,10 @@ const SECTION_ORDER: ConsoleSection[] = [
   "overview",
   "board",
   "requests",
-  "profile",
   "website_access",
   "activity",
   "health",
+  "profile",
 ];
 
 const FEEDBACK_TABS: Array<{ key: FeedbackTab; label: string; category: FeedbackCategory; hint: string }> = [
@@ -219,6 +219,27 @@ function SectionHeading({
       </h2>
       {description ? <p className="wss-section-description">{description}</p> : null}
     </div>
+  );
+}
+
+function NavLabel({ text }: { text: string }) {
+  const parts = text.split("_");
+  return (
+    <span className="wss-nav-label">
+      <span className="wss-nav-underscore" aria-hidden="true">
+        _
+      </span>
+      {parts.map((part, index) => (
+        <span key={`${part}-${index}`}>
+          {index > 0 ? (
+            <span className="wss-nav-underscore" aria-hidden="true">
+              _
+            </span>
+          ) : null}
+          {part}
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -542,6 +563,10 @@ export function AppShell() {
 
   const siteIdForFeedback = selectedRequest?.tenantContext.siteId ?? queue[0]?.siteId ?? "SITE-01";
 
+  function openRequestSurface() {
+    navigate("/requests");
+  }
+
   if (location.pathname === "/" || !isSectionPath(location.pathname)) {
     return <Navigate to="/overview" replace />;
   }
@@ -562,6 +587,13 @@ export function AppShell() {
         </div>
 
         <div className="wss-header-actions">
+          <button
+            type="button"
+            className="wss-primary-button wss-new-request-button"
+            onClick={openRequestSurface}
+          >
+            <MonoLabel text="_new request" />
+          </button>
           <span className="wss-status-chip">
             <MonoLabel text="website_support_studio" />
           </span>
@@ -587,7 +619,7 @@ export function AppShell() {
                 to={`/${item}`}
                 className={({ isActive }) => (isActive ? "wss-nav-link is-active" : "wss-nav-link")}
               >
-                <MonoLabel text={item} />
+                <NavLabel text={item} />
               </NavLink>
             ))}
           </nav>
@@ -1093,6 +1125,15 @@ export function AppShell() {
           ) : null}
         </main>
       </div>
+
+      <button
+        type="button"
+        className="wss-new-request-fab"
+        onClick={openRequestSurface}
+        aria-label="new request"
+      >
+        <MonoLabel text="_new request" />
+      </button>
 
       <button type="button" className="wss-feedback-launcher" onClick={() => setFeedbackOpen(true)}>
         feedback
