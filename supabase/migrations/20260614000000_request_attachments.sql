@@ -10,7 +10,7 @@ do $$ begin
     agency_id uuid not null,
     client_id uuid not null,
     site_id uuid not null,
-    ticket_id uuid not null references public.tickets (id) on delete cascade,
+    ticket_id text not null references public.tickets (id) on delete cascade,
     storage_path text not null,
     file_name text not null,
     mime_type text not null,
