@@ -2,13 +2,13 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
 import { breadcrumbSchema, serviceSchema } from "../schema";
-import { PLANS, ADDONS, CHECKOUT_URL, CONTACT, FOUNDER_PRICING } from "../consts";
+import { PLANS, ADDONS, CHECKOUT_URL, CONTACT, FOUNDER_PRICING, WEBSITE_PACKAGE, ACCOUNT_OWNERSHIP } from "../consts";
 
 const schemas = [
   serviceSchema({
-    name: "Website Support Studio — Plans",
+    name: "Website Support Studio — Founder Website Package & Plans",
     description:
-      "Managed website operations and support. Operations is $399/month with founder pricing at $199.50/month for the first 6 months for the first 25 customers; Growth is $899/month (up to 5 sites, 150 Capacity Units); Enterprise custom.",
+      "Founder Website Package: a $500 one-time professional website (mobile optimization, contact forms, basic SEO, launch, and 30 days of support). After launch, optional managed operations — $199/month for months 2–7, then $399/month standard. Growth is $899/month; Enterprise custom. Customers own their analytics and advertising accounts.",
     path: "/pricing",
   }),
   breadcrumbSchema([
@@ -19,31 +19,51 @@ const schemas = [
 ---
 
 <BaseLayout
-  title="Pricing"
-  description="Website Support Studio plans: Operations $399/month with founder pricing at $199.50/month for the first 6 months for the first 25 customers, Growth $899/month, and custom Enterprise. Capacity top-ups available."
+  title="Pricing — Founder Website Package $500, then operations from $199/mo"
+  description="Founder Website Package: a $500 one-time professional website (mobile, contact forms, basic SEO, launch, 30 days of support). After launch, optional managed operations — $199/month for months 2–7, then $399/month. You own your accounts."
   path="/pricing"
   schemas={schemas}
 >
   <section class="section">
     <div class="container">
-      <p class="kicker"><Label text="_pricing" /></p>
-      <h1>plans priced in <Label text="capacity_units" />.</h1>
+      <p class="kicker"><Label text="_founder_website_package" /></p>
+      <h1>Launch for $500. Keep it running from $199/month.</h1>
       <p class="lede" style="margin-top:1rem;">
-        Every plan is a managed website operations desk with a monthly allotment of Capacity Units.
-        Pick a plan, check out securely, and start your website project. After purchase, you create
-        your account and complete a short onboarding.
+        Start with the Founder Website Package — a professional website built and launched for you.
+        After launch, optional managed operations keep it healthy. You own your website and all your accounts.
       </p>
-      <p class="kicker" style="margin-top:1rem;"><Label text="_founder_pricing" /></p>
-      <p class="lede" style="margin-top:0.35rem;">
-        Founder pricing is {FOUNDER_PRICING.discountPercent}% off Operations for your first {FOUNDER_PRICING.discountMonths} months.
-        Then the plan moves to the standard {PLANS[0].price}{PLANS[0].cadence}. <strong>{FOUNDER_PRICING.spotsLeft} founder spots remaining.</strong>
-      </p>
+
+      <div class="card founder-card" style="margin-top:2rem; max-width:560px;">
+        <div class="founder-badge-row">
+          <span class="founder-badge"><Label text="_founder_website_package" /></span>
+          <span class="founder-spots">{WEBSITE_PACKAGE.cadence}</span>
+        </div>
+        <p class="founder-price-line">
+          <span class="founder-price">{WEBSITE_PACKAGE.price}</span>
+          <span class="founder-cadence"> one-time</span>
+        </p>
+        <p style="margin:0.5rem 0 0; color:var(--text-muted);">{WEBSITE_PACKAGE.tagline}</p>
+        <ul style="padding-left:1.1rem; margin:1rem 0 1.25rem; color:var(--text);">
+          {WEBSITE_PACKAGE.includes.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
+        </ul>
+        <p style="margin:0 0 1.25rem; color:var(--text-muted);">
+          After launch: <strong>{WEBSITE_PACKAGE.afterLaunch.founder}</strong>, then {WEBSITE_PACKAGE.afterLaunch.standard}.
+        </p>
+        <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} style="width:100%; justify-content:center;">
+          <Label text={WEBSITE_PACKAGE.ctaLabel} />
+        </a>
+      </div>
     </div>
   </section>
 
   <section class="section" id="plans" style="background:var(--surface-muted);">
     <div class="container">
-      <p class="kicker"><Label text="_plans" /></p>
+      <p class="kicker"><Label text="_after_launch" /></p>
+      <h2 style="margin:0.4rem 0 0;">Keep it running with managed operations</h2>
+      <p class="lede" style="margin-top:0.75rem; max-width:62ch;">
+        Optional after your website launches. Founder rate $199/month for months 2–7, then $399/month
+        standard. Cancel anytime.
+      </p>
       <div class="grid grid-3" style="margin-top:2rem; align-items:start;">
         {
           PLANS.map((plan) => {
@@ -151,6 +171,18 @@ const schemas = [
       <p style="margin-top:1rem; color:var(--text-muted); font-size:0.9rem;">
         Top-ups and DNS assistance are available to active customers from your account after you join.
       </p>
+    </div>
+  </section>
+
+  <!-- Account ownership -->
+  <section class="section">
+    <div class="container" style="max-width:820px;">
+      <p class="kicker"><Label text="_you_own_it" /></p>
+      <h2>{ACCOUNT_OWNERSHIP.headline}</h2>
+      <p class="lede" style="margin-top:0.75rem;">{ACCOUNT_OWNERSHIP.detail}</p>
+      <ul style="margin:1rem 0 0; padding-left:1.1rem; color:var(--text);">
+        {ACCOUNT_OWNERSHIP.accounts.map((a) => <li style="margin-bottom:0.4rem;">{a}</li>)}
+      </ul>
     </div>
   </section>
 

@@ -24,6 +24,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       { q: "Who is this for?", a: "Organizations with revenue-critical websites — marketing, marketing-operations, digital, and IT teams who need website changes done reliably without staffing and supervising the work themselves. It is not built for hobby sites or one-off freelance tasks." },
       { q: "How is this different from an agency or adding headcount?", a: "Agencies rotate staff and can deprioritize accounts; internal teams are usually already overloaded. Website Support Studio provides an operator-led workflow inside a defined, auditable process — every request is visible, owned, tracked, reviewed, and recorded — without you having to staff and supervise the work." },
       { q: "Does it change our website automatically?", a: "No. Every customer-facing change passes through a mandatory human approval gate, and the platform records who approved each change and when." },
+      { q: "Who owns my analytics and ad accounts?", a: "You do — always. Your Google Analytics, Search Console, Google Business Profile, Google Ads, and Meta Business Manager are created and owned under your own accounts. We provide setup instructions, assist with setup, connect integrations, and request access where needed — but ownership stays with you, and you can revoke our access at any time." },
     ],
   },
   {
@@ -46,11 +47,13 @@ export const FAQ_GROUPS: FaqGroup[] = [
   {
     marker: "_pricing",
     items: [
-      { q: "How much does it cost?", a: "Operations is $399/month (1 website, 50 Capacity Units). Growth is $899/month (up to 5 websites, 150 Capacity Units). Enterprise is custom capacity and onboarding — contact us for a quote." },
-      { q: "How does founder pricing work?", a: "Founder pricing is 50% off Operations for your first 6 months: $199.50/month for 6 months, then $399/month after the founder discount period ends. It is limited to the first 25 customers, with 17 founder spots remaining. Customers can see founder discount timing reminders in the profile billing area so the standard-price change is not a surprise." },
-      { q: "What is a Capacity Unit?", a: "Capacity Units measure the effort of each request. Every plan includes a monthly allotment; a simple change costs fewer units, more involved work costs more. Monthly Capacity Units refresh each month and do not roll over." },
+      { q: "How much does a website cost?", a: "A complete professional website is a $500 one-time Founder Website Package: a mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support. After launch, ongoing operations are optional — $199/month for your first 6 months (months 2–7), then $399/month standard. Growth ($899/month, up to 5 websites) and custom Enterprise are also available." },
+      { q: "What's included in the $500 website?", a: "A professional website, mobile optimization, contact forms, basic SEO setup, website launch, and 30 days of post-launch support." },
+      { q: "What happens after launch?", a: "You get 30 days of post-launch support included. After that, the Operations plan keeps your site updated and monitored — $199/month for your first 6 months, then $399/month. It is optional and you can cancel anytime." },
+      { q: "How does founder pricing work?", a: "After your website launches, ongoing operations start at the founder rate of $199/month for months 2 through 7, then move to the standard $399/month from month 8. Customers can see founder timing reminders in the profile billing area so the standard-price change is not a surprise." },
+      { q: "What is a Capacity Unit?", a: "Capacity Units measure the effort of each request on the Operations plan. Every plan includes a monthly allotment; a simple change costs fewer units, more involved work costs more. Monthly Capacity Units refresh each month and do not roll over." },
       { q: "What happens if I run out?", a: "In a busy month you can add a top-up — 50, 100, or 250 Capacity Units — at any time from your account. Purchased top-up credits stay on your account until used, do roll over, and are used after your monthly credits run out. DNS assistance is available as a $100 one-time add-on." },
-      { q: "How do I get started?", a: "Choose Operations or Growth and check out securely. You'll create your account, complete a short onboarding, and submit your first website request right after payment. For Enterprise, contact us and we'll scope custom capacity and onboarding." },
+      { q: "How do I get started?", a: "Start with the Founder Website Package — contact us to kick off your $500 build. We build and launch your site, then set up optional ongoing operations. For Growth or Enterprise, contact us and we'll scope it." },
       { q: "Do you offer custom plans?", a: "Yes. Enterprise covers custom capacity, site coverage, onboarding, and commercial terms — contact us to scope it." },
     ],
   },

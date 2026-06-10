@@ -8,31 +8,31 @@ const schemas = [
   serviceSchema({
     name: "Website Support Studio",
     description:
-      "Managed website operations and support for organizations with revenue-critical websites: single-desk intake, defined response workflows, operational visibility, and human-approved execution.",
+      "A $500 one-time Founder Website Package: a professional, mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support — then optional managed operations from $199/month. Operated by Corriston Consulting, LLC. Customers own their analytics and advertising accounts.",
     path: "/",
   }),
 ];
 ---
 
 <BaseLayout
-  title="Website Support Studio — Managed Website Operations & Support"
-  description="Managed website operations and support for organizations with revenue-critical websites. One desk for every request, defined response workflows, operational visibility, and human accountability on every change."
+  title="Website Support Studio — Get a Professional Website for $500"
+  description="Get a professional website for $500 — mobile-optimized, contact forms, basic SEO, and launch, plus 30 days of post-launch support. Then optional managed operations from $199/month. You own your website and all your accounts."
   path="/"
   schemas={schemas}
 >
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <p class="kicker"><Label text="_managed_website_operations" /></p>
-      <h1>run your revenue-critical website as operations, not as a backlog of favors.</h1>
+      <p class="kicker"><Label text="_founder_website_package" /></p>
+      <h1>Get a professional website for $500.</h1>
       <p class="lede">
-        Website Support Studio is a managed operations and support desk for organizations whose websites
-        drive revenue. One place for every request, a defined workflow from intake to closure, and a
-        mandatory human approval before anything ships.
+        A complete, mobile-optimized website — with contact forms, basic SEO, and launch included, plus
+        30 days of post-launch support. Then we keep it running: $199/month for your first 6 months,
+        $399/month after. You own your website and all your accounts.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
-        <a class="btn btn-ghost" href="/services">See How It Works</a>
+        <a class="btn btn-green btn-cta" href="/contact"><Label text="_build_my_website" /></a>
+        <a class="btn btn-ghost" href={JOIN_PATH}>See Pricing</a>
       </div>
       <div class="accent-bar" style="max-width:240px; margin-top:2.5rem;"></div>
     </div>
@@ -42,10 +42,10 @@ const schemas = [
   <section class="section" style="padding-top:1rem;">
     <div class="container">
       <div class="summary" style="max-width:760px;">
-        <strong>In one sentence.</strong> Website Support Studio consolidates website, marketing, and
-        operations requests into a single managed desk — with operational visibility, defined response
-        workflows, and human accountability at every approval point — so revenue-critical sites stay
-        reliable and never ship unreviewed changes.
+        <strong>In one sentence.</strong> Website Support Studio builds and launches a professional
+        website for a one-time $500 — then optionally keeps it running with managed operations
+        ($199/month for your first six months, $399/month after) — while you keep ownership of your
+        website and every analytics and advertising account.
       </div>
     </div>
   </section>

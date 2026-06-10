@@ -10,7 +10,7 @@
 // ---- Canonical site ---------------------------------------------------------
 export const SITE_URL = "https://websitesupportstudio.com";
 export const SITE_NAME = "Website Support Studio";
-export const SITE_TAGLINE = "Managed website operations and support for revenue-critical sites";
+export const SITE_TAGLINE = "Professional websites built, launched, and managed — you own everything";
 
 // ---- Owning legal entity (Corriston Consulting, LLC) ------------------------
 export const ORG = {
@@ -54,6 +54,45 @@ export const FOUNDER_PRICING = {
   discountPercent: 50,
   discountMonths: 6,
   appliesTo: ["operations"],
+} as const;
+
+// ---- Founder Website Package (primary offer) --------------------------------
+// $500 one-time website build. Marketing/messaging only — NO Stripe checkout is
+// wired for this product, so its CTA routes to /contact to start a build. This
+// constant changes no pricing logic; it is content for the marketing site.
+export const WEBSITE_PACKAGE = {
+  name: "Founder Website Package",
+  price: "$500",
+  cadence: "one-time",
+  tagline: "A professional website, built and launched for you.",
+  includes: [
+    "Professional website",
+    "Mobile optimization",
+    "Contact forms",
+    "Basic SEO setup",
+    "Website launch",
+    "30 days post-launch support",
+  ],
+  afterLaunch: {
+    founder: "$199/month for months 2–7",
+    standard: "$399/month from month 8",
+  },
+  ctaLabel: "_build_my_website",
+  ctaHref: "/contact",
+} as const;
+
+// ---- Account ownership (the customer owns their own accounts) ----------------
+export const ACCOUNT_OWNERSHIP = {
+  headline: "You own your accounts — always.",
+  accounts: [
+    "Google Analytics",
+    "Search Console",
+    "Google Business Profile",
+    "Google Ads",
+    "Meta Business Manager",
+  ],
+  detail:
+    "We set them up under your accounts, assist with setup, connect integrations, and request access where needed. Ownership stays with you, and you can revoke access at any time.",
 } as const;
 
 export const PLANS = [
