@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
 import { breadcrumbSchema, serviceSchema } from "../schema";
-import { PLANS, ADDONS, CHECKOUT_URL, CONTACT } from "../consts";
+import { PLANS, ADDONS, CHECKOUT_URL, CONTACT, FOUNDER_PRICING } from "../consts";
 
 const schemas = [
   serviceSchema({
@@ -35,7 +35,8 @@ const schemas = [
       </p>
       <p class="kicker" style="margin-top:1rem;"><Label text="_founder_pricing" /></p>
       <p class="lede" style="margin-top:0.35rem;">
-        Founder pricing is 50% off Operations and available only for a limited number of new customers.
+        Founder pricing is {FOUNDER_PRICING.discountPercent}% off Operations for the first {FOUNDER_PRICING.totalSpots} customers.
+        <strong>{FOUNDER_PRICING.spotsLeft} founder spots left.</strong>
       </p>
     </div>
   </section>
@@ -48,24 +49,32 @@ const schemas = [
           PLANS.map((plan) => {
             const featured = "recommended" in plan && plan.recommended;
             const isOperations = plan.key === "operations";
+            const founderApplies =
+              FOUNDER_PRICING.active && (FOUNDER_PRICING.appliesTo as readonly string[]).includes(plan.key);
+            const checkoutPlanKey = founderApplies && "founderPlanKey" in plan ? plan.founderPlanKey : plan.key;
             return (
               <div>
                 {featured && (
                   <p class="kicker" style="margin-bottom:0.6rem;"><Label text="_most_common" /></p>
                 )}
-                <div class="card" style={featured ? "border:2px solid var(--brand-blue);" : ""}>
+                <div class={founderApplies ? "card founder-card" : "card"} style={!founderApplies && featured ? "border:2px solid var(--brand-blue);" : ""}>
                   <h3 style="margin-top:0;"><Label text={`_${plan.name.toLowerCase()}`} /></h3>
-                  {isOperations ? (
-                    <div style="margin:0.25rem 0 0; display:grid; gap:0.45rem;">
-                      <p style="margin:0;">
-                        <span style="font-size:1.9rem; font-weight:800; letter-spacing:-0.03em;">{plan.price}</span>
-                        <span style="color:var(--text-muted);">{plan.cadence}</span>
+                  {founderApplies && isOperations ? (
+                    <div class="founder-offer">
+                      <div class="founder-badge-row">
+                        <span class="founder-badge"><Label text="_founder_pricing" /></span>
+                        <span class="founder-spots">{FOUNDER_PRICING.spotsLeft} of {FOUNDER_PRICING.totalSpots} spots left</span>
+                      </div>
+                      <p class="founder-discount">{plan.founderDiscountLabel} for the first {FOUNDER_PRICING.totalSpots} customers</p>
+                      <p class="founder-price-line">
+                        <span class="founder-price">{plan.founderPrice}</span>
+                        <span class="founder-cadence">{plan.cadence}</span>
                       </p>
-                      <p style="margin:0; color:var(--text-muted); font-size:0.9rem;">
-                        founder price: <strong style="color:var(--text-strong);">{plan.founderPrice}</strong> {plan.cadence} · {plan.founderDiscountLabel}
+                      <p class="founder-regular">
+                        regularly <s>{plan.price}{plan.cadence}</s>
                       </p>
-                      <p style="margin:0; color:var(--text-subtle); font-size:0.82rem;">
-                        {plan.founderAvailability}
+                      <p class="founder-note">
+                        _join_now uses founder checkout automatically while spots remain.
                       </p>
                     </div>
                   ) : (
@@ -75,21 +84,20 @@ const schemas = [
                     </p>
                   )}
                   <p style="color:var(--text-muted); font-size:0.9rem; margin:0.5rem 0 0;">{plan.sites} · {plan.cu}</p>
-                  <p style="margin:0.75rem 0 0;">{isOperations ? plan.founderBlurb : plan.blurb}</p>
+                  <p style="margin:0.75rem 0 0;">{founderApplies && isOperations ? plan.founderBlurb : plan.blurb}</p>
                   <ul style="padding-left:1.1rem; margin:1rem 0 1.25rem; color:var(--text);">
                     {plan.points.map((p) => <li style="margin-bottom:0.4rem;">{p}</li>)}
                   </ul>
-                  {isOperations ? (
-                    <div style="display:grid; gap:0.65rem;">
-                      <button class="btn btn-green btn-cta" type="button" data-plan={plan.key} style="width:100%; justify-content:center;">
-                        <Label text="_join_now" />
-                      </button>
-                      <button class="btn btn-ghost" type="button" data-plan={plan.founderPlanKey} style="width:100%; justify-content:center;">
-                        <Label text="_founder_price" />
-                      </button>
-                    </div>
-                  ) : plan.cta === "checkout" ? (
-                    <button class="btn btn-green btn-cta" type="button" data-plan={plan.key} style="width:100%; justify-content:center;"><Label text="_join_now" /></button>
+                  {plan.cta === "checkout" ? (
+                    <button
+                      class="btn btn-green btn-cta"
+                      type="button"
+                      data-plan={checkoutPlanKey}
+                      data-regular-plan={plan.key}
+                      style="width:100%; justify-content:center;"
+                    >
+                      <Label text="_join_now" />
+                    </button>
                   ) : (
                     <a class="btn btn-ghost" href="/contact" style="width:100%; justify-content:center;">contact sales</a>
                   )}
@@ -101,7 +109,7 @@ const schemas = [
       </div>
       <p style="margin-top:1.25rem; color:var(--text-muted); max-width:62ch;">
         All plans operate inside the same defined response workflow with a mandatory human approval gate.
-        Plans differ in monthly Capacity Units and the number of websites covered.
+        Founder pricing currently applies to Operations only. Plans differ in monthly Capacity Units and the number of websites covered.
       </p>
     </div>
   </section>

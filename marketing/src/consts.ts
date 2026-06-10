@@ -45,6 +45,16 @@ export const JOIN_PATH = "/pricing";
 export const CHECKOUT_URL =
   (import.meta as { env?: Record<string, string> }).env?.PUBLIC_WSS_CHECKOUT_URL ?? "";
 
+// Manual founder pricing controls.
+// Replace founderSpotsLeft with a live source later when the counter is connected.
+export const FOUNDER_PRICING = {
+  active: true,
+  totalSpots: 25,
+  spotsLeft: 17,
+  discountPercent: 50,
+  appliesTo: ["operations"],
+} as const;
+
 export const PLANS = [
   {
     key: "operations",

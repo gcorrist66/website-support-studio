@@ -302,6 +302,95 @@ main {
   margin-top: 0;
 }
 
+.founder-card {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid color-mix(in srgb, var(--brand-blue) 62%, var(--cta-green));
+  box-shadow: 0 20px 50px -28px rgba(4, 67, 251, 0.5);
+}
+.founder-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--cta-green) 46%, transparent), transparent 32%),
+    linear-gradient(135deg, rgba(4, 67, 251, 0.07), transparent 42%);
+}
+.founder-card > * {
+  position: relative;
+}
+.founder-offer {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--brand-blue) 24%, transparent);
+  background: rgba(255, 255, 255, 0.72);
+}
+.founder-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.founder-badge,
+.founder-spots {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.34rem 0.62rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.founder-badge {
+  background: var(--brand-blue);
+  color: #fff;
+}
+.founder-spots {
+  background: var(--cta-green);
+  color: var(--text-strong);
+  border: 1px solid var(--cta-green-hover);
+}
+.founder-discount {
+  margin: 0;
+  color: var(--brand-blue);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+.founder-price-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin: 0;
+}
+.founder-price {
+  font-size: clamp(2.3rem, 7vw, 3.25rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  color: var(--text-strong);
+}
+.founder-cadence,
+.founder-regular,
+.founder-note {
+  color: var(--text-muted);
+}
+.founder-regular,
+.founder-note {
+  margin: 0;
+  font-size: 0.9rem;
+}
+.founder-regular s {
+  color: var(--text-subtle);
+  text-decoration-thickness: 2px;
+}
+.founder-note {
+  font-weight: 700;
+}
+
 /* Accent bar cycling brand colors */
 .accent-bar {
   height: 4px;
