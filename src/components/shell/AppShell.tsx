@@ -43,6 +43,7 @@ import { LoginShell } from "../auth/LoginShell";
 import { SessionSourcePrototype } from "../auth/SessionSourcePrototype";
 import { buildLoginShellState, type LoginShellStatus } from "../../auth/loginShellState";
 import { OperatorPilotStatusCard } from "../operator/OperatorPilotStatusCard";
+import { LaunchAccountPreview } from "../operator/LaunchAccountPreview";
 import {
   createDisabledSessionReadState,
   createExistingSessionShapeReadState,
@@ -760,6 +761,12 @@ export function AppShell() {
         </nav>
 
         <main className="phase4a-main">
+          <LaunchAccountPreview
+            orgId={selectedTicket.tenantContext.clientId}
+            customerLabel={selectedTicket.tenantContext.clientName}
+            siteLabel={selectedTicket.tenantContext.siteName}
+          />
+
           <section className="phase4a-card operator-overview-card">
             <div className="operator-overview-header">
               <div>
