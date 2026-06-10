@@ -130,12 +130,11 @@ create policy project_deliverables_operator_all on public.project_deliverables
   for all to authenticated using (app_operator_in_agency(agency_id)) with check (app_operator_in_agency(agency_id));
 
 -- ----------------------------------------------------------------------------
--- V2.3 (DEFERRED — DO NOT ENABLE HERE): customer read access, added together with projects'
--- customer SELECT policy after a cross-tenant isolation test. Kept here only as the intended shape:
---   create policy project_milestones_customer_select on public.project_milestones
---     for select to authenticated using (app_is_org_member(client_id));
---   create policy project_deliverables_customer_select on public.project_deliverables
---     for select to authenticated using (app_is_org_member(client_id));
+-- CUSTOMER READ (V2.3): handled by a column-whitelisting SECURITY DEFINER RPC (get_my_projects), NOT by
+-- direct customer SELECT policies. The earlier sketch of per-table customer SELECT policies was
+-- SUPERSEDED in V2.3 (20260612000000): a row-level customer policy on these tables / on `projects` would
+-- also expose intake_notes + stripe ids (RLS filters rows, not columns; customers and operators share the
+-- `authenticated` role). => these tables stay OPERATOR-ONLY; customers never read them directly.
 -- ----------------------------------------------------------------------------
 
 -- ============================================================================

@@ -5,6 +5,14 @@
 **Status:** PROPOSAL — no code applied, no DB changes made
 **Constraint:** Codex owns WSS 1.5 stabilization + tomorrow's customer signup. This plan must not touch that path.
 
+> **Reading note (added 2026-06-09 consistency pass):** Part I below is the *original* proposal captured on
+> 2026-06-09; its "tomorrow's $500 customer" framing is **historical context from that day**, not a current
+> claim. The **current consolidated state** is `WSS_V2_ARCHITECTURE_SUMMARY.md`; the **final phase placement**
+> is Part II §II.7. Where Part I's early sketches differ from later parts (e.g. deliverables landed in **V2.2**,
+> not V2.3; `project_messages` was **not adopted** — project communication reuses linked tickets; customer reads
+> use the `get_my_projects()` **RPC**, not direct customer RLS policies), the later parts and the four draft
+> migrations are authoritative. All four V2 migrations remain **drafts, unapplied**.
+
 ---
 
 ## 1. Executive Summary
@@ -127,18 +135,17 @@ project_milestones
   sort_order int, due_at, completed_at, created_at/updated_at
 ```
 
-### Deliverables (V2.3 — defer)
+### Deliverables (FINAL: V2.2 table; customer-visible V2.3)
 ```
 project_deliverables
   id, project_id, agency_id, client_id
-  title, kind (link|file|note), url, status, delivered_at, created_at/updated_at
+  title, kind (link|file|note|credential), url, status, delivered_at, accepted_at, created_at/updated_at
 ```
 
-### Messages (V2.3 — defer; or reuse tickets)
+### Messages (NOT ADOPTED — project communication reuses linked tickets)
 ```
-project_messages   -- mirrors ticket_messages exactly
-  id, project_id, agency_id, client_id, author_id, author_role,
-  message_body, message_direction, created_at
+-- project_messages was sketched here but never built. Final design: a request (ticket) is linked to a
+-- project via tickets.project_id (V2.2); project communication rides the existing ticket message flow.
 ```
 
 ### Project ↔ Ticket link (V2.2 — defer, additive)
@@ -202,7 +209,7 @@ current head (`20260609170500`).
 **Build V2.0 as files on an unmerged `v2-foundation` branch. Apply nothing to the database yet.**
 
 Concretely, the first safe artifact is a single migration file
-`supabase/migrations/2026061000000_v2_projects_foundation.sql` containing:
+`supabase/migrations/20260610000000_v2_projects_foundation.sql` containing:
 1. `project_type`, `project_status`, `project_payment_status` enums.
 2. `projects` table with tenant keys + indexes.
 3. RLS enabled, **operator-only** policies (`app_operator_in_agency`), customers denied by default.
@@ -238,7 +245,7 @@ manually until V2.0 is live. This keeps tomorrow entirely on Codex's hardened pa
 
 1. **Confirm with Codex** that tomorrow's signup work does not need the DB locked tonight, and
    agree a window for applying any V2 migration. (Coordination, not code.)
-2. On a new `v2-foundation` branch, **write** `2026061000000_v2_projects_foundation.sql` (the
+2. On a new `v2-foundation` branch, **write** `20260610000000_v2_projects_foundation.sql` (the
    V2.0 migration above) and review it — **do not apply, do not merge, do not push to prod.**
 3. For tomorrow's customer specifically: prepare a **one-time $500 Stripe payment link** (manual,
    via Stripe MCP) and a lightweight internal note to track the engagement until V2.0 lands.
@@ -424,8 +431,8 @@ project-requests: add a `request_kind` (`support | product_feedback | bug_report
 |---|---|---|
 | **V2.0 Foundation** (this branch) | `projects` + `project_audit_events` + enums (incl. `waiting_on_customer`) + `target_delivery_date` + operator-only RLS + `operator_create_project` / `operator_set_project_status`. **Written, NOT applied.** | unapplied file |
 | **V2.1 Project Intake** | one-time Stripe payment path; operator intake UI | edge fn + RPC |
-| **V2.2 Operator Project Mgmt** | `project_milestones`; `tickets.project_id` + `request_kind`; Projects tab + detail pane | additive |
-| **V2.3 Customer Visibility** | customer RLS read policies; "Your Projects" panel; `project_deliverables` | additive |
+| **V2.2 Operator Project Mgmt** | `project_milestones` **and** `project_deliverables`; `tickets.project_id` + `request_kind`; 6 operator RPCs; Projects tab + detail pane | additive |
+| **V2.3 Customer Visibility** | `get_my_projects()` column-whitelisting **read RPC** (NOT direct customer RLS policies — column-safety) + "Your Projects" panel | additive |
 | **V2.4 Capacity/Credit** | `capacity_ledger`; project-request vs CU policy | additive |
 
 **Still true:** no migration is applied to `…prod` outside a coordinated window; everything in Part II

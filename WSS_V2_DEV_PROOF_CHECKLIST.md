@@ -1,7 +1,7 @@
 # WSS V2 — DEV-Only Proof Checklist
 
 **Branch:** `v2-foundation` · **Date:** 2026-06-09 · **Status:** READY TO RUN LATER (not run yet).
-**Purpose:** prove the four parked V2 draft migrations on a **dev** database, with zero risk to tomorrow's
+**Purpose:** prove the four parked V2 draft migrations on a **dev** database, with zero risk to the live
 WSS 1.5 production signup.
 
 > ⛔ **Hard safety line.** This repo's Supabase CLI is linked to **production** (`sfhllezyyylduxvwdxki`).
