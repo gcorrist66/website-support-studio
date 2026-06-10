@@ -26,23 +26,110 @@ import {
   getReadOnlyTicketQueue,
 } from "../../data/readOnlyTicketData";
 
-type ConsoleSection = "overview" | "board" | "requests" | "profile" | "website_access" | "activity" | "health";
+type ConsoleSection = "overview" | "board" | "requests" | "project_intake" | "profile" | "website_access" | "activity" | "health";
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
 type CreditTopupKey = "topup_50" | "topup_100" | "topup_250";
 type WebsitePlatformKey = "wordpress" | "shopify" | "webflow" | "squarespace" | "wix" | "custom_other" | "hosting_dns";
 type RequestType = "website_update" | "bug_report" | "urgent_issue" | "question" | "other";
 type RequestUrgency = "normal" | "high" | "urgent";
+type ProjectIntakeStep =
+  | "business_information"
+  | "branding"
+  | "services"
+  | "products"
+  | "pages"
+  | "navigation"
+  | "images"
+  | "content"
+  | "pricing"
+  | "inspiration"
+  | "social_links"
+  | "comments"
+  | "package";
 type AttachmentState = CustomerRequestAttachmentDraft & {
   id: string;
   status: "uploading" | "ready" | "error";
   previewUrl: string | null;
   error: string | null;
 };
+type IntakeUpload = {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  storagePath: string;
+  publicUrl: string;
+  status: "local" | "uploading" | "ready" | "error";
+  error: string | null;
+  associateWithPage?: string;
+};
+type IntakeServiceItem = {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  image: IntakeUpload | null;
+};
+type IntakeProductItem = IntakeServiceItem;
+type IntakeInspirationItem = {
+  id: string;
+  url: string;
+  likes: string;
+};
+type WebsiteProjectIntake = {
+  businessInformation: {
+    businessName: string;
+    tagline: string;
+    phone: string;
+    email: string;
+    address: string;
+    serviceArea: string;
+    yearsInBusiness: string;
+    businessDescription: string;
+    comments: string;
+  };
+  branding: {
+    logoUploads: IntakeUpload[];
+    logoNotes: string;
+    noLogo: boolean;
+  };
+  services: IntakeServiceItem[];
+  products: IntakeProductItem[];
+  pages: {
+    selected: string[];
+    custom: string[];
+  };
+  navigation: string[];
+  images: IntakeUpload[];
+  content: {
+    uploads: IntakeUpload[];
+    pastedText: string;
+  };
+  pricing: {
+    showPricing: "not_sure" | "yes" | "no";
+    notes: string;
+  };
+  inspiration: IntakeInspirationItem[];
+  socialLinks: {
+    facebook: string;
+    instagram: string;
+    linkedIn: string;
+    youtube: string;
+    tiktok: string;
+    googleBusinessProfile: string;
+  };
+  comments: string;
+  meta: {
+    logoCreationNeeded: boolean;
+    updatedAt: string | null;
+  };
+};
 
 const SECTION_ORDER: ConsoleSection[] = [
   "overview",
   "board",
   "requests",
+  "project_intake",
   "website_access",
   "activity",
   "health",
@@ -85,6 +172,35 @@ const ACCEPTED_ATTACHMENT_MIME_TYPES = new Set([
   "application/zip",
   "application/x-zip-compressed",
 ]);
+const PROJECT_INTAKE_STORAGE_KEY = "wss_project_intake_v1";
+const PROJECT_INTAKE_STEPS: Array<{ key: ProjectIntakeStep; label: string; hint: string }> = [
+  { key: "business_information", label: "business_information", hint: "Name, contact details, service area, and what the business does." },
+  { key: "branding", label: "branding", hint: "Logo files, notes, or a flag that logo creation is needed." },
+  { key: "services", label: "services", hint: "Services WSS should include, even if details are rough." },
+  { key: "products", label: "products", hint: "Products, descriptions, prices, and optional images." },
+  { key: "pages", label: "pages", hint: "Suggested and custom pages for the site map." },
+  { key: "navigation", label: "navigation", hint: "Menu links the customer wants visitors to see." },
+  { key: "images", label: "images", hint: "Photos or image bundles and where they might belong." },
+  { key: "content", label: "content", hint: "Current website copy, documents, brochures, or pasted notes." },
+  { key: "pricing", label: "pricing", hint: "Whether pricing should appear publicly." },
+  { key: "inspiration", label: "inspiration", hint: "Websites the customer likes and why." },
+  { key: "social_links", label: "social_links", hint: "Social and business profile URLs." },
+  { key: "comments", label: "comments", hint: "Anything else WSS should know." },
+  { key: "package", label: "package", hint: "Review and create the structured website project package." },
+] as const;
+const PROJECT_PAGE_SUGGESTIONS = ["home", "about", "services", "pricing", "gallery", "faq", "contact"] as const;
+const PROJECT_PAGE_ASSOCIATIONS = [...PROJECT_PAGE_SUGGESTIONS, "all pages", "not sure"] as const;
+const LOGO_ACCEPT_ATTR = ".svg,.png,.ai,.eps,.pdf,image/svg+xml,image/png,application/pdf,application/postscript";
+const PROJECT_IMAGE_ACCEPT_ATTR = ".jpg,.jpeg,.png,.webp,.pdf,.zip,image/jpeg,image/png,image/webp,application/pdf,application/zip,application/x-zip-compressed";
+const PROJECT_CONTENT_ACCEPT_ATTR = ".pdf,.doc,.docx,.txt,.csv,.zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/zip,application/x-zip-compressed";
+const SOCIAL_LINK_FIELDS: Array<{ key: keyof WebsiteProjectIntake["socialLinks"]; label: string }> = [
+  { key: "facebook", label: "facebook" },
+  { key: "instagram", label: "instagram" },
+  { key: "linkedIn", label: "linkedin" },
+  { key: "youtube", label: "youtube" },
+  { key: "tiktok", label: "tiktok" },
+  { key: "googleBusinessProfile", label: "google_business_profile" },
+];
 
 const ACCOUNT_SUMMARY = {
   profile: "gary",
@@ -414,6 +530,179 @@ function mergeOptimisticRequests(queue: MockTicketQueueItem[], optimistic: MockT
   return [...optimistic.filter((ticket) => !liveIds.has(ticket.id)), ...queue];
 }
 
+function createIntakeUpload(file: File, associateWithPage?: string): IntakeUpload {
+  return {
+    id: getRandomId("intake-file"),
+    fileName: file.name,
+    mimeType: inferMimeType(file),
+    fileSizeBytes: file.size,
+    storagePath: "",
+    publicUrl: "",
+    status: "local",
+    error: null,
+    associateWithPage,
+  };
+}
+
+function createEmptyIntakeService(): IntakeServiceItem {
+  return {
+    id: getRandomId("service"),
+    name: "",
+    description: "",
+    price: "",
+    image: null,
+  };
+}
+
+function createEmptyIntakeProduct(): IntakeProductItem {
+  return {
+    id: getRandomId("product"),
+    name: "",
+    description: "",
+    price: "",
+    image: null,
+  };
+}
+
+function createEmptyInspiration(): IntakeInspirationItem {
+  return {
+    id: getRandomId("inspiration"),
+    url: "",
+    likes: "",
+  };
+}
+
+function createEmptyProjectIntake(): WebsiteProjectIntake {
+  return {
+    businessInformation: {
+      businessName: "",
+      tagline: "",
+      phone: "",
+      email: "",
+      address: "",
+      serviceArea: "",
+      yearsInBusiness: "",
+      businessDescription: "",
+      comments: "",
+    },
+    branding: {
+      logoUploads: [],
+      logoNotes: "",
+      noLogo: false,
+    },
+    services: [createEmptyIntakeService()],
+    products: [createEmptyIntakeProduct()],
+    pages: {
+      selected: [...PROJECT_PAGE_SUGGESTIONS],
+      custom: [],
+    },
+    navigation: ["home", "about", "services", "contact"],
+    images: [],
+    content: {
+      uploads: [],
+      pastedText: "",
+    },
+    pricing: {
+      showPricing: "not_sure",
+      notes: "",
+    },
+    inspiration: [createEmptyInspiration()],
+    socialLinks: {
+      facebook: "",
+      instagram: "",
+      linkedIn: "",
+      youtube: "",
+      tiktok: "",
+      googleBusinessProfile: "",
+    },
+    comments: "",
+    meta: {
+      logoCreationNeeded: false,
+      updatedAt: null,
+    },
+  };
+}
+
+function mergeProjectIntake(value: unknown): WebsiteProjectIntake {
+  const empty = createEmptyProjectIntake();
+  if (!value || typeof value !== "object") {
+    return empty;
+  }
+  const saved = value as Partial<WebsiteProjectIntake>;
+  return {
+    ...empty,
+    ...saved,
+    businessInformation: { ...empty.businessInformation, ...saved.businessInformation },
+    branding: { ...empty.branding, ...saved.branding },
+    services: Array.isArray(saved.services) && saved.services.length > 0 ? saved.services : empty.services,
+    products: Array.isArray(saved.products) && saved.products.length > 0 ? saved.products : empty.products,
+    pages: { ...empty.pages, ...saved.pages },
+    navigation: Array.isArray(saved.navigation) && saved.navigation.length > 0 ? saved.navigation : empty.navigation,
+    images: Array.isArray(saved.images) ? saved.images : empty.images,
+    content: { ...empty.content, ...saved.content },
+    pricing: { ...empty.pricing, ...saved.pricing },
+    inspiration: Array.isArray(saved.inspiration) && saved.inspiration.length > 0 ? saved.inspiration : empty.inspiration,
+    socialLinks: { ...empty.socialLinks, ...saved.socialLinks },
+    meta: { ...empty.meta, ...saved.meta },
+  };
+}
+
+function loadProjectIntakeDraft(): WebsiteProjectIntake {
+  if (typeof window === "undefined") {
+    return createEmptyProjectIntake();
+  }
+  try {
+    const raw = window.localStorage.getItem(PROJECT_INTAKE_STORAGE_KEY);
+    return raw ? mergeProjectIntake(JSON.parse(raw)) : createEmptyProjectIntake();
+  } catch {
+    return createEmptyProjectIntake();
+  }
+}
+
+function getProjectPages(intake: WebsiteProjectIntake): string[] {
+  return Array.from(new Set([...intake.pages.selected, ...intake.pages.custom.map((page) => page.trim()).filter(Boolean)]));
+}
+
+function buildWebsiteProjectPackage(intake: WebsiteProjectIntake) {
+  return {
+    package_type: "website_project_intake",
+    philosophy: "nothing is required; WSS can draft with AI, placeholders, and operator review when details are missing.",
+    business_information: intake.businessInformation,
+    branding: {
+      ...intake.branding,
+      logo_creation_needed: intake.branding.noLogo,
+    },
+    services: intake.services,
+    products: intake.products,
+    pages: getProjectPages(intake),
+    navigation: intake.navigation.filter((item) => item.trim()),
+    images: intake.images,
+    content: intake.content,
+    pricing: intake.pricing,
+    inspiration: intake.inspiration.filter((item) => item.url.trim() || item.likes.trim()),
+    social_links: intake.socialLinks,
+    comments: intake.comments,
+    flags: {
+      logo_creation_needed: intake.branding.noLogo,
+      sparse_intake_ok: true,
+      operator_review_required: true,
+    },
+    generated_at: new Date().toISOString(),
+  };
+}
+
+function collectReadyIntakeAttachments(intake: WebsiteProjectIntake) {
+  return collectIntakeUploads(intake).filter((upload) => upload.status === "ready" && upload.storagePath);
+}
+
+function collectIntakeUploads(intake: WebsiteProjectIntake) {
+  return [
+    ...intake.branding.logoUploads,
+    ...intake.images,
+    ...intake.content.uploads,
+  ];
+}
+
 function boardLaneForTicket(ticket: MockTicketQueueItem): "new" | "triage" | "waiting_on_us" | "waiting_on_customer" | "review" | "complete" {
   switch (ticket.status) {
     case "received":
@@ -689,6 +978,12 @@ export function AppShell() {
   const [requestSubmitting, setRequestSubmitting] = useState(false);
   const [requestError, setRequestError] = useState<string | null>(null);
   const [requestSuccess, setRequestSuccess] = useState<MockTicketDetail | null>(null);
+  const [projectIntake, setProjectIntake] = useState<WebsiteProjectIntake>(() => loadProjectIntakeDraft());
+  const [projectIntakeStep, setProjectIntakeStep] = useState<ProjectIntakeStep>("business_information");
+  const [projectIntakeSavedAt, setProjectIntakeSavedAt] = useState<string | null>(null);
+  const [projectIntakeSubmittedId, setProjectIntakeSubmittedId] = useState<string | null>(null);
+  const [projectIntakeSubmitting, setProjectIntakeSubmitting] = useState(false);
+  const [projectIntakeError, setProjectIntakeError] = useState<string | null>(null);
   const optimisticRequestsRef = useRef<MockTicketQueueItem[]>([]);
 
   useEffect(() => {
@@ -835,6 +1130,23 @@ export function AppShell() {
     }
   }, [requestType]);
 
+  useEffect(() => {
+    const nextIntake = {
+      ...projectIntake,
+      branding: {
+        ...projectIntake.branding,
+        logoUploads: projectIntake.branding.noLogo ? [] : projectIntake.branding.logoUploads,
+      },
+      meta: {
+        ...projectIntake.meta,
+        logoCreationNeeded: projectIntake.branding.noLogo,
+        updatedAt: new Date().toISOString(),
+      },
+    };
+    window.localStorage.setItem(PROJECT_INTAKE_STORAGE_KEY, JSON.stringify(nextIntake));
+    setProjectIntakeSavedAt(nextIntake.meta.updatedAt);
+  }, [projectIntake]);
+
   const activeRequests = useMemo(
     () => queue.filter((ticket) => ACTIVE_REQUEST_STATUSES.has(ticket.status)),
     [queue],
@@ -875,6 +1187,8 @@ export function AppShell() {
   const siteIdForFeedback = selectedRequest?.tenantContext.siteId ?? queue[0]?.siteId ?? "SITE-01";
   const selectedPlatform =
     WEBSITE_ACCESS_PLATFORMS.find((platform) => platform.key === selectedPlatformKey) ?? WEBSITE_ACCESS_PLATFORMS[0];
+  const projectPages = getProjectPages(projectIntake);
+  const projectPackagePreview = buildWebsiteProjectPackage(projectIntake);
 
   function openRequestSurface() {
     setRequestModalOpen(true);
@@ -1116,6 +1430,298 @@ export function AppShell() {
       setRequestError(err instanceof Error ? err.message : "submit_failed");
     } finally {
       setRequestSubmitting(false);
+    }
+  }
+
+  function updateProjectBusinessField(field: keyof WebsiteProjectIntake["businessInformation"], value: string) {
+    setProjectIntake((current) => ({
+      ...current,
+      businessInformation: {
+        ...current.businessInformation,
+        [field]: value,
+      },
+    }));
+  }
+
+  function updateProjectBranding(updates: Partial<WebsiteProjectIntake["branding"]>) {
+    setProjectIntake((current) => ({
+      ...current,
+      branding: {
+        ...current.branding,
+        ...updates,
+      },
+    }));
+  }
+
+  function updateProjectSocialField(field: keyof WebsiteProjectIntake["socialLinks"], value: string) {
+    setProjectIntake((current) => ({
+      ...current,
+      socialLinks: {
+        ...current.socialLinks,
+        [field]: value,
+      },
+    }));
+  }
+
+  function updateProjectUploadState(
+    kind: "logo" | "images" | "content",
+    uploadId: string,
+    updates: Partial<IntakeUpload>,
+  ) {
+    setProjectIntake((current) => {
+      if (kind === "logo") {
+        return {
+          ...current,
+          branding: {
+            ...current.branding,
+            logoUploads: current.branding.logoUploads.map((upload) =>
+              upload.id === uploadId ? { ...upload, ...updates } : upload,
+            ),
+          },
+        };
+      }
+      if (kind === "content") {
+        return {
+          ...current,
+          content: {
+            ...current.content,
+            uploads: current.content.uploads.map((upload) =>
+              upload.id === uploadId ? { ...upload, ...updates } : upload,
+            ),
+          },
+        };
+      }
+      return {
+        ...current,
+        images: current.images.map((upload) => (upload.id === uploadId ? { ...upload, ...updates } : upload)),
+      };
+    });
+  }
+
+  function addProjectUploads(kind: "logo" | "images" | "content", fileList: FileList | File[], associateWithPage?: string) {
+    const files = Array.from(fileList);
+    const uploads = files.map((file) => ({
+      file,
+      upload: {
+        ...createIntakeUpload(file, associateWithPage),
+        status: user ? "uploading" as const : "local" as const,
+      },
+    }));
+    if (uploads.length === 0) {
+      return;
+    }
+    setProjectIntake((current) => {
+      const uploadDrafts = uploads.map((item) => item.upload);
+      if (kind === "logo") {
+        return {
+          ...current,
+          branding: {
+            ...current.branding,
+            logoUploads: [...current.branding.logoUploads, ...uploadDrafts],
+          },
+        };
+      }
+      if (kind === "content") {
+        return {
+          ...current,
+          content: {
+            ...current.content,
+            uploads: [...current.content.uploads, ...uploadDrafts],
+          },
+        };
+      }
+      return {
+        ...current,
+        images: [...current.images, ...uploadDrafts],
+      };
+    });
+
+    if (!user) {
+      return;
+    }
+
+    uploads.forEach(({ file, upload }) => {
+      void uploadRequestAttachment(file, `website-project-${upload.id}`)
+        .then((uploaded) => updateProjectUploadState(kind, upload.id, { ...uploaded, status: "ready", error: null }))
+        .catch((error) =>
+          updateProjectUploadState(kind, upload.id, {
+            status: "error",
+            error: error instanceof Error ? error.message : "upload_failed",
+          }),
+        );
+    });
+  }
+
+  function removeProjectUpload(kind: "logo" | "images" | "content", uploadId: string) {
+    setProjectIntake((current) => {
+      if (kind === "logo") {
+        return {
+          ...current,
+          branding: {
+            ...current.branding,
+            logoUploads: current.branding.logoUploads.filter((upload) => upload.id !== uploadId),
+          },
+        };
+      }
+      if (kind === "content") {
+        return {
+          ...current,
+          content: {
+            ...current.content,
+            uploads: current.content.uploads.filter((upload) => upload.id !== uploadId),
+          },
+        };
+      }
+      return {
+        ...current,
+        images: current.images.filter((upload) => upload.id !== uploadId),
+      };
+    });
+  }
+
+  function updateImagePageAssociation(uploadId: string, page: string) {
+    setProjectIntake((current) => ({
+      ...current,
+      images: current.images.map((upload) => (upload.id === uploadId ? { ...upload, associateWithPage: page } : upload)),
+    }));
+  }
+
+  function updateProjectService(index: number, updates: Partial<IntakeServiceItem>) {
+    setProjectIntake((current) => ({
+      ...current,
+      services: current.services.map((item, itemIndex) => (itemIndex === index ? { ...item, ...updates } : item)),
+    }));
+  }
+
+  function updateProjectProduct(index: number, updates: Partial<IntakeProductItem>) {
+    setProjectIntake((current) => ({
+      ...current,
+      products: current.products.map((item, itemIndex) => (itemIndex === index ? { ...item, ...updates } : item)),
+    }));
+  }
+
+  function addServiceImage(index: number, fileList: FileList | File[]) {
+    const file = Array.from(fileList)[0];
+    if (!file) {
+      return;
+    }
+    updateProjectService(index, { image: createIntakeUpload(file) });
+  }
+
+  function addProductImage(index: number, fileList: FileList | File[]) {
+    const file = Array.from(fileList)[0];
+    if (!file) {
+      return;
+    }
+    updateProjectProduct(index, { image: createIntakeUpload(file) });
+  }
+
+  function updateProjectInspiration(index: number, updates: Partial<IntakeInspirationItem>) {
+    setProjectIntake((current) => ({
+      ...current,
+      inspiration: current.inspiration.map((item, itemIndex) => (itemIndex === index ? { ...item, ...updates } : item)),
+    }));
+  }
+
+  async function submitProjectIntakePackage() {
+    if (projectIntakeSubmitting) {
+      return;
+    }
+    if (collectIntakeUploads(projectIntake).some((upload) => upload.status === "uploading")) {
+      setProjectIntakeError("wait for uploads to finish before creating the package.");
+      return;
+    }
+    const projectPackage = buildWebsiteProjectPackage(projectIntake);
+    const now = new Date().toISOString();
+    const selectedSite = requestSites[0];
+    const liveSubmission = Boolean(user) && Boolean(selectedSite) && isUuid(selectedSite.id);
+    const title = `website_project: ${projectIntake.businessInformation.businessName.trim() || ACCOUNT_SUMMARY.company} intake package`;
+    const readyAttachments = collectReadyIntakeAttachments(projectIntake);
+
+    setProjectIntakeSubmitting(true);
+    setProjectIntakeError(null);
+
+    try {
+      const result = liveSubmission
+        ? await submitCustomerRequestWithAttachments({
+            siteId: selectedSite.id,
+            title,
+            description: JSON.stringify(projectPackage, null, 2),
+            priority: "normal",
+            attachments: readyAttachments.map((upload) => ({
+              storagePath: upload.storagePath,
+              fileName: upload.fileName,
+              mimeType: upload.mimeType,
+              fileSizeBytes: upload.fileSizeBytes,
+            })),
+          })
+        : {
+            ticket_id: getRandomId("local-website-project"),
+            ticket_number: `WEB-${Date.now().toString(36).toUpperCase()}`,
+            status: "received",
+          };
+
+    const queueItem: MockTicketQueueItem = {
+      id: result.ticket_number,
+      workflowId: result.ticket_id,
+      title,
+      status: "received",
+      priority: "normal",
+      submittedBy: user?.email ?? "customer",
+      updatedAt: now,
+      siteId: selectedSite?.id ?? ACCOUNT_SUMMARY.website,
+      siteName: selectedSite?.name ?? ACCOUNT_SUMMARY.website,
+      clientId: queue[0]?.clientId ?? "CLI-WEBSITE-PROJECT",
+      clientName: projectIntake.businessInformation.businessName.trim() || ACCOUNT_SUMMARY.company,
+      identityConfidence: liveSubmission ? "claimed" : "unknown",
+    };
+    const detail: MockTicketDetail = {
+      id: result.ticket_number,
+      workflowId: queueItem.workflowId,
+      summary: title,
+      customerRequest: JSON.stringify(projectPackage, null, 2),
+      status: "received",
+      priority: "normal",
+      identityConfidence: queueItem.identityConfidence,
+      tenantContext: {
+        agencyId: "website_support_studio",
+        agencyName: "website_support_studio",
+        clientId: queueItem.clientId,
+        clientName: queueItem.clientName,
+        siteId: queueItem.siteId,
+        siteName: queueItem.siteName,
+      },
+      submittedBy: queueItem.submittedBy,
+      submittedAt: now,
+      approvalStatus: "not_required",
+      auditTimeline: [
+        {
+          id: getRandomId("audit"),
+          ticketId: result.ticket_number,
+          eventType: "website_project_intake_submitted",
+          summary: "Structured website project package created for operator review.",
+          actor: queueItem.submittedBy,
+          occurredAt: now,
+        },
+      ],
+      attachments: readyAttachments.map((upload) => ({
+        id: upload.id,
+        fileName: upload.fileName,
+        mimeType: upload.mimeType,
+        fileSizeBytes: upload.fileSizeBytes,
+        publicUrl: upload.publicUrl,
+        createdAt: now,
+      })),
+    };
+    optimisticRequestsRef.current = mergeOptimisticRequests([queueItem], optimisticRequestsRef.current);
+    setQueue((current) => [queueItem, ...current.filter((ticket) => ticket.id !== queueItem.id)]);
+    setRequestDetails((current) => ({ ...current, [queueItem.id]: detail }));
+    setSelectedRequestId(queueItem.id);
+      setProjectIntakeSubmittedId(result.ticket_number);
+    } catch (error) {
+      setProjectIntakeError(error instanceof Error ? error.message : "website_project_submit_failed");
+    } finally {
+      setProjectIntakeSubmitting(false);
     }
   }
 
@@ -1473,6 +2079,540 @@ export function AppShell() {
                       </div>
                     )}
                   </div>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
+          {section === "project_intake" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="project_intake"
+                title="website_project_intake"
+                description="Share whatever you have. Nothing is required; WSS can draft with AI, placeholders, and operator review."
+              />
+
+              <div className="wss-intake-shell">
+                <aside className="wss-intake-steps" aria-label="website project intake sections">
+                  {PROJECT_INTAKE_STEPS.map((step) => (
+                    <button
+                      key={step.key}
+                      type="button"
+                      className={projectIntakeStep === step.key ? "is-active" : ""}
+                      onClick={() => setProjectIntakeStep(step.key)}
+                    >
+                      <MonoLabel text={step.label} />
+                      <span>{step.hint}</span>
+                    </button>
+                  ))}
+                </aside>
+
+                <article className="wss-card wss-intake-panel">
+                  <div className="wss-intake-status">
+                    <span>
+                      {projectIntakeSavedAt ? `saved locally ${formatDateTime(projectIntakeSavedAt)}` : "draft ready"}
+                    </span>
+                    {projectIntakeSubmittedId ? (
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => {
+                          setSelectedRequestId(projectIntakeSubmittedId);
+                          navigate("/requests");
+                        }}
+                      >
+                        view_package_request
+                      </button>
+                    ) : null}
+                  </div>
+
+                  {projectIntakeStep === "business_information" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="business_information" description="Basic identity and context for the website project." />
+                      <div className="wss-form-grid">
+                        {[
+                          ["businessName", "business_name"],
+                          ["tagline", "tagline"],
+                          ["phone", "phone"],
+                          ["email", "email"],
+                          ["address", "address"],
+                          ["serviceArea", "service_area"],
+                          ["yearsInBusiness", "years_in_business"],
+                        ].map(([field, label]) => (
+                          <label key={field} className="wss-field">
+                            <span className="wss-field-label">
+                              <MonoLabel text={label} />
+                            </span>
+                            <input
+                              className="wss-input"
+                              value={projectIntake.businessInformation[field as keyof WebsiteProjectIntake["businessInformation"]]}
+                              onChange={(event) =>
+                                updateProjectBusinessField(field as keyof WebsiteProjectIntake["businessInformation"], event.target.value)
+                              }
+                            />
+                          </label>
+                        ))}
+                      </div>
+                      <label className="wss-field">
+                        <span className="wss-field-label">
+                          <MonoLabel text="business_description" />
+                        </span>
+                        <textarea
+                          value={projectIntake.businessInformation.businessDescription}
+                          onChange={(event) => updateProjectBusinessField("businessDescription", event.target.value)}
+                          placeholder="what does the business do, who does it serve, and what should the website help visitors understand?"
+                        />
+                      </label>
+                      <label className="wss-field">
+                        <span className="wss-field-label">
+                          <MonoLabel text="comments" />
+                        </span>
+                        <textarea
+                          value={projectIntake.businessInformation.comments}
+                          onChange={(event) => updateProjectBusinessField("comments", event.target.value)}
+                          placeholder="anything else about the business"
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "branding" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="branding" description="Upload a logo if one exists, or flag that WSS should help create one." />
+                      <div className="wss-intake-callout">
+                        accepted formats: svg, png, ai, eps, pdf
+                      </div>
+                      <label className="wss-check-row">
+                        <input
+                          type="checkbox"
+                          checked={projectIntake.branding.noLogo}
+                          onChange={(event) =>
+                            updateProjectBranding({
+                              noLogo: event.target.checked,
+                              logoUploads: event.target.checked ? [] : projectIntake.branding.logoUploads,
+                            })
+                          }
+                        />
+                        <span>I do not have a logo</span>
+                      </label>
+                      {projectIntake.branding.noLogo ? (
+                        <p className="wss-intake-flag">
+                          <MonoLabel text="logo_creation_needed" /> · Logo creation is available as an additional service.
+                        </p>
+                      ) : (
+                        <label className="wss-dropzone">
+                          <div>
+                            <strong>
+                              <MonoLabel text="logo_upload" />
+                            </strong>
+                            <p>svg, png, ai, eps, pdf</p>
+                          </div>
+                          <span className="wss-upload-button">
+                            <input
+                              type="file"
+                              multiple
+                              accept={LOGO_ACCEPT_ATTR}
+                              onChange={(event) => {
+                                if (event.target.files) {
+                                  addProjectUploads("logo", event.target.files);
+                                }
+                                event.target.value = "";
+                              }}
+                            />
+                            attach_logo
+                          </span>
+                        </label>
+                      )}
+                      <div className="wss-intake-upload-list">
+                        {projectIntake.branding.logoUploads.map((upload) => (
+                          <div key={upload.id}>
+                            <span>{upload.fileName} · {formatBytes(upload.fileSizeBytes)} · {upload.status}</span>
+                            <button type="button" onClick={() => removeProjectUpload("logo", upload.id)}>remove</button>
+                          </div>
+                        ))}
+                      </div>
+                      <label className="wss-field">
+                        <span className="wss-field-label">
+                          <MonoLabel text="logo_notes" />
+                        </span>
+                        <textarea
+                          value={projectIntake.branding.logoNotes}
+                          onChange={(event) => updateProjectBranding({ logoNotes: event.target.value })}
+                          placeholder="colors, versions, usage notes, or rough preferences"
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "services" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="services" description="Add as many services as are useful. Price and image are optional." />
+                      {projectIntake.services.map((service, index) => (
+                        <div key={service.id} className="wss-repeat-card">
+                          <div className="wss-form-grid">
+                            <label className="wss-field">
+                              <span className="wss-field-label"><MonoLabel text="service_name" /></span>
+                              <input className="wss-input" value={service.name} onChange={(event) => updateProjectService(index, { name: event.target.value })} />
+                            </label>
+                            <label className="wss-field">
+                              <span className="wss-field-label"><MonoLabel text="price_optional" /></span>
+                              <input className="wss-input" value={service.price} onChange={(event) => updateProjectService(index, { price: event.target.value })} />
+                            </label>
+                          </div>
+                          <label className="wss-field">
+                            <span className="wss-field-label"><MonoLabel text="description" /></span>
+                            <textarea value={service.description} onChange={(event) => updateProjectService(index, { description: event.target.value })} />
+                          </label>
+                          <label className="wss-upload-button">
+                            <input
+                              type="file"
+                              accept={PROJECT_IMAGE_ACCEPT_ATTR}
+                              onChange={(event) => {
+                                if (event.target.files) {
+                                  addServiceImage(index, event.target.files);
+                                }
+                                event.target.value = "";
+                              }}
+                            />
+                            image_optional
+                          </label>
+                          {service.image ? <p className="wss-card-note">{service.image.fileName}</p> : null}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => setProjectIntake((current) => ({ ...current, services: [...current.services, createEmptyIntakeService()] }))}
+                      >
+                        add_service
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "products" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="products" description="Add products if the site should feature or sell them." />
+                      {projectIntake.products.map((product, index) => (
+                        <div key={product.id} className="wss-repeat-card">
+                          <div className="wss-form-grid">
+                            <label className="wss-field">
+                              <span className="wss-field-label"><MonoLabel text="product_name" /></span>
+                              <input className="wss-input" value={product.name} onChange={(event) => updateProjectProduct(index, { name: event.target.value })} />
+                            </label>
+                            <label className="wss-field">
+                              <span className="wss-field-label"><MonoLabel text="price_optional" /></span>
+                              <input className="wss-input" value={product.price} onChange={(event) => updateProjectProduct(index, { price: event.target.value })} />
+                            </label>
+                          </div>
+                          <label className="wss-field">
+                            <span className="wss-field-label"><MonoLabel text="description" /></span>
+                            <textarea value={product.description} onChange={(event) => updateProjectProduct(index, { description: event.target.value })} />
+                          </label>
+                          <label className="wss-upload-button">
+                            <input
+                              type="file"
+                              accept={PROJECT_IMAGE_ACCEPT_ATTR}
+                              onChange={(event) => {
+                                if (event.target.files) {
+                                  addProductImage(index, event.target.files);
+                                }
+                                event.target.value = "";
+                              }}
+                            />
+                            image_optional
+                          </label>
+                          {product.image ? <p className="wss-card-note">{product.image.fileName}</p> : null}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => setProjectIntake((current) => ({ ...current, products: [...current.products, createEmptyIntakeProduct()] }))}
+                      >
+                        add_product
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "pages" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="pages" description="Default pages are suggested. Remove or add whatever fits." />
+                      <div className="wss-option-grid">
+                        {PROJECT_PAGE_SUGGESTIONS.map((page) => (
+                          <label key={page} className="wss-check-row">
+                            <input
+                              type="checkbox"
+                              checked={projectIntake.pages.selected.includes(page)}
+                              onChange={(event) =>
+                                setProjectIntake((current) => ({
+                                  ...current,
+                                  pages: {
+                                    ...current.pages,
+                                    selected: event.target.checked
+                                      ? [...current.pages.selected, page]
+                                      : current.pages.selected.filter((item) => item !== page),
+                                  },
+                                }))
+                              }
+                            />
+                            <MonoLabel text={page} />
+                          </label>
+                        ))}
+                      </div>
+                      <div className="wss-repeat-card">
+                        <p className="wss-card-kicker"><MonoLabel text="custom_pages" /></p>
+                        {projectIntake.pages.custom.map((page, index) => (
+                          <input
+                            key={`${index}-${page}`}
+                            className="wss-input"
+                            value={page}
+                            onChange={(event) =>
+                              setProjectIntake((current) => ({
+                                ...current,
+                                pages: {
+                                  ...current.pages,
+                                  custom: current.pages.custom.map((item, itemIndex) => (itemIndex === index ? event.target.value : item)),
+                                },
+                              }))
+                            }
+                          />
+                        ))}
+                        <button
+                          type="button"
+                          className="wss-secondary-button"
+                          onClick={() => setProjectIntake((current) => ({ ...current, pages: { ...current.pages, custom: [...current.pages.custom, ""] } }))}
+                        >
+                          add_custom_page
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "navigation" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="navigation" description="What links should appear in the website menu?" />
+                      {projectIntake.navigation.map((item, index) => (
+                        <input
+                          key={`${index}-${item}`}
+                          className="wss-input"
+                          value={item}
+                          onChange={(event) =>
+                            setProjectIntake((current) => ({
+                              ...current,
+                              navigation: current.navigation.map((navItem, navIndex) => (navIndex === index ? event.target.value : navItem)),
+                            }))
+                          }
+                        />
+                      ))}
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => setProjectIntake((current) => ({ ...current, navigation: [...current.navigation, ""] }))}
+                      >
+                        add_menu_link
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "images" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="images" description="Upload jpg, png, webp, pdf, or zip files and associate them with pages if you know where they belong." />
+                      <label className="wss-dropzone">
+                        <div>
+                          <strong><MonoLabel text="image_uploads" /></strong>
+                          <p>jpg, png, webp, pdf, zip</p>
+                        </div>
+                        <span className="wss-upload-button">
+                          <input
+                            type="file"
+                            multiple
+                            accept={PROJECT_IMAGE_ACCEPT_ATTR}
+                            onChange={(event) => {
+                              if (event.target.files) {
+                                addProjectUploads("images", event.target.files, "not sure");
+                              }
+                              event.target.value = "";
+                            }}
+                          />
+                          attach_images
+                        </span>
+                      </label>
+                      <div className="wss-intake-upload-list">
+                        {projectIntake.images.map((upload) => (
+                          <div key={upload.id}>
+                            <span>{upload.fileName} · {formatBytes(upload.fileSizeBytes)} · {upload.status}</span>
+                            <select value={upload.associateWithPage ?? "not sure"} onChange={(event) => updateImagePageAssociation(upload.id, event.target.value)}>
+                              {PROJECT_PAGE_ASSOCIATIONS.map((page) => (
+                                <option key={page} value={page}>{page}</option>
+                              ))}
+                              {projectPages.map((page) => (
+                                <option key={`custom-${page}`} value={page}>{page}</option>
+                              ))}
+                            </select>
+                            <button type="button" onClick={() => removeProjectUpload("images", upload.id)}>remove</button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "content" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="content" description="Upload current pages, articles, brochures, PDFs, Word docs, or marketing materials. Paste text if easier." />
+                      <label className="wss-dropzone">
+                        <div>
+                          <strong><MonoLabel text="content_uploads" /></strong>
+                          <p>pdf, doc, docx, txt, csv, zip</p>
+                        </div>
+                        <span className="wss-upload-button">
+                          <input
+                            type="file"
+                            multiple
+                            accept={PROJECT_CONTENT_ACCEPT_ATTR}
+                            onChange={(event) => {
+                              if (event.target.files) {
+                                addProjectUploads("content", event.target.files);
+                              }
+                              event.target.value = "";
+                            }}
+                          />
+                          attach_content
+                        </span>
+                      </label>
+                      <div className="wss-intake-upload-list">
+                        {projectIntake.content.uploads.map((upload) => (
+                          <div key={upload.id}>
+                            <span>{upload.fileName} · {formatBytes(upload.fileSizeBytes)} · {upload.status}</span>
+                            <button type="button" onClick={() => removeProjectUpload("content", upload.id)}>remove</button>
+                          </div>
+                        ))}
+                      </div>
+                      <label className="wss-field">
+                        <span className="wss-field-label"><MonoLabel text="paste_text" /></span>
+                        <textarea
+                          value={projectIntake.content.pastedText}
+                          onChange={(event) => setProjectIntake((current) => ({ ...current, content: { ...current.content, pastedText: event.target.value } }))}
+                          placeholder="paste copy, notes, page drafts, or rough content here"
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "pricing" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="pricing" description="Optional. WSS can draft with placeholders if you are not sure yet." />
+                      <label className="wss-field">
+                        <span className="wss-field-label"><MonoLabel text="show_pricing_on_website" /></span>
+                        <select
+                          className="wss-input"
+                          value={projectIntake.pricing.showPricing}
+                          onChange={(event) =>
+                            setProjectIntake((current) => ({
+                              ...current,
+                              pricing: { ...current.pricing, showPricing: event.target.value as WebsiteProjectIntake["pricing"]["showPricing"] },
+                            }))
+                          }
+                        >
+                          <option value="not_sure">not_sure</option>
+                          <option value="yes">yes</option>
+                          <option value="no">no</option>
+                        </select>
+                      </label>
+                      <label className="wss-field">
+                        <span className="wss-field-label"><MonoLabel text="pricing_notes" /></span>
+                        <textarea
+                          value={projectIntake.pricing.notes}
+                          onChange={(event) => setProjectIntake((current) => ({ ...current, pricing: { ...current.pricing, notes: event.target.value } }))}
+                          placeholder="pricing packages, ranges, or notes WSS should consider"
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "inspiration" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="inspiration" description="Share websites you like and what you like about them." />
+                      {projectIntake.inspiration.map((item, index) => (
+                        <div key={item.id} className="wss-repeat-card">
+                          <label className="wss-field">
+                            <span className="wss-field-label"><MonoLabel text="website_url" /></span>
+                            <input className="wss-input" value={item.url} onChange={(event) => updateProjectInspiration(index, { url: event.target.value })} />
+                          </label>
+                          <label className="wss-field">
+                            <span className="wss-field-label"><MonoLabel text="what_do_you_like" /></span>
+                            <textarea value={item.likes} onChange={(event) => updateProjectInspiration(index, { likes: event.target.value })} />
+                          </label>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => setProjectIntake((current) => ({ ...current, inspiration: [...current.inspiration, createEmptyInspiration()] }))}
+                      >
+                        add_inspiration
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "social_links" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="social_links" description="Add whatever profiles are relevant." />
+                      <div className="wss-form-grid">
+                        {SOCIAL_LINK_FIELDS.map((field) => (
+                          <label key={field.key} className="wss-field">
+                            <span className="wss-field-label"><MonoLabel text={field.label} /></span>
+                            <input
+                              className="wss-input"
+                              value={projectIntake.socialLinks[field.key]}
+                              onChange={(event) => updateProjectSocialField(field.key, event.target.value)}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "comments" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="comments" description="Large notes field for everything else." />
+                      <label className="wss-field">
+                        <span className="wss-field-label"><MonoLabel text="comments" /></span>
+                        <textarea
+                          value={projectIntake.comments}
+                          onChange={(event) => setProjectIntake((current) => ({ ...current, comments: event.target.value }))}
+                          placeholder="goals, preferences, competitors, concerns, deadlines, must-haves, nice-to-haves"
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {projectIntakeStep === "package" ? (
+                    <div className="wss-intake-form">
+                      <SectionHeading title="structured_package" description="Create the website project package for WSS review. Empty fields are okay." />
+                      <div className="wss-grid three-up">
+                        <OverviewCard title="pages" value={String(projectPages.length)} note={projectPages.join(", ") || "WSS can suggest pages."} />
+                        <OverviewCard title="services" value={String(projectIntake.services.length)} note="repeatable service entries" />
+                        <OverviewCard title="uploads" value={String(projectIntake.branding.logoUploads.length + projectIntake.images.length + projectIntake.content.uploads.length)} note="file metadata captured" />
+                      </div>
+                      <pre className="wss-package-preview">{JSON.stringify(projectPackagePreview, null, 2)}</pre>
+                      <div className="wss-modal-actions">
+                        <button
+                          type="button"
+                          className="wss-soft-cta"
+                          onClick={() => {
+                            void submitProjectIntakePackage();
+                          }}
+                          disabled={projectIntakeSubmitting}
+                        >
+                          {projectIntakeSubmitting ? "creating_package" : "create_project_package"}
+                        </button>
+                        <button type="button" className="wss-secondary-button" onClick={() => setProjectIntake(createEmptyProjectIntake())}>
+                          reset_draft
+                        </button>
+                      </div>
+                      {projectIntakeError ? <p className="wss-inline-error">{projectIntakeError}</p> : null}
+                    </div>
+                  ) : null}
                 </article>
               </div>
             </section>

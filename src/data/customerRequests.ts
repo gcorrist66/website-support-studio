@@ -39,10 +39,28 @@ export interface CustomerRequestRecord {
 }
 
 const ATTACHMENT_BUCKET = "request_attachments";
-const ACCEPTED_ATTACHMENT_EXTENSIONS = new Set(["png", "jpg", "jpeg", "pdf", "doc", "docx", "csv", "txt", "zip"]);
+const ACCEPTED_ATTACHMENT_EXTENSIONS = new Set([
+  "png",
+  "jpg",
+  "jpeg",
+  "webp",
+  "svg",
+  "ai",
+  "eps",
+  "pdf",
+  "doc",
+  "docx",
+  "csv",
+  "txt",
+  "zip",
+]);
 const ACCEPTED_ATTACHMENT_MIME_TYPES = new Set([
   "image/png",
   "image/jpeg",
+  "image/webp",
+  "image/svg+xml",
+  "application/illustrator",
+  "application/postscript",
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -88,6 +106,14 @@ function inferMimeType(file: File): string {
     case "jpg":
     case "jpeg":
       return "image/jpeg";
+    case "webp":
+      return "image/webp";
+    case "svg":
+      return "image/svg+xml";
+    case "ai":
+      return "application/illustrator";
+    case "eps":
+      return "application/postscript";
     case "pdf":
       return "application/pdf";
     case "doc":
