@@ -18,12 +18,10 @@ import {
   type SubmitRequestResult,
 } from "../../data/customerRequests";
 import {
-  createEmptyCustomerWorkspaceSummary,
-  loadCustomerWorkspaceSummary,
   loadMySites,
   type CustomerSite,
-  type CustomerWorkspaceSummary,
 } from "../../data/customerWorkspace";
+import { loadCustomerAccount, type CustomerAccount } from "../../data/customerAccount";
 
 const SUPPORT_PRIORITIES = ["low", "normal", "high", "critical"] as const;
 
@@ -60,6 +58,13 @@ function formatCapacity(value: number | null): string {
   return value === null ? "not tracked yet" : `${value}`;
 }
 
+function formatCount(value: number | null): string {
+  if (value === null) {
+    return "not available";
+  }
+  return `${value}`;
+}
+
 function safeSiteLabel(site: CustomerSite | SiteOption | null | undefined): string {
   if (!site) {
     return "not linked yet";
@@ -70,40 +75,23 @@ function safeSiteLabel(site: CustomerSite | SiteOption | null | undefined): stri
   return site.name;
 }
 
-function getCapacityEffortExamples(): Array<{ title: string; examples: string }> {
-  return [
-    {
-      title: "Low effort",
-      examples: "content update, image swap, typo fix",
-    },
-    {
-      title: "Medium effort",
-      examples: "plugin update, landing page change, form adjustment",
-    },
-    {
-      title: "High effort",
-      examples: "bug fix, multi-step site change, layout repair",
-    },
-  ];
-}
-
-function getPlanNote(summary: CustomerWorkspaceSummary): string {
-  if (!summary.subscriptionStatus) {
+function getPlanNote(account: Pick<CustomerAccount, "subscriptionStatus" | "currentPeriodEnd">): string {
+  if (!account.subscriptionStatus) {
     return "Plan details are still loading.";
   }
-  if (summary.subscriptionStatus === "trialing") {
-    return summary.currentPeriodEnd ? `Trial ends on ${formatDate(summary.currentPeriodEnd)}.` : "Trialing right now.";
+  if (account.subscriptionStatus === "trialing") {
+    return account.currentPeriodEnd ? `Trial ends on ${formatDate(account.currentPeriodEnd)}.` : "Trialing right now.";
   }
-  if (summary.subscriptionStatus === "active") {
-    return summary.currentPeriodEnd ? `Renews on ${formatDate(summary.currentPeriodEnd)}.` : "Active subscription.";
+  if (account.subscriptionStatus === "active") {
+    return account.currentPeriodEnd ? `Renews on ${formatDate(account.currentPeriodEnd)}.` : "Active subscription.";
   }
-  if (summary.subscriptionStatus === "past_due") {
+  if (account.subscriptionStatus === "past_due") {
     return "Payment is past due. Please contact Corriston Consulting.";
   }
-  if (summary.subscriptionStatus === "canceled") {
+  if (account.subscriptionStatus === "canceled") {
     return "Subscription is canceled.";
   }
-  return `Status: ${summary.subscriptionStatus.replaceAll("_", " ")}.`;
+  return `Status: ${account.subscriptionStatus.replaceAll("_", " ")}.`;
 }
 
 function formatRequestError(message: string): string {
@@ -408,7 +396,7 @@ type CustomerRequestProps = {
 
 export function CustomerRequest({ identity }: CustomerRequestProps) {
   const { user, signOut } = useAuth();
-  const [summary, setSummary] = useState<CustomerWorkspaceSummary>(createEmptyCustomerWorkspaceSummary());
+  const [account, setAccount] = useState<CustomerAccount | null>(null);
   const [sites, setSites] = useState<CustomerSite[]>([]);
   const [loading, setLoading] = useState(true);
   const currentSite = useMemo(() => sites[0] ?? null, [sites]);
@@ -418,21 +406,21 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
     setLoading(true);
 
     async function load() {
-      const [workspaceSummary, siteRows] = await Promise.all([
-        loadCustomerWorkspaceSummary(identity.orgId),
+      const [accountRow, siteRows] = await Promise.all([
+        loadCustomerAccount(identity.orgId),
         loadMySites(),
       ]);
       if (!active) {
         return;
       }
-      setSummary(workspaceSummary);
+      setAccount(accountRow);
       setSites(siteRows);
       setLoading(false);
     }
 
     load().catch(() => {
       if (active) {
-        setSummary(createEmptyCustomerWorkspaceSummary());
+        setAccount(null);
         setSites([]);
         setLoading(false);
       }
@@ -458,14 +446,15 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             <li>PROFILE</li>
             <li>PLAN</li>
             <li>CAPACITY</li>
+            <li>REPLENISHMENT</li>
             <li>SUPPORT</li>
             <li>FEEDBACK</li>
             <li>LOGOUT</li>
           </ul>
-          {summary.planName !== "Plan not found" ? (
+          {account?.planName && account.planName !== "Plan not found" ? (
             <p className="customer-smallprint">
-              You are on {summary.planName} at {formatMoney(summary.monthlyUsd)} with{" "}
-              {formatCapacity(summary.capacityIncluded)} Capacity Units each month.
+              You are on {account.planName} at {formatMoney(account.monthlyUsd)} with{" "}
+              {formatCapacity(account.capacity.includedThisMonth)} Capacity Units each month.
             </p>
           ) : null}
         </div>
@@ -474,137 +463,174 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
         </button>
       </section>
 
-      <div className="customer-grid">
-        <section className="customer-card">
-          <h2>PROFILE</h2>
-          <dl className="customer-definition-list">
-            <div>
-              <dt>Logged in email</dt>
-              <dd>{user?.email ?? "not available"}</dd>
-            </div>
-            <div>
-              <dt>Role</dt>
-              <dd>customer</dd>
-            </div>
-            <div>
-              <dt>Company</dt>
-              <dd>{summary.orgName}</dd>
-            </div>
-            <div>
-              <dt>Website</dt>
-              <dd>{safeSiteLabel(currentSite)}</dd>
-            </div>
-            <div>
-              <dt>Current plan</dt>
-              <dd>{summary.planName}</dd>
-            </div>
-            <div>
-              <dt>Subscription status</dt>
-              <dd>{summary.subscriptionStatus ? summary.subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
-            </div>
-          </dl>
-          <p className="customer-smallprint">
-            If you need to switch accounts, log out and sign in with the same email you used at checkout.
-          </p>
-        </section>
+    <div className="customer-grid">
+      <section className="customer-card">
+        <h2>PROFILE</h2>
+        <dl className="customer-definition-list">
+          <div>
+            <dt>Logged in email</dt>
+            <dd>{account?.customerEmail ?? user?.email ?? "not available"}</dd>
+          </div>
+          <div>
+            <dt>Role</dt>
+            <dd>customer</dd>
+          </div>
+          <div>
+            <dt>Company</dt>
+            <dd>{account?.company ?? "your organization"}</dd>
+          </div>
+          <div>
+            <dt>Website</dt>
+            <dd>{account?.website ?? safeSiteLabel(currentSite)}</dd>
+          </div>
+          <div>
+            <dt>Current plan</dt>
+            <dd>{account?.planName ?? "Plan not found"}</dd>
+          </div>
+          <div>
+            <dt>Subscription status</dt>
+            <dd>{account?.subscriptionStatus ? account.subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
+          </div>
+        </dl>
+        <p className="customer-smallprint">
+          If you need to switch accounts, log out and sign in with the same email you used at checkout.
+        </p>
+      </section>
 
-        <section className="customer-card">
-          <h2>CAPACITY</h2>
-          <p className="customer-copy">
-            Capacity Units are the monthly support allowance included with your plan.
-          </p>
-          <p className="customer-smallprint">
-            Capacity education: a low-effort request uses fewer units; a medium-effort request uses more;
-            a high-effort request uses the most.
-          </p>
-          <dl className="customer-definition-list">
-            <div>
-              <dt>Included this month</dt>
-              <dd>{formatCapacity(summary.capacityIncluded)}</dd>
-            </div>
-            <div>
-              <dt>Used this month</dt>
-              <dd>{formatCapacity(summary.capacityUsed)}</dd>
-            </div>
-            <div>
-              <dt>Remaining this month</dt>
-              <dd>{formatCapacity(summary.capacityRemaining)}</dd>
-            </div>
-          </dl>
-          <ul className="customer-bullet-list">
-            {getCapacityEffortExamples().map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}:</strong> {item.examples}
-              </li>
-            ))}
-          </ul>
-          <p className="customer-smallprint">
-            When you run out, requests wait until the next monthly refresh or until additional Capacity
-            Units are added. Need more? Contact Corriston Consulting.
-          </p>
-          <p className="customer-smallprint">
-            Replenishment: additional Capacity Units can be added at any time by contacting Corriston
-            Consulting.
-          </p>
-          <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
-            contact Corriston Consulting
-          </a>
-        </section>
+      <section className="customer-card">
+        <h2>CAPACITY</h2>
+        <p className="customer-copy">
+          Capacity Units are the monthly support allowance included with your plan.
+        </p>
+        <p className="customer-smallprint">
+          {account?.capacity.trackingNote ?? "Usage is being tracked manually during the pilot."}
+        </p>
+        <dl className="customer-definition-list">
+          <div>
+            <dt>Included this month</dt>
+            <dd>{formatCapacity(account?.capacity.includedThisMonth ?? null)}</dd>
+          </div>
+          <div>
+            <dt>Used this month</dt>
+            <dd>{formatCapacity(account?.capacity.usedThisMonth ?? null)}</dd>
+          </div>
+          <div>
+            <dt>Remaining this month</dt>
+            <dd>{formatCapacity(account?.capacity.remainingThisMonth ?? null)}</dd>
+          </div>
+        </dl>
+        <ul className="customer-bullet-list">
+          {(account?.effortLevels ?? []).map((item) => (
+            <li key={item.key}>
+              <strong>{item.name}:</strong> {item.summary} Examples: {item.examples.join(", ")}
+            </li>
+          ))}
+        </ul>
+        <p className="customer-smallprint">
+          Usage is estimated/manual during the pilot. Low effort means fewer units, medium effort means
+          more, and high effort means the most.
+        </p>
+        <p className="customer-smallprint">
+          Capacity education: low effort examples include content updates and image swaps; medium effort
+          examples include plugin updates and landing page changes; high effort examples include bug fixes
+          and more complex site work.
+        </p>
+      </section>
 
-        <section className="customer-card">
-          <h2>PLAN</h2>
-          <dl className="customer-definition-list">
-            <div>
-              <dt>Current plan</dt>
-              <dd>{summary.planName}</dd>
-            </div>
-            <div>
-              <dt>Monthly price</dt>
-              <dd>{formatMoney(summary.monthlyUsd)}</dd>
-            </div>
-            <div>
-              <dt>Subscription status</dt>
-              <dd>{summary.subscriptionStatus ? summary.subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
-            </div>
-            <div>
-              <dt>Renewal / trial</dt>
-              <dd>{getPlanNote(summary)}</dd>
-            </div>
-          </dl>
-          <p className="customer-smallprint">
-            Need to change your plan or add more Capacity Units? Contact Corriston Consulting. If the plan
-            looks wrong, sign out and use the checkout email again.
-          </p>
-          <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
-            contact Corriston Consulting
-          </a>
-        </section>
+      <section className="customer-card">
+        <h2>PLAN</h2>
+        <dl className="customer-definition-list">
+          <div>
+            <dt>Current plan</dt>
+            <dd>{account?.planName ?? "Plan not found"}</dd>
+          </div>
+          <div>
+            <dt>Monthly price</dt>
+            <dd>{formatMoney(account?.monthlyUsd ?? null)}</dd>
+          </div>
+          <div>
+            <dt>Subscription status</dt>
+            <dd>{account?.subscriptionStatus ? account.subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
+          </div>
+          <div>
+            <dt>Renewal / trial</dt>
+            <dd>{getPlanNote(account ?? { subscriptionStatus: null, currentPeriodEnd: null })}</dd>
+          </div>
+        </dl>
+        <p className="customer-smallprint">
+          What you bought: {account?.billingMessage ?? "Pricing is confirmed during checkout or support."}
+        </p>
+        <p className="customer-smallprint">
+          Need to change your plan or add more Capacity Units? Contact Corriston Consulting. If the plan
+          looks wrong, sign out and use the checkout email again.
+        </p>
+        <p className="customer-smallprint">
+          Pricing is confirmed during checkout and support if a custom plan or top-up is needed.
+        </p>
+        <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
+          contact Corriston Consulting
+        </a>
+      </section>
 
-        <section className="customer-card">
-          <h2>SUPPORT</h2>
-          <p className="customer-copy">
-            Support request means work on your website. Product feedback means improving
-            website_support_studio itself.
-          </p>
-          <ul className="customer-bullet-list">
-            <li>
-              <strong>Support request:</strong> content updates, image swaps, plugin updates, landing
-              page changes, and bug fixes.
-            </li>
-            <li>
-              <strong>Product feedback:</strong> ideas, confusion, feature requests, or bug reports about
-              website_support_studio.
-            </li>
-            <li>
-              <strong>After you submit:</strong> you get a request ID and the item enters the internal
-              queue for review.
-            </li>
-          </ul>
-          <p className="customer-smallprint">
-            Onboarding status is still tracked in the account summary above so you can tell whether setup is
-            complete.
-          </p>
-        </section>
+      <section className="customer-card">
+        <h2>REPLENISHMENT</h2>
+        <p className="customer-copy">
+          {account?.replenishment.refresh ?? "Your Capacity Units refresh at the start of each billing period."}
+        </p>
+        <p className="customer-smallprint">
+          Need more Capacity Units in a busy month? Additional Capacity Units are available by contacting
+          Corriston Consulting.
+        </p>
+        <p className="customer-smallprint">
+          {account?.replenishment.note ?? "Top-ups can be arranged at any time through Corriston Consulting."}
+        </p>
+        <p className="customer-smallprint">
+          {account?.replenishment.topups?.length
+            ? `Available top-ups: ${account.replenishment.topups
+                .map((topup) => `${topup.name}${topup.priceUsd === null ? "" : ` (${formatMoney(topup.priceUsd)})`}`)
+                .join(", ")}.`
+            : "Top-ups are confirmed during checkout or support."}
+        </p>
+      </section>
+
+      <section className="customer-card">
+        <h2>ACTIVITY SUMMARY</h2>
+        <dl className="customer-definition-list">
+          <div>
+            <dt>Support requests</dt>
+            <dd>{formatCount(account?.supportRequestCount ?? null)}</dd>
+          </div>
+          <div>
+            <dt>Product feedback</dt>
+            <dd>{formatCount(account?.productFeedbackCount ?? null)}</dd>
+          </div>
+        </dl>
+        <p className="customer-smallprint">
+          Support requests are work on your website. Product feedback is about improving
+          website_support_studio itself.
+        </p>
+      </section>
+
+      <section className="customer-card">
+        <h2>SUPPORT</h2>
+        <p className="customer-copy">
+          Support request means work on your website. Product feedback means improving website_support_studio itself.
+        </p>
+        <ul className="customer-bullet-list">
+          <li>
+            <strong>Support request:</strong> content updates, image swaps, plugin updates, landing page changes, and bug fixes.
+          </li>
+          <li>
+            <strong>Product feedback:</strong> ideas, confusion, feature requests, or bug reports about website_support_studio.
+          </li>
+          <li>
+            <strong>After you submit:</strong> you get a request ID and the item enters the internal queue for review.
+          </li>
+        </ul>
+        <p className="customer-smallprint">
+          Onboarding status is still tracked in the account summary above so you can tell whether setup is complete.
+        </p>
+      </section>
       </div>
 
       <div className="customer-grid">
