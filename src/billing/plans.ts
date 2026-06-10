@@ -29,13 +29,13 @@ export type AddonKey = "topup_50" | "topup_100" | "topup_250" | "dns";
 export interface AddonDef {
   key: AddonKey;
   name: string;
-  /** One-time price in USD; null = TBD (top-up amounts are a pending business input). */
+  /** One-time price in USD. Stripe price IDs stay in the Edge Function env. */
   priceUsd: number | null;
 }
 
 export const ADDONS: Record<AddonKey, AddonDef> = {
-  topup_50: { key: "topup_50", name: "50 Capacity Units", priceUsd: null },
-  topup_100: { key: "topup_100", name: "100 Capacity Units", priceUsd: null },
-  topup_250: { key: "topup_250", name: "250 Capacity Units", priceUsd: null },
+  topup_50: { key: "topup_50", name: "50 Capacity Units", priceUsd: 150 },
+  topup_100: { key: "topup_100", name: "100 Capacity Units", priceUsd: 275 },
+  topup_250: { key: "topup_250", name: "250 Capacity Units", priceUsd: 625 },
   dns: { key: "dns", name: "DNS Assistance", priceUsd: 100 },
 };

@@ -103,9 +103,9 @@ export const PLANS = [
 ] as const;
 
 export const ADDONS = [
-  { key: "topup_50", name: "50 Capacity Units", note: "Top-up" },
-  { key: "topup_100", name: "100 Capacity Units", note: "Top-up" },
-  { key: "topup_250", name: "250 Capacity Units", note: "Top-up" },
+  { key: "topup_50", name: "50 Capacity Units", note: "$150 one-time · $3.00 / credit" },
+  { key: "topup_100", name: "100 Capacity Units", note: "$275 one-time · $2.75 / credit" },
+  { key: "topup_250", name: "250 Capacity Units", note: "$625 one-time · $2.50 / credit" },
   { key: "dns", name: "DNS Assistance", note: "$100 one-time" },
 ] as const;
 

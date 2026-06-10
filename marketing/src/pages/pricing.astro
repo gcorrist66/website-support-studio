@@ -122,6 +122,11 @@ const schemas = [
             <div class="card">
               <h3 style="margin-top:0;">{a.name}</h3>
               <p style="color:var(--text-muted); margin:0;">{a.note}</p>
+              {a.key.startsWith("topup_") ? (
+                <p style="margin:1rem 0 0;">
+                  <button class="btn btn-secondary" data-addon={a.key}><Label text="buy_top_up" /></button>
+                </p>
+              ) : null}
             </div>
           ))
         }
@@ -148,10 +153,11 @@ const schemas = [
 
   <script is:inline define:vars={{ CHECKOUT_URL, fallback: CONTACT.email }}>
     document.addEventListener("click", async (e) => {
-      const btn = e.target.closest("[data-plan]");
+      const btn = e.target.closest("[data-plan], [data-addon]");
       if (!btn) return;
       e.preventDefault();
       const plan = btn.getAttribute("data-plan");
+      const addon = btn.getAttribute("data-addon");
       if (!CHECKOUT_URL) {
         window.location.href = "/contact";
         return;
@@ -163,7 +169,7 @@ const schemas = [
         const res = await fetch(CHECKOUT_URL, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ plan }),
+          body: JSON.stringify(plan ? { plan } : { addon }),
         });
         const data = await res.json();
         if (data && data.url) {

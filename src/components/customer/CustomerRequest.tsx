@@ -90,22 +90,22 @@ function safeSiteLabel(site: CustomerSite | SiteOption | null | undefined): stri
 function getCapacityEffortExamples(): Array<{ title: string; examples: string }> {
   return [
     {
-      title: "Low effort",
+      title: "low_effort = 1 credit",
       examples: "content update, image swap, typo fix",
     },
     {
-      title: "Medium effort",
+      title: "medium_effort = 3 credits",
       examples: "plugin update, landing page change, form adjustment",
     },
     {
-      title: "High effort",
+      title: "high_effort = 8 credits",
       examples: "bug fix, multi-step site change, layout repair",
     },
   ];
 }
 
 function getCapacityExplainer(): string {
-  return "Capacity Units are the monthly support allowance included with your plan. Small requests use fewer units; bigger requests use more.";
+  return "Capacity Units are the monthly support allowance included with your plan. low_effort uses 1 credit, medium_effort uses 3 credits, and high_effort uses 8 credits.";
 }
 
 function getWhatYouBought(summary: CustomerWorkspaceSummary): string {
@@ -535,8 +535,8 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             ))}
           </ul>
           <p className="customer-smallprint">
-            When you run out, requests wait until the next monthly refresh or until additional Capacity
-            Units are added. Need more? Contact Corriston Consulting to add more support capacity.
+            Credits refresh monthly. Bigger work may use more credits, project work may be priced
+            separately, and active customers can buy discounted top-ups for busy months.
           </p>
           <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
             contact Corriston Consulting

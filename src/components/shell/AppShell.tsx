@@ -19,6 +19,8 @@ import {
 
 type ConsoleSection = "overview" | "board" | "requests" | "profile" | "website_access" | "activity" | "health";
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
+type CreditTopupKey = "topup_50" | "topup_100" | "topup_250";
+type WebsitePlatformKey = "wordpress" | "shopify" | "webflow" | "squarespace" | "wix" | "custom_other" | "hosting_dns";
 
 const SECTION_ORDER: ConsoleSection[] = [
   "overview",
@@ -60,45 +62,129 @@ const ACCOUNT_SUMMARY = {
   creditsIncluded: 40,
   creditsUsed: 22,
   creditsRemaining: 18,
-  lowEffortExplanation: "small edits, content swaps, and quick fixes usually stay within the included allowance.",
-  mediumEffortExplanation: "single-page changes, plugin updates, and structured content work use more capacity.",
-  highEffortExplanation: "multi-step repairs, staging coordination, and broader site changes consume the most capacity.",
+  lowEffortExplanation: "small edits, content swaps, image changes, typo fixes, and quick CMS updates.",
+  mediumEffortExplanation: "single-page changes, plugin updates, form adjustments, and structured content work.",
+  highEffortExplanation: "multi-step repairs, staging coordination, layout fixes, and broader site changes.",
   replenishmentMessaging:
-    "when credits run low, lower-effort requests stay visible while bigger work is queued until replenishment.",
+    "credits refresh monthly. bigger work may use more credits, project work may be priced separately, and active customers can buy discounted top-ups.",
 };
 
-const WEBSITE_ACCESS_GROUPS = [
+const CREDIT_EFFORTS = [
   {
-    key: "required",
-    label: "required",
-    tone: "blue",
-    items: [
-      "WordPress admin access for content edits, plugin work, and theme configuration.",
-      "Hosting access when we need deployment controls, file access, or environment settings.",
-      "DNS / domain access when routing, records, or certificate work is part of the request.",
-    ],
+    key: "low_effort",
+    label: "low_effort",
+    credits: 1,
+    examples: ACCOUNT_SUMMARY.lowEffortExplanation,
   },
   {
-    key: "recommended",
-    label: "recommended",
-    tone: "amber",
-    items: [
-      "Theme and plugin access so we can resolve layout or integration issues faster.",
-      "CMS access for page edits, structured content updates, and reusable blocks.",
-      "Staging access so we can verify changes before anything touches production.",
-    ],
+    key: "medium_effort",
+    label: "medium_effort",
+    credits: 3,
+    examples: ACCOUNT_SUMMARY.mediumEffortExplanation,
   },
   {
-    key: "optional",
-    label: "optional",
-    tone: "mulberry",
-    items: [
-      "Backup guidance if you already have a preferred recovery or snapshot routine.",
-      "Design system notes when brand assets or editorial rules are important.",
-      "Analytics or reporting access only if a specific request needs it. Not required for normal support.",
-    ],
+    key: "high_effort",
+    label: "high_effort",
+    credits: 8,
+    examples: ACCOUNT_SUMMARY.highEffortExplanation,
   },
 ] as const;
+
+const CREDIT_TOPUPS: Array<{
+  key: CreditTopupKey;
+  label: string;
+  credits: number;
+  price: string;
+  note: string;
+}> = [
+  { key: "topup_50", label: "50_credits", credits: 50, price: "$150", note: "$3.00 / credit for busy months." },
+  { key: "topup_100", label: "100_credits", credits: 100, price: "$275", note: "$2.75 / credit with a simple volume discount." },
+  { key: "topup_250", label: "250_credits", credits: 250, price: "$625", note: "$2.50 / credit for larger bursts of work." },
+];
+
+const CHECKOUT_FUNCTION_URL = "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/create-checkout-session";
+
+const WEBSITE_ACCESS_PLATFORMS: Array<{
+  key: WebsitePlatformKey;
+  label: string;
+  icon: string;
+  required: string[];
+  optional: string[];
+  canChange: string[];
+  customerNeeds: string[];
+  nextStep: string;
+}> = [
+  {
+    key: "wordpress",
+    label: "wordpress",
+    icon: "wp",
+    required: ["admin login", "plugin/theme access when the request touches code, layout, or integrations"],
+    optional: ["hosting access if file/server changes are needed", "backup and staging access before larger changes"],
+    canChange: ["content, menus, forms, plugins, themes, and approved site settings"],
+    customerNeeds: ["a temporary admin user or secure credential share", "backup location or restore process for safer changes"],
+    nextStep: "send a temporary WordPress admin invite, then add hosting or staging access if the request needs it.",
+  },
+  {
+    key: "shopify",
+    label: "shopify",
+    icon: "sh",
+    required: ["staff or collaborator access", "theme access for layout, liquid, or storefront changes"],
+    optional: ["app permissions only when a request touches that app", "domain access if DNS or routing is involved"],
+    canChange: ["themes, sections, product/content updates, navigation, and app configuration with approval"],
+    customerNeeds: ["approve the collaborator request", "confirm any app-specific permissions before work starts"],
+    nextStep: "invite WSS as a Shopify collaborator or staff user with theme permissions.",
+  },
+  {
+    key: "webflow",
+    label: "webflow",
+    icon: "wf",
+    required: ["workspace or site access", "designer/editor access"],
+    optional: ["CMS access for collection work", "publish permission when WSS should ship approved changes"],
+    canChange: ["pages, components, styles, CMS content, interactions, and approved publish-ready updates"],
+    customerNeeds: ["invite WSS to the workspace/site", "confirm whether changes should stay in draft or be published"],
+    nextStep: "add WSS to the Webflow workspace or site with designer/editor access.",
+  },
+  {
+    key: "squarespace",
+    label: "squarespace",
+    icon: "sq",
+    required: ["contributor or admin access"],
+    optional: ["domain/DNS access if routing, email records, or certificates are part of the request"],
+    canChange: ["pages, blocks, navigation, forms, basic design settings, and approved content updates"],
+    customerNeeds: ["invite WSS as a contributor", "confirm domain owner access if DNS work is needed"],
+    nextStep: "send a Squarespace contributor invite with permissions matched to the request.",
+  },
+  {
+    key: "wix",
+    label: "wix",
+    icon: "wx",
+    required: ["contributor or admin access", "site dashboard access"],
+    optional: ["app permissions only when the request touches a specific Wix app", "domain access for DNS or routing changes"],
+    canChange: ["site content, design settings, forms, apps, navigation, and approved dashboard updates"],
+    customerNeeds: ["invite WSS from the Wix dashboard", "confirm whether WSS can publish after approval"],
+    nextStep: "invite WSS as a Wix contributor/admin for the specific site.",
+  },
+  {
+    key: "custom_other",
+    label: "custom / other",
+    icon: "<>",
+    required: ["CMS/admin access", "hosting, SFTP, or Git access if applicable"],
+    optional: ["DNS/domain access if routing is part of the request", "staging and backup access before risky changes"],
+    canChange: ["CMS content, templates, code-backed updates, integrations, and approved deployment work"],
+    customerNeeds: ["tell WSS what platform powers the site", "share the safest admin, Git, SFTP, or hosting path available"],
+    nextStep: "send the platform name and safest access path; WSS will confirm the minimum required access.",
+  },
+  {
+    key: "hosting_dns",
+    label: "hosting / dns access",
+    icon: "dns",
+    required: ["hosting access for server, file, SSL, backup, or environment changes", "DNS/domain access for records and routing"],
+    optional: ["read-only access first if the host supports it", "staging/snapshot access before production changes"],
+    canChange: ["DNS records, redirects, SSL, backups, deploy settings, and approved hosting configuration"],
+    customerNeeds: ["confirm the registrar and host", "share temporary access or invite WSS as a delegated user"],
+    nextStep: "identify the host/registrar, then invite WSS or prepare temporary access for the exact task.",
+  },
+];
 
 const ACTIVE_REQUEST_STATUSES = new Set<MockTicketQueueItem["status"]>([
   "received",
@@ -421,6 +507,9 @@ export function AppShell() {
   const [selectedRequestId, setSelectedRequestId] = useState(ticketQueue[0]?.id ?? "");
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [pilotStatus, setPilotStatus] = useState<OperatorPilotStatus>(createEmptyOperatorPilotStatus());
+  const [selectedPlatformKey, setSelectedPlatformKey] = useState<WebsitePlatformKey>("wordpress");
+  const [topupStatus, setTopupStatus] = useState<string | null>(null);
+  const [topupLoading, setTopupLoading] = useState<CreditTopupKey | null>(null);
 
   useEffect(() => {
     if (!isSectionPath(location.pathname)) {
@@ -562,9 +651,36 @@ export function AppShell() {
   );
 
   const siteIdForFeedback = selectedRequest?.tenantContext.siteId ?? queue[0]?.siteId ?? "SITE-01";
+  const selectedPlatform =
+    WEBSITE_ACCESS_PLATFORMS.find((platform) => platform.key === selectedPlatformKey) ?? WEBSITE_ACCESS_PLATFORMS[0];
 
   function openRequestSurface() {
     navigate("/requests");
+  }
+
+  async function startTopupCheckout(addon: CreditTopupKey) {
+    setTopupStatus(null);
+    setTopupLoading(addon);
+
+    try {
+      const response = await fetch(CHECKOUT_FUNCTION_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ addon }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as { url?: string; error?: string };
+
+      if (payload.url) {
+        window.location.href = payload.url;
+        return;
+      }
+
+      setTopupStatus(payload.error ?? "checkout_unavailable");
+    } catch {
+      setTopupStatus("checkout_unavailable");
+    } finally {
+      setTopupLoading(null);
+    }
   }
 
   if (location.pathname === "/" || !isSectionPath(location.pathname)) {
@@ -940,7 +1056,7 @@ export function AppShell() {
                 </article>
 
                 <article className="wss-card">
-                  <SectionHeading title="credits_summary" description="How the included work is measured." />
+                  <SectionHeading title="credits_summary" description="How credits are used, refreshed, and topped up." />
                   <dl className="wss-detail-grid">
                     <div>
                       <dt>
@@ -962,29 +1078,60 @@ export function AppShell() {
                     </div>
                     <div>
                       <dt>
-                        <MonoLabel text="low_effort" />
-                      </dt>
-                      <dd>{ACCOUNT_SUMMARY.lowEffortExplanation}</dd>
-                    </div>
-                    <div>
-                      <dt>
-                        <MonoLabel text="medium_effort" />
-                      </dt>
-                      <dd>{ACCOUNT_SUMMARY.mediumEffortExplanation}</dd>
-                    </div>
-                    <div>
-                      <dt>
-                        <MonoLabel text="high_effort" />
-                      </dt>
-                      <dd>{ACCOUNT_SUMMARY.highEffortExplanation}</dd>
-                    </div>
-                    <div>
-                      <dt>
                         <MonoLabel text="replenishment" />
                       </dt>
                       <dd>{ACCOUNT_SUMMARY.replenishmentMessaging}</dd>
                     </div>
                   </dl>
+
+                  <div className="wss-credit-model" aria-label="credit effort costs">
+                    {CREDIT_EFFORTS.map((effort) => (
+                      <article key={effort.key} className="wss-credit-row">
+                        <div>
+                          <p className="wss-card-kicker">
+                            <MonoLabel text={effort.label} />
+                          </p>
+                          <strong>
+                            {effort.credits} {effort.credits === 1 ? "credit" : "credits"}
+                          </strong>
+                        </div>
+                        <p>{effort.examples}</p>
+                      </article>
+                    ))}
+                  </div>
+
+                  <div className="wss-topup-area">
+                    <SectionHeading
+                      title="buy_more_credits"
+                      description="Discounted top-ups are available for active customers when a month gets busy."
+                    />
+                    <div className="wss-topup-grid">
+                      {CREDIT_TOPUPS.map((topup) => (
+                        <article key={topup.key} className="wss-topup-card">
+                          <p className="wss-card-kicker">
+                            <MonoLabel text={topup.label} />
+                          </p>
+                          <strong>{topup.price}</strong>
+                          <p>{topup.note}</p>
+                          <button
+                            type="button"
+                            className="wss-primary-button"
+                            onClick={() => void startTopupCheckout(topup.key)}
+                            disabled={topupLoading !== null}
+                          >
+                            {topupLoading === topup.key ? "opening_checkout" : "buy_top_up"}
+                          </button>
+                        </article>
+                      ))}
+                    </div>
+                    {topupStatus ? (
+                      <p className="wss-inline-error" role="status">
+                        {topupStatus === "price_not_configured" || topupStatus === "unknown_plan_or_addon"
+                          ? "top-up checkout is waiting on live Stripe price configuration."
+                          : "top-up checkout is temporarily unavailable."}
+                      </p>
+                    ) : null}
+                  </div>
                 </article>
               </div>
             </section>
@@ -994,36 +1141,91 @@ export function AppShell() {
             <section className="wss-panel">
               <SectionHeading
                 eyebrow="website_access"
-                title="website access"
-                description="The access model should be clear so customers understand what is required, optional, and recommended."
+                title="connect_website"
+                description="Choose the platform and follow the access checklist for the safest way to let WSS work on the site."
               />
 
-              <div className="wss-grid three-up">
-                {WEBSITE_ACCESS_GROUPS.map((group) => (
-                  <article key={group.key} className="wss-card">
-                    <p className={`wss-badge tone-${group.tone}`}>
-                      <MonoLabel text={group.label} />
+              <div className="wss-platform-grid" role="list" aria-label="supported website platforms">
+                {WEBSITE_ACCESS_PLATFORMS.map((platform) => (
+                  <button
+                    key={platform.key}
+                    type="button"
+                    className={
+                      selectedPlatformKey === platform.key ? "wss-platform-card is-active" : "wss-platform-card"
+                    }
+                    onClick={() => setSelectedPlatformKey(platform.key)}
+                  >
+                    <span className="wss-platform-icon" aria-hidden="true">
+                      {platform.icon}
+                    </span>
+                    <span>
+                      <NavLabel text={platform.label.replaceAll(" / ", "_").replaceAll(" ", "_")} />
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <article className="wss-card wss-platform-detail">
+                <SectionHeading
+                  title={`${selectedPlatform.label.replaceAll(" / ", "_").replaceAll(" ", "_")}_checklist`}
+                  description="Required access is the minimum. Optional access is only requested when the work needs it."
+                />
+                <div className="wss-checklist-grid">
+                  <div>
+                    <p className="wss-badge tone-blue">
+                      <MonoLabel text="required" />
                     </p>
                     <ul className="wss-list">
-                      {group.items.map((item) => (
+                      {selectedPlatform.required.map((item) => (
                         <li key={item}>
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
-                  </article>
-                ))}
-              </div>
-
-              <article className="wss-card">
-                <SectionHeading
-                  title="backup_guidance"
-                  description="Backups are not a billing or reporting feature. They are simply part of safe website access."
-                />
-                <p className="wss-copy">
-                  We can work more confidently when the site owner can point us to the latest backup, the restore
-                  method, and the place where staging or production changes are tracked.
-                </p>
+                  </div>
+                  <div>
+                    <p className="wss-badge tone-amber">
+                      <MonoLabel text="optional" />
+                    </p>
+                    <ul className="wss-list">
+                      {selectedPlatform.optional.map((item) => (
+                        <li key={item}>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="wss-badge tone-blue">
+                      <MonoLabel text="wss_can_change" />
+                    </p>
+                    <ul className="wss-list">
+                      {selectedPlatform.canChange.map((item) => (
+                        <li key={item}>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="wss-badge tone-mulberry">
+                      <MonoLabel text="customer_next_step" />
+                    </p>
+                    <ul className="wss-list">
+                      {selectedPlatform.customerNeeds.map((item) => (
+                        <li key={item}>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <div className="wss-next-step">
+                  <p className="wss-card-kicker">
+                    <MonoLabel text="next_step" />
+                  </p>
+                  <p>{selectedPlatform.nextStep}</p>
+                </div>
               </article>
             </section>
           ) : null}
