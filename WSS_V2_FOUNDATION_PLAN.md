@@ -430,3 +430,107 @@ project-requests: add a `request_kind` (`support | product_feedback | bug_report
 
 **Still true:** no migration is applied to `…prod` outside a coordinated window; everything in Part II
 beyond the two `projects` field additions is design-only.
+
+---
+---
+
+# Part III — V2.3 Customer Project Visibility (design + draft)
+
+**Added:** 2026-06-09 · **Branch:** `v2-foundation` · **Status:** DESIGN + DRAFT MIGRATION (not applied).
+**Draft migration:** `supabase/migrations/20260612000000_v2_3_customer_project_visibility.sql`.
+Customers who bought a website project need to see — in calm, plain language — what they bought, where
+it stands, what's done, what's next, what's needed from them, which requests belong to it, and which
+deliverables are ready.
+
+## III.1 — Customer Project Visibility Design (Phase 1)
+
+A **"Your Projects"** panel, shown only when the customer has ≥1 project. Each question maps to a field
+in the read model (§III.3):
+
+| Question | Answered by |
+|---|---|
+| What is my active project? | project card: `title`, `project_type`, `project_number` |
+| What status is it in? | `status` → customer-safe label (§III.2) + progress bar from `milestone_progress` |
+| What is finished? | `done` milestones + `delivered`/`accepted` deliverables |
+| What is next? | `next_milestone` (first non-done/non-skipped by order) |
+| What do you need from me? | `action_needed` (= status `waiting_on_customer`) → a prompt banner |
+| What requests are part of this project? | `requests[]` (linked tickets: number, title, status) |
+| What deliverables are ready? | `deliverables[]` (READY only — pending/WIP never shown) |
+
+## III.2 — Customer-Safe Status Copy (Phase 2)
+
+`status` is internal; the UI renders these labels. Calm, non-alarming language:
+
+| Internal status | Customer label | Micro-copy (optional sub-text) |
+|---|---|---|
+| `intake` | Getting started | "We're setting things up." |
+| `scoping` | Planning | "We're mapping out the work." |
+| `in_progress` | In progress | "We're building." |
+| `waiting_on_customer` | Needs your input | "We need something from you to continue." |
+| `in_review` | In review | "Take a look and let us know." |
+| `delivered` | Delivered | "Your work is ready." |
+| `closed` | Complete | "All wrapped up." |
+| `blocked` | On hold | "Paused for now — we're on it." |
+| `cancelled` | Cancelled | "This project was cancelled." |
+
+Payment (from `payment_status`, optional badge): `unpaid` → "Awaiting payment", `paid` → "Paid",
+`refunded` → "Refunded".
+
+## III.3 — Customer Read Model (Phase 3)
+
+Returned by `get_my_projects()` per project (safe fields only):
+
+```
+project_number, title, summary, project_type, status, payment_status,
+price_cents, currency, target_delivery_date, delivered_at, closed_at, created_at,
+action_needed: bool,                         // status == waiting_on_customer
+next_milestone: { id, title, status, due_at } | null,
+milestone_progress: { done, total },         // total excludes skipped
+milestones[]:   { id, title, description, status, sort_order, due_at, completed_at },
+deliverables[]: { id, title, kind, url, status, delivered_at, accepted_at }   // delivered/accepted ONLY
+requests[]:     { ticket_number, title, status, request_kind, created_at }    // the customer's own tickets
+```
+
+**Never exposed:** `intake_notes`, `stripe_checkout_session_id`, `stripe_payment_intent_id`,
+`project_audit_events`, draft replies/approvals, any other tenant's data, or pending deliverables.
+
+## III.4 — RLS / Security Plan (Phase 4)
+
+**Decision:** customer reads go through ONE column-whitelisting SECURITY DEFINER RPC
+(`get_my_projects()`), not direct table policies. **Why:** RLS filters rows, not columns; customers and
+operators share the `authenticated` role, so a `projects` customer SELECT policy would also expose
+`intake_notes` + stripe ids (column GRANTs can't separate the two cohorts on one role). The RPC returns
+only safe columns and self-authorizes by joining `org_members` (active membership in the project's org)
+— so it returns only the caller's org's projects, milestones, deliverables, and linked requests.
+
+- Project tables stay **operator-only** at the row level (V2.0/V2.2 policies unchanged).
+- This **supersedes** the V2.2 commented "direct customer SELECT" sketch — that sketch is not enabled.
+- `tickets` already has `tickets_customer_select`; the RPC reads them as definer and filters by
+  `client_id`, so no ticket-policy change is needed.
+- Verify on dev: a member sees only their org's projects (safe columns); a non-member/anon gets nothing;
+  the payload never contains intake_notes or stripe ids.
+
+## III.5 — UI Proposal (Phase 5)
+
+Smallest safe surface — **no dashboard redesign**:
+- Add a **"Your Projects"** panel to the existing customer workspace (`CustomerRequest.tsx`), sibling to
+  the requests panel. One `get_my_projects()` call on load.
+- **Empty state = render nothing** (no header, no placeholder) so subscription-only customers see no clutter.
+- Per project: a card with status pill (§III.2 label), progress bar (`done/total`), a "Next: …" line
+  (`next_milestone.title`), and — when `action_needed` — a gentle "Needs your input" banner.
+- Expandable detail: milestone checklist, ready-deliverable links (`url`), and linked request rows.
+- Read-only in V2.3. (Submitting a request *into* a project rides the V2.2 `submit_customer_request`
+  `p_project_id` change, landed in lockstep — not part of this read-only step.)
+- Implementation note: this is a **new data module + new panel component**; it must NOT disturb Codex's
+  in-flight `CustomerRequest.tsx` edits — coordinate placement before wiring.
+
+## III.6 — Rollout Plan
+
+1. Apply V2.0 → V2.2 → V2.3 to **dev** (coordinated window); run §III.4 verification + the V2.2 checks.
+2. Seed a demo project (operator RPCs) and confirm `get_my_projects()` returns the safe shape.
+3. Build the read-only "Your Projects" panel behind the existing auth/customer gate; ship empty-state-safe.
+4. Only after that, enable project-scoped request submission (V2.2 app change) and any write surfaces.
+5. Production only after WSS 1.5 is proven and a window is agreed. No merge/push/apply before then.
+
+**Design-only / not built this session:** the panel + data module (would be production code) are
+specified here, not written; only the read RPC migration is drafted (and unapplied).
