@@ -1,3 +1,4 @@
+import { MonoLabel } from "../brand/MonoLabel";
 import { getTicketDetail, type MockTicketDetail } from "../../ui/mockData";
 
 function statusClass(status: MockTicketDetail["status"]) {
@@ -49,13 +50,13 @@ function confidenceClass(confidence: MockTicketDetail["identityConfidence"]) {
 function approvalLabel(status: MockTicketDetail["approvalStatus"]) {
   switch (status) {
     case "awaiting_approval":
-      return "Awaiting approval";
+      return "awaiting_approval";
     case "approved":
-      return "Approved";
+      return "approved";
     case "rejected":
-      return "Rejected";
+      return "rejected";
     default:
-      return "No approval required";
+      return "no_approval_required";
   }
 }
 
@@ -141,12 +142,12 @@ export function ReadOnlyTicketDetail({
   const hasTriageAction = typeof onTriage === "function";
   const triageDisabled = !hasTriageAction || !canTriage || isTriageInProgress;
   const triageLabel = isTriageInProgress
-    ? "Triaging..."
+    ? "triaging..."
     : hasTriageAction
       ? canTriage
-        ? "Triage Ticket"
-        : "Triage Ticket (unavailable)"
-      : "Triage Ticket (disabled)";
+        ? "triage_ticket"
+        : "triage_ticket (unavailable)"
+      : "triage_ticket (disabled)";
 
   const handleTriage = async () => {
     if (triageDisabled) {
@@ -159,8 +160,8 @@ export function ReadOnlyTicketDetail({
   const approvalRequestDisabled =
     !hasApprovalRequestAction || !canRequestApproval || isApprovalRequestInProgress;
   const approvalRequestLabel = isApprovalRequestInProgress
-    ? "Requesting approval..."
-    : "Request Gary Approval";
+    ? "requesting_approval..."
+    : "request_gary_approval";
 
   const handleRequestApproval = async () => {
     if (approvalRequestDisabled) {
@@ -211,12 +212,14 @@ export function ReadOnlyTicketDetail({
 
   return (
     <section className="phase4a-card">
-      <h2>Ticket detail</h2>
+      <h2>
+        <MonoLabel text="ticket detail" />
+      </h2>
       <p className="placeholder-meta">
-        Demo data fallback available · workflow actions appear only when eligible for the ticket&apos;s current state and run only in read-only access mode.
+        demo data fallback available · workflow actions appear only when eligible for the ticket&apos;s current state and run only in read-only access mode.
       </p>
       <p className="placeholder-meta">
-        Replies are saved locally: a sent reply is recorded locally and no real email is delivered. Approval is required before send, and close requires a sent_to_customer ticket.
+        replies are saved locally: a sent reply is recorded locally and no real email is delivered. approval is required before send, and close requires a sent_to_customer ticket.
       </p>
 
       <article className="phase4c-detail-card">
@@ -227,47 +230,53 @@ export function ReadOnlyTicketDetail({
 
         <div className="phase4c-grid">
           <p>
-            <strong>Status:</strong> <span className={statusClass(ticket.status)}>{ticket.status}</span>
+            <strong>status:</strong> <span className={statusClass(ticket.status)}>{ticket.status}</span>
           </p>
           <p>
-            <strong>Priority:</strong> <span className={priorityClass(ticket.priority)}>{ticket.priority}</span>
+            <strong>priority:</strong> <span className={priorityClass(ticket.priority)}>{ticket.priority}</span>
           </p>
           <p>
-            <strong>Identity confidence:</strong>{" "}
+            <strong>identity confidence:</strong>{" "}
             <span className={confidenceClass(ticket.identityConfidence)}>{ticket.identityConfidence}</span>
           </p>
           <p>
-            <strong>Approval:</strong>{" "}
+            <strong>approval:</strong>{" "}
             <span className="phase4c-approval-text">{approvalLabel(ticket.approvalStatus)}</span>
           </p>
         </div>
 
         <div className="phase4c-section">
-          <h4>Customer request summary</h4>
+          <h4>
+            <MonoLabel text="customer request summary" />
+          </h4>
           <p className="phase4c-summary">{ticket.customerRequest}</p>
         </div>
 
         <div className="phase4c-section">
-          <h4>Tenant / client / site context</h4>
+          <h4>
+            <MonoLabel text="tenant client site context" />
+          </h4>
           <ul className="phase4c-meta-list">
             <li>
-              <strong>Agency:</strong> {ticket.tenantContext.agencyName} ({ticket.tenantContext.agencyId})
+              <strong>agency:</strong> {ticket.tenantContext.agencyName} ({ticket.tenantContext.agencyId})
             </li>
             <li>
-              <strong>Client:</strong> {ticket.tenantContext.clientName} ({ticket.tenantContext.clientId})
+              <strong>client:</strong> {ticket.tenantContext.clientName} ({ticket.tenantContext.clientId})
             </li>
             <li>
-              <strong>Site:</strong> {ticket.tenantContext.siteName} ({ticket.tenantContext.siteId})
+              <strong>site:</strong> {ticket.tenantContext.siteName} ({ticket.tenantContext.siteId})
             </li>
           </ul>
         </div>
       </article>
 
       <article className="phase4c-section">
-        <h4>Audit timeline</h4>
+        <h4>
+          <MonoLabel text="audit timeline" />
+        </h4>
         {ticket.auditTimeline.length === 0 ? (
           <p className="placeholder-meta phase7-empty-state" role="status">
-            No audit events recorded for this ticket yet.
+            no audit events recorded for this ticket yet.
           </p>
         ) : (
           <div className="placeholder-table">
@@ -285,14 +294,16 @@ export function ReadOnlyTicketDetail({
       </article>
 
       <article className="phase4c-section">
-        <h4>Local action placeholders</h4>
+        <h4>
+          <MonoLabel text="local action placeholders" />
+        </h4>
         <div className="phase4c-actions">
           <button type="button" className="phase4a-action" disabled={triageDisabled} onClick={handleTriage}>
             {triageLabel}
           </button>
         </div>
         <label htmlFor={`draft-${ticket.id}`} className="phase4c-label">
-          Draft reply body
+          draft_reply_body
         </label>
         <textarea
           id={`draft-${ticket.id}`}
@@ -303,7 +314,7 @@ export function ReadOnlyTicketDetail({
             onDraftTextChange?.(event.target.value);
           }}
           disabled={isDraftInProgress || !canDraft}
-          placeholder={canDraft ? "Draft reply text (phase 5D)" : "Draft is only available for triaged tickets in guarded mode"}
+          placeholder={canDraft ? "draft_reply_text (phase_5d)" : "draft is only available for triaged tickets in guarded mode"}
         />
         <button
           type="button"
@@ -315,7 +326,7 @@ export function ReadOnlyTicketDetail({
             }
           }}
         >
-          {isDraftInProgress ? "Drafting reply..." : canDraft ? "Draft Reply" : "Draft Reply (disabled)"}
+          {isDraftInProgress ? "drafting_reply..." : canDraft ? "draft_reply" : "draft_reply (disabled)"}
         </button>
         <div className="phase4c-actions">
           <button
@@ -327,9 +338,7 @@ export function ReadOnlyTicketDetail({
             {approvalRequestLabel}
           </button>
         </div>
-        {!canRequestApproval && (
-          <p className="placeholder-meta">Request Gary Approval: Not active for this ticket state</p>
-        )}
+        {!canRequestApproval && <p className="placeholder-meta">request_gary_approval: not active for this ticket state</p>}
         <div className="phase4c-actions">
           <button
             type="button"
@@ -337,7 +346,7 @@ export function ReadOnlyTicketDetail({
             disabled={approveDisabled}
             onClick={handleApproveReply}
           >
-            {isApprovalDecisionInProgress ? "Processing decision..." : "Approve Reply"}
+            {isApprovalDecisionInProgress ? "processing_decision..." : "approve_reply"}
           </button>
           <button
             type="button"
@@ -345,12 +354,10 @@ export function ReadOnlyTicketDetail({
             disabled={rejectDisabled}
             onClick={handleRejectReply}
           >
-            {isApprovalDecisionInProgress ? "Processing decision..." : "Reject Reply"}
+            {isApprovalDecisionInProgress ? "processing_decision..." : "reject_reply"}
           </button>
         </div>
-        {!canDecideApproval && (
-          <p className="placeholder-meta">Approve Reply / Reject Reply: Not active for this ticket state</p>
-        )}
+        {!canDecideApproval && <p className="placeholder-meta">approve_reply / reject_reply: not active for this ticket state</p>}
         <div className="phase4c-actions">
           <button
             type="button"
@@ -358,14 +365,12 @@ export function ReadOnlyTicketDetail({
             disabled={sendReplyDisabled}
             onClick={handleSendReply}
           >
-            {isSendReplyInProgress ? "Sending reply..." : "Send Reply"}
+            {isSendReplyInProgress ? "sending_reply..." : "send_reply"}
           </button>
         </div>
-        {!canSendReply && (
-          <p className="placeholder-meta">Send Reply: Not active for this ticket state</p>
-        )}
+        {!canSendReply && <p className="placeholder-meta">send_reply: not active for this ticket state</p>}
         <label htmlFor={`closure-${ticket.id}`} className="phase4c-label">
-          Closure note
+          closure_note
         </label>
         <textarea
           id={`closure-${ticket.id}`}
@@ -376,7 +381,7 @@ export function ReadOnlyTicketDetail({
             onClosureNoteChange?.(event.target.value);
           }}
           disabled={isCloseTicketInProgress || !canCloseTicket}
-          placeholder={canCloseTicket ? "Closure note (required to close)" : "Close is only available for sent tickets in guarded mode"}
+          placeholder={canCloseTicket ? "closure_note (required to close)" : "close is only available for sent tickets in guarded mode"}
         />
         <div className="phase4c-actions">
           <button
@@ -385,12 +390,10 @@ export function ReadOnlyTicketDetail({
             disabled={closeTicketDisabled}
             onClick={handleCloseTicket}
           >
-            {isCloseTicketInProgress ? "Closing ticket..." : "Close Ticket"}
+            {isCloseTicketInProgress ? "closing_ticket..." : "close_ticket"}
           </button>
         </div>
-        {!canCloseTicket && (
-          <p className="placeholder-meta">Close Ticket: Not active for this ticket state</p>
-        )}
+        {!canCloseTicket && <p className="placeholder-meta">close_ticket: not active for this ticket state</p>}
         {closeTicketMessage && <p className="phase5b-success">{closeTicketMessage}</p>}
         {closeTicketError && <p className="phase5b-error">{closeTicketError}</p>}
         {sendReplyMessage && <p className="phase5b-success">{sendReplyMessage}</p>}

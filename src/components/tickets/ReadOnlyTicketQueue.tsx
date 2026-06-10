@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
+import { MonoLabel } from "../brand/MonoLabel";
 import { type MockTicketQueueItem } from "../../ui/mockData";
 
 function statusClass(status: MockTicketQueueItem["status"]) {
@@ -50,30 +51,32 @@ type ReadOnlyTicketQueueProps = {
 export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket }: ReadOnlyTicketQueueProps) {
   return (
     <section className="phase4a-card">
-      <h2>Support queue</h2>
+      <h2>
+        <MonoLabel text="queue" />
+      </h2>
       <p>
-        Read-only access in this environment · no live ticket actions are enabled here.
+        read-only access in this environment · no live ticket actions are enabled here.
       </p>
       <p className="placeholder-meta">Filter results: {tickets.length} ticket(s)</p>
 
       {tickets.length === 0 ? (
         <div className="phase7-empty-state" role="status">
-          <p>No tickets match the current filters.</p>
+          <p>no tickets match the current filters.</p>
           <p className="placeholder-meta">
-            Adjust or clear the search and filters above. In demo data mode this list shows local tickets;
+            adjust or clear the search and filters above. in demo data mode this list shows local tickets;
             in read-only access mode it reflects live data without writes.
           </p>
         </div>
       ) : (
-      <div className="placeholder-table" role="table" aria-label="Support queue">
+      <div className="placeholder-table" role="table" aria-label="support_queue">
         <article className="phase4b-header-row">
-          <span>Ticket</span>
-          <span>Status</span>
-          <span>Priority</span>
-          <span>Tenant / Site / Client</span>
-          <span>Submitter</span>
-          <span>Identity</span>
-          <span>Action</span>
+          <span>ticket</span>
+          <span>status</span>
+          <span>priority</span>
+          <span>tenant / site / client</span>
+          <span>submitter</span>
+          <span>identity</span>
+          <span>action</span>
         </article>
 
         {tickets.map((ticket: MockTicketQueueItem) => (
@@ -106,7 +109,7 @@ export function ReadOnlyTicketQueue({ tickets, selectedTicketId, onSelectTicket 
                 onClick={() => onSelectTicket(ticket.id)}
                 data-selected={selectedTicketId === ticket.id ? "true" : "false"}
               >
-                {selectedTicketId === ticket.id ? "Selected" : "View details"}
+                {selectedTicketId === ticket.id ? "selected" : "view details"}
               </button>
 
               {ticket.blockedReason ? (

@@ -33,22 +33,22 @@ export interface EffortLevelDef {
 export const EFFORT_LEVELS: Record<EffortLevel, EffortLevelDef> = {
   low: {
     key: "low",
-    name: "Low effort",
-    summary: "Quick changes we can usually turn around fast.",
+    name: "low effort",
+    summary: "quick changes we can usually turn around fast.",
     examples: ["Edit text or fix a typo", "Swap an image or logo", "Update a link or button", "Small content tweaks"],
     relativeCost: "fewest",
   },
   medium: {
     key: "medium",
-    name: "Medium effort",
-    summary: "Standard updates that take a bit more work.",
+    name: "medium effort",
+    summary: "standard updates that take a bit more work.",
     examples: ["Add a new section to a page", "Adjust layout or styling", "Configure a form or plugin", "Update content across several pages"],
     relativeCost: "moderate",
   },
   high: {
     key: "high",
-    name: "High effort",
-    summary: "Involved work that uses the most capacity.",
+    name: "high effort",
+    summary: "involved work that uses the most capacity.",
     examples: ["Build a new page or template", "Set up an integration", "Complex troubleshooting", "Performance or SEO overhaul"],
     relativeCost: "most",
   },
@@ -58,8 +58,8 @@ export const EFFORT_LEVEL_ORDER: EffortLevel[] = ["low", "medium", "high"];
 
 /** Short plain-language explanation of what a Capacity Unit is (mirrors the marketing FAQ). */
 export const CAPACITY_EXPLAINER =
-  "Capacity Units measure the effort of each request. Your plan includes a monthly allotment — a " +
-  "simple change costs fewer units, more involved work costs more. Your allotment refreshes every month.";
+  "capacity units measure the effort of each request. your plan includes a monthly allotment — a " +
+  "simple change costs fewer units, more involved work costs more. your allotment refreshes every month.";
 
 /**
  * How usage is tracked today. Flip `automated` to true (and remove the pilot note) when a real CU
@@ -69,8 +69,8 @@ export const USAGE_TRACKING = {
   automated: false,
   mode: "manual_pilot" as const,
   note:
-    "During the pilot, Capacity Unit usage is tracked manually by your operator and updated here. " +
-    "Automated, real-time metering is coming soon.",
+    "during the pilot, capacity unit usage is tracked manually by your operator and updated here. " +
+    "automated, real-time metering is coming soon.",
 };
 
 /** Replenishment / top-up messaging, derived from the plan + add-on catalog (no Stripe IDs). */
@@ -83,16 +83,16 @@ export const REPLENISHMENT = {
     priceUsd: a.priceUsd,
   })),
   dns: { name: ADDONS.dns.name, priceUsd: ADDONS.dns.priceUsd },
-  note: "Need more in a busy month? Add a top-up (50, 100, or 250 Capacity Units) anytime from your account.",
+  note: "need more in a busy month? add a top-up (50, 100, or 250 capacity units) anytime from your account.",
 };
 
 /** Build a single human-readable billing/replenishment line for a plan. */
 export function buildBillingMessage(planKey: PlanKey | null): string {
   if (!planKey) {
-    return "We couldn't find an active plan on your account. Contact support if this looks wrong.";
+    return "we couldn't find an active plan on your account. contact support if this looks wrong.";
   }
   const plan = PLANS[planKey];
-  const cu = plan.capacityUnits != null ? `${plan.capacityUnits} Capacity Units` : "a custom Capacity Unit allotment";
+  const cu = plan.capacityUnits != null ? `${plan.capacityUnits} capacity units` : "a custom capacity unit allotment";
   const price = plan.monthlyUsd != null ? `$${plan.monthlyUsd}/month` : "custom pricing";
   return `${plan.name} — ${price}, ${cu} each month. ${REPLENISHMENT.note}`;
 }

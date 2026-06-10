@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { MonoLabel } from "../brand/MonoLabel";
 import {
   createEmptyOperatorPilotStatus,
   loadOperatorPilotStatus,
@@ -11,23 +12,23 @@ function formatAccountValue(field: "buyerEmail" | "stripeCustomerId" | "stripeSu
   if (value === null) {
     switch (field) {
       case "buyerEmail":
-        return "No customer selected";
+        return "no_customer_selected";
       case "stripeCustomerId":
-        return "No Stripe record";
+        return "no_stripe_record";
       case "stripeSubscriptionId":
-        return "No Stripe subscription";
+        return "no_stripe_subscription";
       case "plan":
-        return "Awaiting checkout";
+        return "awaiting_checkout";
       case "wssStatus":
-        return "No WSS subscription";
+        return "no_wss_subscription";
       case "ownerClaimed":
-        return "Missing owner record";
+        return "missing_owner_record";
       case "onboardingStatus":
-        return "Awaiting onboarding";
+        return "awaiting_onboarding";
       case "orgMemberCount":
-        return "No members yet";
+        return "no_members_yet";
       case "siteCount":
-        return "No site created";
+        return "no_site_created";
     }
   }
   if (typeof value === "boolean") {
@@ -38,7 +39,7 @@ function formatAccountValue(field: "buyerEmail" | "stripeCustomerId" | "stripeSu
 
 function formatDateTime(value: string | null): string {
   if (!value) {
-    return "No timestamp available";
+    return "no_timestamp_available";
   }
 
   const date = new Date(value);
@@ -54,41 +55,41 @@ function formatDateTime(value: string | null): string {
 
 function formatClaimStatus(status: OperatorPilotStatus): string {
   if (status.ownerClaimed === true && (status.orgMemberCount ?? 0) > 0) {
-    return "Claimed";
+    return "claimed";
   }
   if (status.ownerClaimed === false && (status.orgMemberCount ?? 0) === 0) {
-    return "Awaiting Claim";
+    return "awaiting_claim";
   }
-  return "Missing Owner Record";
+  return "missing_owner_record";
 }
 
 function formatSiteStatus(siteCount: number | null): string {
   if (siteCount === null || siteCount === 0) {
-    return "No Site Created";
+    return "no_site_created";
   }
   if (siteCount === 1) {
-    return "1 Site Created";
+    return "1_site_created";
   }
-  return "Multiple Sites";
+  return "multiple_sites";
 }
 
 function formatMismatchLabel(status: OperatorPilotStatus): { label: string; tone: "blue" | "amber" | "mulberry" } {
   if (!status.stripeSubscriptionId) {
-    return { label: "Missing Stripe Subscription", tone: "amber" };
+    return { label: "missing_stripe_subscription", tone: "amber" };
   }
   if (!status.stripeCustomerId) {
-    return { label: "Missing Stripe Customer", tone: "amber" };
+    return { label: "missing_stripe_customer", tone: "amber" };
   }
   if (!status.wssStatus) {
-    return { label: "Missing WSS Subscription", tone: "mulberry" };
+    return { label: "missing_wss_subscription", tone: "mulberry" };
   }
   if (!status.stripeStatus) {
-    return { label: "Stripe Status Unavailable", tone: "amber" };
+    return { label: "stripe_status_unavailable", tone: "amber" };
   }
   if (status.stripeStatus !== status.wssStatus) {
-    return { label: `Mismatch: ${status.stripeStatus} / ${status.wssStatus}`, tone: "mulberry" };
+    return { label: `mismatch: ${status.stripeStatus} / ${status.wssStatus}`, tone: "mulberry" };
   }
-  return { label: "Stripe and WSS aligned", tone: "blue" };
+  return { label: "stripe_and_wss_aligned", tone: "blue" };
 }
 
 type OperatorPilotStatusCardProps = {
@@ -121,7 +122,7 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
           return;
         }
         setStatus(createEmptyOperatorPilotStatus());
-        setError("Could not load pilot status.");
+        setError("could not load pilot status.");
         setLoading(false);
       });
 
@@ -138,15 +139,15 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
   const bundle = useMemo(
     () =>
       [
-        `Buyer Email: ${formatAccountValue("buyerEmail", status.buyerEmail)}`,
-        `Stripe Customer ID: ${formatAccountValue("stripeCustomerId", status.stripeCustomerId)}`,
-        `Stripe Subscription ID: ${formatAccountValue("stripeSubscriptionId", status.stripeSubscriptionId)}`,
-        `Plan: ${formatAccountValue("plan", status.plan)}`,
-        `WSS Subscription Status: ${formatAccountValue("wssStatus", status.wssStatus)}`,
+        `buyer_email: ${formatAccountValue("buyerEmail", status.buyerEmail)}`,
+        `stripe_customer_id: ${formatAccountValue("stripeCustomerId", status.stripeCustomerId)}`,
+        `stripe_subscription_id: ${formatAccountValue("stripeSubscriptionId", status.stripeSubscriptionId)}`,
+        `plan: ${formatAccountValue("plan", status.plan)}`,
+        `wss_subscription_status: ${formatAccountValue("wssStatus", status.wssStatus)}`,
         `owner_claimed: ${formatAccountValue("ownerClaimed", status.ownerClaimed)}`,
-        `Onboarding Status: ${formatAccountValue("onboardingStatus", status.onboardingStatus)}`,
-        `Org Members: ${formatAccountValue("orgMemberCount", status.orgMemberCount)}`,
-        `Sites: ${formatAccountValue("siteCount", status.siteCount)}`,
+        `onboarding_status: ${formatAccountValue("onboardingStatus", status.onboardingStatus)}`,
+        `org_members: ${formatAccountValue("orgMemberCount", status.orgMemberCount)}`,
+        `sites: ${formatAccountValue("siteCount", status.siteCount)}`,
       ].join("\n"),
     [status],
   );
@@ -181,37 +182,39 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
       <div className="pilot-status-header">
         <div>
           <p className="pilot-status-kicker">operator pilot status</p>
-          <h2>Production Pilot status</h2>
+          <h2>
+            <MonoLabel text="pilot status" />
+          </h2>
           <p className="placeholder-meta">
-            Current customer: {customerLabel}
+            current_customer: {customerLabel}
             {siteLabel ? ` · site: ${siteLabel}` : ""}
           </p>
         </div>
         <span className={`pilot-status-badge pilot-status-badge-${mismatch.tone}`}>{mismatch.label}</span>
       </div>
 
-      {loading ? <p className="placeholder-meta">Loading pilot status…</p> : null}
+      {loading ? <p className="placeholder-meta">loading pilot status…</p> : null}
       {error ? <p className="placeholder-meta" role="status">{error}</p> : null}
 
       <dl className="pilot-status-grid">
         <div>
-          <dt>Buyer Email</dt>
+          <dt>buyer_email</dt>
           <dd>{formatAccountValue("buyerEmail", status.buyerEmail)}</dd>
         </div>
         <div>
-          <dt>Stripe Customer ID</dt>
+          <dt>stripe_customer_id</dt>
           <dd>{formatAccountValue("stripeCustomerId", status.stripeCustomerId)}</dd>
         </div>
         <div>
-          <dt>Stripe Subscription ID</dt>
+          <dt>stripe_subscription_id</dt>
           <dd>{formatAccountValue("stripeSubscriptionId", status.stripeSubscriptionId)}</dd>
         </div>
         <div>
-          <dt>Plan</dt>
+          <dt>plan</dt>
           <dd>{formatAccountValue("plan", status.plan)}</dd>
         </div>
         <div>
-          <dt>WSS Subscription Status</dt>
+          <dt>wss_subscription_status</dt>
           <dd>{formatAccountValue("wssStatus", status.wssStatus)}</dd>
         </div>
         <div>
@@ -219,15 +222,15 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
           <dd>{formatAccountValue("ownerClaimed", status.ownerClaimed)}</dd>
         </div>
         <div>
-          <dt>Onboarding Status</dt>
+          <dt>onboarding_status</dt>
           <dd>{formatAccountValue("onboardingStatus", status.onboardingStatus)}</dd>
         </div>
         <div>
-          <dt>Org Member Count</dt>
+          <dt>org_member_count</dt>
           <dd>{formatAccountValue("orgMemberCount", ownerMemberCount)}</dd>
         </div>
         <div>
-          <dt>Site Count</dt>
+          <dt>site_count</dt>
           <dd>{formatAccountValue("siteCount", status.siteCount)}</dd>
         </div>
       </dl>
@@ -235,9 +238,11 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
       <div className="pilot-timeline-section">
         <div className="pilot-timeline-section-header">
           <div>
-            <h3>Customer timeline</h3>
+            <h3>
+              <MonoLabel text="customer timeline" />
+            </h3>
             <p className="placeholder-meta">
-              Operational view of the customer lifecycle. Read-only and ordered by the key pilot events Gary checks
+              operational view of the customer lifecycle. read-only and ordered by the key pilot events gary checks
               manually.
             </p>
           </div>
@@ -264,14 +269,14 @@ export function OperatorPilotStatusCard({ clientId, customerLabel, siteLabel }: 
       </div>
 
       <div className="pilot-status-summary">
-        <span className="pilot-status-summary-item">Claim status: {claimStatus}</span>
-        <span className="pilot-status-summary-item">Site status: {siteStatus}</span>
+        <span className="pilot-status-summary-item">claim_status: {claimStatus}</span>
+        <span className="pilot-status-summary-item">site_status: {siteStatus}</span>
       </div>
 
       <div className="pilot-status-actions">
         <textarea className="pilot-status-bundle" readOnly value={bundle} aria-label="Account summary" />
         <button className="auth-btn auth-btn-ghost" type="button" onClick={() => void copyBundle()}>
-          Copy Account Summary
+          copy_account_summary
         </button>
         {copyState === "copied" ? <p className="pilot-status-copy-state">bundle copied</p> : null}
         {copyState === "error" ? <p className="pilot-status-copy-state">copy failed</p> : null}

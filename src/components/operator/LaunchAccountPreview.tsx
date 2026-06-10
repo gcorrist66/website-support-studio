@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "../../auth/AuthProvider";
+import { MonoLabel } from "../brand/MonoLabel";
 import { LogoLockup } from "../brand/LogoLockup";
 import { loadCustomerAccount, type CustomerAccount } from "../../data/customerAccount";
 import {
@@ -104,24 +105,28 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
       <section className="customer-hero">
         <div>
           <LogoLockup size={30} />
-          <p className="customer-kicker">website_support_studio launch account preview</p>
-          <h1>what did they buy?</h1>
+          <p className="customer-kicker">
+            <MonoLabel text="website support studio launch account preview" />
+          </p>
+          <h1>
+            <MonoLabel text="launch account preview" />
+          </h1>
           <p className="customer-copy">
-            This is the first screen Gary needs after refresh: profile, plan, credits, replenishment,
+            this is the first screen gary needs after refresh: profile, plan, credits, replenishment,
             support, feedback, and account switching.
           </p>
           <ul className="customer-section-strip" aria-label="launch account sections">
-            <li>PROFILE</li>
-            <li>PLAN</li>
-            <li>CREDITS</li>
-            <li>CAPACITY EDUCATION</li>
-            <li>REPLENISHMENT</li>
-            <li>SUPPORT</li>
-            <li>FEEDBACK</li>
-            <li>LOGOUT</li>
+            <li>profile_account</li>
+            <li>billing_plan</li>
+            <li>credits_capacity</li>
+            <li>capacity_education</li>
+            <li>replenishment</li>
+            <li>support_request</li>
+            <li>feedback_bug_feature_request</li>
+            <li>logout</li>
           </ul>
           <p className="customer-smallprint">
-            Previewing customer account for <strong>{customerLabel}</strong>
+            previewing customer account for <strong>{customerLabel}</strong>
             {siteLabel ? ` · site: ${siteLabel}` : ""}
           </p>
           {loading ? (
@@ -143,51 +148,55 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
 
       <div className="customer-grid">
         <section className="customer-card">
-          <h2>Profile / account</h2>
+          <h2>
+            <MonoLabel text="profile account" />
+          </h2>
           <dl className="customer-definition-list">
             <div>
-              <dt>Checkout email</dt>
+              <dt>checkout_email</dt>
               <dd>{checkoutEmail}</dd>
             </div>
             <div>
-              <dt>Company</dt>
+              <dt>company</dt>
               <dd>{company}</dd>
             </div>
             <div>
-              <dt>Website</dt>
+              <dt>website</dt>
               <dd>{website}</dd>
             </div>
             <div>
-              <dt>Current site</dt>
+              <dt>current_site</dt>
               <dd>{siteLabel ?? "not linked yet"}</dd>
             </div>
             <div>
-              <dt>Role</dt>
+              <dt>role</dt>
               <dd>customer</dd>
             </div>
           </dl>
           <p className="customer-smallprint">
-            If this is not the checkout email, sign out and use the same email you used at checkout.
+            if this is not the checkout email, sign out and use the same email you used at checkout.
           </p>
         </section>
 
         <section className="customer-card">
-          <h2>Billing / plan</h2>
+          <h2>
+            <MonoLabel text="billing plan" />
+          </h2>
           <dl className="customer-definition-list">
             <div>
-              <dt>Current plan</dt>
+              <dt>current_plan</dt>
               <dd>{planName}</dd>
             </div>
             <div>
-              <dt>Monthly price</dt>
+              <dt>monthly_price</dt>
               <dd>{formatMoney(monthlyUsd)}</dd>
             </div>
             <div>
-              <dt>Subscription status</dt>
+              <dt>subscription_status</dt>
               <dd>{subscriptionStatus ? subscriptionStatus.replaceAll("_", " ") : "not available"}</dd>
             </div>
             <div>
-              <dt>Renewal / trial</dt>
+              <dt>renewal_trial</dt>
               <dd>{formatPlanNote({ subscriptionStatus, currentPeriodEnd })}</dd>
             </div>
           </dl>
@@ -198,24 +207,26 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
         </section>
 
         <section className="customer-card">
-          <h2>Credits / Capacity Units</h2>
+          <h2>
+            <MonoLabel text="credits capacity" />
+          </h2>
           <p className="customer-copy">
-            Capacity Units are the monthly support allowance included with your plan.
+            capacity_units are the monthly support allowance included with your plan.
           </p>
           <p className="customer-smallprint">
-            {capacity?.trackingNote ?? "Usage is being tracked manually during the pilot."}
+            {capacity?.trackingNote ?? "usage is being tracked manually during the pilot."}
           </p>
           <dl className="customer-definition-list">
             <div>
-              <dt>Included this month</dt>
+              <dt>included_this_month</dt>
               <dd>{formatCapacity(capacity?.includedThisMonth ?? null)}</dd>
             </div>
             <div>
-              <dt>Used this month</dt>
+              <dt>used_this_month</dt>
               <dd>{formatCapacity(capacity?.usedThisMonth ?? null)}</dd>
             </div>
             <div>
-              <dt>Remaining this month</dt>
+              <dt>remaining_this_month</dt>
               <dd>{formatCapacity(capacity?.remainingThisMonth ?? null)}</dd>
             </div>
           </dl>
@@ -228,18 +239,20 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
             ))}
           </ul>
           <p className="customer-smallprint">
-            Usage is estimated/manual during the pilot. Low effort means fewer units, medium effort
+            usage is estimated/manual during the pilot. low effort means fewer units, medium effort
             means more, and high effort means the most.
           </p>
         </section>
 
         <section className="customer-card">
-          <h2>Replenishment</h2>
+          <h2>
+            <MonoLabel text="replenishment" />
+          </h2>
           <p className="customer-copy">
             {account?.replenishment.refresh ?? "Your Capacity Units refresh at the start of each billing period."}
           </p>
           <p className="customer-smallprint">
-            Need more Capacity Units? Additional Capacity Units can be added at any time. Contact
+            need more capacity_units? additional capacity_units can be added at any time. contact
             Corriston Consulting.
           </p>
           <p className="customer-smallprint">
@@ -249,69 +262,77 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
         </section>
 
         <section className="customer-card">
-          <h2>Support request</h2>
-          <p className="customer-copy">This means work on the customer website.</p>
+          <h2>
+            <MonoLabel text="support request" />
+          </h2>
+          <p className="customer-copy">this means work on the customer website.</p>
           <ul className="customer-bullet-list">
             <li>
-              <strong>Low effort:</strong> content updates and image swaps.
+              <strong>low effort:</strong> content updates and image swaps.
             </li>
             <li>
-              <strong>Medium effort:</strong> plugin updates and landing page changes.
+              <strong>medium effort:</strong> plugin updates and landing page changes.
             </li>
             <li>
-              <strong>High effort:</strong> bug fixes and more complex site work.
+              <strong>high effort:</strong> bug fixes and more complex site work.
             </li>
           </ul>
           <p className="customer-smallprint">
-            Support requests go to the customer work queue so the website gets updated.
+            support requests go to the customer work queue so the website gets updated.
           </p>
         </section>
 
         <section className="customer-card">
-          <h2>Feedback / bug / feature request</h2>
-          <p className="customer-copy">This means improving website_support_studio itself.</p>
+          <h2>
+            <MonoLabel text="feedback bug feature request" />
+          </h2>
+          <p className="customer-copy">this means improving website_support_studio itself.</p>
           <ul className="customer-bullet-list">
             <li>
-              <strong>Feedback:</strong> something that is confusing, helpful, or worth improving.
+              <strong>feedback:</strong> something that is confusing, helpful, or worth improving.
             </li>
             <li>
-              <strong>Bug report:</strong> something broken or unexpected in the app.
+              <strong>bug report:</strong> something broken or unexpected in the app.
             </li>
             <li>
-              <strong>Feature request:</strong> a new capability or workflow for the product.
+              <strong>feature request:</strong> a new capability or workflow for the product.
             </li>
           </ul>
           <p className="customer-smallprint">
-            Use this for product ideas. Use support requests for website work.
+            use this for product ideas. use support requests for website work.
           </p>
         </section>
 
         <section className="customer-card">
-          <h2>Activity summary</h2>
+          <h2>
+            <MonoLabel text="activity summary" />
+          </h2>
           <dl className="customer-definition-list">
             <div>
-              <dt>Support requests</dt>
+              <dt>support_requests</dt>
               <dd>{formatCount(account?.supportRequestCount ?? null)}</dd>
             </div>
             <div>
-              <dt>Product feedback</dt>
+              <dt>product_feedback</dt>
               <dd>{formatCount(account?.productFeedbackCount ?? null)}</dd>
             </div>
           </dl>
           <p className="customer-smallprint">
-            Support requests are work on your website. Product feedback is about improving
+            support requests are work on your website. product feedback is about improving
             website_support_studio itself.
           </p>
         </section>
 
         <section className="customer-card">
-          <h2>Logout / account switching</h2>
+          <h2>
+            <MonoLabel text="logout account switching" />
+          </h2>
           <p className="customer-copy">
-            If this is the wrong email, log out and sign back in with the checkout email. That
+            if this is the wrong email, log out and sign back in with the checkout email. that
             switches you to the correct account.
           </p>
           <button className="auth-btn auth-btn-ghost" type="button" onClick={() => void signOut()}>
-            sign out and switch accounts
+            sign_out_switch_accounts
           </button>
         </section>
       </div>

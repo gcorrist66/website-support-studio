@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
+import { MonoLabel } from "../brand/MonoLabel";
 import { ActorRole, TicketPriority, type TicketPriority as TicketPriorityType } from "../../domain/ticketStatus";
 import { handleCreateTicket } from "../../handlers/ticketWorkflowHandlers";
 import type { CreateTicketRequest } from "../../contracts/ticketWorkflowContracts";
@@ -149,19 +150,19 @@ export function CreateTicketForm() {
 
     const errors: Record<string, string> = {};
     if (!normalizeText(title)) {
-      errors.title = "Title is required";
+      errors.title = "title is required";
     }
     if (!normalizeText(description)) {
-      errors.description = "Description is required";
+      errors.description = "description is required";
     }
     if (!tenantContextFromSelection.clientId) {
-      errors.clientId = "Client is required";
+      errors.clientId = "client is required";
     }
     if (!tenantContextFromSelection.siteId) {
-      errors.siteId = "Site is required";
+      errors.siteId = "site is required";
     }
     if (!normalizeText(submitterEmail).includes("@")) {
-      errors.submitterEmail = "Valid submitter email is required";
+      errors.submitterEmail = "valid submitter_email is required";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -198,7 +199,7 @@ export function CreateTicketForm() {
       return;
     }
 
-    setSuccessMessage("Ticket created successfully.");
+    setSuccessMessage("ticket created successfully.");
     setCreatedTicket({
       ticketId: result.response.ticketId,
       ticketNumber: result.response.ticketNumber,
@@ -210,38 +211,40 @@ export function CreateTicketForm() {
 
   return (
     <section className="phase5b-card">
-      <h2>New Support Request</h2>
+      <h2>
+        <MonoLabel text="support_request" />
+      </h2>
       <p className="placeholder-meta">
-        Creates a new support request from customer input.
+        creates a new support request from customer input.
       </p>
       <p className="placeholder-meta">
-        This form only creates the request. Triage, replies, approvals, and closure happen elsewhere.
+        this form only creates the request. triage, replies, approvals, and closure happen elsewhere.
       </p>
 
       <form onSubmit={handleSubmit} className="phase5b-form" noValidate>
         <label>
-          Title
+          title
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            placeholder="Short ticket title"
+            placeholder="short ticket title"
           />
           {validationErrors.title && <span className="phase5b-error">{validationErrors.title}</span>}
         </label>
 
         <label>
-          Description
+          description
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             rows={4}
-            placeholder="Customer request description"
+            placeholder="customer request description"
           />
           {validationErrors.description && <span className="phase5b-error">{validationErrors.description}</span>}
         </label>
 
         <label>
-          Client
+          client
           <select
             value={selectedClientId}
             onChange={(event) => {
@@ -259,14 +262,14 @@ export function CreateTicketForm() {
         </label>
 
         <label>
-          Site
+          site
           <select
             value={selectedSiteId}
             onChange={(event) => setSelectedSiteId(event.target.value)}
             disabled={selectedSites.length === 0}
           >
             <option value="" disabled>
-              {selectedSites.length === 0 ? "No site available" : "Select site"}
+              {selectedSites.length === 0 ? "no site available" : "select site"}
             </option>
             {selectedSites.map((site) => (
               <option key={site.id} value={site.id}>
@@ -278,16 +281,16 @@ export function CreateTicketForm() {
         </label>
 
         <label>
-          Submitter Name
+          submitter_name
           <input
             value={submitterName}
             onChange={(event) => setSubmitterName(event.target.value)}
-            placeholder="Name"
+            placeholder="name"
           />
         </label>
 
         <label>
-          Submitter Email
+          submitter_email
           <input
             type="email"
             value={submitterEmail}
@@ -298,7 +301,7 @@ export function CreateTicketForm() {
         </label>
 
         <label>
-          Priority
+          priority
           <select
             value={priority}
             onChange={(event) => setPriority(event.target.value as TicketPriorityType)}
@@ -313,24 +316,24 @@ export function CreateTicketForm() {
 
         <div className="phase5b-actions">
           <button type="submit" disabled={isSubmitting} className="phase4a-action">
-            {isSubmitting ? "Creating request..." : "Create Support Request"}
+            {isSubmitting ? "creating_request..." : "create_support_request"}
           </button>
         </div>
       </form>
 
-      {errorMessage && <p className="phase5b-error">Failure: {errorMessage}</p>}
+      {errorMessage && <p className="phase5b-error">failure: {errorMessage}</p>}
       {successMessage && createdTicket && (
         <p className="phase5b-success">
-          Success: {successMessage} Ticket {createdTicket.ticketNumber} ({createdTicket.ticketId}), status{" "}
+          success: {successMessage} ticket {createdTicket.ticketNumber} ({createdTicket.ticketId}), status{" "}
           {createdTicket.status}.
         </p>
       )}
 
       <p className="placeholder-meta">
-        Validation is local; only the create-request path is available here.
+        validation is local; only the create-request path is available here.
       </p>
       <p className="placeholder-meta">
-        Client/site are selected from local data for this operator view.
+        client/site are selected from local data for this operator view.
       </p>
       <pre className="phase5b-debug-note">
         Tenant context: {tenantContextFromSelection.agencyId} / {tenantContextFromSelection.clientId} / {tenantContextFromSelection.siteId}
