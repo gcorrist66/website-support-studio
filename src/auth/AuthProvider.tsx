@@ -11,7 +11,7 @@ import type { Session, User } from "@supabase/supabase-js";
 
 import { getAuthClient, isRealAuthEnabled } from "./realAuthClient";
 
-export type OAuthProvider = "google" | "github";
+export type OAuthProvider = "google" | "github" | "azure";
 
 interface AuthContextValue {
   /** Whether real auth is enabled for this build. */

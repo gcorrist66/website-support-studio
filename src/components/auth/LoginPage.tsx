@@ -36,6 +36,15 @@ export function LoginPage() {
             >
               continue with google
             </button>
+            <button
+              className="auth-btn auth-btn-ghost"
+              type="button"
+              onClick={() => {
+                void signInWithOAuth("azure");
+              }}
+            >
+              continue with microsoft
+            </button>
             {error ? (
               <p className="auth-error" role="alert">
                 {error}
