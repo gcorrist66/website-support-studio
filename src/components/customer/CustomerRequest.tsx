@@ -580,6 +580,11 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
             Need to change your plan or add more Capacity Units? Contact Corriston Consulting. If the plan
             looks wrong, sign out and use the checkout email again.
           </p>
+          <p className="customer-smallprint">
+            You own your website, content, domain, and accounts. If you ever cancel, you can move your
+            website to another host, or keep it online with us under a separate Hosting Only arrangement.
+            We'll provide a reasonable export/migration package on request.
+          </p>
           <a className="auth-btn auth-btn-ghost" href="https://websitesupportstudio.com/contact">
             contact Corriston Consulting
           </a>
