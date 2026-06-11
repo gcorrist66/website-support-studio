@@ -48,7 +48,8 @@
     "validate:session-source-prototype": "node scripts/validate-session-source-prototype.mjs",
     "validate:dev-session-read": "node scripts/validate-dev-session-read.mjs",
     "validate:dev-session-read-db": "node scripts/validate-dev-session-read-db.mjs",
-    "seed:operators-dev": "node scripts/seed-operators-dev.mjs"
+    "seed:operators-dev": "node scripts/seed-operators-dev.mjs",
+    "resend:upsert-wss-templates": "node scripts/resend-upsert-wss-templates.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

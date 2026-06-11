@@ -5,3 +5,5 @@ dist
 .vscode
 .supabase/
 supabase/.temp/
+.vercel/
+artifacts/
