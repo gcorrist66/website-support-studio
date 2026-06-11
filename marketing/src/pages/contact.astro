@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
 import { breadcrumbSchema } from "../schema";
-import { CONTACT, SITE_NAME } from "../consts";
+import { CONTACT, CONTACT_NOTIFY_URL, SITE_NAME } from "../consts";
 import { ID } from "../schema";
 
 const schemas = [
@@ -25,6 +25,8 @@ const schemas = [
     { name: "Contact", path: "/contact" },
   ]),
 ];
+const contactNotifyUrl =
+  CONTACT_NOTIFY_URL || "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/contact-notification";
 ---
 
 <BaseLayout
@@ -54,9 +56,59 @@ const schemas = [
         <div class="card">
           <h3 style="margin-top:0;"><Label text="_email_us" /></h3>
           <p style="color:var(--text-muted);">Prefer to write first? Send the details and we'll respond with next steps.</p>
-          <a class="btn btn-ghost" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+          <form id="wss-contact-form" style="display:grid;gap:0.85rem;" data-notify-url={contactNotifyUrl} data-fallback-email={CONTACT.email}>
+            <input class="input" name="name" placeholder="Name" autocomplete="name" />
+            <input class="input" name="email" type="email" placeholder="Email" autocomplete="email" required />
+            <textarea class="input" name="message" rows="5" placeholder="What should we know?" required></textarea>
+            <input name="company_website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true" />
+            <button class="btn btn-green" type="submit"><Label text="_send_message" /></button>
+            <p id="wss-contact-status" role="status" aria-live="polite" style="margin:0;font-size:0.82rem;color:var(--text-subtle);"></p>
+          </form>
+          <p style="margin:0.85rem 0 0; font-size:0.82rem; color:var(--text-subtle);">
+            If the form does not send, email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+          </p>
         </div>
       </div>
     </div>
   </section>
+  <script is:inline>
+    document.addEventListener("submit", async (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || form.id !== "wss-contact-form") return;
+      event.preventDefault();
+
+      const status = document.getElementById("wss-contact-status");
+      const button = form.querySelector("button[type='submit']");
+      const notifyUrl = form.dataset.notifyUrl || "";
+      const fallbackEmail = form.dataset.fallbackEmail || "corristonconsulting@gmail.com";
+      const failureMessage = `We could not send this automatically. Please email ${fallbackEmail}.`;
+
+      if (!notifyUrl) {
+        if (status) status.textContent = failureMessage;
+        return;
+      }
+
+      if (status) status.textContent = "sending...";
+      if (button instanceof HTMLButtonElement) button.disabled = true;
+
+      try {
+        const data = Object.fromEntries(new FormData(form).entries());
+        const res = await fetch(notifyUrl, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || json?.ok !== true) {
+          throw new Error("notification_not_confirmed");
+        }
+        form.reset();
+        if (status) status.textContent = "Message sent. Gary will reply from corristonconsulting@gmail.com.";
+      } catch (_) {
+        if (status) status.textContent = failureMessage;
+      } finally {
+        if (button instanceof HTMLButtonElement) button.disabled = false;
+      }
+    });
+  </script>
 </BaseLayout>
