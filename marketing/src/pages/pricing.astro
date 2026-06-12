@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FounderTrustLayer from "../components/FounderTrustLayer.astro";
 import Label from "../components/Label.astro";
 import { breadcrumbSchema, serviceSchema } from "../schema";
 import { PLANS, ADDONS, CHECKOUT_URL, CONTACT, FOUNDER_PRICING, WEBSITE_PACKAGE, ACCOUNT_OWNERSHIP } from "../consts";
@@ -55,6 +56,8 @@ const schemas = [
       </div>
     </div>
   </section>
+
+  <FounderTrustLayer />
 
   <section class="section" id="plans" style="background:var(--surface-muted);">
     <div class="container">

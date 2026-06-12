@@ -16,6 +16,37 @@ export interface FaqGroup {
   items: Faq[];
 }
 
+export const FOUNDER_WEBSITE_FAQS: Faq[] = [
+  {
+    q: "What happens right after I pay?",
+    a: "You get a Stripe receipt and one next step: a short intake form about your business. The moment you finish it, your build starts. Pay, tell us about your business, we build, you review, and you're live.",
+  },
+  {
+    q: "What exactly do I get for $500?",
+    a: "A complete five-page website built for your business: mobile optimization, contact forms wired to your inbox, click-to-call, basic SEO setup, hosting, SSL, launch, and 30 days of post-launch support.",
+  },
+  {
+    q: "Why is it only $500?",
+    a: "Because we're not starting from scratch. We've already designed and tested the websites we adapt to your business, so the build takes days, not months. The $500 build is how we earn the chance to keep running your site month to month afterward.",
+  },
+  {
+    q: "What if I don't have a logo or photos?",
+    a: "No problem, and no delay. No logo means a clean professional text treatment in your colors. No photos means licensed photography appropriate to your trade. You can swap in real photos later.",
+  },
+  {
+    q: "How long does the website take?",
+    a: "Your build starts when the intake form is complete, because we cannot build before we know your business. From there, we build in days, send a preview, and launch after review.",
+  },
+  {
+    q: "What do I own?",
+    a: "You own the website, domain, content, and connected accounts. Google Analytics, Search Console, and other accounts are set up under your accounts, and you can revoke our access whenever you like.",
+  },
+  {
+    q: "What happens after launch?",
+    a: "You get 30 days of post-launch support included. After that, the Operations plan is optional: $199/month for your first 6 months, then $399/month. Cancel anytime. The website is yours either way.",
+  },
+];
+
 export const FAQ_GROUPS: FaqGroup[] = [
   {
     marker: "_general",
@@ -43,6 +74,10 @@ export const FAQ_GROUPS: FaqGroup[] = [
       { q: "Is every change reviewed?", a: "Yes. No customer-facing change ships without a mandatory human approval, recorded with the approver and a timestamp." },
       { q: "Who approves changes?", a: "An authorized approver on the operations side signs off before anything goes live, and the approval is recorded in the request's audit trail." },
     ],
+  },
+  {
+    marker: "_founder_website",
+    items: FOUNDER_WEBSITE_FAQS,
   },
   {
     marker: "_pricing",

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FounderTrustLayer from "../components/FounderTrustLayer.astro";
 import Label from "../components/Label.astro";
 import { serviceSchema } from "../schema";
 import { JOIN_PATH, TEMPLATES, WEBSITE_PACKAGE } from "../consts";
@@ -39,6 +40,8 @@ const homepageModelWebsites = TEMPLATES.slice(0, 6);
       <div class="accent-bar" style="max-width:240px; margin-top:2.5rem;"></div>
     </div>
   </section>
+
+  <FounderTrustLayer />
 
   <!-- Model website gallery — polished examples for outreach -->
   <section class="section" id="examples" style="padding-top:1.5rem;">

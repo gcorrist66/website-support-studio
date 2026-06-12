@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FounderTrustLayer from "../components/FounderTrustLayer.astro";
 import Label from "../components/Label.astro";
 import { breadcrumbSchema, serviceSchema } from "../schema";
 import {
@@ -57,6 +58,8 @@ const schemas = [
       </p>
     </div>
   </section>
+
+  <FounderTrustLayer />
 
   <!-- Model website starting points -->
   <section class="section" style="background:var(--surface-muted);">

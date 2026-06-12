@@ -1,0 +1,85 @@
+---
+import Faq from "./Faq.astro";
+import Label from "./Label.astro";
+import { FOUNDER_WEBSITE_FAQS } from "../faqs";
+
+const nextSteps = [
+  {
+    step: "1",
+    title: "Secure your build",
+    body: "Pay $500 through Stripe-hosted checkout. It takes a minute, and Stripe sends the receipt.",
+  },
+  {
+    step: "2",
+    title: "Complete a short intake form",
+    body: "Tell us about your business in about 10 minutes. No logo or photos? We handle it.",
+  },
+  {
+    step: "3",
+    title: "We build your website",
+    body: "Your build starts when intake is complete. We adapt a model website to your services, towns, words, and brand.",
+  },
+  {
+    step: "4",
+    title: "Review and launch",
+    body: "You preview the site before launch. Then it goes live on your domain with 30 days of included support.",
+  },
+];
+
+const ownershipItems = [
+  "You own your website",
+  "You own your domain",
+  "You own your content",
+  "You can leave anytime",
+];
+---
+
+<section class="section founder-trust" id="founder-trust">
+  <div class="container">
+    <div class="trust-intro">
+      <p class="kicker"><Label text="_what_happens_next" /></p>
+      <h2>From payment to launched website, the path is visible.</h2>
+      <p class="lede">
+        Easy to buy because the path is short; easy to trust because the path is visible.
+      </p>
+    </div>
+
+    <div class="trust-steps" aria-label="Founder Website Package purchase flow">
+      {nextSteps.map((item) => (
+        <article class="card trust-step">
+          <span class="trust-step-number">{item.step}</span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="trust-grid">
+      <article class="card trust-panel">
+        <p class="kicker"><Label text="_you_own_it" /></p>
+        <h3>You own your website.</h3>
+        <p>Your domain, your website, your accounts, your logins. Cancel anything; keep everything.</p>
+        <ul class="trust-list">
+          {ownershipItems.map((item) => <li>{item}</li>)}
+        </ul>
+        <p class="trust-note">The monthly plan afterward is optional. Cancel anytime. The website is yours either way.</p>
+      </article>
+
+      <article class="card trust-panel">
+        <p class="kicker"><Label text="_why_only_500" /></p>
+        <h3>Because we're not starting from scratch.</h3>
+        <p>
+          We've already designed and tested the websites we adapt to your business, so the build takes days,
+          not months. And honestly: the $500 build is how we earn the chance to keep running your site month
+          to month afterward. You get the site cheap; we get a customer worth keeping. Both of those are the plan.
+        </p>
+      </article>
+    </div>
+
+    <div class="trust-faq">
+      <p class="kicker"><Label text="_founder_website_faq" /></p>
+      <h2>Founder Website questions, answered.</h2>
+      <Faq items={FOUNDER_WEBSITE_FAQS} />
+    </div>
+  </div>
+</section>
