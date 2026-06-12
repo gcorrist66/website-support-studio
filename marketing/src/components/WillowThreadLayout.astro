@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AdaptableStyleProof from "./AdaptableStyleProof.astro";
+import { APP_URL } from "../consts";
 import { willow, willowNav } from "../willowThread";
 
 const { title, description, path } = Astro.props as { title: string; description: string; path: string };
@@ -14,18 +15,18 @@ const lunaPalettes = [
 <BaseLayout title={title} description={description} path={path}>
   <div class="wt-site">
     <header class="wt-header">
-      <a class="wt-logo" href="/templates/luna/boutique" aria-label="Willow Thread home"><span>Willow</span><small>Thread</small></a>
+      <a class="wt-logo" href="/" aria-label="Back to Website Support Studio homepage"><span>Willow</span><small>Thread</small></a>
       <nav class="wt-nav" aria-label="Willow Thread navigation">
         {willowNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
-      <a class="wt-visit" href="/templates/luna/boutique/visit">Plan Your Visit</a>
+      <div class="wt-header-actions"><a class="wt-login" href={APP_URL} data-ga-event="click_willow_login">Client Login</a><a class="wt-visit" href="/templates/luna/boutique/visit">Plan Your Visit</a></div>
     </header>
     <section class="wt-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this boutique website?</p>
       <div>
         <a href={willow.checkoutHref} data-ga-event="click_willow_strip_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a href={willow.checkoutHref} data-ga-event="click_willow_strip_luna" data-ga-secondary-event="stripe_payment_link_click">Start With Luna</a>
-        <a href={willow.checkoutHref} data-ga-event="click_willow_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+        <a href={willow.checkoutHref} data-ga-event="click_willow_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href={APP_URL} data-ga-event="click_willow_strip_login">Client Login</a>
       </div>
     </section>
     <slot />
@@ -63,8 +64,10 @@ const lunaPalettes = [
     .wt-nav { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-family:var(--font-mono); font-size:.82rem; }
     .wt-nav a,.wt-footer a { color:var(--wt-ink); }
     .wt-nav a[aria-current="page"] { color:var(--wt-berry); font-weight:900; }
-    .wt-visit,.wt-btn,.wt-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--wt-berry); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
+    .wt-visit,.wt-login,.wt-btn,.wt-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--wt-berry); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
     .wt-visit,.wt-btn-primary,.wt-sticky a { background:var(--wt-ink); color:#fff; border-color:var(--wt-ink); }
+    .wt-login { background:#fffaf5; color:var(--wt-ink); border-color:rgba(38,27,33,.18); }
+    .wt-header-actions { display:flex; align-items:center; gap:.55rem; }
     .wt-btn-secondary { background:#fffaf5; color:var(--wt-ink); }
     .wt-btn-quiet { color:var(--wt-ink); background:transparent; }
     .wt-conversion-strip { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:.75rem 1rem; background:linear-gradient(90deg,var(--wt-ink),var(--wt-berry)); color:var(--wt-cream); }
@@ -102,6 +105,6 @@ const lunaPalettes = [
     .wt-founder-cta .wt-btn-secondary,.wt-founder-cta .wt-btn-quiet { background:transparent; color:var(--wt-cream); border-color:rgba(251,245,237,.78); }
     .wt-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(38,27,33,.14); }
     .wt-sticky { display:none; }
-    @media (max-width:900px) { .wt-header{align-items:start}.wt-nav,.wt-visit{display:none}.wt-hero-grid,.wt-split,.wt-card-grid,.wt-gallery-grid,.wt-founder-cta,.wt-footer{grid-template-columns:1fr;display:grid}.wt-photo-card{min-height:330px}.wt-hero h1{max-width:100%}.wt-section{padding-left:1rem;padding-right:1rem}.wt-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,245,.92);border:1px solid rgba(143,91,116,.28);box-shadow:0 16px 44px rgba(38,27,33,.2);backdrop-filter:blur(12px)}.wt-sticky a{width:100%} }
+    @media (max-width:900px) { .wt-header{align-items:start}.wt-nav,.wt-header-actions{display:none}.wt-hero-grid,.wt-split,.wt-card-grid,.wt-gallery-grid,.wt-founder-cta,.wt-footer{grid-template-columns:1fr;display:grid}.wt-photo-card{min-height:330px}.wt-hero h1{max-width:100%}.wt-section{padding-left:1rem;padding-right:1rem}.wt-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,245,.92);border:1px solid rgba(143,91,116,.28);box-shadow:0 16px 44px rgba(38,27,33,.2);backdrop-filter:blur(12px)}.wt-sticky a{width:100%} }
   </style>
 </BaseLayout>

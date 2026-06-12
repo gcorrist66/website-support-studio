@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AdaptableStyleProof from "./AdaptableStyleProof.astro";
+import { APP_URL } from "../consts";
 import { moonroom, moonroomNav } from "../moonroomCoffee";
 
 const { title, description, path } = Astro.props as { title: string; description: string; path: string };
@@ -14,18 +15,18 @@ const lunaPalettes = [
 <BaseLayout title={title} description={description} path={path}>
   <div class="mc-site">
     <header class="mc-header">
-      <a class="mc-logo" href="/templates/luna/coffee-shop" aria-label="Moonroom Coffee home"><span>Moonroom</span><small>Coffee</small></a>
+      <a class="mc-logo" href="/" aria-label="Back to Website Support Studio homepage"><span>Moonroom</span><small>Coffee</small></a>
       <nav class="mc-nav" aria-label="Moonroom Coffee navigation">
         {moonroomNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
-      <a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a>
+      <div class="mc-header-actions"><a class="mc-login" href={APP_URL} data-ga-event="click_moonroom_login">Client Login</a><a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a></div>
     </header>
     <section class="mc-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this coffee shop website?</p>
       <div>
         <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_luna" data-ga-secondary-event="stripe_payment_link_click">Start With Luna</a>
-        <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+        <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href={APP_URL} data-ga-event="click_moonroom_strip_login">Client Login</a>
       </div>
     </section>
     <slot />
@@ -63,8 +64,10 @@ const lunaPalettes = [
     .mc-nav { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-family:var(--font-mono); font-size:.82rem; }
     .mc-nav a,.mc-footer a { color:var(--mc-ink); }
     .mc-nav a[aria-current="page"] { color:var(--mc-caramel); font-weight:900; }
-    .mc-visit,.mc-btn,.mc-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--mc-caramel); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
+    .mc-visit,.mc-login,.mc-btn,.mc-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--mc-caramel); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
     .mc-visit,.mc-btn-primary,.mc-sticky a { background:var(--mc-espresso); color:#fff; border-color:var(--mc-espresso); }
+    .mc-login { background:#fffaf1; color:var(--mc-ink); border-color:rgba(58,36,24,.18); }
+    .mc-header-actions { display:flex; align-items:center; gap:.55rem; }
     .mc-btn-secondary { background:#fffaf1; color:var(--mc-ink); }
     .mc-btn-quiet { color:var(--mc-ink); background:transparent; }
     .mc-conversion-strip { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:.75rem 1rem; background:linear-gradient(90deg,var(--mc-ink),var(--mc-espresso)); color:var(--mc-cream); }
@@ -102,6 +105,6 @@ const lunaPalettes = [
     .mc-founder-cta .mc-btn-secondary,.mc-founder-cta .mc-btn-quiet { background:transparent; color:var(--mc-cream); border-color:rgba(246,239,226,.78); }
     .mc-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(58,36,24,.15); }
     .mc-sticky { display:none; }
-    @media (max-width:900px) { .mc-header{align-items:start}.mc-nav,.mc-visit{display:none}.mc-hero-grid,.mc-split,.mc-card-grid,.mc-gallery-grid,.mc-founder-cta,.mc-footer{grid-template-columns:1fr;display:grid}.mc-photo-card{min-height:330px}.mc-hero h1{max-width:100%}.mc-section{padding-left:1rem;padding-right:1rem}.mc-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,241,.92);border:1px solid rgba(184,120,63,.28);box-shadow:0 16px 44px rgba(33,21,15,.2);backdrop-filter:blur(12px)}.mc-sticky a{width:100%} }
+    @media (max-width:900px) { .mc-header{align-items:start}.mc-nav,.mc-header-actions{display:none}.mc-hero-grid,.mc-split,.mc-card-grid,.mc-gallery-grid,.mc-founder-cta,.mc-footer{grid-template-columns:1fr;display:grid}.mc-photo-card{min-height:330px}.mc-hero h1{max-width:100%}.mc-section{padding-left:1rem;padding-right:1rem}.mc-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,241,.92);border:1px solid rgba(184,120,63,.28);box-shadow:0 16px 44px rgba(33,21,15,.2);backdrop-filter:blur(12px)}.mc-sticky a{width:100%} }
   </style>
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AdaptableStyleProof from "./AdaptableStyleProof.astro";
+import { APP_URL } from "../consts";
 import { marigold, marigoldNav } from "../marigoldMane";
 
 const { title, description, path } = Astro.props as { title: string; description: string; path: string };
@@ -14,18 +15,18 @@ const lunaPalettes = [
 <BaseLayout title={title} description={description} path={path}>
   <div class="mm-site">
     <header class="mm-header">
-      <a class="mm-logo" href="/templates/luna/salon" aria-label="Marigold & Mane home"><span>Marigold</span><small>& Mane</small></a>
+      <a class="mm-logo" href="/" aria-label="Back to Website Support Studio homepage"><span>Marigold</span><small>& Mane</small></a>
       <nav class="mm-nav" aria-label="Marigold & Mane navigation">
         {marigoldNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
-      <a class="mm-book" href="/templates/luna/salon/contact#appointment">Request Appointment</a>
+      <div class="mm-header-actions"><a class="mm-login" href={APP_URL} data-ga-event="click_marigold_login">Client Login</a><a class="mm-book" href="/templates/luna/salon/contact#appointment">Request Appointment</a></div>
     </header>
     <section class="mm-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this salon website?</p>
       <div>
         <a href={marigold.checkoutHref} data-ga-event="click_marigold_strip_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a href={marigold.checkoutHref} data-ga-event="click_marigold_strip_luna" data-ga-secondary-event="stripe_payment_link_click">Start With Luna</a>
-        <a href={marigold.checkoutHref} data-ga-event="click_marigold_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+        <a href={marigold.checkoutHref} data-ga-event="click_marigold_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href={APP_URL} data-ga-event="click_marigold_strip_login">Client Login</a>
       </div>
     </section>
     <slot />
@@ -63,8 +64,10 @@ const lunaPalettes = [
     .mm-nav { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-family:var(--font-mono); font-size:.82rem; }
     .mm-nav a,.mm-footer a { color:var(--mm-ink); }
     .mm-nav a[aria-current="page"] { color:var(--mm-clay); font-weight:900; }
-    .mm-book,.mm-btn,.mm-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--mm-clay); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
+    .mm-book,.mm-login,.mm-btn,.mm-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--mm-clay); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
     .mm-book,.mm-btn-primary,.mm-sticky a { background:var(--mm-clay); color:#fff; }
+    .mm-login { background:#fff; color:var(--mm-ink); border-color:rgba(47,33,28,.18); }
+    .mm-header-actions { display:flex; align-items:center; gap:.55rem; }
     .mm-btn-secondary { background:#fff; color:var(--mm-ink); }
     .mm-btn-quiet { color:var(--mm-ink); background:transparent; }
     .mm-conversion-strip { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:.75rem 1rem; background:linear-gradient(90deg,var(--mm-ink),#7f4f62); color:var(--mm-cream); }
@@ -102,6 +105,6 @@ const lunaPalettes = [
     .mm-founder-cta .mm-btn-secondary,.mm-founder-cta .mm-btn-quiet { background:transparent; color:var(--mm-cream); border-color:rgba(255,248,239,.78); }
     .mm-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(191,111,94,.18); }
     .mm-sticky { display:none; }
-    @media (max-width:900px) { .mm-header{align-items:start}.mm-nav,.mm-book{display:none}.mm-hero-grid,.mm-split,.mm-card-grid,.mm-gallery-grid,.mm-founder-cta,.mm-footer{grid-template-columns:1fr;display:grid}.mm-photo-card{min-height:330px}.mm-hero h1{max-width:100%}.mm-section{padding-left:1rem;padding-right:1rem}.mm-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,248,239,.92);border:1px solid rgba(191,111,94,.28);box-shadow:0 16px 44px rgba(47,33,28,.2);backdrop-filter:blur(12px)}.mm-sticky a{width:100%} }
+    @media (max-width:900px) { .mm-header{align-items:start}.mm-nav,.mm-header-actions{display:none}.mm-hero-grid,.mm-split,.mm-card-grid,.mm-gallery-grid,.mm-founder-cta,.mm-footer{grid-template-columns:1fr;display:grid}.mm-photo-card{min-height:330px}.mm-hero h1{max-width:100%}.mm-section{padding-left:1rem;padding-right:1rem}.mm-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,248,239,.92);border:1px solid rgba(191,111,94,.28);box-shadow:0 16px 44px rgba(47,33,28,.2);backdrop-filter:blur(12px)}.mm-sticky a{width:100%} }
   </style>
 </BaseLayout>
