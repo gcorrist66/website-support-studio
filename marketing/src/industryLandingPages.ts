@@ -1,7 +1,20 @@
 import { WEBSITE_PACKAGE } from "./consts";
 
 export type IndustryLandingPage = {
-  slug: "roofing" | "salon" | "coffee-shop" | "hvac" | "plumbing" | "landscaping" | "restaurant" | "boutique";
+  slug:
+    | "roofing"
+    | "salon"
+    | "coffee-shop"
+    | "hvac"
+    | "plumbing"
+    | "landscaping"
+    | "restaurant"
+    | "boutique"
+    | "consultant"
+    | "medical"
+    | "dental"
+    | "attorney"
+    | "financial";
   industry: string;
   eyebrow: string;
   title: string;
@@ -266,6 +279,161 @@ export const INDUSTRY_LANDING_PAGES: Record<IndustryLandingPage["slug"], Industr
       "No polished product photos yet? We can start with licensed imagery and replace it as your shop grows.",
     ],
     intakeItems: ["Collections", "Hours", "Location", "Shop story", "Product or interior photos if available"],
+  },
+  consultant: {
+    slug: "consultant",
+    industry: "Consultant",
+    eyebrow: "websites for consultants",
+    title: "A consulting website that makes expertise easy to understand.",
+    description:
+      "Show your advisory offers, process, fit, and consultation path with a professional website built for trust before the first call.",
+    heroImage: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=82",
+    heroAlt: "Consulting team reviewing strategy in a bright office",
+    accent: "#4f46e5",
+    demoName: "Atlas Advisory Group",
+    demoRoute: "/templates/sample/atlas-advisory",
+    demoType: "Atlas consultant sample",
+    problems: [
+      "Consulting buyers need to understand what you do, who you help, and what the first conversation is for.",
+      "Vague expertise pages create hesitation because prospects cannot see your process or where they fit.",
+      "A strong consultant website turns authority into a clear consultation path without fake case studies.",
+    ],
+    exampleBullets: [
+      "Clear advisory offers and consultation CTAs",
+      "Process-led proof without invented client wins",
+      "Professional services layout built around trust",
+      "Authority and fit signals before the first call",
+    ],
+    trustBullets: [
+      "You own your domain, website, content, and accounts.",
+      "We adapt Atlas around your consulting offers, positioning, process, and booking path.",
+      "The monthly plan after launch is optional. Cancel anytime; the website is yours either way.",
+    ],
+    intakeItems: ["Services", "Ideal clients", "Consultation path", "Bio", "Logo/photos if available"],
+  },
+  medical: {
+    slug: "medical",
+    industry: "Medical",
+    eyebrow: "websites for medical practices",
+    title: "A medical website that helps patients feel oriented before they call.",
+    description:
+      "Explain services, appointments, location, visit expectations, and contact paths in a calm site that avoids hype and builds confidence.",
+    heroImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1400&q=82",
+    heroAlt: "Bright medical clinic room with treatment table",
+    accent: "#2563eb",
+    demoName: "Harbor Wellness Clinic",
+    demoRoute: "/templates/sample/harbor-wellness",
+    demoType: "Harbor medical and wellness sample",
+    problems: [
+      "Patients need plain-language service information, location details, and appointment expectations before reaching out.",
+      "Medical-adjacent websites should reduce anxiety, not bury people in jargon or overclaim results.",
+      "A generic website can make a legitimate practice feel harder to trust than it should.",
+    ],
+    exampleBullets: [
+      "Calm clinical design and clear service pages",
+      "Appointment-first contact path",
+      "Visit expectations and practical care details",
+      "No fake testimonials or medical promises",
+    ],
+    trustBullets: [
+      "You own your domain, website, content, and accounts.",
+      "We adapt Harbor around your services, appointment process, location, and patient-facing language.",
+      "The  build includes launch and 30 days of post-launch support.",
+    ],
+    intakeItems: ["Services", "Appointment process", "Location", "Hours", "Provider/clinic photos if available"],
+  },
+  dental: {
+    slug: "dental",
+    industry: "Dental",
+    eyebrow: "websites for dental offices",
+    title: "A dental website that makes new-patient next steps clear.",
+    description:
+      "Show services, new-patient details, office location, hours, and appointment requests in a trust-first format patients can scan quickly.",
+    heroImage: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=1400&q=82",
+    heroAlt: "Clean dental treatment room with chair and equipment",
+    accent: "#0891b2",
+    demoName: "Harbor Wellness Clinic",
+    demoRoute: "/templates/sample/harbor-wellness",
+    demoType: "Harbor healthcare sample",
+    problems: [
+      "Dental patients want to know what you offer, whether you accept new patients, and how to request an appointment.",
+      "Service lists, office details, and comfort cues need to be easy to find on mobile.",
+      "A dental website should feel professional and reassuring without fake reviews or unverifiable claims.",
+    ],
+    exampleBullets: [
+      "Trust-forward layout for patient decision-making",
+      "Service, appointment, location, and visit-detail sections",
+      "Calm healthcare-style visual language",
+      "Flexible Harbor structure ready for dental copy",
+    ],
+    trustBullets: [
+      "You own your domain, website, content, and accounts.",
+      "We adapt Harbor around your dental services, office details, patient instructions, and appointment flow.",
+      "The monthly plan after launch is optional. Cancel anytime; the website is yours either way.",
+    ],
+    intakeItems: ["Dental services", "New-patient process", "Hours", "Location", "Office photos/logo if available"],
+  },
+  attorney: {
+    slug: "attorney",
+    industry: "Attorney",
+    eyebrow: "websites for attorneys",
+    title: "A law firm website that makes the right inquiry easier to make.",
+    description:
+      "Present practice areas, attorney background, consultation next steps, and contact paths in a professional site that builds credibility quickly.",
+    heroImage: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=82",
+    heroAlt: "Law office desk with legal books and paperwork",
+    accent: "#334155",
+    demoName: "Atlas Advisory Group",
+    demoRoute: "/templates/sample/atlas-advisory",
+    demoType: "Atlas professional-services sample",
+    problems: [
+      "Legal prospects need to understand practice fit, consultation next steps, and how to contact the office.",
+      "A vague professional-services site can make a serious practice feel generic or hard to evaluate.",
+      "Attorney websites need authority, clarity, and restraint without fake case results or testimonials.",
+    ],
+    exampleBullets: [
+      "Professional-services structure for practice-area clarity",
+      "Consultation and inquiry CTAs",
+      "Process-led trust sections",
+      "No fake outcomes, reviews, or case claims",
+    ],
+    trustBullets: [
+      "You own your domain, website, content, and accounts.",
+      "We adapt Atlas around your practice areas, attorney bio, consultation flow, and location.",
+      "The  build includes launch and 30 days of post-launch support.",
+    ],
+    intakeItems: ["Practice areas", "Attorney bio", "Consultation process", "Location", "Logo/headshot if available"],
+  },
+  financial: {
+    slug: "financial",
+    industry: "Financial",
+    eyebrow: "websites for financial professionals",
+    title: "A financial services website that makes trust visible before the first call.",
+    description:
+      "Explain who you help, what you offer, your process, and the consultation path with a polished site built for careful decision-making.",
+    heroImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1400&q=82",
+    heroAlt: "Financial planning documents and calculator on a desk",
+    accent: "#16a34a",
+    demoName: "Atlas Advisory Group",
+    demoRoute: "/templates/sample/atlas-advisory",
+    demoType: "Atlas financial and advisory sample",
+    problems: [
+      "Financial prospects need to understand fit, services, process, and next steps before they share sensitive goals.",
+      "Trust matters more than hype. A polished site should explain the relationship without overpromising outcomes.",
+      "A generic website can make a careful buyer wonder whether the practice is equally generic.",
+    ],
+    exampleBullets: [
+      "Advisory-style service and process sections",
+      "Consultation-first conversion path",
+      "Professional trust language without fake results",
+      "Clear fit and next-step framing",
+    ],
+    trustBullets: [
+      "You own your domain, website, content, and accounts.",
+      "We adapt Atlas around your services, audience, compliance-safe language, and consultation flow.",
+      "The monthly plan after launch is optional. Cancel anytime; the website is yours either way.",
+    ],
+    intakeItems: ["Services", "Client fit", "Consultation process", "Compliance notes", "Logo/headshot if available"],
   },
 };
 
