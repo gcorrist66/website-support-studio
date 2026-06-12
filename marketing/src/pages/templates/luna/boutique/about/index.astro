@@ -1,0 +1,8 @@
+---
+import WillowThreadLayout from "../../../../../components/WillowThreadLayout.astro";
+import { willow, willowTrust } from "../../../../../willowThread";
+---
+<WillowThreadLayout title="About — Willow Thread" description="About page for the fictional Willow Thread sample boutique website." path="/templates/luna/boutique/about">
+  <section class="wt-section wt-hero"><div class="wt-container wt-split"><div><p class="wt-sample">{willow.badge}</p><p class="wt-eyebrow">About</p><h1>A small shop for pieces people actually wear.</h1><p class="wt-lede">Willow Thread is a fictional boutique sample built around local retail details: curated collections, helpful styling, giftable shelves, and an obvious reason to visit.</p></div><div class="wt-card"><h3>Sample boutique story</h3><p>The shop voice is warm and specific: breathable staples, easy layers, thoughtful gifts, and a downtown storefront where visitors can browse without pressure.</p></div></div></section>
+  <section class="wt-section wt-soft"><div class="wt-container wt-split"><div><h2>What the site communicates</h2><p>A polished boutique website should show the taste of the shop, explain what shoppers can find, and make hours, location, and questions easy on mobile.</p></div><div class="wt-card"><h3>Retail trust points</h3><ul class="wt-info-list">{willowTrust.map((item) => <li>{item}</li>)}</ul></div></div></section>
+</WillowThreadLayout>

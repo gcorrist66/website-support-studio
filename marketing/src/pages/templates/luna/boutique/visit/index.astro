@@ -1,0 +1,9 @@
+---
+import WillowThreadLayout from "../../../../../components/WillowThreadLayout.astro";
+import { willow, willowGallery } from "../../../../../willowThread";
+---
+<WillowThreadLayout title="Visit — Willow Thread" description="Visit page for the fictional Willow Thread sample boutique website." path="/templates/luna/boutique/visit">
+  <section class="wt-section wt-hero"><div class="wt-container"><p class="wt-sample">{willow.badge}</p><p class="wt-eyebrow">Visit</p><h1>Stop in for a quick browse or a full outfit.</h1><p class="wt-lede">This visit page gives a boutique the practical details shoppers need: where to go, when to come by, and what kind of experience to expect.</p></div></section>
+  <section class="wt-section wt-soft"><div class="wt-container wt-split"><div class="wt-card"><h2>Store details</h2><p>{willow.address}</p><p><a href={willow.phoneHref}>{willow.phoneLabel}</a></p><ul class="wt-info-list">{willow.hours.map((hour) => <li>{hour}</li>)}</ul></div><div><h2>What to expect</h2><p>Browse new arrivals near the front, gifts and accessories by the counter, and fitting rooms in the back. Street and garage parking are available nearby in this sample downtown location.</p><div class="wt-actions"><a class="wt-btn wt-btn-primary" href="/templates/luna/boutique/contact#question">Ask a Question</a></div></div></div></section>
+  <section class="wt-section"><div class="wt-container"><p class="wt-eyebrow">In-store moments</p><div class="wt-gallery-grid">{willowGallery.map((item) => <div class="wt-gallery-tile">{item}</div>)}</div></div></section>
+</WillowThreadLayout>

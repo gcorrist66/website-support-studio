@@ -53,8 +53,9 @@ const schemas = [
         {FOUNDER_WEBSITE_INCLUDES.map((item) => <li>{item}</li>)}
       </ul>
       <p style="margin-top:1rem; color:var(--text-muted); max-width:62ch;">
-        One-time {WEBSITE_PACKAGE.price}. After launch: {WEBSITE_PACKAGE.afterLaunch.founder}, then{" "}
-        {WEBSITE_PACKAGE.afterLaunch.standard}. You own your website and all your accounts.
+        One-time {WEBSITE_PACKAGE.price}. After launch: optional managed operations at{" "}
+        {WEBSITE_PACKAGE.afterLaunch.founder}. {WEBSITE_PACKAGE.afterLaunch.standard} You own your
+        website and all your accounts.
       </p>
     </div>
   </section>
@@ -86,10 +87,17 @@ const schemas = [
                   <ul class="model-signals" aria-label={`${t.name} visual signals`}>
                     {t.preview.signals.map((signal) => <li>{signal}</li>)}
                   </ul>
-                  <div class="design-system-adapt-box">
-                    <p><strong>Originally built for:</strong> {t.adaptableFrom}</p>
-                    <p><strong>Could become:</strong> {t.adaptableTo.join(", ")}</p>
-                  </div>
+                  {t.key === "luna" ? (
+                    <div class="design-system-adapt-box">
+                      <p><strong>Finished sample sites:</strong> Marigold & Mane, Moonroom Coffee, Willow Thread</p>
+                      <p><strong>Good for:</strong> salon, coffee shop, boutique, restaurant, wellness, and other atmosphere-led businesses.</p>
+                    </div>
+                  ) : (
+                    <div class="design-system-adapt-box">
+                      <p><strong>Originally built for:</strong> {t.adaptableFrom}</p>
+                      <p><strong>Could become:</strong> {t.adaptableTo.join(", ")}</p>
+                    </div>
+                  )}
                   <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Industries it fits</p>
                   <ul class="model-signals" aria-label={`${t.name} industries`}>
                     {t.fits.map((fit) => <li>{fit}</li>)}
@@ -116,10 +124,18 @@ const schemas = [
                     >
                       Start With This Style
                     </a>
-                    {t.demoRoute ? (
-                      <a class="btn btn-ghost" href={t.demoRoute} data-ga-event="click_design_system_demo" data-ga-label={t.key}>
-                        View System Demo
-                      </a>
+                    {t.key === "luna" ? (
+                      <>
+                        <a class="btn btn-ghost" href="/templates/luna/salon" data-ga-event="click_sample_site" data-ga-label="luna_salon">
+                          View Salon Sample
+                        </a>
+                        <a class="btn btn-ghost" href="/templates/luna/coffee-shop" data-ga-event="click_sample_site" data-ga-label="luna_coffee">
+                          View Coffee Sample
+                        </a>
+                        <a class="btn btn-ghost" href="/templates/luna/boutique" data-ga-event="click_sample_site" data-ga-label="luna_boutique">
+                          View Boutique Sample
+                        </a>
+                      </>
                     ) : (
                       <a class="btn btn-ghost" href="#whats-customizable" data-ga-event="click_template_compare" data-ga-label={t.key}>
                         Compare Adaptability
