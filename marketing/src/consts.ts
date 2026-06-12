@@ -367,14 +367,14 @@ export const PLANS = [
     founderPlanKey: "operations_founder",
     cadence: "/month",
     sites: "1 website",
-    cu: "50 Capacity Units / month",
+    cu: "50 Website Requests / month",
     blurb: "Managed website operations for a single revenue-critical site.",
     founderBlurb: "Same Operations plan at founder pricing, locked in while your account remains active.",
     points: [
       "Single-desk request intake",
       "Operator-led support with mandatory human approval",
       "Per-request audit trail",
-      "50 Capacity Units each month",
+      "50 Website Requests each month",
     ],
     cta: "checkout" as const,
   },
@@ -384,13 +384,13 @@ export const PLANS = [
     price: "$899",
     cadence: "/month",
     sites: "up to 5 websites",
-    cu: "150 Capacity Units / month",
+    cu: "150 Website Requests / month",
     blurb: "Operations across a portfolio of sites with more monthly capacity.",
     recommended: true,
     points: [
       "Everything in Operations",
       "Coverage across up to 5 websites",
-      "150 Capacity Units each month",
+      "150 Website Requests each month",
       "Operational reporting",
     ],
     cta: "checkout" as const,
@@ -405,7 +405,7 @@ export const PLANS = [
     blurb: "Custom capacity, coverage, and onboarding for larger estates.",
     points: [
       "Everything in Growth",
-      "Custom Capacity Units and site coverage",
+      "Custom Website Request capacity and site coverage",
       "Custom onboarding and SLAs",
       "Dedicated commercial terms",
     ],
@@ -414,9 +414,9 @@ export const PLANS = [
 ] as const;
 
 export const ADDONS = [
-  { key: "topup_50", name: "50 Capacity Units", note: "$150 one-time · $3.00 / credit · rolls over until used" },
-  { key: "topup_100", name: "100 Capacity Units", note: "$275 one-time · $2.75 / credit · rolls over until used" },
-  { key: "topup_250", name: "250 Capacity Units", note: "$625 one-time · $2.50 / credit · rolls over until used" },
+  { key: "topup_50", name: "50 Website Requests", note: "$150 one-time · $3.00 / credit · rolls over until used" },
+  { key: "topup_100", name: "100 Website Requests", note: "$275 one-time · $2.75 / credit · rolls over until used" },
+  { key: "topup_250", name: "250 Website Requests", note: "$625 one-time · $2.50 / credit · rolls over until used" },
   { key: "dns", name: "DNS Assistance", note: "$100 one-time" },
 ] as const;
 

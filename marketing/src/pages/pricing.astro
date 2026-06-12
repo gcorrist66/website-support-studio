@@ -130,25 +130,25 @@ const schemas = [
       </div>
       <p style="margin-top:1.25rem; color:var(--text-muted); max-width:62ch;">
         All plans operate inside the same defined response workflow with a mandatory human approval gate.
-        Founder pricing is locked in while your account remains active. Plans differ in monthly Capacity Units and the number of websites covered.
+        Founder pricing is locked in while your account remains active. Plans differ in monthly Website Requests and the number of websites covered.
       </p>
     </div>
   </section>
 
-  <!-- Capacity Units explainer -->
+  <!-- Website Requests explainer -->
   <section class="section">
     <div class="container" style="max-width:820px;">
-      <p class="kicker"><Label text="_capacity_units" /></p>
-      <h2>How Capacity Units work</h2>
+      <p class="kicker"><Label text="_website_requests" /></p>
+      <h2>How Website Requests work</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Capacity Units measure the effort of each request, so you always know what's included in your
-        website project. Monthly Capacity Units refresh every month and do not roll over. Need more in
+        Website Requests measure the effort of each request, so you always know what's included in your
+        website project. Monthly Website Requests refresh every month and do not roll over. Need more in
         a busy month? Add a top-up anytime.
       </p>
       <div class="card" style="margin-top:1rem;">
         <h3 style="margin-top:0;">Credit policy</h3>
         <ul style="margin:0; padding-left:1.1rem; color:var(--text-muted);">
-          <li>Monthly Capacity Units refresh each month and do not roll over.</li>
+          <li>Monthly Website Requests refresh each month and do not roll over.</li>
           <li>Purchased top-up credits stay on your account until used.</li>
           <li>Top-up credits do roll over and are used after monthly credits run out.</li>
         </ul>
@@ -192,11 +192,28 @@ const schemas = [
       <p class="kicker"><Label text="_questions" /></p>
       <h2>Questions, answered.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Cost, Capacity Units, top-ups, getting started, and custom plans — all in one place.
+        Cost, Website Requests, top-ups, getting started, and custom plans — all in one place.
       </p>
       <p style="margin-top:1.25rem;">
         <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
       </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-card cta-card--founder">
+      <div>
+        <p class="kicker"><Label text="_next_step" /></p>
+        <h2>Ready to secure your Founder Website Package?</h2>
+        <p>
+          Start with the $500 website build, then keep your site supported for $199/month while your account remains active.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref}>Build My Website</a>
+        <a class="btn btn-ghost" href="/templates">View Sample Sites</a>
+        <a class="btn btn-ghost" href="/contact">Book A Call</a>
+      </div>
     </div>
   </section>
 
