@@ -1,61 +1,97 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Ridgeline Roofing desktop demo preview">
   <defs>
     <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0" stop-color="#f7f9fc"/>
-      <stop offset="1" stop-color="#eef4f7"/>
+      <stop offset="0" stop-color="#f4f8fb"/>
+      <stop offset="1" stop-color="#edf2f7"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f8fafc"/>
     </linearGradient>
   </defs>
-  <rect width="1200" height="750" rx="14" fill="url(#sky)" stroke="#d6d2c5"/>
 
+  <rect width="1200" height="750" rx="14" fill="url(#sky)" stroke="#d6d2c5"/>
   <rect x="1" y="1" width="1198" height="748" rx="13" fill="none" stroke="#e4e1d9"/>
 
   <!-- Header -->
-  <rect x="34" y="20" width="180" height="38" rx="8" fill="#0f172a"/>
-  <text x="44" y="46" font-family="'JetBrains Mono', Menlo, monospace" font-size="20" font-weight="700" fill="#ffffff">RIDGELINE</text>
-  <text x="130" y="47" font-family="'JetBrains Mono', Menlo, monospace" font-size="20" font-weight="700" fill="#ff8f24">ROOFING</text>
-  <rect x="1000" y="28" width="140" height="24" rx="12" fill="#f9d89e"/>
-  <text x="1020" y="45" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" fill="#0b1220">Call (303) 555-0198</text>
-  <rect x="800" y="28" width="170" height="24" rx="12" fill="#0f172a"/>
-  <text x="818" y="44" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#ffffff">Request a Roof Estimate</text>
+  <rect x="32" y="18" width="188" height="38" rx="8" fill="#0f172a"/>
+  <text x="48" y="44" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff">RIDGELINE</text>
+  <text x="144" y="44" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#ff8f24">ROOFING</text>
+  <rect x="900" y="24" width="130" height="26" rx="13" fill="#ff8f24"/>
+  <text x="917" y="42" font-family="Inter, Arial, sans-serif" font-size="11" fill="#0b1220" font-weight="700">(303) 555-0198</text>
 
-  <!-- Hero -->
-  <rect x="40" y="82" width="1120" height="270" rx="16" fill="#1f2937"/>
-  <rect x="64" y="114" width="500" height="44" rx="9" fill="#ff9b35"/>
-  <text x="82" y="143" font-family="'JetBrains Mono', Menlo, monospace" font-size="30" fill="#0b1220" font-weight="700">DEMO SAMPLE · Fictional Roofing Website</text>
-  <text x="64" y="188" font-family="'JetBrains Mono', Menlo, monospace" font-size="22" fill="#ffffff">Denver Roofing That Stays Solid Through Every Season</text>
-  <text x="64" y="225" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" fill="#e2e8f0">Roof repair, storm damage support, and insurance help for homeowners across Denver and the foothills.</text>
-  <rect x="64" y="252" width="188" height="44" rx="10" fill="#ff8f24"/>
-  <text x="100" y="280" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" fill="#0b1220" font-weight="700">Request a Roof Estimate</text>
-  <rect x="272" y="252" width="150" height="44" rx="10" fill="transparent" stroke="#cbd5e1"/>
-  <text x="309" y="280" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" fill="#f8fafc">Schedule Inspection</text>
+  <!-- Roof hero with home + shingles + inspect note -->
+  <rect x="42" y="82" width="1116" height="235" rx="16" fill="url(#roof)"/>
+  <text x="64" y="122" font-family="Inter, Arial, sans-serif" font-size="13" fill="#fed7aa" opacity="0.92">DEMO SAMPLE · FICTITIOUS RESIDENTIAL ROOFING</text>
+  <text x="64" y="160" font-family="Inter, Arial, sans-serif" font-size="32" fill="#ffffff" font-weight="700">Ridgeline Roofing — Denver Residential Roof Specialists</text>
+  <text x="64" y="198" font-family="Inter, Arial, sans-serif" font-size="16" fill="#e2e8f0">Roof replacement. Storm damage. Inspection scheduling. Claim-ready updates.</text>
 
-  <!-- Section cards -->
-  <rect x="40" y="378" width="368" height="165" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
-  <text x="62" y="408" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" fill="#0b1220">Roof Replacement</text>
-  <rect x="62" y="425" width="324" height="9" rx="5" fill="#d6d2c5"/>
-  <text x="62" y="454" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#475569">Rebuilds, shingle replacements, and age-critical systems.</text>
-  <text x="62" y="474" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#475569">Built for wind resilience and full weatherproofing.</text>
-  <text x="62" y="501" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#ff8f24" font-weight="700">Learn more</text>
+  <rect x="64" y="214" width="210" height="36" rx="9" fill="#ff9b35"/>
+  <text x="90" y="238" font-family="Inter, Arial, sans-serif" font-size="14" fill="#0b1220" font-weight="700">Request a Roof Estimate</text>
 
-  <rect x="416" y="378" width="368" height="165" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
-  <text x="438" y="408" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" fill="#0b1220">Insurance Claim Support</text>
-  <rect x="438" y="425" width="324" height="9" rx="5" fill="#d6d2c5"/>
-  <text x="438" y="454" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#475569">Fast photo documentation and contractor access</text>
-  <text x="438" y="474" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#475569">to reduce delays before and after storms.</text>
-  <text x="438" y="501" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#ff8f24" font-weight="700">Learn more</text>
+  <rect x="288" y="214" width="160" height="36" rx="9" fill="#1e293b" stroke="#94a3b8"/>
+  <text x="306" y="236" font-family="Inter, Arial, sans-serif" font-size="14" fill="#f8fafc">Schedule Inspection</text>
 
-  <rect x="792" y="378" width="368" height="165" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
-  <text x="814" y="408" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" fill="#0b1220">Emergency Tarping</text>
-  <rect x="814" y="425" width="324" height="9" rx="5" fill="#d6d2c5"/>
-  <text x="814" y="454" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#475569">24/7 response for temporary protection after hail or wind.</text>
-  <text x="814" y="474" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#475569">We stabilize quickly and safely.</text>
-  <text x="814" y="501" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#ff8f24" font-weight="700">Learn more</text>
+  <!-- Home + shingles row -->
+  <g transform="translate(40 332)">
+    <rect x="0" y="130" width="340" height="120" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <rect x="22" y="84" width="296" height="54" fill="#ff8f24"/>
+    <polygon points="170,84 12,84 170,24 328,84" fill="#f59e0b"/>
+    <rect x="34" y="150" width="272" height="12" fill="#94a3b8"/>
+    <rect x="34" y="166" width="240" height="8" fill="#cbd5e1"/>
+    <rect x="34" y="180" width="180" height="8" fill="#cbd5e1"/>
+    <rect x="34" y="194" width="120" height="8" fill="#cbd5e1"/>
 
-  <!-- Footer -->
-  <rect x="40" y="572" width="1120" height="124" rx="12" fill="#0b1220"/>
-  <text x="64" y="612" font-family="'JetBrains Mono', Menlo, monospace" font-size="18" fill="#ffffff" font-weight="700">Licensed • Insured • Serving Denver Metro</text>
-  <text x="64" y="636" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#cbd5e1">Demo disclosure: this is a fictional sample business for the Ridgeline Roofing model home.</text>
-  <text x="64" y="658" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#cbd5e1">Trust points: same-day response, detailed estimates, transparent pricing.</text>
+    <rect x="380" y="130" width="320" height="120" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <polygon points="540,130 390,68 690,68 540,18" fill="#e2e8f0"/>
+    <rect x="408" y="194" width="264" height="24" rx="12" fill="#bfdbfe"/>
+    <circle cx="460" cy="212" r="12" fill="#0369a1"/>
+    <circle cx="500" cy="212" r="12" fill="#0369a1"/>
+    <circle cx="540" cy="212" r="12" fill="#0369a1"/>
 
-  <text x="60" y="730" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#94a3b8">Roofing Demo • Demo page generated for Founder Website Package model home</text>
+    <!-- Crew + ladder + shingles -->
+    <g transform="translate(760 130)">
+      <rect x="0" y="118" width="310" height="120" rx="10" fill="#111827"/>
+      <polygon points="155,118 40,58 270,58 155,0" fill="#374151"/>
+      <line x1="150" y1="118" x2="150" y2="168" stroke="#d97706" stroke-width="4"/>
+      <rect x="132" y="140" width="36" height="28" fill="#f59e0b"/>
+      <text x="150" y="158" font-family="Inter, Arial, sans-serif" font-size="8" fill="#0b1220" text-anchor="middle">CREW</text>
+      <rect x="52" y="110" width="210" height="14" fill="#0b1220"/>
+      <rect x="52" y="126" width="210" height="8" fill="#1f2937"/>
+      <rect x="52" y="136" width="160" height="8" fill="#cbd5e1"/>
+      <rect x="52" y="146" width="210" height="8" fill="#cbd5e1"/>
+      <rect x="52" y="156" width="178" height="8" fill="#cbd5e1"/>
+    </g>
+  </g>
+
+  <!-- Storm damage + truck + inspection -->
+  <rect x="70" y="498" width="368" height="165" rx="12" fill="url(#card)" stroke="#e5e3dc"/>
+  <text x="92" y="532" font-family="Inter, Arial, sans-serif" font-size="16" fill="#0b1220" font-weight="700">Storm Damage Response</text>
+  <path d="M104 548 C150 548, 150 586, 186 586 C222 586, 222 548, 268 548 C314 548, 314 578, 358 578" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <text x="92" y="606" font-family="Inter, Arial, sans-serif" font-size="11" fill="#475569">Crew on-site after hail with temporary tarping and photo log.</text>
+
+  <rect x="466" y="498" width="368" height="165" rx="12" fill="url(#card)" stroke="#e5e3dc"/>
+  <text x="488" y="532" font-family="Inter, Arial, sans-serif" font-size="16" fill="#0b1220" font-weight="700">Roof Inspections</text>
+  <rect x="488" y="552" width="322" height="10" fill="#e2e8f0"/>
+  <rect x="488" y="570" width="286" height="10" fill="#cbd5e1"/>
+  <circle cx="690" cy="605" r="12" fill="none" stroke="#2563eb" stroke-width="3"/>
+  <line x1="690" y1="599" x2="690" y2="611" stroke="#2563eb" stroke-width="3"/>
+  <line x1="684" y1="605" x2="696" y2="605" stroke="#2563eb" stroke-width="3"/>
+  <text x="488" y="632" font-family="Inter, Arial, sans-serif" font-size="11" fill="#475569">Condition findings, recommendations, and estimate-ready notes.</text>
+
+  <rect x="862" y="498" width="276" height="165" rx="12" fill="url(#card)" stroke="#e5e3dc"/>
+  <text x="886" y="534" font-family="Inter, Arial, sans-serif" font-size="16" fill="#0b1220" font-weight="700">Roofing Truck</text>
+  <rect x="900" y="552" width="80" height="52" rx="10" fill="#1e3a8a"/>
+  <rect x="900" y="548" width="120" height="38" rx="8" fill="#334155"/>
+  <rect x="890" y="600" width="24" height="20" rx="4" fill="#111827"/>
+  <rect x="1050" y="600" width="24" height="20" rx="4" fill="#111827"/>
+  <circle cx="914" cy="604" r="10" fill="#111827"/>
+  <circle cx="1034" cy="604" r="10" fill="#111827"/>
+  <text x="887" y="636" font-family="Inter, Arial, sans-serif" font-size="11" fill="#475569">Callout-ready jobs in Denver metro.</text>
+
+  <text x="64" y="730" font-family="Inter, Arial, sans-serif" font-size="11" fill="#94a3b8">Ridgeline Roofing model home for Founder Website Package demo</text>
 </svg>

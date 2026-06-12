@@ -39,6 +39,7 @@ const localBusinessSchema = {
     <section class="hero" style="padding-top:3rem;">
       <div class="container">
         <p class="demo-disclaimer">Demo website · Fictional demo company</p>
+        <p class="roofing-badge" aria-label="Roofing business indicator">[Residential Roofing]</p>
         <h1>Denver Roofing That Stays Solid Through Every Season.</h1>
         <p class="lede">
           Ridgeline Roofing provides residential roof replacement, repair, and storm response in Denver and surrounding neighborhoods. Every section below is sample copy for the Founder Website Package model home.
@@ -57,21 +58,25 @@ const localBusinessSchema = {
         <h2>Services homeowners asked for most</h2>
         <div class="demo-grid">
           <article class="card">
+            <p class="service-mini-card-label">[Roof Replacement]</p>
             <h3 style="margin-top:0;">Roof Replacement</h3>
             <p style="margin:0.45rem 0 0; color:var(--text-muted);">Full roof system replacement and material guidance for Denver-area weather and exposure patterns.</p>
             <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
           </article>
           <article class="card">
+            <p class="service-mini-card-label">[Roof Repair]</p>
             <h3 style="margin-top:0;">Roof Repair</h3>
             <p style="margin:0.45rem 0 0; color:var(--text-muted);">Leak fixes, flashing repair, shingle lift corrections, and storm-breathing vent checks.</p>
             <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
           </article>
           <article class="card">
+            <p class="service-mini-card-label">[Storm Damage]</p>
             <h3 style="margin-top:0;">Storm Damage</h3>
             <p style="margin:0.45rem 0 0; color:var(--text-muted);">Same-day triage after hail or wind events with temporary protection planning and photos for claims.</p>
             <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
           </article>
           <article class="card">
+            <p class="service-mini-card-label">[Insurance Claims]</p>
             <h3 style="margin-top:0;">Insurance Claim Support</h3>
             <p style="margin:0.45rem 0 0; color:var(--text-muted);">Clear documentation support for claims teams and transparent communication during adjustments.</p>
             <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
@@ -151,6 +156,26 @@ const localBusinessSchema = {
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
+    }
+    .roofing-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: var(--surface-elevated);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.8rem;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .service-mini-card-label {
+      margin: 0 0 0.65rem;
+      font-weight: 700;
+      color: var(--brand-blue);
+      letter-spacing: 0.02em;
     }
     .demo-grid .card .btn {
       margin-top: 0.8rem;

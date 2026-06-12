@@ -3,26 +3,32 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 const services = [
   {
+    icon: "[Roofing]",
     title: "Roof Replacement",
     body: "Comprehensive replacement plans for older roofs, including permit coordination and weatherproofing details for Denver-specific conditions.",
   },
   {
+    icon: "[Repair]",
     title: "Roof Repair",
     body: "Targeted repair workflows for leaks, flashing failures, shingle wear, and ridge ridgeline stress points with transparent repair notes.",
   },
   {
+    icon: "[Storm]",
     title: "Storm Damage",
     body: "24-hour incident triage and temporary stabilization, then restoration scope with photo documentation for homeowners and adjusters.",
   },
   {
+    icon: "[Claims]",
     title: "Insurance Claim Support",
     body: "Claim-ready documentation support, estimate summaries, and timeline updates before contractor submission.",
   },
   {
+    icon: "[Inspect]",
     title: "Roof Inspections",
     body: "Pre-season inspections and post-repair checks that include concise scoring and prioritized repair recommendations.",
   },
   {
+    icon: "[Truck]",
     title: "Emergency Tarping",
     body: "Immediate temporary coverage when weather events occur, minimizing interior damage while a permanent repair is planned.",
   },
@@ -50,6 +56,7 @@ const services = [
         <div class="grid grid-2">
           {services.map((service) => (
             <article class="card" id={service.title.toLowerCase().replace(/ /g, "-")}> 
+              <p class="service-badge" aria-label={`${service.title} roofing service`}><span>{service.icon}</span>{service.title}</p>
               <h3 style="margin-top:0;">{service.title}</h3>
               <p style="color:var(--text-muted);">{service.body}</p>
             </article>
@@ -74,6 +81,19 @@ const services = [
       margin-bottom: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+    }
+    .service-badge {
+      margin: 0 0 0.5rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--border);
+      width: max-content;
+      border-radius: 999px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
   </style>
 </BaseLayout>

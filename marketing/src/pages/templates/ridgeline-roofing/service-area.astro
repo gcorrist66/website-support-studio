@@ -29,6 +29,7 @@ const localBusinessSchema = {
       <div class="container">
         <p class="demo-disclaimer">Demo website · Fictional demo company</p>
         <p class="kicker">Denver local SEO</p>
+        <p class="roofing-badge">[Roofing Service Areas]</p>
         <h1>Service Area</h1>
         <p class="lede">Ridgeline Roofing serves the metro areas below for residential roofing, inspections, and emergency response.</p>
       </div>
@@ -80,6 +81,20 @@ const localBusinessSchema = {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
+    }
+    .roofing-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: var(--surface-elevated);
+      padding: 0.35rem 0.72rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     @media (max-width: 860px) {
       .service-grid {
