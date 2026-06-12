@@ -19,6 +19,7 @@ const path = `/for/${page.slug}`;
         <div class="industry-actions">
           <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
           <a class="btn btn-ghost" href={page.demoRoute} data-ga-event={`click_for_${page.slug}_demo`}>View Live Example</a>
+          <a class="btn btn-ghost" href="/templates/sample/back-office/" data-ga-event={`click_for_${page.slug}_back_office`}>Preview Back Office</a>
         </div>
         <p class="industry-strip">Pay $500 once → 10-minute intake → we build and you preview → launch with 30 days of included support.</p>
       </div>
@@ -113,6 +114,7 @@ const path = `/for/${page.slug}`;
       <div class="industry-actions">
         <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_final_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a class="btn btn-ghost" href={page.demoRoute}>View Live Example</a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
       </div>
     </div>
   </section>

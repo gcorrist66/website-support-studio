@@ -40,6 +40,24 @@ const schemas = [
         Choose a design system that feels right. We customize the words, photos, colors, services,
         calls to action, and local trust signals for your business.
       </p>
+      <ul class="conversion-proof-strip" aria-label="Founder Website Package quick facts">
+        <li><strong>$500</strong><span>one-time build</span></li>
+        <li><strong>$199/month</strong><span>locked while active</span></li>
+        <li><strong>You own it</strong><span>site, domain, content</span></li>
+        <li><strong>Back Office</strong><span>leads, requests, plan</span></li>
+      </ul>
+      <div class="hero-actions" style="margin-top:1.25rem;">
+        <a
+          class="btn btn-green btn-cta"
+          href={WEBSITE_PACKAGE.ctaHref}
+          data-ga-event="click_build_my_website"
+          data-ga-secondary-event="stripe_payment_link_click"
+        >
+          Build My Website
+        </a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
+        <a class="btn btn-ghost" href="/pricing">See Pricing</a>
+      </div>
       <div class="accent-bar" style="max-width:240px; margin-top:2rem;"></div>
     </div>
   </section>
@@ -53,7 +71,7 @@ const schemas = [
         {FOUNDER_WEBSITE_INCLUDES.map((item) => <li>{item}</li>)}
       </ul>
       <p style="margin-top:1rem; color:var(--text-muted); max-width:62ch;">
-        One-time {WEBSITE_PACKAGE.price}. After launch: optional managed operations at{" "}
+        One-time {WEBSITE_PACKAGE.price}. After launch: optional website support at{" "}
         {WEBSITE_PACKAGE.afterLaunch.founder}. {WEBSITE_PACKAGE.afterLaunch.standard} You own your
         website and all your accounts.
       </p>
@@ -176,6 +194,7 @@ const schemas = [
         >
           <Label text={WEBSITE_PACKAGE.ctaLabel} />
         </a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office/" data-ga-event="click_back_office_preview">Preview Back Office</a>
         <a class="btn btn-ghost" href="/pricing" data-ga-event="click_pricing">See Pricing</a>
       </div>
     </div>

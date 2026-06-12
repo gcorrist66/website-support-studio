@@ -838,6 +838,41 @@ main {
   margin-top: 1.75rem;
   flex-wrap: wrap;
 }
+.conversion-proof-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: 980px;
+}
+.conversion-proof-strip li {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-elevated);
+  padding: 0.9rem 1rem;
+  box-shadow: 0 14px 40px rgba(11, 18, 32, 0.05);
+}
+.conversion-proof-strip strong,
+.conversion-proof-strip span {
+  display: block;
+}
+.conversion-proof-strip strong {
+  color: var(--text-strong);
+  font-size: 0.98rem;
+}
+.conversion-proof-strip span {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  margin-top: 0.18rem;
+}
+.trust-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
 
 /* Definition / feature lists */
 .deflist {
@@ -946,7 +981,15 @@ main {
     flex-direction: column;
     align-items: stretch;
   }
+  .conversion-proof-strip {
+    grid-template-columns: 1fr;
+  }
+  .trust-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
   .hero-actions .btn,
+  .trust-actions .btn,
   .card .btn {
     width: 100%;
     justify-content: center;

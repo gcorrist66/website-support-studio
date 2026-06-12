@@ -27,8 +27,13 @@ const schemas = [
       <p class="kicker"><Label text="_questions" /></p>
       <h1>questions, answered.</h1>
       <p class="lede" style="margin-top:1rem;">
-        Everything about requests, capacity, platforms, and approvals — in one place.
+        Everything about cost, what happens next, what you own, Website Requests, sample sites, and support — in one place.
       </p>
+      <div class="hero-actions" style="margin-top:1.25rem;">
+        <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref}>Build My Website</a>
+        <a class="btn btn-ghost" href="/templates/">View Sample Sites</a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
+      </div>
 
       {
         FAQ_GROUPS.map((group) => (
@@ -53,7 +58,7 @@ const schemas = [
       <div class="hero-actions">
         <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref}>Build My Website</a>
         <a class="btn btn-ghost" href="/pricing">Review Pricing</a>
-        <a class="btn btn-ghost" href="/contact">Book A Call</a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
       </div>
     </div>
   </section>

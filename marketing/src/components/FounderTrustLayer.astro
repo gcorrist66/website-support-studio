@@ -1,6 +1,7 @@
 ---
 import Faq from "./Faq.astro";
 import Label from "./Label.astro";
+import { WEBSITE_PACKAGE } from "../consts";
 import { FOUNDER_WEBSITE_FAQS } from "../faqs";
 
 const nextSteps = [
@@ -40,8 +41,13 @@ const ownershipItems = [
       <p class="kicker"><Label text="_what_happens_next" /></p>
       <h2>From payment to launched website, the path is visible.</h2>
       <p class="lede">
-        Easy to buy because the path is short; easy to trust because the path is visible.
+        Pay $500, complete a short intake, preview your website, and launch. You own the site, and founder support stays $199/month while your account is active.
       </p>
+      <div class="trust-actions">
+        <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref}>Build My Website</a>
+        <a class="btn btn-ghost" href="/templates/">View Sample Sites</a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
+      </div>
     </div>
 
     <div class="trust-steps" aria-label="Founder Website Package purchase flow">
