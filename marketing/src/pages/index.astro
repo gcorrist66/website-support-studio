@@ -12,6 +12,8 @@ const schemas = [
     path: "/",
   }),
 ];
+
+const homepageModelWebsites = TEMPLATES.slice(0, 6);
 ---
 
 <BaseLayout
@@ -44,12 +46,12 @@ const schemas = [
       <p class="kicker"><Label text="_model_websites" /></p>
       <h2 style="margin-top:0;">See what your $500 website can look like.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Three model websites built for local service businesses. We customize the words, photos,
-        colors, and service areas for your business.
+        Model websites for local businesses. Pick the one closest to your business — we customize
+        the words, photos, colors, and service areas for you.
       </p>
       <div class="model-gallery">
         {
-          TEMPLATES.map((t) => (
+          homepageModelWebsites.map((t) => (
             <article class="card model-card">
               <div class="model-preview">
                 <img src={t.preview.image} alt={t.preview.alt} width="1100" height="720" loading="lazy" />
@@ -80,6 +82,11 @@ const schemas = [
             </article>
           ))
         }
+      </div>
+      <div class="hero-actions" style="margin-top:1.5rem;">
+        <a class="btn btn-ghost" href="/templates" data-ga-event="click_model_gallery_all">
+          See All Model Websites
+        </a>
       </div>
     </div>
   </section>

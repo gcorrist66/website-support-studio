@@ -87,11 +87,10 @@ export const WEBSITE_PACKAGE = {
   ctaHref: "https://buy.stripe.com/5kQ14f8gycXJ4ea4Tt9Zm08",
 } as const;
 
-// ---- Founder Website templates (the $500 package, made tangible) ------------
-// Three launch templates for local service businesses. Preview images are
-// committed representations; Ridgeline Roofing now points to a complete
-// fictional model home at /templates/ridgeline-roofing. The
-// "Start With This Template" CTA reuses the existing Founder Website Package
+// ---- Founder Website model websites (the $500 package, made tangible) -------
+// Model website starting points for local businesses. Ridgeline Roofing also
+// has a complete fictional model home route at /templates/ridgeline-roofing.
+// The "Start With This Website" CTA reuses the existing Founder Website Package
 // Stripe Payment Link unchanged.
 export const FOUNDER_WEBSITE_INCLUDES = [
   "5 pages",
@@ -180,6 +179,131 @@ export const TEMPLATES = [
       label: "Demo business",
       headline: "Plumbing website focused on fast service requests and local coverage.",
       signals: ["Water heater", "Pipes", "Repair", "Service calls"],
+    },
+  },
+  {
+    key: "greenline-landscaping",
+    name: "Greenline Landscaping",
+    industry: "Landscaping",
+    pages: ["Home", "Services", "Seasonal Work", "Service Areas", "Contact"],
+    demoRoute: undefined,
+    features: [
+      "Estimate request form",
+      "Seasonal cleanup callouts",
+      "Service area pages",
+      "Photo-forward project sections",
+      "Click-to-call header and footer",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=1100&q=82",
+      alt: "Landscaping worker trimming a residential lawn",
+      label: "Example website",
+      headline: "Landscaping site for lawn care, cleanups, hardscapes, and seasonal service.",
+      signals: ["Lawn care", "Cleanups", "Hardscapes", "Seasonal work"],
+    },
+  },
+  {
+    key: "honeycomb-salon",
+    name: "Honeycomb Salon",
+    industry: "Salon",
+    pages: ["Home", "Services", "Gallery", "Stylists", "Contact"],
+    demoRoute: undefined,
+    features: [
+      "Appointment-focused calls to action",
+      "Service menu layout",
+      "Portfolio gallery sections",
+      "Stylist profile blocks",
+      "Hours and location details",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1100&q=82",
+      alt: "Hair salon chairs and styling stations",
+      label: "Model website",
+      headline: "Salon website for hair services, appointments, and portfolio galleries.",
+      signals: ["Hair services", "Appointments", "Gallery", "Salon space"],
+    },
+  },
+  {
+    key: "table-hearth",
+    name: "Table & Hearth",
+    industry: "Restaurant",
+    pages: ["Home", "Menu", "Hours", "Reservations", "Contact"],
+    demoRoute: undefined,
+    features: [
+      "Menu highlight sections",
+      "Reservation call to action",
+      "Hours and location block",
+      "Online ordering CTA",
+      "Private event inquiry path",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1100&q=82",
+      alt: "Restaurant table with plated food and wine glasses",
+      label: "Demo business",
+      headline: "Restaurant website built around menus, hours, reservations, and ordering.",
+      signals: ["Menu", "Dining room", "Reservations", "Ordering"],
+    },
+  },
+  {
+    key: "morning-ember-coffee",
+    name: "Morning Ember Coffee",
+    industry: "Coffee Shop",
+    pages: ["Home", "Menu", "Location", "Events", "Contact"],
+    demoRoute: undefined,
+    features: [
+      "Coffee menu layout",
+      "Location and hours block",
+      "Events and catering callouts",
+      "Neighborhood story section",
+      "Click-to-call and directions links",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=1100&q=82",
+      alt: "Coffee shop counter with menu boards and barista station",
+      label: "Example starting point",
+      headline: "Coffee shop website for menu, location, hours, events, and catering.",
+      signals: ["Coffee menu", "Cafe counter", "Hours", "Events"],
+    },
+  },
+  {
+    key: "small-batch-boutique",
+    name: "Small Batch Boutique",
+    industry: "Boutique",
+    pages: ["Home", "Collections", "Products", "Visit", "Contact"],
+    demoRoute: undefined,
+    features: [
+      "Collection highlight sections",
+      "Product preview layout",
+      "Store hours and location",
+      "Local shopping callouts",
+      "Contact and visit CTA",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1100&q=82",
+      alt: "Clothing racks inside a boutique shop",
+      label: "Model website",
+      headline: "Boutique website for products, collections, hours, and local shopping.",
+      signals: ["Collections", "Products", "Retail display", "Shop local"],
     },
   },
 ] as const;

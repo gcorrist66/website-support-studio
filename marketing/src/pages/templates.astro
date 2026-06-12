@@ -14,7 +14,7 @@ const schemas = [
   serviceSchema({
     name: "Founder Website Package — Model Websites",
     description:
-      "Three model website starting points for local service businesses — Ridgeline Roofing, Airflow HVAC, and Mainline Plumbing. Every $500 Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, service area pages, basic SEO, hosting, SSL, launch, and 30 days of support.",
+      "Model website starting points for local businesses including roofing, HVAC, plumbing, landscaping, salons, restaurants, coffee shops, and boutiques. Every $500 Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, launch, and 30 days of support.",
     serviceType: "Website design and launch",
     path: "/templates",
   }),
@@ -27,7 +27,7 @@ const schemas = [
 
 <BaseLayout
   title="Model Websites — See what your $500 website can look like"
-  description="Three model website starting points for local service businesses: Ridgeline Roofing, Airflow HVAC, and Mainline Plumbing. Every Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, hosting, SSL, launch, and 30 days of support."
+  description="Model website starting points for local businesses including roofing, HVAC, plumbing, landscaping, salons, restaurants, coffee shops, and boutiques. Every Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, hosting, SSL, launch, and 30 days of support."
   path="/templates"
   schemas={schemas}
 >
@@ -36,8 +36,8 @@ const schemas = [
       <p class="kicker"><Label text="_model_websites" /></p>
       <h1>See what your $500 website can look like.</h1>
       <p class="lede">
-        Three model websites built for local service businesses. Pick the starting point closest to
-        your trade — we customize the words, photos, colors, and service areas for your business.
+        Model websites for local businesses. Pick the one closest to your business — we customize
+        the words, photos, colors, and service areas for you.
       </p>
       <div class="accent-bar" style="max-width:240px; margin-top:2rem;"></div>
     </div>
@@ -58,11 +58,11 @@ const schemas = [
     </div>
   </section>
 
-  <!-- The three model websites -->
+  <!-- Model website starting points -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container">
       <p class="kicker"><Label text="_starting_points" /></p>
-      <h2 style="margin-top:0;">Three model websites. One per trade.</h2>
+      <h2 style="margin-top:0;">Model websites for businesses like yours.</h2>
       <div style="display:grid; gap:2rem; margin-top:2rem;">
         {
           TEMPLATES.map((t) => (
@@ -104,6 +104,9 @@ const schemas = [
                     >
                       Start With This Website
                     </a>
+                    <a class="btn btn-ghost" href="#whats-customizable" data-ga-event="click_template_compare" data-ga-label={t.key}>
+                      Compare Details
+                    </a>
                   </div>
                 </div>
               </div>
@@ -115,7 +118,7 @@ const schemas = [
   </section>
 
   <!-- Customizable vs custom work -->
-  <section class="section">
+  <section class="section" id="whats-customizable">
     <div class="container">
       <p class="kicker"><Label text="_whats_customizable" /></p>
       <h2 style="margin-top:0;">Made yours, not made from scratch.</h2>
