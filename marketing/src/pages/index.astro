@@ -3,13 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import FounderTrustLayer from "../components/FounderTrustLayer.astro";
 import Label from "../components/Label.astro";
 import { serviceSchema } from "../schema";
-import { DESIGN_SYSTEMS, JOIN_PATH, WEBSITE_PACKAGE } from "../consts";
+import { DESIGN_SYSTEMS, WEBSITE_PACKAGE } from "../consts";
 
 const schemas = [
   serviceSchema({
     name: "Website Support Studio",
     description:
-      "A $500 one-time Founder Website Package: a professional, mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support — then optional managed operations at $199/month. Founder pricing is locked in while your account remains active. Operated by Corriston Consulting, LLC. Customers own their analytics and advertising accounts.",
+      "A $500 one-time Founder Website Package: a professional, mobile-optimized website with contact forms, basic SEO, launch, a simple customer Back Office, and optional managed website support at $199/month locked in while the account remains active. Operated by Corriston Consulting, LLC. Customers own their website, domain, content, analytics, and advertising accounts.",
     path: "/",
   }),
 ];
@@ -19,40 +19,60 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
 
 <BaseLayout
   title="Website Support Studio — Get a Professional Website for $500"
-  description="Get a professional website for $500 — mobile-optimized, contact forms, basic SEO, and launch, plus 30 days of post-launch support. Then optional managed operations at $199/month, locked in while your account remains active. You own your website and all your accounts."
+  description="Get a professional website for $500, then keep it running with Website Support Studio. Founder customers pay $199/month locked while active, own everything, and get a simple Back Office for leads, analytics, testimonials, requests, profile, plan, and support."
   path="/"
   schemas={schemas}
 >
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container">
-      <p class="kicker"><Label text="_founder_website_package" /></p>
-      <h1>Get a professional website for $500.</h1>
-      <p class="lede">
-        A complete, mobile-optimized website — with contact forms, basic SEO, and launch included, plus
-        30 days of post-launch support. Then optional managed operations are $199/month, locked in
-        while your account remains active. You own your website and all your accounts.
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_build_my_website" data-ga-secondary-event="stripe_payment_link_click"><Label text="_build_my_website" /></a>
-        <a class="btn btn-ghost" href={JOIN_PATH} data-ga-event="click_pricing">See Pricing</a>
+  <section class="home-hero home-hero--tight">
+    <div class="container home-hero-grid">
+      <div>
+        <p class="kicker"><Label text="_founder_website_package" /></p>
+        <h1>Get a professional website for $500.</h1>
+        <p class="lede">
+          We build your website, run your website, and Damon keeps track so nothing falls through the cracks.
+          Your Founder plan includes a finished website, a simple Back Office, and ownership of your site,
+          domain, content, and accounts.
+        </p>
+        <div class="home-price-strip" aria-label="Founder Website Package summary">
+          <span><strong>$500</strong> one-time build</span>
+          <span><strong>$199/month</strong> locked while active</span>
+          <span><strong>You own</strong> everything</span>
+        </div>
+        <div class="hero-actions home-actions">
+          <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_build_my_website" data-ga-secondary-event="stripe_payment_link_click"><Label text="_build_my_website" /></a>
+          <a class="btn btn-ghost" href="#examples" data-ga-event="click_home_view_samples">View Sample Sites</a>
+          <a class="btn btn-ghost" href="/templates/sample/back-office" data-ga-event="click_home_preview_back_office">Preview Back Office</a>
+          <a class="btn btn-ghost" href="/contact" data-ga-event="click_home_book_call">Book A Call</a>
+        </div>
       </div>
-      <div class="accent-bar" style="max-width:240px; margin-top:2.5rem;"></div>
+      <aside class="home-back-office-card" aria-label="Back Office preview summary">
+        <div class="home-card-topbar"><span></span><span></span><span></span></div>
+        <p class="kicker">Website + Back Office</p>
+        <h2>What you get after launch</h2>
+        <ul>
+          <li>Leads and form submissions</li>
+          <li>Simple analytics and top pages</li>
+          <li>Website requests and support</li>
+          <li>Testimonials, profile, and plan info</li>
+        </ul>
+        <a class="btn btn-green" href="/templates/sample/back-office" data-ga-event="click_home_card_back_office">Open Sample Back Office</a>
+      </aside>
     </div>
   </section>
 
-  <FounderTrustLayer />
-
-  <!-- Design system catalog — flexible website styles for outreach -->
-  <section class="section" id="examples" style="padding-top:1.5rem;">
+  <section class="section home-examples" id="examples">
     <div class="container">
-      <p class="kicker"><Label text="_design_systems" /></p>
-      <h2 style="margin-top:0;">Choose the website style you want.</h2>
-      <p class="lede" style="margin-top:0.75rem;">
-        Choose the website style you like. We customize the words, photos, colors, services,
-        calls to action, and local trust signals for your business.
-      </p>
-      <div class="model-gallery">
+      <div class="home-section-head">
+        <div>
+          <p class="kicker"><Label text="_sample_websites" /></p>
+          <h2>See what your $500 website can look like.</h2>
+        </div>
+        <p>
+          Choose a website style you like. We customize the words, photos, colors, services,
+          calls to action, and local details for your business.
+        </p>
+      </div>
+      <div class="model-gallery home-model-gallery">
         {
           homepageDesignSystems.map((t) => (
             <article class="card model-card">
@@ -81,7 +101,7 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
                 >
                   Start With This Style
                 </a>
-                {t.sampleSites.slice(0, 3).map((site) => (
+                {t.sampleSites.slice(0, 2).map((site) => (
                   <a class="btn btn-ghost" href={site.href} data-ga-event="click_home_sample_site" data-ga-label={`${t.key}_${site.label.toLowerCase().replaceAll(" ", "_")}`}>
                     {site.label}
                   </a>
@@ -91,103 +111,111 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
           ))
         }
       </div>
-      <div class="hero-actions" style="margin-top:1.5rem;">
-        <a class="btn btn-ghost" href="/templates" data-ga-event="click_model_gallery_all">
-          See All Design Systems
-        </a>
+      <div class="hero-actions home-actions" style="margin-top:1.5rem;">
+        <a class="btn btn-ghost" href="/templates" data-ga-event="click_model_gallery_all">View All Sample Sites</a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office" data-ga-event="click_model_gallery_back_office">Preview Back Office</a>
       </div>
     </div>
   </section>
 
-  <!-- Definition / summary block for answer engines -->
-  <section class="section" style="padding-top:1rem;">
+  <section class="section home-story">
     <div class="container">
-      <div class="summary" style="max-width:760px;">
-        <strong>In one sentence.</strong> Website Support Studio builds and launches a professional
-        website for a one-time $500 — then optionally keeps it running with managed operations
-        at $199/month, locked in while your account remains active — while you keep ownership of
-        your website and every analytics and advertising account.
+      <p class="kicker">The Website Support Studio story</p>
+      <h2>We build your website. We run your website. Damon makes sure nothing falls through the cracks.</h2>
+      <div class="grid grid-3" style="margin-top:1.5rem;">
+        <article class="card">
+          <h3>We build your website</h3>
+          <p>A professional, mobile-ready site with clear pages, contact forms, basic SEO, and launch support for a one-time $500 build.</p>
+        </article>
+        <article class="card">
+          <h3>We run your website</h3>
+          <p>After launch, Website Support Studio helps with updates, fixes, page changes, forms, content, and support so your site keeps moving.</p>
+        </article>
+        <article class="card">
+          <h3>Damon keeps track</h3>
+          <p>Damon is the WSS system that keeps your website requests organized, visible, and followed up so details do not disappear in email.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- The problem -->
+  <section class="section home-back-office" style="background:var(--surface-muted);">
+    <div class="container home-back-office-grid">
+      <div>
+        <p class="kicker">Your Back Office</p>
+        <h2>One simple place to check your website.</h2>
+        <p class="lede" style="margin-top:0.75rem;">
+          Your Back Office gives you leads, analytics, website requests, testimonials, business profile,
+          plan details, and support in one practical customer dashboard.
+        </p>
+        <p>
+          Future upgrades can connect reporting from Google Analytics, Search Console, social channels,
+          and other tools as your website grows.
+        </p>
+        <div class="hero-actions home-actions">
+          <a class="btn btn-green" href="/templates/sample/back-office" data-ga-event="click_home_back_office_preview">Preview Back Office</a>
+          <a class="btn btn-ghost" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_home_back_office_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+        </div>
+      </div>
+      <div class="home-dashboard-mini" aria-label="Sample Back Office dashboard preview">
+        <div class="home-dashboard-nav">
+          <strong>Marigold & Mane Back Office</strong>
+          <span>Sample customer dashboard</span>
+        </div>
+        <div class="home-dashboard-stats">
+          <span><strong>1,248</strong> visits</span>
+          <span><strong>23</strong> leads</span>
+          <span><strong>4</strong> requests</span>
+          <span><strong>2</strong> reviews</span>
+        </div>
+        <div class="home-dashboard-table">
+          <p><strong>Maya R.</strong><span>Contact page</span><em>New</em></p>
+          <p><strong>Chris D.</strong><span>Services page</span><em>Replied</em></p>
+          <p><strong>Jordan P.</strong><span>Homepage CTA</span><em>Booked</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FounderTrustLayer />
+
+  <section class="section home-ownership">
+    <div class="container">
+      <div class="summary home-summary">
+        <strong>Simple version:</strong> Website Support Studio builds and launches your site for a one-time $500.
+        If you want WSS to keep helping after launch, Founder customers keep $199/month pricing while the account
+        remains active. You own your website, domain, content, and connected accounts.
+      </div>
+    </div>
+  </section>
+
   <section class="section" style="background:var(--surface-muted);">
     <div class="container">
-      <p class="kicker"><Label text="_problem" /></p>
-      <h2>Websites generate revenue. Their support rarely matches their importance.</h2>
-      <div class="grid grid-3" style="margin-top:2rem;">
-        <div class="card">
-          <h3>Support is fragmented</h3>
-          <p>Requests live in email, chat, project tools, and hallway asks. No one sees the full queue, and work falls through the gaps.</p>
-        </div>
-        <div class="card">
-          <h3>Agencies disappear</h3>
-          <p>External partners rotate staff and deprioritize accounts. The knowledge of how your site is wired leaves with them.</p>
-        </div>
-        <div class="card">
-          <h3>Internal teams are overloaded</h3>
-          <p>The people who could make a change are already running campaigns, releases, and incidents. Maintenance loses.</p>
-        </div>
-        <div class="card">
-          <h3>Ownership is unclear</h3>
-          <p>When something breaks, the first hour goes to deciding whose job it is — exactly when accountability matters most.</p>
-        </div>
-        <div class="card">
-          <h3>Changes ship unreviewed</h3>
-          <p>Under pressure, edits go live without a second set of eyes. Defects and brand drift reach customers first.</p>
-        </div>
-        <div class="card">
-          <h3>No record of decisions</h3>
-          <p>Without an audit trail, "who changed this and who approved it" has no answer when leadership or compliance asks.</p>
-        </div>
+      <p class="kicker">Why small businesses choose WSS</p>
+      <h2>A website should not become another thing you have to chase.</h2>
+      <div class="grid grid-3" style="margin-top:1.5rem;">
+        <article class="card">
+          <h3>Clear next steps</h3>
+          <p>You know what happens after payment: short intake, build, preview, adjustments, launch, and support.</p>
+        </article>
+        <article class="card">
+          <h3>Built to be yours</h3>
+          <p>Your site, domain, content, photos, analytics, and accounts belong to you. You can leave without losing your website.</p>
+        </article>
+        <article class="card">
+          <h3>Help after launch</h3>
+          <p>Need a change, new photo, fixed form, new page, or clearer wording? Submit a Website Request from your Back Office.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- The approach — expanded around the _daemon concept -->
-  <section class="section">
-    <div class="container">
-      <p class="kicker"><Label text="_approach" /></p>
-      <h2>One operating model, run like a daemon.</h2>
-      <div class="summary" style="max-width:780px; margin-top:1rem;">
-        <strong><Label text="_daemon" />.</strong> Think of Website Support Studio as a daemon for your
-        website — an always-on operational process that watches one queue, picks up every request, and runs
-        it through the same disciplined lifecycle. It doesn't sleep, it doesn't lose tickets, and it never
-        ships without sign-off. The four commitments below are how that daemon runs.
-      </div>
-      <dl class="deflist grid grid-2" style="margin-top:2rem;">
-        <div class="card">
-          <dt>Operational visibility</dt>
-          <dd>Every request enters one desk and becomes visible work — with a status, an owner, and a stage. The queue is shared, not scattered across inboxes.</dd>
-        </div>
-        <div class="card">
-          <dt>Managed support</dt>
-          <dd>The Website Support Studio support process triages, prepares, and delivers each change. You get the outcome without staffing, training, and supervising the work yourself.</dd>
-        </div>
-        <div class="card">
-          <dt>Defined response workflows</dt>
-          <dd>Each request follows a deterministic lifecycle — received, triaged, drafted, approved, delivered, closed — with defined handling for urgent and exceptional cases.</dd>
-        </div>
-        <div class="card">
-          <dt>Accountability</dt>
-          <dd>No customer-facing change ships without a mandatory human approval. The platform records who approved what, and when, for every request.</dd>
-        </div>
-      </dl>
-      <div class="hero-actions">
-        <a class="btn btn-ghost" href="/services">Explore Services</a>
-        <a class="btn btn-ghost" href="/articles/introducing-website-support-studio">Read the Launch Announcement</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Questions → single source of truth at /faqs -->
-  <section class="section" style="background:var(--surface-muted);">
+  <section class="section" style="background:var(--surface-muted); padding-top:1rem;">
     <div class="container" style="max-width:820px;">
       <p class="kicker"><Label text="_questions" /></p>
       <h2>Questions, answered.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        How requests work, response times, platforms, approvals, and pricing — all in one place.
+        What happens after payment, what is included, what you own, how requests work, and how Founder pricing stays locked while active.
       </p>
       <p style="margin-top:1.25rem;">
         <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
@@ -202,14 +230,52 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
         <h2>Ready to turn one of these sample sites into your website?</h2>
         <p>
           Secure your Founder Website Package, send us your business details, and we will shape the words,
-          photos, colors, and pages around your company.
+          photos, colors, pages, and Back Office around your company.
         </p>
       </div>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref}>Build My Website</a>
-        <a class="btn btn-ghost" href="/contact">Book A Call</a>
-        <a class="btn btn-ghost" href="/templates">View Sample Sites</a>
+      <div class="hero-actions home-actions">
+        <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_home_final_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+        <a class="btn btn-ghost" href="/templates" data-ga-event="click_home_final_samples">View Sample Sites</a>
+        <a class="btn btn-ghost" href="/templates/sample/back-office" data-ga-event="click_home_final_back_office">Preview Back Office</a>
+        <a class="btn btn-ghost" href="/contact" data-ga-event="click_home_final_book_call">Book A Call</a>
       </div>
     </div>
   </section>
+
+  <style>
+    .home-hero--tight { padding:clamp(2.25rem,5vw,4.25rem) 0 clamp(1.25rem,3vw,2rem); }
+    .home-hero-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,.72fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:center; }
+    .home-hero h1 { max-width:11ch; margin:.55rem 0 0; font-size:clamp(3rem,8vw,5.8rem); line-height:.92; letter-spacing:-.06em; }
+    .home-hero .lede { max-width:64ch; margin-top:1rem; }
+    .home-price-strip { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1rem; }
+    .home-price-strip span { display:inline-flex; align-items:center; gap:.35rem; border:1px solid var(--border); border-radius:999px; padding:.55rem .75rem; background:var(--surface); color:var(--text-muted); font-size:.92rem; }
+    .home-price-strip strong { color:var(--text); }
+    .home-actions { gap:.65rem; margin-top:1.1rem; }
+    .home-back-office-card { border:1px solid var(--border); border-radius:1.5rem; padding:1rem; background:linear-gradient(180deg,#fff,var(--surface-muted)); box-shadow:0 22px 70px rgba(15,23,42,.08); }
+    .home-card-topbar { display:flex; gap:.35rem; margin-bottom:1rem; }
+    .home-card-topbar span { width:.7rem; height:.7rem; border-radius:999px; background:var(--border); }
+    .home-back-office-card h2 { margin:.25rem 0 .65rem; font-size:1.55rem; }
+    .home-back-office-card ul { display:grid; gap:.55rem; margin:0 0 1rem; padding:0; list-style:none; color:var(--text-muted); }
+    .home-back-office-card li { padding:.6rem .7rem; border:1px solid var(--border); border-radius:.8rem; background:#fff; }
+    .home-examples { padding-top:clamp(1.5rem,3vw,2.5rem); }
+    .home-section-head { display:grid; grid-template-columns:minmax(0,.95fr) minmax(260px,.7fr); gap:1rem; align-items:end; margin-bottom:1.25rem; }
+    .home-section-head h2 { margin-top:0; }
+    .home-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
+    .home-model-gallery { margin-top:0; }
+    .home-story h2 { max-width:960px; }
+    .home-back-office-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(320px,1fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:center; }
+    .home-dashboard-mini { border:1px solid var(--border); border-radius:1.35rem; background:#fff; box-shadow:0 22px 70px rgba(15,23,42,.08); overflow:hidden; }
+    .home-dashboard-nav { display:flex; justify-content:space-between; gap:1rem; align-items:center; padding:1rem; border-bottom:1px solid var(--border); background:#f8faf6; }
+    .home-dashboard-nav span { color:var(--text-muted); font-family:var(--font-mono); font-size:.72rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
+    .home-dashboard-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.5rem; padding:1rem; }
+    .home-dashboard-stats span { display:grid; gap:.15rem; border:1px solid var(--border); border-radius:.8rem; padding:.75rem; color:var(--text-muted); background:var(--surface-muted); font-size:.82rem; }
+    .home-dashboard-stats strong { color:var(--text); font-size:1.35rem; }
+    .home-dashboard-table { display:grid; gap:.4rem; padding:0 1rem 1rem; }
+    .home-dashboard-table p { display:grid; grid-template-columns:1fr 1fr auto; gap:.75rem; align-items:center; margin:0; padding:.75rem; border:1px solid var(--border); border-radius:.75rem; color:var(--text-muted); }
+    .home-dashboard-table strong { color:var(--text); }
+    .home-dashboard-table em { font-style:normal; border-radius:999px; padding:.25rem .45rem; background:#e8f4ec; color:#17633f; font-family:var(--font-mono); font-size:.7rem; font-weight:900; }
+    .home-summary { max-width:880px; }
+    @media (max-width:900px) { .home-hero-grid,.home-section-head,.home-back-office-grid { grid-template-columns:1fr; } .home-hero h1 { max-width:100%; font-size:clamp(2.8rem,14vw,4.5rem); } .home-dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:640px) { .home-hero--tight { padding-top:1.75rem; } .home-actions .btn { width:100%; justify-content:center; } .home-price-strip span { width:100%; } .home-dashboard-nav,.home-dashboard-table p { display:grid; } .home-dashboard-stats { grid-template-columns:1fr; } }
+  </style>
 </BaseLayout>

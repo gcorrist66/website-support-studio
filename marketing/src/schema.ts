@@ -35,7 +35,7 @@ export function organizationSchema() {
     logo: abs("/website-support-studio.svg"),
     image: abs(DEFAULT_OG_IMAGE),
     description:
-      "Website Support Studio is a managed website operations and support platform for organizations with revenue-critical websites. Operated by Corriston Consulting, LLC.",
+      "Website Support Studio builds professional websites, provides a simple customer Back Office, and supports small businesses after launch. Operated by Corriston Consulting, LLC.",
     founder: { "@type": "Person", "@id": ID.founder, name: ORG.founder },
     parentOrganization: {
       "@type": "Organization",
@@ -96,7 +96,7 @@ export function serviceSchema(opts: {
     areaServed: { "@type": "Country", name: "United States" },
     audience: {
       "@type": "Audience",
-      audienceType: "Enterprise marketing, marketing operations, digital, and IT teams",
+      audienceType: "Small business owners and local service businesses",
     },
     offers: {
       "@type": "Offer",
@@ -104,7 +104,6 @@ export function serviceSchema(opts: {
       priceSpecification: {
         "@type": "PriceSpecification",
         priceCurrency: "USD",
-        // Enterprise engagements are quoted per scope.
         description: "Custom pricing by engagement. Contact sales for a quote.",
       },
     },
