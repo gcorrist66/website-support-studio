@@ -1,0 +1,8 @@
+---
+import MoonroomCoffeeLayout from "../../../../../components/MoonroomCoffeeLayout.astro";
+import { moonroom, moonroomMenu } from "../../../../../moonroomCoffee";
+---
+<MoonroomCoffeeLayout title="Menu — Moonroom Coffee" description="Menu page for the fictional Moonroom Coffee sample website." path="/templates/luna/coffee-shop/menu">
+  <section class="mc-section mc-hero"><div class="mc-container"><p class="mc-sample">{moonroom.badge}</p><p class="mc-eyebrow">Menu</p><h1>Small menu, clear favorites, easy visit.</h1><p class="mc-lede">A coffee shop menu should be readable on a phone, specific enough to feel real, and simple enough for a first-time visitor to choose quickly.</p></div></section>
+  <section class="mc-section mc-soft"><div class="mc-container"><div class="mc-card-grid">{moonroomMenu.map((item) => <article class="mc-card"><h3>{item.name}</h3><p class="mc-price">{item.price}</p><p>{item.body}</p></article>)}</div><div class="mc-actions"><a class="mc-btn mc-btn-primary" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a></div></div></section>
+</MoonroomCoffeeLayout>

@@ -1,0 +1,8 @@
+---
+import MoonroomCoffeeLayout from "../../../../../components/MoonroomCoffeeLayout.astro";
+import { moonroom, moonroomTrust } from "../../../../../moonroomCoffee";
+---
+<MoonroomCoffeeLayout title="About — Moonroom Coffee" description="About page for the fictional Moonroom Coffee sample website." path="/templates/luna/coffee-shop/about">
+  <section class="mc-section mc-hero"><div class="mc-container mc-split"><div><p class="mc-sample">{moonroom.badge}</p><p class="mc-eyebrow">About</p><h1>A little coffee room for the neighborhood.</h1><p class="mc-lede">Moonroom Coffee is a fictional sample business built around the details a real cafe website needs: a memorable atmosphere, clear hours, menu highlights, and community reasons to come back.</p></div><div class="mc-card"><h3>Sample cafe story</h3><p>The shop voice is warm and practical: good espresso, a pastry case worth stopping for, tables that work for quick laptop mornings, and weekend events that make the space feel local.</p></div></div></section>
+  <section class="mc-section mc-soft"><div class="mc-container mc-split"><div><h2>What the site communicates</h2><p>A polished coffee shop website should tell visitors what it feels like to walk in, what they can order, when it is open, and how to ask about gatherings or coffee boxes.</p></div><div class="mc-card"><h3>Built-in trust points</h3><ul class="mc-info-list">{moonroomTrust.map((item) => <li>{item}</li>)}</ul></div></div></section>
+</MoonroomCoffeeLayout>

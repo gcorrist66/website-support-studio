@@ -1,0 +1,9 @@
+---
+import MoonroomCoffeeLayout from "../../../../../components/MoonroomCoffeeLayout.astro";
+import { moonroom, moonroomEvents, moonroomFeatured } from "../../../../../moonroomCoffee";
+---
+<MoonroomCoffeeLayout title="Events — Moonroom Coffee" description="Events and catering page for the fictional Moonroom Coffee sample website." path="/templates/luna/coffee-shop/events">
+  <section class="mc-section mc-hero"><div class="mc-container"><p class="mc-sample">{moonroom.badge}</p><p class="mc-eyebrow">Events</p><h1>Weekend pop-ups and coffee for small teams.</h1><p class="mc-lede">Moonroom has enough community detail to feel like a cafe people would actually visit, without inventing testimonials or customer results.</p></div></section>
+  <section class="mc-section mc-soft"><div class="mc-container"><div class="mc-card-grid">{moonroomEvents.map((event) => <article class="mc-card"><h3>{event.title}</h3><p>{event.body}</p></article>)}</div><div class="mc-actions"><a class="mc-btn mc-btn-primary" href="/templates/luna/coffee-shop/contact#visit">Ask About Events</a></div></div></section>
+  <section class="mc-section"><div class="mc-container"><p class="mc-eyebrow">Good for</p><div class="mc-gallery-grid">{moonroomFeatured.map((item) => <div class="mc-gallery-tile">{item}</div>)}</div></div></section>
+</MoonroomCoffeeLayout>

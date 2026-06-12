@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { moonroom, moonroomNav } from "../moonroomCoffee";
+
+const { title, description, path } = Astro.props as { title: string; description: string; path: string };
+---
+
+<BaseLayout title={title} description={description} path={path}>
+  <div class="mc-site">
+    <header class="mc-header">
+      <a class="mc-logo" href="/templates/luna/coffee-shop" aria-label="Moonroom Coffee home"><span>Moonroom</span><small>Coffee</small></a>
+      <nav class="mc-nav" aria-label="Moonroom Coffee navigation">
+        {moonroomNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a>
+    </header>
+    <slot />
+    <section class="mc-founder-cta">
+      <div>
+        <p class="mc-eyebrow">Founder Website Package</p>
+        <h2>Want a website like Moonroom Coffee?</h2>
+        <p>This sample business shows the style and completeness your $500 Founder Website can start from. We customize the words, photos, menu, services, and local details for your business.</p>
+      </div>
+      <div class="mc-actions">
+        <a class="mc-btn mc-btn-primary" href={moonroom.checkoutHref} data-ga-event="click_moonroom_build_my_website" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+        <a class="mc-btn mc-btn-secondary" href={moonroom.checkoutHref} data-ga-event="click_moonroom_start_luna" data-ga-secondary-event="stripe_payment_link_click">Start With Luna</a>
+        <a class="mc-btn mc-btn-quiet" href={moonroom.checkoutHref} data-ga-event="click_moonroom_use_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+      </div>
+    </section>
+    <footer class="mc-footer">
+      <div><strong>{moonroom.name}</strong><p>{moonroom.location}</p><p>{moonroom.badge} · Fictional example. Not a real coffee shop.</p></div>
+      <div><p>{moonroom.address}</p><p><a href={moonroom.phoneHref}>{moonroom.phoneLabel}</a></p></div>
+    </footer>
+    <div class="mc-sticky"><a href={moonroom.checkoutHref} data-ga-event="click_moonroom_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+  </div>
+
+  <style is:inline>
+    body[data-page^="/templates/luna/coffee-shop"] .site-header,
+    body[data-page^="/templates/luna/coffee-shop"] .site-footer,
+    body[data-page^="/templates/luna/coffee-shop"] .skip-link { display: none; }
+    body[data-page^="/templates/luna/coffee-shop"] { background:#f6efe2; }
+    .mc-site { --mc-ink:#21150f; --mc-muted:#755f50; --mc-cream:#f6efe2; --mc-foam:#fffaf1; --mc-caramel:#b8783f; --mc-espresso:#3a2418; --mc-card:rgba(255,250,241,.78); min-height:100vh; color:var(--mc-ink); background:radial-gradient(circle at 85% 5%,rgba(184,120,63,.18),transparent 28rem),linear-gradient(180deg,#fffaf1,#f1e0ce 58%,#f7efe4); font-family:Georgia,"Times New Roman",serif; }
+    .mc-site h1,.mc-site h2,.mc-site h3 { color:var(--mc-ink); font-family:Georgia,"Times New Roman",serif; letter-spacing:-.052em; }
+    .mc-site p,.mc-site li { color:var(--mc-muted); }
+    .mc-header { position:sticky; top:0; z-index:70; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem clamp(1rem,4vw,3rem); border-bottom:1px solid rgba(58,36,24,.15); background:rgba(246,239,226,.9); backdrop-filter:blur(14px); }
+    .mc-logo { display:grid; color:var(--mc-ink); line-height:.9; font-size:1.45rem; font-weight:900; }
+    .mc-logo small { color:var(--mc-caramel); font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; }
+    .mc-nav { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-family:var(--font-mono); font-size:.82rem; }
+    .mc-nav a,.mc-footer a { color:var(--mc-ink); }
+    .mc-nav a[aria-current="page"] { color:var(--mc-caramel); font-weight:900; }
+    .mc-visit,.mc-btn,.mc-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--mc-caramel); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
+    .mc-visit,.mc-btn-primary,.mc-sticky a { background:var(--mc-espresso); color:#fff; border-color:var(--mc-espresso); }
+    .mc-btn-secondary { background:#fffaf1; color:var(--mc-ink); }
+    .mc-btn-quiet { color:var(--mc-ink); background:transparent; }
+    .mc-section { padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem); }
+    .mc-container { max-width:1120px; margin:0 auto; }
+    .mc-eyebrow,.mc-sample { display:inline-flex; width:fit-content; border-radius:999px; font-family:var(--font-mono); font-size:.76rem; font-weight:900; letter-spacing:.04em; text-transform:uppercase; }
+    .mc-eyebrow { color:var(--mc-caramel); }
+    .mc-sample { padding:.32rem .65rem; border:1px dashed rgba(184,120,63,.55); color:var(--mc-muted); background:rgba(255,250,241,.72); }
+    .mc-hero-grid,.mc-split { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.9fr); gap:clamp(1.4rem,5vw,3.5rem); align-items:center; }
+    .mc-hero h1 { max-width:11ch; margin:.8rem 0 0; font-size:clamp(3.1rem,11vw,7.2rem); line-height:.88; }
+    .mc-lede { max-width:58ch; font-size:1.12rem; line-height:1.75; }
+    .mc-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.25rem; }
+    .mc-photo-card { position:relative; min-height:480px; overflow:hidden; border-radius:2rem; border:1px solid rgba(58,36,24,.16); box-shadow:0 34px 90px rgba(33,21,15,.18); background:#dbc4a8; }
+    .mc-photo-card img,.mc-image { display:block; width:100%; height:100%; object-fit:cover; }
+    .mc-caption { position:absolute; left:1rem; right:1rem; bottom:1rem; border-radius:999px; padding:.55rem .8rem; color:#fff; background:rgba(33,21,15,.78); font-family:var(--font-mono); font-size:.78rem; font-weight:800; }
+    .mc-card-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.4rem; }
+    .mc-card { border:1px solid rgba(58,36,24,.16); border-radius:1.4rem; padding:1.25rem; background:var(--mc-card); box-shadow:0 18px 50px rgba(33,21,15,.08); }
+    .mc-card h3 { margin:0; font-size:1.35rem; }
+    .mc-price { margin:.7rem 0 0; color:var(--mc-caramel) !important; font-family:var(--font-mono); font-weight:900; font-size:.9rem; }
+    .mc-soft { background:rgba(219,196,168,.42); }
+    .mc-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.9rem; margin-top:1.4rem; }
+    .mc-gallery-tile { min-height:220px; display:flex; align-items:end; border-radius:1.6rem; padding:1rem; color:#fff; font-weight:900; background:linear-gradient(180deg,transparent,rgba(33,21,15,.8)),radial-gradient(circle at 20% 10%,#d7a66f,var(--mc-espresso)); }
+    .mc-info-list { display:grid; gap:.7rem; padding:0; margin:1rem 0 0; list-style:none; }
+    .mc-info-list li { padding:.8rem; border-radius:1rem; background:rgba(255,250,241,.78); border:1px solid rgba(58,36,24,.12); }
+    .mc-form { display:grid; gap:.85rem; }
+    .mc-form label { display:grid; gap:.4rem; color:var(--mc-ink); font-family:var(--font-mono); font-weight:800; font-size:.82rem; }
+    .mc-form input,.mc-form select,.mc-form textarea { width:100%; border:1px solid rgba(58,36,24,.2); border-radius:1rem; padding:.8rem; background:#fffaf1; font:inherit; }
+    .mc-form textarea { min-height:120px; resize:vertical; }
+    .mc-founder-cta { display:flex; align-items:center; justify-content:space-between; gap:1.25rem; margin:0 clamp(1rem,4vw,3rem) 2rem; padding:clamp(1.25rem,4vw,2rem); border-radius:2rem; background:var(--mc-espresso); color:#fff; }
+    .mc-founder-cta h2,.mc-founder-cta p { color:#fff; }
+    .mc-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(58,36,24,.15); }
+    .mc-sticky { display:none; }
+    @media (max-width:900px) { .mc-header{align-items:start}.mc-nav,.mc-visit{display:none}.mc-hero-grid,.mc-split,.mc-card-grid,.mc-gallery-grid,.mc-founder-cta,.mc-footer{grid-template-columns:1fr;display:grid}.mc-photo-card{min-height:330px}.mc-hero h1{max-width:100%}.mc-section{padding-left:1rem;padding-right:1rem}.mc-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,241,.92);border:1px solid rgba(184,120,63,.28);box-shadow:0 16px 44px rgba(33,21,15,.2);backdrop-filter:blur(12px)}.mc-sticky a{width:100%} }
+  </style>
+</BaseLayout>
