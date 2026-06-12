@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import FounderTrustLayer from "../components/FounderTrustLayer.astro";
 import Label from "../components/Label.astro";
 import { serviceSchema } from "../schema";
-import { JOIN_PATH, TEMPLATES, WEBSITE_PACKAGE } from "../consts";
+import { DESIGN_SYSTEMS, JOIN_PATH, WEBSITE_PACKAGE } from "../consts";
 
 const schemas = [
   serviceSchema({
@@ -14,7 +14,7 @@ const schemas = [
   }),
 ];
 
-const homepageModelWebsites = TEMPLATES.slice(0, 6);
+const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
 ---
 
 <BaseLayout
@@ -43,18 +43,18 @@ const homepageModelWebsites = TEMPLATES.slice(0, 6);
 
   <FounderTrustLayer />
 
-  <!-- Model website gallery — polished examples for outreach -->
+  <!-- Design system catalog — flexible website styles for outreach -->
   <section class="section" id="examples" style="padding-top:1.5rem;">
     <div class="container">
-      <p class="kicker"><Label text="_model_websites" /></p>
-      <h2 style="margin-top:0;">See what your $500 website can look like.</h2>
+      <p class="kicker"><Label text="_design_systems" /></p>
+      <h2 style="margin-top:0;">Choose the website style you want.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Model websites for local businesses. Pick the one closest to your business — we customize
-        the words, photos, colors, and service areas for you.
+        Choose the website style you like. We customize the words, photos, colors, services,
+        calls to action, and local trust signals for your business.
       </p>
       <div class="model-gallery">
         {
-          homepageModelWebsites.map((t) => (
+          homepageDesignSystems.map((t) => (
             <article class="card model-card">
               <div class="model-preview">
                 <img src={t.preview.image} alt={t.preview.alt} width="1100" height="720" loading="lazy" />
@@ -68,7 +68,10 @@ const homepageModelWebsites = TEMPLATES.slice(0, 6);
               <ul class="model-signals" aria-label={`${t.name} visual signals`}>
                 {t.preview.signals.map((signal) => <li>{signal}</li>)}
               </ul>
-              <div class="template-actions">
+              <p class="design-system-adapt">
+                Starts from {t.adaptableFrom}; can become {t.adaptableTo.slice(0, 3).join(", ")}.
+              </p>
+              <div class="design-system-actions">
                 <a
                   class="btn btn-green btn-cta"
                   href={WEBSITE_PACKAGE.ctaHref}
@@ -76,10 +79,10 @@ const homepageModelWebsites = TEMPLATES.slice(0, 6);
                   data-ga-secondary-event="stripe_payment_link_click"
                   data-ga-label={t.key}
                 >
-                  Start With This Website
+                  Start With This Style
                 </a>
                 <a class="btn btn-ghost" href={`/templates#${t.key}`} data-ga-event="click_template_details" data-ga-label={t.key}>
-                  Compare Starting Points
+                  Compare Website Styles
                 </a>
               </div>
             </article>
@@ -88,7 +91,7 @@ const homepageModelWebsites = TEMPLATES.slice(0, 6);
       </div>
       <div class="hero-actions" style="margin-top:1.5rem;">
         <a class="btn btn-ghost" href="/templates" data-ga-event="click_model_gallery_all">
-          See All Model Websites
+          See All Design Systems
         </a>
       </div>
     </div>

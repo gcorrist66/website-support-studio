@@ -87,10 +87,11 @@ export const WEBSITE_PACKAGE = {
   ctaHref: "https://buy.stripe.com/5kQ14f8gycXJ4ea4Tt9Zm08",
 } as const;
 
-// ---- Founder Website model websites (the $500 package, made tangible) -------
-// Model website starting points for local businesses. Ridgeline Roofing also
-// has a complete fictional model home route at /templates/ridgeline-roofing.
-// The "Start With This Website" CTA reuses the existing Founder Website Package
+// ---- Founder Website design systems (the $500 package, made flexible) ----
+// Design system starting points for local businesses. Customers choose the
+// website style they like; Website Support Studio adapts the words, photos,
+// colors, services, calls to action, and local trust signals to their business.
+// The "Start With This Style" CTA reuses the existing Founder Website Package
 // Stripe Payment Link unchanged.
 export const FOUNDER_WEBSITE_INCLUDES = [
   "5 pages",
@@ -105,19 +106,87 @@ export const FOUNDER_WEBSITE_INCLUDES = [
   "30 days support",
 ] as const;
 
-export const TEMPLATES = [
+export const DESIGN_SYSTEMS = [
   {
-    key: "ridgeline-roofing",
-    name: "Ridgeline Roofing",
-    industry: "Roofing",
-    pages: ["Home", "Services", "Service Areas", "About", "Contact"],
-    demoRoute: "/templates/ridgeline-roofing",
+    key: "harbor",
+    name: "Harbor",
+    personality: "Calm, trustworthy, polished, established.",
+    visualStyle: "Soft neutrals, deep blue accents, generous whitespace, clean cards, and trust-first sections.",
+    industry: "Professional services, medical, wellness, home services",
+    pages: ["Home", "Services", "Proof", "Service Areas", "Contact"],
+    demoRoute: undefined,
+    fits: ["Professional services", "Medical offices", "Wellness", "Home services"],
+    exampleBusinesses: ["Dental office", "Bookkeeping firm", "Physical therapy clinic", "Home inspection company"],
+    adaptableFrom: "Dental office",
+    adaptableTo: ["Roofing company", "Financial planner", "Med spa", "Therapist", "Home inspection company"],
     features: [
-      "Free estimate request form",
-      "Storm damage callout section",
-      "Project gallery layout",
+      "Trust-forward hero and proof sections",
+      "Clear service architecture",
+      "Appointment or estimate calls to action",
+      "Local credibility blocks",
+      "Contact and intake path",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1100&q=82",
+      alt: "Polished professional office lounge with calm blue seating",
+      label: "Design system",
+      headline: "A calm, polished website style for businesses that need trust fast.",
+      signals: ["Trust", "Services", "Proof", "Appointments"],
+    },
+  },
+  {
+    key: "luna",
+    name: "Luna",
+    personality: "Elegant, warm, stylish, intimate.",
+    visualStyle: "Soft contrast, editorial imagery, rounded cards, refined type, warm neutrals, and boutique spacing.",
+    industry: "Salon, boutique, cafe, restaurant, wellness",
+    pages: ["Home", "Services", "Gallery", "About", "Contact"],
+    demoRoute: undefined,
+    fits: ["Salons", "Boutiques", "Coffee shops", "Restaurants", "Wellness studios"],
+    exampleBusinesses: ["Hair salon", "Local boutique", "Candle shop", "Yoga studio", "Brunch cafe"],
+    adaptableFrom: "Salon",
+    adaptableTo: ["Boutique", "Coffee shop", "Restaurant", "Wellness studio", "Florist"],
+    features: [
+      "Image-led hero and service menus",
+      "Gallery or portfolio sections",
+      "Appointment and visit calls to action",
+      "Hours and location blocks",
+      "Warm brand story section",
+    ],
+    images: {
+      desktop: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=700&q=82",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1100&q=82",
+      alt: "Elegant salon chairs and styling stations",
+      label: "Website style",
+      headline: "A warm, image-led website style for businesses where atmosphere matters.",
+      signals: ["Style", "Gallery", "Appointments", "Local visits"],
+    },
+  },
+  {
+    key: "summit",
+    name: "Summit",
+    personality: "Bold, capable, outdoorsy, dependable.",
+    visualStyle: "Strong hero imagery, rugged contrast, slate tones, safety accents, direct CTAs, and action-first layouts.",
+    industry: "Contractors, roofing, landscaping, outdoor services",
+    pages: ["Home", "Services", "Service Areas", "Proof", "Contact"],
+    demoRoute: "/templates/ridgeline-roofing",
+    fits: ["Roofing", "Landscaping", "Tree service", "Exterior painting", "Outdoor services"],
+    exampleBusinesses: ["Roofing company", "Landscaping crew", "Tree service", "Window installer", "Exterior painter"],
+    adaptableFrom: "Roofing company",
+    adaptableTo: ["Landscaping business", "Tree service", "Exterior painting company", "Gym", "Outdoor equipment rental"],
+    features: [
+      "Estimate-first conversion path",
+      "Emergency or priority service callouts",
+      "Service area structure",
+      "Project and proof sections",
       "Click-to-call header and footer",
-      "Service area pages",
     ],
     images: {
       desktop: "/templates/ridgeline-roofing-desktop.svg",
@@ -126,148 +195,60 @@ export const TEMPLATES = [
     preview: {
       image: "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?auto=format&fit=crop&w=1100&q=82",
       alt: "Roofer working on a residential shingle roof",
-      label: "Model website",
-      headline: "Residential roofing website with estimate-first calls to action.",
-      signals: ["Roof work", "Shingles", "Inspection", "Storm response"],
+      label: "Design system",
+      headline: "A bold, dependable website style for businesses built around estimates and service calls.",
+      signals: ["Estimates", "Service areas", "Proof", "Urgent calls"],
     },
   },
   {
-    key: "airflow-hvac",
-    name: "Airflow HVAC",
-    industry: "Heating & Cooling",
-    pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    key: "foundry",
+    name: "Foundry",
+    personality: "Industrial, precise, confident, no-nonsense.",
+    visualStyle: "Strong grid, charcoal tones, bold headings, technical details, process blocks, and sharp CTA sections.",
+    industry: "Trades, manufacturing, auto, construction, B2B services",
+    pages: ["Home", "Services", "Process", "Service Areas", "Contact"],
     demoRoute: undefined,
+    fits: ["Plumbing", "HVAC", "Auto repair", "Manufacturing", "Commercial contractors"],
+    exampleBusinesses: ["Plumbing company", "HVAC service", "Machine shop", "Auto repair shop", "Commercial contractor"],
+    adaptableFrom: "Auto repair shop",
+    adaptableTo: ["Plumbing company", "HVAC company", "Welding shop", "Contractor", "Equipment rental business"],
     features: [
-      "Service request form",
-      "Emergency service callout section",
-      "Seasonal maintenance layout",
-      "Click-to-call header and footer",
-      "Service area pages",
+      "Technical service menus",
+      "Repair and maintenance callouts",
+      "Process and diagnostic sections",
+      "Emergency service path",
+      "Commercial credibility blocks",
     ],
     images: {
-      desktop: "/templates/airflow-hvac-desktop.svg",
-      mobile: "/templates/airflow-hvac-mobile.svg",
+      desktop: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=700&q=82",
     },
     preview: {
-      image: "https://images.unsplash.com/photo-1660330590022-9f4ff56b63f6?auto=format&fit=crop&w=1100&q=82",
-      alt: "HVAC technician servicing equipment",
-      label: "Example starting point",
-      headline: "Heating and cooling site built around emergency calls and maintenance.",
-      signals: ["AC service", "Technician", "Equipment", "Maintenance"],
+      image: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1100&q=82",
+      alt: "Industrial workshop with tools and machinery",
+      label: "Starting point",
+      headline: "A precise, industrial website style for technical businesses and trades.",
+      signals: ["Process", "Repairs", "Maintenance", "Commercial"],
     },
   },
   {
-    key: "mainline-plumbing",
-    name: "Mainline Plumbing",
-    industry: "Plumbing",
-    pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    key: "ember",
+    name: "Ember",
+    personality: "Warm, energetic, flavorful, social.",
+    visualStyle: "Rich warm colors, food/editorial imagery, menu-style sections, inviting CTAs, and cozy local atmosphere.",
+    industry: "Restaurants, coffee shops, bakeries, bars, food trucks",
+    pages: ["Home", "Menu", "Hours", "Events", "Contact"],
     demoRoute: undefined,
+    fits: ["Restaurants", "Coffee shops", "Bakeries", "Bars", "Caterers"],
+    exampleBusinesses: ["Coffee shop", "Pizza restaurant", "Bakery", "Brunch cafe", "Catering company"],
+    adaptableFrom: "Coffee shop",
+    adaptableTo: ["Restaurant", "Bakery", "Bar", "Food truck", "Catering service"],
     features: [
-      "Estimate request form",
-      "Emergency plumbing callout section",
-      "Service list layout",
-      "Click-to-call header and footer",
-      "Service area pages",
-    ],
-    images: {
-      desktop: "/templates/mainline-plumbing-desktop.svg",
-      mobile: "/templates/mainline-plumbing-mobile.svg",
-    },
-    preview: {
-      image: "https://images.unsplash.com/photo-1620653713380-7a34b773fef8?auto=format&fit=crop&w=1100&q=82",
-      alt: "Plumbing work on a water heater and pipes",
-      label: "Demo business",
-      headline: "Plumbing website focused on fast service requests and local coverage.",
-      signals: ["Water heater", "Pipes", "Repair", "Service calls"],
-    },
-  },
-  {
-    key: "greenline-landscaping",
-    name: "Greenline Landscaping",
-    industry: "Landscaping",
-    pages: ["Home", "Services", "Seasonal Work", "Service Areas", "Contact"],
-    demoRoute: undefined,
-    features: [
-      "Estimate request form",
-      "Seasonal cleanup callouts",
-      "Service area pages",
-      "Photo-forward project sections",
-      "Click-to-call header and footer",
-    ],
-    images: {
-      desktop: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=700&q=82",
-    },
-    preview: {
-      image: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=1100&q=82",
-      alt: "Landscaping worker trimming a residential lawn",
-      label: "Example website",
-      headline: "Landscaping site for lawn care, cleanups, hardscapes, and seasonal service.",
-      signals: ["Lawn care", "Cleanups", "Hardscapes", "Seasonal work"],
-    },
-  },
-  {
-    key: "honeycomb-salon",
-    name: "Honeycomb Salon",
-    industry: "Salon",
-    pages: ["Home", "Services", "Gallery", "Stylists", "Contact"],
-    demoRoute: undefined,
-    features: [
-      "Appointment-focused calls to action",
-      "Service menu layout",
-      "Portfolio gallery sections",
-      "Stylist profile blocks",
-      "Hours and location details",
-    ],
-    images: {
-      desktop: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=700&q=82",
-    },
-    preview: {
-      image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1100&q=82",
-      alt: "Hair salon chairs and styling stations",
-      label: "Model website",
-      headline: "Salon website for hair services, appointments, and portfolio galleries.",
-      signals: ["Hair services", "Appointments", "Gallery", "Salon space"],
-    },
-  },
-  {
-    key: "table-hearth",
-    name: "Table & Hearth",
-    industry: "Restaurant",
-    pages: ["Home", "Menu", "Hours", "Reservations", "Contact"],
-    demoRoute: undefined,
-    features: [
-      "Menu highlight sections",
-      "Reservation call to action",
-      "Hours and location block",
-      "Online ordering CTA",
-      "Private event inquiry path",
-    ],
-    images: {
-      desktop: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=700&q=82",
-    },
-    preview: {
-      image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1100&q=82",
-      alt: "Restaurant table with plated food and wine glasses",
-      label: "Demo business",
-      headline: "Restaurant website built around menus, hours, reservations, and ordering.",
-      signals: ["Menu", "Dining room", "Reservations", "Ordering"],
-    },
-  },
-  {
-    key: "morning-ember-coffee",
-    name: "Morning Ember Coffee",
-    industry: "Coffee Shop",
-    pages: ["Home", "Menu", "Location", "Events", "Contact"],
-    demoRoute: undefined,
-    features: [
-      "Coffee menu layout",
-      "Location and hours block",
+      "Menu and featured item sections",
+      "Hours and location blocks",
+      "Reservation, ordering, or directions CTAs",
       "Events and catering callouts",
       "Neighborhood story section",
-      "Click-to-call and directions links",
     ],
     images: {
       desktop: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=1100&q=82",
@@ -276,41 +257,49 @@ export const TEMPLATES = [
     preview: {
       image: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=1100&q=82",
       alt: "Coffee shop counter with menu boards and barista station",
-      label: "Example starting point",
-      headline: "Coffee shop website for menu, location, hours, events, and catering.",
-      signals: ["Coffee menu", "Cafe counter", "Hours", "Events"],
+      label: "Design system",
+      headline: "A warm, local website style for menus, hours, events, and visits.",
+      signals: ["Menu", "Hours", "Ordering", "Events"],
     },
   },
   {
-    key: "small-batch-boutique",
-    name: "Small Batch Boutique",
-    industry: "Boutique",
-    pages: ["Home", "Collections", "Products", "Visit", "Contact"],
+    key: "atlas",
+    name: "Atlas",
+    personality: "Modern, strategic, premium, authoritative.",
+    visualStyle: "Large type, confident spacing, subtle gradients, data/trust sections, and strong comparison blocks.",
+    industry: "Consulting, legal, accounting, IT, B2B services",
+    pages: ["Home", "Services", "Approach", "Proof", "Contact"],
     demoRoute: undefined,
+    fits: ["Consultants", "Law firms", "Accounting", "IT services", "Agencies"],
+    exampleBusinesses: ["Marketing consultant", "Law office", "IT services company", "Accounting firm", "Fractional CFO"],
+    adaptableFrom: "Consulting firm",
+    adaptableTo: ["Law office", "IT company", "Accounting practice", "Recruiting firm", "Business coach"],
     features: [
-      "Collection highlight sections",
-      "Product preview layout",
-      "Store hours and location",
-      "Local shopping callouts",
-      "Contact and visit CTA",
+      "Authority-first hero and value proposition",
+      "Service and offer comparison sections",
+      "Process and approach blocks",
+      "Trust and proof structure",
+      "Consultation-focused CTA path",
     ],
     images: {
-      desktop: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=700&q=82",
+      desktop: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=82",
+      mobile: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=700&q=82",
     },
     preview: {
-      image: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1100&q=82",
-      alt: "Clothing racks inside a boutique shop",
-      label: "Model website",
-      headline: "Boutique website for products, collections, hours, and local shopping.",
-      signals: ["Collections", "Products", "Retail display", "Shop local"],
+      image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=82",
+      alt: "Modern team strategy session in a bright office",
+      label: "Website style",
+      headline: "A strategic, authority-led website style for experts and professional firms.",
+      signals: ["Authority", "Services", "Process", "Consultations"],
     },
   },
 ] as const;
 
+export const TEMPLATES = DESIGN_SYSTEMS;
+
 // What we adapt to each business inside the $500 package, versus what is
-// quoted separately as custom work. Shared across all three templates.
-export const TEMPLATE_CUSTOMIZABLE = [
+// quoted separately as custom work. Shared across all design systems.
+export const DESIGN_SYSTEM_CUSTOMIZABLE = [
   "Your business name and logo",
   "Colors and fonts to match your brand",
   "All text and page copy",
@@ -320,7 +309,7 @@ export const TEMPLATE_CUSTOMIZABLE = [
   "Contact details, phone number, and business hours",
 ] as const;
 
-export const TEMPLATE_CUSTOM_WORK = [
+export const DESIGN_SYSTEM_CUSTOM_WORK = [
   "Online booking or scheduling systems",
   "E-commerce and online payments",
   "Customer logins or portals",
@@ -328,6 +317,9 @@ export const TEMPLATE_CUSTOM_WORK = [
   "Third-party software integrations",
   "Custom features and functionality",
 ] as const;
+
+export const TEMPLATE_CUSTOMIZABLE = DESIGN_SYSTEM_CUSTOMIZABLE;
+export const TEMPLATE_CUSTOM_WORK = DESIGN_SYSTEM_CUSTOM_WORK;
 
 // ---- Account ownership (the customer owns their own accounts) ----------------
 export const ACCOUNT_OWNERSHIP = {

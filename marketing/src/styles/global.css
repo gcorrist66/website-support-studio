@@ -542,6 +542,28 @@ main {
   padding: 0.22rem 0.58rem;
   font-size: 0.76rem;
 }
+.design-system-adapt {
+  margin: 0.9rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+.design-system-adapt-box {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-muted);
+}
+.design-system-adapt-box p {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.design-system-adapt-box strong {
+  color: var(--text-strong);
+}
 .founder-trust {
   background: var(--surface-muted);
 }

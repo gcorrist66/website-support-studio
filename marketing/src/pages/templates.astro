@@ -5,40 +5,40 @@ import Label from "../components/Label.astro";
 import { breadcrumbSchema, serviceSchema } from "../schema";
 import {
   FOUNDER_WEBSITE_INCLUDES,
-  TEMPLATES,
-  TEMPLATE_CUSTOMIZABLE,
-  TEMPLATE_CUSTOM_WORK,
+  DESIGN_SYSTEMS,
+  DESIGN_SYSTEM_CUSTOMIZABLE,
+  DESIGN_SYSTEM_CUSTOM_WORK,
   WEBSITE_PACKAGE,
 } from "../consts";
 
 const schemas = [
   serviceSchema({
-    name: "Founder Website Package — Model Websites",
+    name: "Founder Website Package — Design Systems",
     description:
-      "Model website starting points for local businesses including roofing, HVAC, plumbing, landscaping, salons, restaurants, coffee shops, and boutiques. Every $500 Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, launch, and 30 days of support.",
+      "Design system starting points for local businesses. Choose a website style and Website Support Studio customizes it to your business. Every $500 Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, launch, and 30 days of support.",
     serviceType: "Website design and launch",
     path: "/templates",
   }),
   breadcrumbSchema([
     { name: "Home", path: "/" },
-    { name: "Templates", path: "/templates" },
+    { name: "Design Systems", path: "/templates" },
   ]),
 ];
 ---
 
 <BaseLayout
-  title="Model Websites — See what your $500 website can look like"
-  description="Model website starting points for local businesses including roofing, HVAC, plumbing, landscaping, salons, restaurants, coffee shops, and boutiques. Every Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, hosting, SSL, launch, and 30 days of support."
+  title="Design Systems — Choose the website style you want"
+  description="Design system starting points for local businesses. Choose a website style and Website Support Studio customizes the words, photos, colors, services, and calls to action for your business. Every Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, hosting, SSL, launch, and 30 days of support."
   path="/templates"
   schemas={schemas}
 >
   <section class="hero" style="padding-bottom:1.5rem;">
     <div class="container">
-      <p class="kicker"><Label text="_model_websites" /></p>
-      <h1>See what your $500 website can look like.</h1>
+      <p class="kicker"><Label text="_design_systems" /></p>
+      <h1>Choose the website style you want.</h1>
       <p class="lede">
-        Model websites for local businesses. Pick the one closest to your business — we customize
-        the words, photos, colors, and service areas for you.
+        Choose a design system that feels right. We customize the words, photos, colors, services,
+        calls to action, and local trust signals for your business.
       </p>
       <div class="accent-bar" style="max-width:240px; margin-top:2rem;"></div>
     </div>
@@ -61,15 +61,15 @@ const schemas = [
 
   <FounderTrustLayer />
 
-  <!-- Model website starting points -->
+  <!-- Design system starting points -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container">
       <p class="kicker"><Label text="_starting_points" /></p>
-      <h2 style="margin-top:0;">Model websites for businesses like yours.</h2>
+      <h2 style="margin-top:0;">Design systems that can become your business website.</h2>
       <div style="display:grid; gap:2rem; margin-top:2rem;">
         {
-          TEMPLATES.map((t) => (
-            <div class="card template-card" id={t.key} style="scroll-margin-top:5rem;">
+          DESIGN_SYSTEMS.map((t) => (
+            <div class="card design-system-card" id={t.key} style="scroll-margin-top:5rem;">
               <div class="grid grid-2" style="align-items:start;">
                 <div class="model-preview model-preview-large">
                   <img src={t.preview.image} alt={t.preview.alt} width="1100" height="720" loading="lazy" />
@@ -80,13 +80,22 @@ const schemas = [
                 </div>
                 <div style="display:flex; flex-direction:column; min-height:100%;">
                   <h3 style="margin:0;">{t.name}</h3>
-                  <p class="template-industry">{t.industry}</p>
+                  <p class="design-system-fit">{t.industry}</p>
+                  <p style="margin:0.65rem 0 0; color:var(--text-muted);">{t.personality}</p>
                   <p style="margin:0.8rem 0 0; color:var(--text);">{t.preview.headline}</p>
                   <ul class="model-signals" aria-label={`${t.name} visual signals`}>
                     {t.preview.signals.map((signal) => <li>{signal}</li>)}
                   </ul>
+                  <div class="design-system-adapt-box">
+                    <p><strong>Originally built for:</strong> {t.adaptableFrom}</p>
+                    <p><strong>Could become:</strong> {t.adaptableTo.join(", ")}</p>
+                  </div>
+                  <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Industries it fits</p>
+                  <ul class="model-signals" aria-label={`${t.name} industries`}>
+                    {t.fits.map((fit) => <li>{fit}</li>)}
+                  </ul>
                   <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Included pages</p>
-                  <ul class="template-pages">
+                  <ul class="design-system-pages">
                     {t.pages.map((page) => (
                       <li>{page}</li>
                     ))}
@@ -97,7 +106,7 @@ const schemas = [
                       <li style="margin-bottom:0.35rem;">{f}</li>
                     ))}
                   </ul>
-                  <div class="template-actions">
+                  <div class="design-system-actions">
                     <a
                       class="btn btn-green btn-cta"
                       href={WEBSITE_PACKAGE.ctaHref}
@@ -105,10 +114,10 @@ const schemas = [
                       data-ga-secondary-event="stripe_payment_link_click"
                       data-ga-label={t.key}
                     >
-                      Start With This Website
+                      Start With This Style
                     </a>
                     <a class="btn btn-ghost" href="#whats-customizable" data-ga-event="click_template_compare" data-ga-label={t.key}>
-                      Compare Details
+                      Compare Adaptability
                     </a>
                   </div>
                 </div>
@@ -126,20 +135,20 @@ const schemas = [
       <p class="kicker"><Label text="_whats_customizable" /></p>
       <h2 style="margin-top:0;">Made yours, not made from scratch.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Starting points keep the $500 price possible. We adapt the model website to your business —
+        Design systems keep the $500 price possible. We start from a proven website style and adapt it to your business —
         anything beyond that is quoted separately as custom work.
       </p>
       <div class="grid grid-2" style="margin-top:2rem; align-items:start;">
         <div class="card">
           <h3 style="margin-top:0;">Customizable — included in $500</h3>
           <ul style="padding-left:1.1rem; margin:1rem 0 0; color:var(--text);">
-            {TEMPLATE_CUSTOMIZABLE.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
+            {DESIGN_SYSTEM_CUSTOMIZABLE.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
           </ul>
         </div>
         <div class="card">
           <h3 style="margin-top:0;">Requires custom work — quoted separately</h3>
           <ul style="padding-left:1.1rem; margin:1rem 0 0; color:var(--text);">
-            {TEMPLATE_CUSTOM_WORK.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
+            {DESIGN_SYSTEM_CUSTOM_WORK.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
           </ul>
         </div>
       </div>
@@ -150,7 +159,7 @@ const schemas = [
   <section class="section" style="background:var(--surface-muted);">
     <div class="container" style="max-width:820px;">
       <p class="kicker"><Label text="_get_started" /></p>
-      <h2 style="margin-top:0;">Pick a starting point. We do the rest.</h2>
+      <h2 style="margin-top:0;">Pick a website style. We do the rest.</h2>
       <p class="lede" style="margin-top:0.75rem;">
         {WEBSITE_PACKAGE.tagline} One-time {WEBSITE_PACKAGE.price} — built, launched, and supported
         for 30 days.
