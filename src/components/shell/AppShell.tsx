@@ -26,7 +26,7 @@ import {
   getReadOnlyTicketQueue,
 } from "../../data/readOnlyTicketData";
 
-type ConsoleSection = "overview" | "board" | "requests" | "project_intake" | "profile" | "website_access" | "activity" | "health";
+type ConsoleSection = "admin" | "overview" | "board" | "requests" | "project_intake" | "profile" | "website_access" | "activity" | "health";
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
 type CreditTopupKey = "topup_50" | "topup_100" | "topup_250";
 type WebsitePlatformKey = "wordpress" | "shopify" | "webflow" | "squarespace" | "wix" | "custom_other" | "hosting_dns";
@@ -126,6 +126,7 @@ type WebsiteProjectIntake = {
 };
 
 const SECTION_ORDER: ConsoleSection[] = [
+  "admin",
   "overview",
   "board",
   "requests",
@@ -1820,6 +1821,86 @@ export function AppShell() {
         </aside>
 
         <main className="wss-main">
+          {section === "admin" ? (
+            <section className="wss-panel">
+              <SectionHeading
+                eyebrow="operator"
+                title="operator dashboard"
+                description="Quick links to operator surfaces for active work."
+              />
+
+              <div className="wss-grid three-up">
+                <article className="wss-card">
+                  <SectionHeading title="operations" description="Core workload and handoff surfaces." />
+                  <ul className="wss-list">
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/overview")}>
+                        overview
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/board")}>
+                        board
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/requests")}>
+                        requests
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="wss-soft-cta" onClick={() => navigate("/project_intake")}>
+                        project_intake
+                      </button>
+                    </li>
+                  </ul>
+                </article>
+
+                <article className="wss-card">
+                  <SectionHeading
+                    title="account surfaces"
+                    description="Profile, website access, and operational health checks."
+                  />
+                  <ul className="wss-list">
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/profile")}>
+                        profile
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/website_access")}>
+                        website_access
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/activity")}>
+                        activity
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="wss-secondary-button" onClick={() => navigate("/health")}>
+                        health
+                      </button>
+                    </li>
+                  </ul>
+                </article>
+
+                <article className="wss-card">
+                  <SectionHeading title="support links" description="Keep customer communication and support quick." />
+                  <p className="wss-copy">No new admin stack. Use existing operator surfaces above.</p>
+                  <div className="wss-modal-actions">
+                    <button type="button" className="wss-soft-cta" onClick={() => navigate("/requests")}>
+                      open_requests
+                    </button>
+                  </div>
+                  <p className="wss-copy">
+                    Gary / operator users should start here, then move into requests, board, or health.
+                  </p>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
           {section === "overview" ? (
             <section className="wss-panel">
               <SectionHeading

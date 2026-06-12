@@ -6,9 +6,11 @@
  * the operator console — no data is exposed and nothing is created.
  */
 import { useAuth } from "../../auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 export function WorkspaceSetupRequired() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="auth-screen">
@@ -31,6 +33,7 @@ export function WorkspaceSetupRequired() {
           type="button"
           onClick={() => {
             void signOut();
+            navigate("/login", { replace: true });
           }}
         >
           sign out and try another account

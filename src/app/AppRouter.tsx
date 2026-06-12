@@ -57,6 +57,7 @@ export function AppRouter() {
         <Routes>
           <Route path="/" element={<HomeRoute />} />
           <Route path="/overview" element={<HomeRoute />} />
+          <Route path="/admin" element={<HomeRoute />} />
           <Route path="/board" element={<HomeRoute />} />
           <Route path="/requests" element={<HomeRoute />} />
           <Route path="/project_intake" element={<HomeRoute />} />

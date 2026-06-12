@@ -154,6 +154,7 @@ export function OnboardingForm() {
               type="button"
               onClick={() => {
                 void signOut();
+                navigate("/login", { replace: true });
               }}
             >
               sign out and try again

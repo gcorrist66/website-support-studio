@@ -14,6 +14,7 @@ export function LoginPage() {
   const { enabled, signInWithOAuth, error } = useAuth();
   const status = getAuthConfigStatus();
   const ready = enabled && status.configured;
+  const publicHomeUrl = "https://www.websitesupportstudio.com/";
 
   return (
     <div className="auth-screen">
@@ -83,6 +84,9 @@ export function LoginPage() {
         <p className="auth-meta auth-footnote">
           new to website_support_studio?{" "}
           <a href="https://websitesupportstudio.com/pricing">join now</a>
+        </p>
+        <p className="auth-meta auth-footnote">
+          <a href={publicHomeUrl}>Back to Website Support Studio</a>
         </p>
       </div>
     </div>

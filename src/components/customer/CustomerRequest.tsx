@@ -6,6 +6,7 @@
  * requests stay easy to inspect with their uploaded files.
  */
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { LogoLockup } from "../brand/LogoLockup";
 import { useAuth } from "../../auth/AuthProvider";
@@ -408,6 +409,7 @@ type CustomerRequestProps = {
 
 export function CustomerRequest({ identity }: CustomerRequestProps) {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [summary, setSummary] = useState<CustomerWorkspaceSummary>(createEmptyCustomerWorkspaceSummary());
   const [sites, setSites] = useState<CustomerSite[]>([]);
   const [requests, setRequests] = useState<CustomerRequestRecord[]>([]);
@@ -478,7 +480,14 @@ export function CustomerRequest({ identity }: CustomerRequestProps) {
         </div>
         <div className="customer-hero-actions">
           <RequestComposer sites={sites} onCreated={handleRequestCreated} />
-          <button className="auth-btn auth-btn-ghost customer-logout" type="button" onClick={() => { void signOut(); }}>
+          <button
+            className="auth-btn auth-btn-ghost customer-logout"
+            type="button"
+            onClick={() => {
+              void signOut();
+              navigate("/login", { replace: true });
+            }}
+          >
             log out
           </button>
         </div>

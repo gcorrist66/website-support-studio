@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../auth/AuthProvider";
 import { MonoLabel } from "../brand/MonoLabel";
@@ -55,6 +56,7 @@ function formatEffortExamples(label: string, examples: string[]): string {
 
 export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: LaunchAccountPreviewProps) {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [workspace, setWorkspace] = useState<CustomerWorkspaceSummary | null>(null);
   const [account, setAccount] = useState<CustomerAccount | null>(null);
   const [loading, setLoading] = useState(true);
@@ -140,6 +142,7 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
           type="button"
           onClick={() => {
             void signOut();
+            navigate("/login", { replace: true });
           }}
         >
           log out / switch account
@@ -333,7 +336,14 @@ export function LaunchAccountPreview({ orgId, customerLabel, siteLabel }: Launch
             if this is the wrong email, log out and sign back in with the checkout email. that
             switches you to the correct account.
           </p>
-          <button className="auth-btn auth-btn-ghost" type="button" onClick={() => void signOut()}>
+          <button
+            className="auth-btn auth-btn-ghost"
+            type="button"
+            onClick={() => {
+              void signOut();
+              navigate("/login", { replace: true });
+            }}
+          >
             sign_out_switch_accounts
           </button>
         </section>

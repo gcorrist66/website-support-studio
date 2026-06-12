@@ -9,7 +9,7 @@
  * Guarantees: operators never enter customer onboarding; customers never see operator tooling.
  */
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../auth/AuthProvider";
 import { resolveMyIdentity, type Identity } from "../../data/identity";
@@ -31,6 +31,7 @@ function Screen({ title, body }: { title?: string; body: string }) {
 export function IdentityGate() {
   const { loading, session } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [identity, setIdentity] = useState<Identity | null>(null);
 
   useEffect(() => {
@@ -44,6 +45,9 @@ export function IdentityGate() {
           return;
         }
         setIdentity(id);
+        if (id.kind === "operator" && (location.pathname === "/" || location.pathname === "/overview")) {
+          navigate("/admin", { replace: true });
+        }
         if (id.kind === "customer" && id.onboardingStatus === "onboarding_required") {
           navigate("/onboarding", { replace: true });
         }
@@ -56,7 +60,7 @@ export function IdentityGate() {
     return () => {
       active = false;
     };
-  }, [loading, session, navigate]);
+  }, [loading, session, navigate, location.pathname]);
 
   if (loading || !identity) {
     return <Screen body="loading your account…" />;
