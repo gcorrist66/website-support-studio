@@ -1,0 +1,127 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "./Label.astro";
+import { founderCheckoutHref, type IndustryLandingPage } from "../industryLandingPages";
+
+const { page } = Astro.props as { page: IndustryLandingPage };
+const title = `${page.industry} Websites — Founder Website Package`;
+const description = `${page.industry} website landing page for the $500 Founder Website Package. View ${page.demoName} and start a website using this style.`;
+const path = `/for/${page.slug}`;
+---
+
+<BaseLayout title={title} description={description} path={path}>
+  <section class="industry-hero" style={`--industry-accent:${page.accent};`}>
+    <div class="container industry-hero-grid">
+      <div>
+        <p class="kicker"><Label text={page.eyebrow} /></p>
+        <h1>{page.title}</h1>
+        <p class="lede">{page.description}</p>
+        <div class="industry-actions">
+          <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+          <a class="btn btn-ghost" href={page.demoRoute} data-ga-event={`click_for_${page.slug}_demo`}>View Live Example</a>
+        </div>
+        <p class="industry-strip">Pay $500 once → 10-minute intake → we build and you preview → launch with 30 days of included support.</p>
+      </div>
+      <figure class="industry-photo">
+        <img src={page.heroImage} alt={page.heroAlt} width="1400" height="980" loading="eager" />
+        <figcaption>{page.demoName} · {page.demoType}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container industry-split">
+      <div>
+        <p class="kicker"><Label text="_the_problem" /></p>
+        <h2>Your website has to answer industry-specific questions fast.</h2>
+        <p>
+          Prospects do not land on a website hoping to decode a generic brochure. They want to know what you do,
+          whether you fit their need, and what to click next.
+        </p>
+      </div>
+      <div class="industry-card-list">
+        {page.problems.map((problem) => <article class="industry-card"><p>{problem}</p></article>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section industry-muted">
+    <div class="container industry-example">
+      <div>
+        <p class="kicker"><Label text="_live_example" /></p>
+        <h2>Start from {page.demoName}, then make it yours.</h2>
+        <p>
+          This is a fictional sample business, not a fake client. It exists so you can click through a finished website
+          and see what your Founder Website Package can become.
+        </p>
+        <ul class="industry-checks">
+          {page.exampleBullets.map((item) => <li>{item}</li>)}
+        </ul>
+        <div class="industry-actions">
+          <a class="btn btn-primary" href={page.demoRoute}>View Live Example</a>
+          <a class="btn btn-ghost" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+        </div>
+      </div>
+      <a class="industry-preview" href={page.demoRoute} aria-label={`View ${page.demoName}`}>
+        <img src={page.heroImage} alt="" width="1100" height="760" loading="lazy" />
+        <span>Open {page.demoName}</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container industry-trust-grid">
+      <article class="industry-trust-panel">
+        <p class="kicker"><Label text="_ownership_guarantee" /></p>
+        <h2>Ownership Guarantee: you own everything.</h2>
+        <p>Your domain, your website, your accounts, your logins. Cancel anything; keep everything.</p>
+        <ul class="industry-checks">
+          {page.trustBullets.map((item) => <li>{item}</li>)}
+        </ul>
+      </article>
+      <article class="industry-trust-panel industry-trust-panel--dark">
+        <p class="kicker"><Label text="_why_500_works" /></p>
+        <h2>Because we are not starting from scratch.</h2>
+        <p>
+          Website Support Studio starts from proven website styles and adapts them to your business. That keeps the
+          build focused, affordable, and fast without pretending every small business needs a custom agency project.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section industry-muted">
+    <div class="container">
+      <p class="kicker"><Label text="_what_happens_next" /></p>
+      <h2>From buy to live, the path is visible.</h2>
+      <div class="industry-steps">
+        <article><strong>1</strong><h3>Secure your build</h3><p>Use Stripe-hosted checkout. Your receipt arrives immediately.</p></article>
+        <article><strong>2</strong><h3>Complete intake</h3><p>Send the basics: {page.intakeItems.join(", ")}. No polished assets required.</p></article>
+        <article><strong>3</strong><h3>We build</h3><p>We adapt the live example into a website for your business and send a preview.</p></article>
+        <article><strong>4</strong><h3>Review and launch</h3><p>You review, we adjust, then launch with 30 days of included support.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container industry-final-cta">
+      <div>
+        <p class="kicker"><Label text="_ready_to_build" /></p>
+        <h2>Ready to build your {page.industry.toLowerCase()} website?</h2>
+        <p>Start with the Founder Website Package. We will customize the pages, words, photos, colors, and calls to action around your business.</p>
+      </div>
+      <div class="industry-actions">
+        <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_final_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+        <a class="btn btn-ghost" href={page.demoRoute}>View Live Example</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="industry-mobile-cta">
+    <a href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_mobile_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+  </div>
+
+  <style is:inline>
+    .industry-hero{padding:clamp(3.5rem,8vw,6rem) 0;background:radial-gradient(circle at 78% 10%,color-mix(in srgb,var(--industry-accent) 18%,transparent),transparent 28rem),linear-gradient(180deg,#fff,var(--surface-muted));overflow:hidden}.industry-hero-grid,.industry-split,.industry-example,.industry-trust-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:clamp(1.5rem,5vw,3.5rem);align-items:center}.industry-hero h1{max-width:13ch;font-size:clamp(2.4rem,7.5vw,5rem);line-height:.94;margin:.5rem 0 1rem}.industry-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.35rem}.industry-strip{max-width:62ch;margin-top:1rem;padding:1rem;border:1px solid color-mix(in srgb,var(--industry-accent) 30%,var(--border));border-left:4px solid var(--industry-accent);border-radius:14px;background:#fff;font-size:.92rem;font-weight:700}.industry-photo,.industry-preview{position:relative;display:block;overflow:hidden;border-radius:28px;border:1px solid var(--border);background:#fff;box-shadow:0 28px 80px rgba(11,18,32,.16)}.industry-photo{min-height:470px;margin:0}.industry-photo img,.industry-preview img{display:block;width:100%;height:100%;object-fit:cover}.industry-photo figcaption,.industry-preview span{position:absolute;left:1rem;right:1rem;bottom:1rem;border-radius:999px;padding:.65rem .85rem;background:rgba(11,18,32,.82);color:#fff;font-size:.78rem;font-weight:800}.industry-card-list{display:grid;gap:.85rem}.industry-card,.industry-trust-panel,.industry-steps article,.industry-final-cta{border:1px solid var(--border);border-radius:22px;background:#fff;padding:1.25rem;box-shadow:0 18px 48px rgba(11,18,32,.06)}.industry-card p{margin:0}.industry-muted{background:var(--surface-muted)}.industry-example{align-items:stretch}.industry-preview{min-height:420px;color:#fff}.industry-checks{display:grid;gap:.7rem;margin:1rem 0 0;padding:0;list-style:none}.industry-checks li{position:relative;padding-left:1.4rem}.industry-checks li::before{content:"";position:absolute;left:0;top:.55rem;width:.55rem;height:.55rem;border-radius:999px;background:var(--industry-accent)}.industry-trust-panel{height:100%;padding:clamp(1.3rem,3vw,2rem)}.industry-trust-panel--dark{background:var(--surface-dark);color:#fff}.industry-trust-panel--dark h2,.industry-trust-panel--dark p,.industry-trust-panel--dark .kicker{color:#fff}.industry-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:1.5rem}.industry-steps strong{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border-radius:999px;background:var(--industry-accent);color:#fff}.industry-steps h3{margin:.9rem 0 .4rem}.industry-steps p{margin:0}.industry-final-cta{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:clamp(1.5rem,4vw,2.5rem);border-left:6px solid var(--industry-accent)}.industry-final-cta h2{margin-top:.25rem}.industry-mobile-cta{display:none}@media(max-width:820px){.industry-hero-grid,.industry-split,.industry-example,.industry-trust-grid,.industry-steps,.industry-final-cta{grid-template-columns:1fr;display:grid}.industry-photo,.industry-preview{min-height:320px}.industry-actions .btn{width:100%;justify-content:center}.industry-final-cta{margin-bottom:4.5rem}.industry-mobile-cta{position:fixed;z-index:95;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--industry-accent) 32%,var(--border));box-shadow:0 16px 44px rgba(11,18,32,.22);backdrop-filter:blur(12px)}.industry-mobile-cta a{display:flex;align-items:center;justify-content:center;min-height:3rem;border-radius:999px;background:var(--cta-green);color:var(--text-strong);font-weight:800}.industry-mobile-cta a:hover{text-decoration:none}}
+  </style>
+</BaseLayout>
