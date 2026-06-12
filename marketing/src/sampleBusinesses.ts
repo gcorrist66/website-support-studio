@@ -28,8 +28,28 @@ export type SampleBusiness = {
   proofItems: string[];
   aboutHeadline: string;
   aboutBody: string;
+  trustHeadline?: string;
+  trustIntro?: string;
+  ownerSection?: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    bullets: string[];
+    cardTitle: string;
+    cardItems: string[];
+  };
+  localSection?: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    items: string[];
+  };
   trust: string[];
   contactPrompt: string;
+  proofHeadline?: string;
+  contactTitle?: string;
+  formTitle?: string;
+  formButtonLabel?: string;
   primaryCtaLabel?: string;
 };
 
@@ -132,9 +152,9 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     category: "AC/HVAC service",
     location: "Minneapolis, MN",
     badge: "Sample Business",
-    tagline: "AC repair, heating service, maintenance plans, replacement installs, and emergency comfort calls.",
-    headline: "AC and heating help when comfort cannot wait.",
-    description: "A polished AC/HVAC sample website with urgent repair paths, maintenance plan language, install quote requests, and clear contact paths for homeowners.",
+    tagline: "AC repair, heating service, maintenance plans, and replacement quotes for Minneapolis homes.",
+    headline: "When the house is too hot or too cold, the next step should be obvious.",
+    description: "A fictional HVAC sample built around the real moments homeowners care about: no-cool calls, no-heat calls, tune-ups, installs, financing questions, and a fast request-service path.",
     phoneLabel: "(612) 555-0172",
     phoneHref: "tel:+16125550172",
     email: "service@northstarair.example",
@@ -147,24 +167,44 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     soft: "#eaf6fb",
     nav: nav("/templates/sample/northstar-air", "AC/HVAC Services", "Service Proof"),
     servicesLabel: "AC/HVAC services",
-    servicesIntro: "A strong HVAC website separates urgent AC repair, heating repair, maintenance plans, replacement installs, and quote requests so homeowners can choose the right next step fast.",
+    servicesIntro: "A strong HVAC website separates urgent repair, planned maintenance, replacement installs, air-quality questions, and quote requests so homeowners can choose the right next step fast.",
     services: [
-      { name: "Emergency AC Service", meta: "No-cool priority path", body: "A direct request path for homes with warm air, failed cooling, or urgent comfort issues during summer demand." },
-      { name: "AC Repair", meta: "Cooling diagnostics", body: "Troubleshooting for warm air, short cycling, thermostat issues, poor airflow, and uneven room temperatures." },
-      { name: "Heating Repair", meta: "Furnace and heat pump checks", body: "No-heat calls, ignition issues, blower problems, thermostat faults, and safety-first repair recommendations." },
-      { name: "Maintenance Plans", meta: "Spring and fall tune-ups", body: "Seasonal cleaning, inspection, performance checks, and plan messaging for recurring homeowner relationships." },
-      { name: "Replacement Installs", meta: "Right-sized quote requests", body: "A clear path for aging systems, efficiency goals, financing conversations, and replacement estimate requests." },
-      { name: "Service Areas", meta: "City and neighborhood coverage", body: "Local pages and service-area copy that help homeowners quickly confirm Northstar works near them." },
-      { name: "Indoor Air Quality", meta: "Filters, humidity, airflow", body: "Filter, humidity, ventilation, and airflow recommendations for more comfortable rooms." },
-      { name: "Financing Questions", meta: "Quote-ready next step", body: "A practical inquiry path for homeowners comparing repair, replacement, and payment options." },
+      { name: "Emergency AC Service", meta: "No-cool priority path", body: "For warm air, failed cooling, or a home that cannot comfortably wait until next week. The request path asks what dispatch needs first." },
+      { name: "AC Repair", meta: "Cooling diagnostics", body: "Clear help for short cycling, thermostat issues, weak airflow, uneven rooms, strange noises, and cooling systems that cannot keep up." },
+      { name: "Heating Repair", meta: "Furnace and heat pump checks", body: "A calm no-heat path for ignition issues, blower problems, thermostat faults, and safety-first repair conversations." },
+      { name: "Maintenance Plans", meta: "Spring and fall tune-ups", body: "Seasonal cleaning, inspection, performance checks, filter reminders, and recurring care language homeowners can understand." },
+      { name: "Replacement Installs", meta: "Right-sized quote requests", body: "A practical path for aging systems, comfort problems, efficiency goals, financing questions, and replacement estimate requests." },
+      { name: "Service Areas", meta: "City and neighborhood coverage", body: "Local service-area copy that helps homeowners quickly confirm whether this HVAC team works near them." },
+      { name: "Indoor Air Quality", meta: "Filters, humidity, airflow", body: "Plain-language guidance for filtration, humidity, ventilation, stale rooms, dust concerns, and comfort from room to room." },
+      { name: "Financing Questions", meta: "Quote-ready next step", body: "A simple inquiry path for homeowners comparing repair, replacement, payment options, and next-step timing." },
     ],
     proofLabel: "HVAC service proof",
-    proofIntro: "A polished HVAC site should show real service situations: seasonal rush calls, maintenance, installs, and service-area clarity without fake reviews or fake results.",
-    proofItems: ["Summer no-cool request", "Fall furnace tune-up", "Replacement quote path", "Maintenance plan signup", "Airflow complaint", "Service-area page"],
-    aboutHeadline: "A practical AC/HVAC sample built around urgent contact and planned installs.",
-    aboutBody: "Northstar Air is a fictional HVAC sample that makes AC repair, heating service, maintenance plans, replacement installs, service areas, and request paths obvious on mobile.",
-    trust: ["No-cool and no-heat request paths", "AC repair and heating categories", "Maintenance plan and install quote CTAs", "Service-area and phone-forward layout"],
-    contactPrompt: "Tell Northstar whether you need AC repair, heating service, a maintenance plan, or a replacement quote, plus your city and whether comfort is currently out.",
+    proofIntro: "Instead of fake testimonials, this sample shows the service situations a real HVAC website should make easy to understand: urgent comfort calls, seasonal maintenance, install estimates, and service-area clarity.",
+    proofItems: ["No-cool dispatch path", "Furnace outage request", "Tune-up reminder", "Replacement quote next step", "Financing question", "Service-area confirmation"],
+    aboutHeadline: "A local HVAC company homeowners can understand in one minute.",
+    aboutBody: "Northstar Air is a fictional Minneapolis HVAC sample with a calm, service-first voice: what is wrong, where the homeowner is, how urgent it is, and what happens next.",
+    trustHeadline: "Why homeowners would feel safe calling",
+    trustIntro: "Northstar avoids vague contractor language and puts the homeowner's immediate question first: can you help, how do I ask, and what should I expect next?",
+    ownerSection: {
+      eyebrow: "Human trust",
+      title: "Meet the kind of HVAC company this site is built for.",
+      body: "Northstar is written like a small local HVAC team that knows a broken AC is not an abstract service category. It is a hot house, a sleeping baby, an older parent, or a workday interrupted by a system that stopped keeping up.",
+      bullets: ["Plain-language repair paths", "No-pressure quote language", "Seasonal maintenance reminders", "A service form that asks what dispatch needs first"],
+      cardTitle: "Sample trust language",
+      cardItems: ["Local service team", "Repair and replacement guidance", "Respectful in-home communication", "No invented reviews or results"],
+    },
+    localSection: {
+      eyebrow: "Local clarity",
+      title: "Built for Minneapolis-area service calls.",
+      body: "A real HVAC site should make service areas, urgent availability, maintenance plans, replacement quotes, and financing questions easy to find before someone fills out a form.",
+      items: ["Minneapolis", "St. Paul", "Edina", "Bloomington", "Maple Grove", "Plymouth"],
+    },
+    trust: ["Clear no-cool and no-heat request paths", "Phone-forward service calls", "Maintenance and replacement options separated", "Service areas stated before the form"],
+    contactPrompt: "Tell Northstar what is happening, whether comfort is currently out, your city, and whether this is repair, maintenance, replacement, or a financing question.",
+    proofHeadline: "Real HVAC situations, shown without fake results.",
+    contactTitle: "Tell Northstar what is happening.",
+    formTitle: "Request service",
+    formButtonLabel: "Request Service",
     primaryCtaLabel: "Request Service",
   },
   {
