@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Mainline Plumbing desktop preview placeholder">
+  <rect width="1200" height="750" rx="14" fill="#fafaf7" stroke="#d6d2c5"/>
+  <rect x="1" y="1" width="1198" height="44" rx="13" fill="#f4f3ee"/>
+  <rect x="1" y="32" width="1198" height="14" fill="#f4f3ee"/>
+  <circle cx="28" cy="23" r="6" fill="#d6d2c5"/><circle cx="48" cy="23" r="6" fill="#d6d2c5"/><circle cx="68" cy="23" r="6" fill="#d6d2c5"/>
+  <rect x="92" y="12" width="420" height="22" rx="11" fill="#fff" stroke="#e5e3dc"/>
+  <rect x="40" y="70" width="180" height="22" rx="6" fill="#0443fb"/>
+  <rect x="800" y="70" width="80" height="14" rx="7" fill="#cbd5e1"/>
+  <rect x="900" y="70" width="80" height="14" rx="7" fill="#cbd5e1"/>
+  <rect x="1000" y="64" width="160" height="28" rx="8" fill="#0443fb"/>
+  <rect x="40" y="120" width="1120" height="240" rx="12" fill="#dce4fe"/>
+  <rect x="80" y="166" width="520" height="30" rx="8" fill="#0b1220" opacity="0.82"/>
+  <rect x="80" y="208" width="440" height="16" rx="8" fill="#64748b" opacity="0.55"/>
+  <rect x="80" y="232" width="380" height="16" rx="8" fill="#64748b" opacity="0.45"/>
+  <rect x="80" y="276" width="170" height="40" rx="10" fill="#0443fb"/>
+  <rect x="270" y="276" width="170" height="40" rx="10" fill="#fff" stroke="#d6d2c5"/>
+  <rect x="40" y="392" width="357" height="190" rx="12" fill="#fff" stroke="#e5e3dc"/>
+  <rect x="421" y="392" width="357" height="190" rx="12" fill="#fff" stroke="#e5e3dc"/>
+  <rect x="802" y="392" width="358" height="190" rx="12" fill="#fff" stroke="#e5e3dc"/>
+  <rect x="64" y="416" width="120" height="14" rx="7" fill="#0443fb"/>
+  <rect x="445" y="416" width="120" height="14" rx="7" fill="#0443fb"/>
+  <rect x="826" y="416" width="120" height="14" rx="7" fill="#0443fb"/>
+  <rect x="64" y="444" width="280" height="12" rx="6" fill="#cbd5e1"/><rect x="64" y="466" width="240" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="445" y="444" width="280" height="12" rx="6" fill="#cbd5e1"/><rect x="445" y="466" width="240" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="826" y="444" width="280" height="12" rx="6" fill="#cbd5e1"/><rect x="826" y="466" width="240" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="40" y="614" width="1120" height="96" rx="12" fill="#0b1220"/>
+  <rect x="76" y="650" width="220" height="16" rx="8" fill="#f1f5f9" opacity="0.85"/>
+  <rect x="950" y="642" width="174" height="38" rx="10" fill="#0443fb"/>
+  <text x="600" y="345" text-anchor="middle" font-family="'JetBrains Mono', Menlo, monospace" font-size="26" font-weight="700" fill="#0b1220">Mainline Plumbing</text>
+  <text x="600" y="738" text-anchor="middle" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" fill="#94a3b8">template preview placeholder — desktop</text>
+</svg>

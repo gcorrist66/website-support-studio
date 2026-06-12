@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { breadcrumbSchema, serviceSchema } from "../schema";
+import {
+  FOUNDER_WEBSITE_INCLUDES,
+  TEMPLATES,
+  TEMPLATE_CUSTOMIZABLE,
+  TEMPLATE_CUSTOM_WORK,
+  WEBSITE_PACKAGE,
+} from "../consts";
+
+const schemas = [
+  serviceSchema({
+    name: "Founder Website Package — Website Templates",
+    description:
+      "Three proven website templates for local service businesses — Ridgeline Roofing, Airflow HVAC, and Mainline Plumbing. Every $500 Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, service area pages, basic SEO, hosting, SSL, launch, and 30 days of support.",
+    serviceType: "Website design and launch",
+    path: "/templates",
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Templates", path: "/templates" },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Website Templates — See exactly what $500 buys"
+  description="Three proven website templates for local service businesses: Ridgeline Roofing, Airflow HVAC, and Mainline Plumbing. Every Founder Website includes 5 pages, mobile optimization, contact forms, click-to-call, basic SEO, hosting, SSL, launch, and 30 days of support."
+  path="/templates"
+  schemas={schemas}
+>
+  <section class="hero" style="padding-bottom:1.5rem;">
+    <div class="container">
+      <p class="kicker"><Label text="_template_gallery" /></p>
+      <h1>See exactly what $500 buys.</h1>
+      <p class="lede">
+        Three proven website templates built for local service businesses. Pick the one closest to
+        your trade — we adapt it to your business, then build and launch it for you.
+      </p>
+      <div class="accent-bar" style="max-width:240px; margin-top:2rem;"></div>
+    </div>
+  </section>
+
+  <!-- Every Founder Website includes -->
+  <section class="section" style="padding-top:2rem;">
+    <div class="container">
+      <p class="kicker"><Label text="_whats_included" /></p>
+      <h2 style="margin-top:0;">Every Founder Website includes</h2>
+      <ul class="template-feature-strip" aria-label="Every Founder Website includes">
+        {FOUNDER_WEBSITE_INCLUDES.map((item) => <li>{item}</li>)}
+      </ul>
+      <p style="margin-top:1rem; color:var(--text-muted); max-width:62ch;">
+        One-time {WEBSITE_PACKAGE.price}. After launch: {WEBSITE_PACKAGE.afterLaunch.founder}, then{" "}
+        {WEBSITE_PACKAGE.afterLaunch.standard}. You own your website and all your accounts.
+      </p>
+    </div>
+  </section>
+
+  <!-- The three templates -->
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <p class="kicker"><Label text="_the_templates" /></p>
+      <h2 style="margin-top:0;">Three templates. One per trade.</h2>
+      <div style="display:grid; gap:2rem; margin-top:2rem;">
+        {
+          TEMPLATES.map((t) => (
+            <div class="card template-card" id={t.key} style="scroll-margin-top:5rem;">
+              <div class="grid grid-2" style="align-items:start;">
+                <div class="template-previews" style="margin-bottom:0;">
+                  <img
+                    class="template-preview-desktop"
+                    src={t.images.desktop}
+                    alt={`${t.name} template — desktop preview placeholder`}
+                    width="1200"
+                    height="750"
+                    loading="lazy"
+                  />
+                  <img
+                    class="template-preview-mobile"
+                    src={t.images.mobile}
+                    alt={`${t.name} template — mobile preview placeholder`}
+                    width="390"
+                    height="780"
+                    loading="lazy"
+                  />
+                </div>
+                <div style="display:flex; flex-direction:column; min-height:100%;">
+                  <h3 style="margin:0;">{t.name}</h3>
+                  <p class="template-industry">{t.industry}</p>
+                  <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Included pages</p>
+                  <ul class="template-pages">
+                    {t.pages.map((page) => (
+                      <li>{page}</li>
+                    ))}
+                  </ul>
+                  <p style="margin:1.25rem 0 0; font-weight:700; color:var(--text-strong);">Included features</p>
+                  <ul style="padding-left:1.1rem; margin:0.5rem 0 0; color:var(--text);">
+                    {t.features.map((f) => (
+                      <li style="margin-bottom:0.35rem;">{f}</li>
+                    ))}
+                  </ul>
+                  <div class="template-actions">
+                    <a
+                      class="btn btn-green btn-cta"
+                      href={WEBSITE_PACKAGE.ctaHref}
+                      data-ga-event="click_template_start"
+                      data-ga-secondary-event="stripe_payment_link_click"
+                      data-ga-label={t.key}
+                    >
+                      Start With This Template
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Customizable vs custom work -->
+  <section class="section">
+    <div class="container">
+      <p class="kicker"><Label text="_whats_customizable" /></p>
+      <h2 style="margin-top:0;">Made yours, not made from scratch.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        Templates keep the $500 price possible. We adapt the template to your business — anything
+        beyond that is quoted separately as custom work.
+      </p>
+      <div class="grid grid-2" style="margin-top:2rem; align-items:start;">
+        <div class="card">
+          <h3 style="margin-top:0;">Customizable — included in $500</h3>
+          <ul style="padding-left:1.1rem; margin:1rem 0 0; color:var(--text);">
+            {TEMPLATE_CUSTOMIZABLE.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0;">Requires custom work — quoted separately</h3>
+          <ul style="padding-left:1.1rem; margin:1rem 0 0; color:var(--text);">
+            {TEMPLATE_CUSTOM_WORK.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container" style="max-width:820px;">
+      <p class="kicker"><Label text="_get_started" /></p>
+      <h2 style="margin-top:0;">Pick a template. We do the rest.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        {WEBSITE_PACKAGE.tagline} One-time {WEBSITE_PACKAGE.price} — built, launched, and supported
+        for 30 days.
+      </p>
+      <div class="hero-actions">
+        <a
+          class="btn btn-green btn-cta"
+          href={WEBSITE_PACKAGE.ctaHref}
+          data-ga-event="click_build_my_website"
+          data-ga-secondary-event="stripe_payment_link_click"
+        >
+          <Label text={WEBSITE_PACKAGE.ctaLabel} />
+        </a>
+        <a class="btn btn-ghost" href="/pricing" data-ga-event="click_pricing">See Pricing</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
 import { serviceSchema } from "../schema";
-import { JOIN_PATH, WEBSITE_PACKAGE } from "../consts";
+import { FOUNDER_WEBSITE_INCLUDES, JOIN_PATH, TEMPLATES, WEBSITE_PACKAGE } from "../consts";
 
 const schemas = [
   serviceSchema({
@@ -35,6 +35,70 @@ const schemas = [
         <a class="btn btn-ghost" href={JOIN_PATH} data-ga-event="click_pricing">See Pricing</a>
       </div>
       <div class="accent-bar" style="max-width:240px; margin-top:2.5rem;"></div>
+    </div>
+  </section>
+
+  <!-- Template gallery — makes the $500 package tangible -->
+  <section class="section" id="templates" style="padding-top:1.5rem;">
+    <div class="container">
+      <p class="kicker"><Label text="_template_gallery" /></p>
+      <h2 style="margin-top:0;">See exactly what $500 buys.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        Three proven website templates built for local service businesses.
+      </p>
+      <div class="grid grid-3" style="margin-top:2rem; align-items:stretch;">
+        {
+          TEMPLATES.map((t) => (
+            <div class="card template-card">
+              <div class="template-previews">
+                <img
+                  class="template-preview-desktop"
+                  src={t.images.desktop}
+                  alt={`${t.name} template — desktop preview placeholder`}
+                  width="1200"
+                  height="750"
+                  loading="lazy"
+                />
+                <img
+                  class="template-preview-mobile"
+                  src={t.images.mobile}
+                  alt={`${t.name} template — mobile preview placeholder`}
+                  width="390"
+                  height="780"
+                  loading="lazy"
+                />
+              </div>
+              <h3 style="margin:0;">{t.name}</h3>
+              <p class="template-industry">{t.industry}</p>
+              <ul class="template-pages">
+                {t.pages.map((page) => (
+                  <li>{page}</li>
+                ))}
+              </ul>
+              <div class="template-actions">
+                <a
+                  class="btn btn-green btn-cta"
+                  href={WEBSITE_PACKAGE.ctaHref}
+                  data-ga-event="click_template_start"
+                  data-ga-secondary-event="stripe_payment_link_click"
+                  data-ga-label={t.key}
+                >
+                  Start With This Template
+                </a>
+                <a class="btn btn-ghost" href={`/templates#${t.key}`} data-ga-event="click_template_details" data-ga-label={t.key}>
+                  View Details
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <ul class="template-feature-strip" aria-label="Every Founder Website includes">
+        {FOUNDER_WEBSITE_INCLUDES.map((item) => <li>{item}</li>)}
+      </ul>
+      <p style="margin-top:0.9rem; color:var(--text-muted); font-size:0.9rem;">
+        Every Founder Website includes all of the above. <a href="/templates">Compare the templates →</a>
+      </p>
     </div>
   </section>
 

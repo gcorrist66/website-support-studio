@@ -87,6 +87,99 @@ export const WEBSITE_PACKAGE = {
   ctaHref: "https://buy.stripe.com/5kQ14f8gycXJ4ea4Tt9Zm08",
 } as const;
 
+// ---- Founder Website templates (the $500 package, made tangible) ------------
+// Three launch templates for local service businesses. Preview images are
+// committed wireframe placeholders (no demo sites exist yet — do not imply
+// live demos). The "Start With This Template" CTA reuses the existing Founder
+// Website Package Stripe Payment Link unchanged.
+export const FOUNDER_WEBSITE_INCLUDES = [
+  "5 pages",
+  "Mobile optimization",
+  "Contact forms",
+  "Click-to-call",
+  "Service area pages",
+  "Basic SEO",
+  "Hosting",
+  "SSL",
+  "Launch",
+  "30 days support",
+] as const;
+
+export const TEMPLATES = [
+  {
+    key: "ridgeline-roofing",
+    name: "Ridgeline Roofing",
+    industry: "Roofing",
+    pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    features: [
+      "Free estimate request form",
+      "Storm damage callout section",
+      "Project gallery layout",
+      "Click-to-call header and footer",
+      "Service area pages",
+    ],
+    images: {
+      desktop: "/templates/ridgeline-roofing-desktop.svg",
+      mobile: "/templates/ridgeline-roofing-mobile.svg",
+    },
+  },
+  {
+    key: "airflow-hvac",
+    name: "Airflow HVAC",
+    industry: "Heating & Cooling",
+    pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    features: [
+      "Service request form",
+      "Emergency service callout section",
+      "Seasonal maintenance layout",
+      "Click-to-call header and footer",
+      "Service area pages",
+    ],
+    images: {
+      desktop: "/templates/airflow-hvac-desktop.svg",
+      mobile: "/templates/airflow-hvac-mobile.svg",
+    },
+  },
+  {
+    key: "mainline-plumbing",
+    name: "Mainline Plumbing",
+    industry: "Plumbing",
+    pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    features: [
+      "Estimate request form",
+      "Emergency plumbing callout section",
+      "Service list layout",
+      "Click-to-call header and footer",
+      "Service area pages",
+    ],
+    images: {
+      desktop: "/templates/mainline-plumbing-desktop.svg",
+      mobile: "/templates/mainline-plumbing-mobile.svg",
+    },
+  },
+] as const;
+
+// What we adapt to each business inside the $500 package, versus what is
+// quoted separately as custom work. Shared across all three templates.
+export const TEMPLATE_CUSTOMIZABLE = [
+  "Your business name and logo",
+  "Colors and fonts to match your brand",
+  "All text and page copy",
+  "Your photos (or licensed stock photos)",
+  "Your list of services",
+  "Your service areas",
+  "Contact details, phone number, and business hours",
+] as const;
+
+export const TEMPLATE_CUSTOM_WORK = [
+  "Online booking or scheduling systems",
+  "E-commerce and online payments",
+  "Customer logins or portals",
+  "Pages beyond the included five",
+  "Third-party software integrations",
+  "Custom features and functionality",
+] as const;
+
 // ---- Account ownership (the customer owns their own accounts) ----------------
 export const ACCOUNT_OWNERSHIP = {
   headline: "You own your accounts — always.",

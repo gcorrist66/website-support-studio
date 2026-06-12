@@ -391,6 +391,82 @@ main {
   font-weight: 700;
 }
 
+/* ---- Template gallery ------------------------------------------------------ */
+.template-card {
+  display: flex;
+  flex-direction: column;
+}
+.template-previews {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.template-previews img {
+  display: block;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.template-preview-desktop {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+}
+.template-preview-mobile {
+  width: 26%;
+  flex: 0 0 auto;
+}
+.template-industry {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+.template-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+}
+.template-pages li {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.78rem;
+  color: var(--text);
+}
+.template-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+}
+.template-actions .btn {
+  width: 100%;
+  justify-content: center;
+}
+.template-feature-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+.template-feature-strip li {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
 /* Accent bar cycling brand colors */
 .accent-bar {
   height: 4px;
