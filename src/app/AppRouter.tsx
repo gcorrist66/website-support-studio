@@ -20,6 +20,7 @@ import { AuthCallback } from "../components/auth/AuthCallback";
 import { LoginPage } from "../components/auth/LoginPage";
 import { IdentityGate } from "../components/auth/IdentityGate";
 import { OnboardingForm } from "../components/customer/OnboardingForm";
+import { AppAnalytics } from "../components/analytics/AppAnalytics";
 import { AuthProvider, useAuth } from "../auth/AuthProvider";
 
 function HomeRoute() {
@@ -52,6 +53,7 @@ export function AppRouter() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <AppAnalytics />
         <Routes>
           <Route path="/" element={<HomeRoute />} />
           <Route path="/overview" element={<HomeRoute />} />

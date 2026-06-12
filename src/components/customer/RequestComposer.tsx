@@ -9,6 +9,7 @@ import {
   type CustomerRequestRecord,
 } from "../../data/customerRequests";
 import type { CustomerSite } from "../../data/customerWorkspace";
+import { trackEvent } from "../../analytics/ga4";
 
 type RequestPriority = "low" | "normal" | "high" | "critical";
 type AttachmentState = CustomerRequestAttachmentDraft & {
@@ -242,6 +243,10 @@ export function RequestComposer({
         })),
       });
 
+      trackEvent("request_submitted", {
+        priority,
+        attachment_count: readyAttachments.length,
+      });
       setOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "submit_failed");

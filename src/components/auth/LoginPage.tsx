@@ -8,6 +8,7 @@
 import { LogoLockup } from "../brand/LogoLockup";
 import { useAuth } from "../../auth/AuthProvider";
 import { getAuthConfigStatus } from "../../auth/realAuthClient";
+import { trackEvent } from "../../analytics/ga4";
 
 export function LoginPage() {
   const { enabled, signInWithOAuth, error } = useAuth();
@@ -31,6 +32,7 @@ export function LoginPage() {
               className="auth-btn auth-btn-green"
               type="button"
               onClick={() => {
+                trackEvent("click_google_login");
                 void signInWithOAuth("google");
               }}
             >
@@ -46,6 +48,7 @@ export function LoginPage() {
               className="auth-btn auth-btn-ghost"
               type="button"
               onClick={() => {
+                trackEvent("click_microsoft_login");
                 void signInWithOAuth("azure");
               }}
             >

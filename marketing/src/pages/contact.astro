@@ -72,6 +72,9 @@ const contactNotifyUrl =
     </div>
   </section>
   <script is:inline>
+    if (window.wssTrack) {
+      window.wssTrack("contact_form_view", { page_path: window.location.pathname });
+    }
     document.addEventListener("submit", async (event) => {
       const form = event.target;
       if (!(form instanceof HTMLFormElement) || form.id !== "wss-contact-form") return;
@@ -84,6 +87,7 @@ const contactNotifyUrl =
       const failureMessage = `We could not send this automatically. Please email ${fallbackEmail}.`;
 
       if (!notifyUrl) {
+        if (window.wssTrack) window.wssTrack("contact_form_submit_failure", { reason: "missing_endpoint" });
         if (status) status.textContent = failureMessage;
         return;
       }
@@ -103,8 +107,10 @@ const contactNotifyUrl =
           throw new Error("notification_not_confirmed");
         }
         form.reset();
+        if (window.wssTrack) window.wssTrack("contact_form_submit_success");
         if (status) status.textContent = "Message sent. Gary will reply from corristonconsulting@gmail.com.";
       } catch (_) {
+        if (window.wssTrack) window.wssTrack("contact_form_submit_failure", { reason: "notification_failed" });
         if (status) status.textContent = failureMessage;
       } finally {
         if (button instanceof HTMLButtonElement) button.disabled = false;

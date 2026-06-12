@@ -49,7 +49,7 @@ const schemas = [
         <p style="margin:0 0 1.25rem; color:var(--text-muted);">
           After launch: <strong>{WEBSITE_PACKAGE.afterLaunch.founder}</strong>, then {WEBSITE_PACKAGE.afterLaunch.standard}.
         </p>
-        <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} style="width:100%; justify-content:center;">
+        <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} style="width:100%; justify-content:center;" data-ga-event="click_founder_package_payment" data-ga-secondary-event="stripe_payment_link_click">
           <Label text={WEBSITE_PACKAGE.ctaLabel} />
         </a>
       </div>
@@ -207,6 +207,9 @@ const schemas = [
       e.preventDefault();
       const plan = btn.getAttribute("data-plan");
       const addon = btn.getAttribute("data-addon");
+      if (window.wssTrack) {
+        window.wssTrack("click_pricing", { plan: plan || "", addon: addon || "" });
+      }
       if (!CHECKOUT_URL) {
         window.location.href = "/contact";
         return;

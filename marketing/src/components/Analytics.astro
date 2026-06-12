@@ -1,7 +1,7 @@
 ---
 /**
- * Env-gated analytics. Renders nothing unless the relevant environment variable
- * is set at build time. No analytics IDs are hardcoded.
+ * GA4 analytics. Defaults to the production WSS measurement ID, with env override
+ * support for non-production or future property changes.
  *
  *   PUBLIC_GA4_ID   e.g. "G-XXXXXXXXXX"  → Google Analytics 4 (gtag.js)
  *   PUBLIC_GTM_ID   e.g. "GTM-XXXXXXX"   → Google Tag Manager container
@@ -12,7 +12,7 @@
  * The matching <noscript> for GTM is emitted in BaseLayout, immediately after
  * <body>, per Google's installation guidance.
  */
-const gaId = import.meta.env.PUBLIC_GA4_ID;
+const gaId = import.meta.env.PUBLIC_GA4_ID || "G-BQJ2J9K94D";
 const gtmId = import.meta.env.PUBLIC_GTM_ID;
 ---
 
@@ -25,8 +25,25 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID;
         function gtag() {
           dataLayer.push(arguments);
         }
+        window.gtag = window.gtag || gtag;
+        window.wssTrack = function (eventName, params) {
+          if (!eventName || typeof window.gtag !== "function") return;
+          window.gtag("event", eventName, params || {});
+        };
         gtag("js", new Date());
         gtag("config", gaId, { anonymize_ip: true });
+        document.addEventListener("click", function (event) {
+          var target = event.target && event.target.closest ? event.target.closest("[data-ga-event]") : null;
+          if (!target || typeof window.wssTrack !== "function") return;
+          var eventName = target.getAttribute("data-ga-event");
+          var secondaryEventName = target.getAttribute("data-ga-secondary-event");
+          var label = target.getAttribute("data-ga-label") || target.textContent || "";
+          var href = target.getAttribute("href") || "";
+          window.wssTrack(eventName, { event_label: label.trim(), link_url: href });
+          if (secondaryEventName) {
+            window.wssTrack(secondaryEventName, { event_label: label.trim(), link_url: href });
+          }
+        });
       </script>
     </>
   )

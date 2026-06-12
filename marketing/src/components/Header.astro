@@ -4,6 +4,9 @@ import Label from "./Label.astro";
 import { NAV, APP_URL, JOIN_PATH } from "../consts";
 
 const current = Astro.url.pathname.replace(/\/$/, "") || "/";
+const navEventByHref: Record<string, string | undefined> = {
+  "/pricing": "click_pricing",
+};
 ---
 
 <header class="site-header">
@@ -16,13 +19,13 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
     <nav class="site-nav" aria-label="Primary">
       {
         NAV.map((item) => (
-          <a href={item.href} aria-current={current === item.href ? "page" : undefined}>
+          <a href={item.href} aria-current={current === item.href ? "page" : undefined} data-ga-event={navEventByHref[item.href]}>
             <Label text={`_${item.label}`} />
           </a>
         ))
       }
-      <a class="btn btn-ghost" href={APP_URL}><Label text="_login" /></a>
-      <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
+      <a class="btn btn-ghost" href={APP_URL} data-ga-event="click_login"><Label text="_login" /></a>
+      <a class="btn btn-green btn-cta" href={JOIN_PATH} data-ga-event="click_pricing"><Label text="_join_now" /></a>
     </nav>
 
     <!-- Mobile hamburger -->
@@ -42,13 +45,13 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
     <div class="container mobile-menu-inner">
       {
         NAV.map((item) => (
-          <a href={item.href} aria-current={current === item.href ? "page" : undefined}>
+          <a href={item.href} aria-current={current === item.href ? "page" : undefined} data-ga-event={navEventByHref[item.href]}>
             <Label text={`_${item.label}`} />
           </a>
         ))
       }
-      <a class="btn btn-ghost" href={APP_URL}><Label text="_login" /></a>
-      <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
+      <a class="btn btn-ghost" href={APP_URL} data-ga-event="click_login"><Label text="_login" /></a>
+      <a class="btn btn-green btn-cta" href={JOIN_PATH} data-ga-event="click_pricing"><Label text="_join_now" /></a>
     </div>
   </nav>
 </header>

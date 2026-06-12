@@ -5,13 +5,14 @@
  * company, website, platform, contact, support email -> complete_paid_onboarding.
  * This is NOT the dashboard/portal — just the onboarding completion screen.
  */
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LogoLockup } from "../brand/LogoLockup";
 import { useAuth } from "../../auth/AuthProvider";
 import { completePaidOnboarding } from "../../data/customerOnboarding";
 import { resolveMyIdentity } from "../../data/identity";
+import { trackEvent } from "../../analytics/ga4";
 
 type Phase = "loading" | "form" | "done" | "no_org";
 
@@ -43,6 +44,7 @@ export function OnboardingForm() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const trackedOnboardingStarted = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -73,6 +75,13 @@ export function OnboardingForm() {
     };
   }, [navigate]);
 
+  useEffect(() => {
+    if (phase === "form" && !trackedOnboardingStarted.current) {
+      trackedOnboardingStarted.current = true;
+      trackEvent("onboarding_started");
+    }
+  }, [phase]);
+
   const update = (key: keyof FormState) => (e: ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -95,6 +104,7 @@ export function OnboardingForm() {
         supportEmail: form.supportEmail,
       });
       if (res.onboarding_status === "complete") {
+        trackEvent("onboarding_completed");
         setPhase("done");
       } else {
         setError("we could not finish setup yet. please check the required fields and try again.");

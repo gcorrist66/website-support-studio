@@ -31,8 +31,8 @@ const schemas = [
         $399/month after. You own your website and all your accounts.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref}><Label text="_build_my_website" /></a>
-        <a class="btn btn-ghost" href={JOIN_PATH}>See Pricing</a>
+        <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_build_my_website" data-ga-secondary-event="stripe_payment_link_click"><Label text="_build_my_website" /></a>
+        <a class="btn btn-ghost" href={JOIN_PATH} data-ga-event="click_pricing">See Pricing</a>
       </div>
       <div class="accent-bar" style="max-width:240px; margin-top:2.5rem;"></div>
     </div>
