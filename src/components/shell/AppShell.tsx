@@ -4,6 +4,7 @@ import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
 import { LogoLockup } from "../brand/LogoLockup";
 import { MonoLabel } from "../brand/MonoLabel";
+import { ProjectAccessPage, type ProjectAccessState } from "../operator/ProjectAccessPage";
 import {
   listMySites,
   removeRequestAttachment,
@@ -24,9 +25,29 @@ import {
 import {
   getReadOnlyTicketDetail,
   getReadOnlyTicketQueue,
+  getReadOnlySendContext,
 } from "../../data/readOnlyTicketData";
+import { operatorWorkflow } from "../../data/operatorWorkflow";
 
-type ConsoleSection = "admin" | "overview" | "board" | "requests" | "project_intake" | "profile" | "website_access" | "activity" | "health";
+type ConsoleSection =
+  | "admin"
+  | "overview"
+  | "board"
+  | "requests"
+  | "project_intake"
+  | "project_access"
+  | "profile"
+  | "website_access"
+  | "activity"
+  | "health";
+
+type AccessTrackState = "not_applicable" | "requested" | "received" | "verified" | "blocked";
+type NeedAttentionLane =
+  | "new_requests"
+  | "waiting_on_customer"
+  | "waiting_on_access"
+  | "waiting_on_gary"
+  | "ready_to_close";
 type FeedbackTab = "bug_report" | "feature_request" | "general_feedback";
 type CreditTopupKey = "topup_50" | "topup_100" | "topup_250";
 type WebsitePlatformKey = "wordpress" | "shopify" | "webflow" | "squarespace" | "wix" | "custom_other" | "hosting_dns";
@@ -131,10 +152,19 @@ const SECTION_ORDER: ConsoleSection[] = [
   "board",
   "requests",
   "project_intake",
+  "project_access",
   "website_access",
   "activity",
   "health",
   "profile",
+];
+
+const NEED_ATTENTION_LANES: Array<{ id: NeedAttentionLane; label: string; hint: string }> = [
+  { id: "new_requests", label: "new_requests", hint: "requests newly arrived or triaged." },
+  { id: "waiting_on_customer", label: "waiting_on_customer", hint: "missing customer input or approval." },
+  { id: "waiting_on_access", label: "waiting_on_access", hint: "platform or hosting access still required." },
+  { id: "waiting_on_gary", label: "waiting_on_gary", hint: "reply is ready and waiting for Gary review." },
+  { id: "ready_to_close", label: "ready_to_close", hint: "reply done; final wrap is ready." },
 ];
 
 const FEEDBACK_TABS: Array<{ key: FeedbackTab; label: string; category: FeedbackCategory; hint: string }> = [
@@ -724,6 +754,56 @@ function boardLaneForTicket(ticket: MockTicketQueueItem): "new" | "triage" | "wa
   }
 }
 
+function includesReasonFragment(value: string | null | undefined, fragments: string[]): boolean {
+  const normalized = (value ?? "").toLowerCase();
+  return fragments.some((fragment) => normalized.includes(fragment));
+}
+
+function isAccessRequested(ticket: MockTicketQueueItem | MockTicketDetail): boolean {
+  return (
+    ticket.status === "blocked" &&
+    includesReasonFragment(ticket.blockedReason, ["access", "credential", "admin", "wss", "invite"])
+  );
+}
+
+function isNeedAttentionLane(ticket: MockTicketQueueItem): NeedAttentionLane {
+  if (ticket.status === "received" || ticket.status === "triaged") {
+    return "new_requests";
+  }
+  if (ticket.status === "blocked") {
+    if (includesReasonFragment(ticket.blockedReason, ["access", "credential", "platform", "invite"])) {
+      return "waiting_on_access";
+    }
+    if (includesReasonFragment(ticket.blockedReason, ["customer", "data", "approval", "information"])) {
+      return "waiting_on_customer";
+    }
+    return "waiting_on_customer";
+  }
+  if (ticket.status === "awaiting_gary_approval" || ticket.status === "reply_drafted") {
+    return "waiting_on_gary";
+  }
+  if (ticket.status === "approved_to_send" || ticket.status === "sent_to_customer") {
+    return "ready_to_close";
+  }
+  return "new_requests";
+}
+
+function inferAccessState(
+  ticket: MockTicketQueueItem | MockTicketDetail,
+  override?: AccessTrackState,
+): AccessTrackState {
+  if (override && override !== "not_applicable") {
+    return override;
+  }
+  if (isAccessRequested(ticket)) {
+    return "requested";
+  }
+  if (ticket.status === "blocked") {
+    return "blocked";
+  }
+  return "not_applicable";
+}
+
 function getTicketDetail(ticketId: string): MockTicketDetail {
   return ticketDetails.find((ticket) => ticket.id === ticketId) ?? ticketDetails[0];
 }
@@ -985,6 +1065,16 @@ export function AppShell() {
   const [projectIntakeSubmittedId, setProjectIntakeSubmittedId] = useState<string | null>(null);
   const [projectIntakeSubmitting, setProjectIntakeSubmitting] = useState(false);
   const [projectIntakeError, setProjectIntakeError] = useState<string | null>(null);
+  const [requestDraftBodies, setRequestDraftBodies] = useState<Record<string, string>>({});
+  const [requestCloseNotes, setRequestCloseNotes] = useState<Record<string, string>>({});
+  const [requestInternalNotes, setRequestInternalNotes] = useState<Record<string, string>>({});
+  const [requestAssignees, setRequestAssignees] = useState<Record<string, string>>({});
+  const [requestClaims, setRequestClaims] = useState<Record<string, string>>({});
+  const [requestAssignedOwners, setRequestAssignedOwners] = useState<Record<string, string>>({});
+  const [requestAccessStates, setRequestAccessStates] = useState<Record<string, AccessTrackState>>({});
+  const [requestActionBusy, setRequestActionBusy] = useState<string | null>(null);
+  const [requestActionMessage, setRequestActionMessage] = useState<string | null>(null);
+  const [requestActionError, setRequestActionError] = useState<string | null>(null);
   const optimisticRequestsRef = useRef<MockTicketQueueItem[]>([]);
 
   useEffect(() => {
@@ -1153,6 +1243,20 @@ export function AppShell() {
     [queue],
   );
 
+  const needAttentionGroups = useMemo(() => {
+    const groups: Record<NeedAttentionLane, MockTicketQueueItem[]> = {
+      new_requests: [],
+      waiting_on_customer: [],
+      waiting_on_access: [],
+      waiting_on_gary: [],
+      ready_to_close: [],
+    };
+    for (const ticket of queue) {
+      groups[isNeedAttentionLane(ticket)].push(ticket);
+    }
+    return groups;
+  }, [queue]);
+
   const boardGroups = useMemo(() => {
     const lanes: Record<ReturnType<typeof boardLaneForTicket>, MockTicketQueueItem[]> = {
       new: [],
@@ -1174,6 +1278,18 @@ export function AppShell() {
     () => requestDetails[selectedRequestId] ?? getTicketDetail(selectedRequestId) ?? ticketDetails[0],
     [requestDetails, selectedRequestId],
   );
+  const selectedRequestIdSafe = selectedRequest.id;
+  const selectedRequestClaimedBy = requestClaims[selectedRequestIdSafe] ?? "";
+  const selectedRequestAssignedTo = requestAssignedOwners[selectedRequestIdSafe] ?? requestClaims[selectedRequestIdSafe] ?? "";
+  const selectedRequestDraftBody = requestDraftBodies[selectedRequestIdSafe] ?? "";
+  const selectedRequestInternalNote = requestInternalNotes[selectedRequestIdSafe] ?? "";
+  const selectedRequestCloseNote = requestCloseNotes[selectedRequestIdSafe] ?? "";
+  const selectedRequestAccessState = inferAccessState(selectedRequest, requestAccessStates[selectedRequestIdSafe]);
+  const selectedRequestAssigneeInput = requestAssignees[selectedRequestIdSafe] ?? user?.email ?? "";
+  const operatorActor =
+    ((user?.user_metadata as { full_name?: string } | undefined)?.full_name?.trim()) ||
+    user?.email?.trim() ||
+    "gary";
 
   const recentEvents = useMemo(() => [...selectedRequest.auditTimeline].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt)), [selectedRequest]);
 
@@ -1190,6 +1306,255 @@ export function AppShell() {
     WEBSITE_ACCESS_PLATFORMS.find((platform) => platform.key === selectedPlatformKey) ?? WEBSITE_ACCESS_PLATFORMS[0];
   const projectPages = getProjectPages(projectIntake);
   const projectPackagePreview = buildWebsiteProjectPackage(projectIntake);
+
+  function clearRequestActionMessages() {
+    setRequestActionMessage(null);
+    setRequestActionError(null);
+  }
+
+  function updateSelectedRequestLocalDetail(mutator: (current: MockTicketDetail) => MockTicketDetail) {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    setRequestDetails((current) => {
+      const currentRequest = current[selectedRequestIdSafe];
+      if (!currentRequest) {
+        return current;
+      }
+      return {
+        ...current,
+        [selectedRequestIdSafe]: mutator(currentRequest),
+      };
+    });
+  }
+
+  function appendRequestAuditEvent(ticketId: string, summary: string, eventType = "operator_action") {
+    setRequestDetails((current) => {
+      const currentRequest = current[ticketId];
+      if (!currentRequest) {
+        return current;
+      }
+      return {
+        ...current,
+        [ticketId]: {
+          ...currentRequest,
+          auditTimeline: [
+            ...currentRequest.auditTimeline,
+            {
+              id: getRandomId("operator"),
+              ticketId,
+              eventType,
+              summary,
+              actor: operatorActor,
+              occurredAt: new Date().toISOString(),
+            },
+          ],
+        },
+      };
+    });
+  }
+
+  function applyTicketStatus(ticketId: string, status: MockTicketQueueItem["status"], blockedReason?: string | null) {
+    setQueue((current) =>
+      current.map((ticket) =>
+        ticket.id === ticketId
+          ? {
+              ...ticket,
+              status,
+              blockedReason: blockedReason === null ? undefined : blockedReason ?? ticket.blockedReason,
+              updatedAt: new Date().toISOString(),
+            }
+          : ticket,
+      ),
+    );
+    updateSelectedRequestLocalDetail((current) => ({
+      ...current,
+      status,
+      blockedReason: blockedReason ?? current.blockedReason,
+    }));
+    appendRequestAuditEvent(ticketId, `status updated to ${status}`, "operator_status_update");
+  }
+
+  function setRequestAccess(ticketId: string, state: ProjectAccessState) {
+    setRequestAccessStates((current) => ({ ...current, [ticketId]: state }));
+    const details =
+      state === "requested"
+        ? "access requested"
+        : state === "received"
+          ? "access received from customer or shared channel"
+          : state === "verified"
+            ? "access verified and ready to proceed"
+            : "access blocked; operator review required";
+    appendRequestAuditEvent(ticketId, details, "operator_access_update");
+  }
+
+  async function runRequestAction(
+    actionId: string,
+    execute: () => Promise<void> | void,
+    pendingMessage: string,
+  ) {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    clearRequestActionMessages();
+    setRequestActionBusy(actionId);
+    try {
+      await execute();
+      setRequestActionMessage(pendingMessage);
+    } catch {
+      setRequestActionError("request_action_failed");
+    } finally {
+      setRequestActionBusy(null);
+    }
+  }
+
+  function handleClaimRequest() {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    void runRequestAction(
+      "claim",
+      () => {
+        setRequestClaims((current) => ({ ...current, [selectedRequestIdSafe]: operatorActor }));
+        appendRequestAuditEvent(selectedRequestIdSafe, `claimed by ${operatorActor}`, "request_claim");
+      },
+      "request claimed",
+    );
+  }
+
+  function handleAssignRequest() {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    const assignee = requestAssignees[selectedRequestIdSafe]?.trim() || operatorActor;
+    if (!assignee) {
+      return;
+    }
+    void runRequestAction(
+      "assign",
+      () => {
+        setRequestAssignedOwners((current) => ({ ...current, [selectedRequestIdSafe]: assignee }));
+        appendRequestAuditEvent(selectedRequestIdSafe, `assigned to ${assignee}`, "request_assign");
+      },
+      `assigned to ${assignee}`,
+    );
+  }
+
+  function handleAddInternalNote() {
+    if (!selectedRequestIdSafe || !requestInternalNotes[selectedRequestIdSafe]?.trim()) {
+      return;
+    }
+    const note = requestInternalNotes[selectedRequestIdSafe].trim();
+    void runRequestAction(
+      "internal-note",
+      () => {
+        const noteEvent = `${operatorActor}: ${note}`;
+        appendRequestAuditEvent(selectedRequestIdSafe, noteEvent, "operator_internal_note");
+        setRequestInternalNotes((current) => ({ ...current, [selectedRequestIdSafe]: "" }));
+        setRequestActionMessage("internal note added");
+      },
+      "internal note added",
+    );
+  }
+
+  function handleDraftReply() {
+    if (!selectedRequestIdSafe || !selectedRequestDraftBody.trim()) {
+      return;
+    }
+    const body = selectedRequestDraftBody.trim();
+    const workflowId = selectedRequest.workflowId || selectedRequest.id;
+    const summary = `draft created (${selectedRequest.workflowId ? "live" : "local"}): ${body.slice(0, 48)}`;
+    void runRequestAction(
+      "draft-reply",
+      async () => {
+        if (operatorWorkflow.isLive() && workflowId) {
+          await operatorWorkflow.draftReply(workflowId, body);
+        }
+        appendRequestAuditEvent(selectedRequestIdSafe, summary, "operator_draft_reply");
+        applyTicketStatus(selectedRequestIdSafe, "reply_drafted");
+      },
+      "draft saved",
+    );
+  }
+
+  function handleSendReply() {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    const workflowId = selectedRequest.workflowId || selectedRequest.id;
+    void runRequestAction(
+      "send-reply",
+      async () => {
+        if (!operatorWorkflow.isLive()) {
+          applyTicketStatus(selectedRequestIdSafe, "sent_to_customer");
+          return;
+        }
+        const context = await getReadOnlySendContext(workflowId);
+        await operatorWorkflow.send(workflowId, context?.recipientEmail);
+        applyTicketStatus(selectedRequestIdSafe, "sent_to_customer");
+      },
+      "reply sent",
+    );
+  }
+
+  function handleSetWaitingOnCustomer() {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    void runRequestAction(
+      "waiting-on-customer",
+      () => {
+        applyTicketStatus(selectedRequestIdSafe, "blocked", "awaiting_customer_information");
+      },
+      "request marked waiting on customer",
+    );
+  }
+
+  function handleSetWaitingOnAccess() {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    void runRequestAction(
+      "waiting-on-access",
+      () => {
+        applyTicketStatus(selectedRequestIdSafe, "blocked", "awaiting_access_grant");
+        setRequestAccess(selectedRequestIdSafe, "requested");
+      },
+      "request marked waiting on access",
+    );
+  }
+
+  function handleSetReadyToClose() {
+    if (!selectedRequestIdSafe) {
+      return;
+    }
+    void runRequestAction(
+      "ready-to-close",
+      () => {
+        applyTicketStatus(selectedRequestIdSafe, "approved_to_send");
+        setRequestAccess(selectedRequestIdSafe, "verified");
+      },
+      "request marked ready to close",
+    );
+  }
+
+  function handleCloseRequest() {
+    if (!selectedRequestIdSafe || !selectedRequestCloseNote.trim()) {
+      return;
+    }
+    const workflowId = selectedRequest.workflowId || selectedRequest.id;
+    const note = selectedRequestCloseNote.trim();
+    void runRequestAction(
+      "close-request",
+      async () => {
+        if (operatorWorkflow.isLive() && workflowId) {
+          await operatorWorkflow.close(workflowId, note);
+        }
+        applyTicketStatus(selectedRequestIdSafe, "closed");
+      },
+      "request closed",
+    );
+  }
 
   function openRequestSurface() {
     setRequestModalOpen(true);
@@ -1826,8 +2191,53 @@ export function AppShell() {
               <SectionHeading
                 eyebrow="operator"
                 title="operator dashboard"
-                description="Quick links to operator surfaces for active work."
+                description="Need attention first. Use this queue before metrics."
               />
+
+              <article className="wss-card">
+                <SectionHeading
+                  title="needs_attention"
+                  description="Prioritized request lanes for immediate operator action."
+                />
+                <div className="wss-need-attention-grid">
+                  {NEED_ATTENTION_LANES.map((lane) => (
+                    <section key={lane.id} className="wss-attention-lane">
+                      <div className="wss-attention-lane-head">
+                        <h3>
+                          <MonoLabel text={lane.label} />
+                        </h3>
+                        <span>{needAttentionGroups[lane.id].length}</span>
+                      </div>
+                      <p className="wss-section-description">{lane.hint}</p>
+                      <div className="wss-attention-lane-body">
+                        {needAttentionGroups[lane.id].length === 0 ? (
+                          <p className="wss-empty-state">none</p>
+                        ) : (
+                          needAttentionGroups[lane.id].map((ticket) => (
+                            <button
+                              key={ticket.id}
+                              type="button"
+                              className="wss-request-item"
+                              onClick={() => {
+                                setSelectedRequestId(ticket.id);
+                                navigate("/requests");
+                              }}
+                            >
+                              <strong>{ticket.title}</strong>
+                              <span>
+                                {ticket.clientName} / {ticket.siteName}
+                              </span>
+                              <span>
+                                <MonoLabel text={ticket.status} /> · {ticket.priority}
+                              </span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </article>
 
               <div className="wss-grid three-up">
                 <article className="wss-card">
@@ -1849,8 +2259,21 @@ export function AppShell() {
                       </button>
                     </li>
                     <li>
-                      <button type="button" className="wss-soft-cta" onClick={() => navigate("/project_intake")}>
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => navigate("/project_intake")}
+                      >
                         project_intake
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        onClick={() => navigate("/project_access")}
+                      >
+                        project_access
                       </button>
                     </li>
                   </ul>
@@ -2114,6 +2537,184 @@ export function AppShell() {
                   </dl>
 
                   <p className="wss-copy">{selectedRequest.customerRequest}</p>
+
+                  <article className="wss-card">
+                    <div className="wss-section-heading">
+                      <h3>
+                        <MonoLabel text="operator_action_bar" />
+                      </h3>
+                      <p className="wss-section-description">
+                        action list is optimistically tracked in this operator console layer.
+                      </p>
+                    </div>
+
+                    <div className="wss-copy">
+                      <strong>state:</strong>{" "}
+                      <MonoLabel text={selectedRequest.status} />
+                    </div>
+                    {selectedRequestClaimedBy ? (
+                      <p className="wss-copy">
+                        <strong>claimed_by:</strong> {selectedRequestClaimedBy}
+                      </p>
+                    ) : null}
+                    {selectedRequestAssignedTo ? (
+                      <p className="wss-copy">
+                        <strong>assigned_to:</strong> {selectedRequestAssignedTo}
+                      </p>
+                    ) : null}
+                    <p className="wss-copy">
+                      <strong>access_state:</strong> {selectedRequestAccessState}
+                    </p>
+
+                    <div className="wss-modal-actions">
+                      <button type="button" className="wss-secondary-button" disabled={Boolean(requestActionBusy)} onClick={handleClaimRequest}>
+                        {requestActionBusy === "claim" ? "claiming..." : "claim"}
+                      </button>
+                      <label className="wss-field">
+                        <span className="wss-field-label">
+                          <MonoLabel text="assignee" />
+                        </span>
+                        <input
+                          className="wss-input"
+                          value={selectedRequestAssigneeInput}
+                          onChange={(event) =>
+                            setRequestAssignees((current) => ({
+                              ...current,
+                              [selectedRequestIdSafe]: event.target.value,
+                            }))
+                          }
+                          placeholder="assignee email or name"
+                        />
+                      </label>
+                      <button type="button" className="wss-secondary-button" disabled={Boolean(requestActionBusy)} onClick={handleAssignRequest}>
+                        {requestActionBusy === "assign" ? "assigning..." : "assign"}
+                      </button>
+                    </div>
+
+                    <div className="wss-field">
+                      <label htmlFor={`internal-note-${selectedRequestIdSafe}`} className="wss-field-label">
+                        <MonoLabel text="internal_note" />
+                      </label>
+                      <textarea
+                        id={`internal-note-${selectedRequestIdSafe}`}
+                        className="wss-input"
+                        value={selectedRequestInternalNote}
+                        onChange={(event) =>
+                          setRequestInternalNotes((current) => ({
+                            ...current,
+                            [selectedRequestIdSafe]: event.target.value,
+                          }))
+                        }
+                        placeholder="operator-only context and next steps"
+                      />
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        disabled={
+                          Boolean(requestActionBusy) ||
+                          !selectedRequestInternalNote.trim() ||
+                          !selectedRequestIdSafe
+                        }
+                        onClick={handleAddInternalNote}
+                      >
+                        {requestActionBusy === "internal-note" ? "saving_note..." : "add_internal_note"}
+                      </button>
+                    </div>
+
+                    <div className="wss-field">
+                      <label htmlFor={`draft-${selectedRequestIdSafe}`} className="wss-field-label">
+                        <MonoLabel text="draft_reply_body" />
+                      </label>
+                      <textarea
+                        id={`draft-${selectedRequestIdSafe}`}
+                        className="wss-input"
+                        value={selectedRequestDraftBody}
+                        onChange={(event) =>
+                          setRequestDraftBodies((current) => ({
+                            ...current,
+                            [selectedRequestIdSafe]: event.target.value,
+                          }))
+                        }
+                        placeholder="write a draft response for review, approval, and send."
+                      />
+                      <div className="wss-modal-actions">
+                        <button
+                          type="button"
+                          className="wss-secondary-button"
+                          disabled={Boolean(requestActionBusy) || !selectedRequestDraftBody.trim() || !selectedRequestIdSafe}
+                          onClick={handleDraftReply}
+                        >
+                          {requestActionBusy === "draft-reply" ? "saving_reply..." : "draft_reply"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="wss-modal-actions">
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        disabled={Boolean(requestActionBusy) || !selectedRequestIdSafe}
+                        onClick={handleSendReply}
+                      >
+                        {requestActionBusy === "send-reply" ? "sending_reply..." : "send_reply"}
+                      </button>
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        disabled={Boolean(requestActionBusy) || !selectedRequestIdSafe}
+                        onClick={handleSetWaitingOnCustomer}
+                      >
+                        {requestActionBusy === "waiting-on-customer" ? "updating..." : "waiting_on_customer"}
+                      </button>
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        disabled={Boolean(requestActionBusy) || !selectedRequestIdSafe}
+                        onClick={handleSetWaitingOnAccess}
+                      >
+                        {requestActionBusy === "waiting-on-access" ? "updating..." : "waiting_on_access"}
+                      </button>
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        disabled={Boolean(requestActionBusy) || !selectedRequestIdSafe}
+                        onClick={handleSetReadyToClose}
+                      >
+                        {requestActionBusy === "ready-to-close" ? "updating..." : "ready_to_close"}
+                      </button>
+                    </div>
+
+                    <div className="wss-field">
+                      <label htmlFor={`close-${selectedRequestIdSafe}`} className="wss-field-label">
+                        <MonoLabel text="close_request_note" />
+                      </label>
+                      <textarea
+                        id={`close-${selectedRequestIdSafe}`}
+                        className="wss-input"
+                        value={selectedRequestCloseNote}
+                        onChange={(event) =>
+                          setRequestCloseNotes((current) => ({
+                            ...current,
+                            [selectedRequestIdSafe]: event.target.value,
+                          }))
+                        }
+                        placeholder="closure reason required"
+                      />
+                      <button
+                        type="button"
+                        className="wss-secondary-button"
+                        disabled={
+                          Boolean(requestActionBusy) || !selectedRequestIdSafe || !selectedRequestCloseNote.trim()
+                        }
+                        onClick={handleCloseRequest}
+                      >
+                        {requestActionBusy === "close-request" ? "closing_request..." : "close_request"}
+                      </button>
+                    </div>
+
+                    {requestActionMessage ? <p className="wss-copy">{requestActionMessage}</p> : null}
+                    {requestActionError ? <p className="wss-inline-error">{requestActionError}</p> : null}
+                  </article>
 
                   <div className="wss-request-attachments">
                     <div className="wss-section-heading">
@@ -2697,6 +3298,14 @@ export function AppShell() {
                 </article>
               </div>
             </section>
+          ) : null}
+
+          {section === "project_access" ? (
+            <ProjectAccessPage
+              tickets={queue}
+              accessStates={requestAccessStates}
+              onSetAccessState={setRequestAccess}
+            />
           ) : null}
 
           {section === "profile" ? (

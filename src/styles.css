@@ -1530,6 +1530,61 @@ pre {
   padding-bottom: 0.25rem;
 }
 
+.wss-need-attention-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(14rem, 1fr));
+  gap: 0.7rem;
+}
+
+.wss-attention-lane,
+.wss-attention-lane-head {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.wss-attention-lane {
+  min-height: 18rem;
+  padding: 0.85rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.wss-attention-lane-head {
+  align-items: start;
+}
+
+.wss-attention-lane-head h3,
+.wss-project-access-head h3 {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.wss-attention-lane-head span,
+.wss-project-access-head span {
+  align-self: start;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 1.45rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.wss-attention-lane-body {
+  display: grid;
+  gap: 0.55rem;
+  min-height: 8.5rem;
+}
+
 .wss-board-column {
   min-height: 20rem;
   display: grid;
@@ -1616,6 +1671,33 @@ pre {
 .wss-request-item.is-active {
   border-color: rgba(4, 67, 251, 0.22);
   background: rgba(4, 67, 251, 0.06);
+}
+
+.wss-project-access-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(14rem, 1fr));
+  gap: 0.8rem;
+}
+
+.wss-project-access-card {
+  display: grid;
+  gap: 0.6rem;
+  min-height: 16rem;
+  padding: 0.9rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.wss-project-access-head {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.wss-project-access-list {
+  display: grid;
+  gap: 0.55rem;
 }
 
 .wss-priority-flag {
@@ -2384,6 +2466,14 @@ pre {
   .wss-board-shell {
     grid-template-columns: repeat(6, minmax(14rem, 1fr));
   }
+
+  .wss-need-attention-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wss-project-access-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 860px) {
@@ -2445,6 +2535,11 @@ pre {
 
   .wss-board-shell {
     grid-template-columns: repeat(6, minmax(13.5rem, 82vw));
+  }
+
+  .wss-need-attention-grid,
+  .wss-project-access-grid {
+    grid-template-columns: 1fr;
   }
 
   .wss-intake-shell {

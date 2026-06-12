@@ -61,6 +61,7 @@ export function AppRouter() {
           <Route path="/board" element={<HomeRoute />} />
           <Route path="/requests" element={<HomeRoute />} />
           <Route path="/project_intake" element={<HomeRoute />} />
+          <Route path="/project_access" element={<HomeRoute />} />
           <Route path="/profile" element={<HomeRoute />} />
           <Route path="/account" element={<Navigate to="/profile" replace />} />
           <Route path="/website_access" element={<HomeRoute />} />
