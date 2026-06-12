@@ -21,8 +21,8 @@ export function initAnalytics(): void {
     return;
   }
   window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function gtagShim(...args: unknown[]) {
-    window.dataLayer?.push(args);
+  window.gtag = window.gtag || function gtagShim() {
+    window.dataLayer?.push(arguments);
   };
 
   const script = document.createElement("script");
