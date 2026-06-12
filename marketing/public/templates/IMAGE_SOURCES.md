@@ -22,3 +22,15 @@ Images are sourced from Unsplash and used under the Unsplash license, which perm
 - Luna Salon / salon interior: https://unsplash.com/s/photos/hair-salon, image CDN URL `https://images.unsplash.com/photo-1560066984-138dadb4c035`
 - Luna Coffee Shop / coffee shop counter: https://unsplash.com/s/photos/coffee-shop-counter, image CDN URL `https://images.unsplash.com/photo-1551529563-fce9529e67ac`
 - Luna Boutique / clothing racks and retail display: https://unsplash.com/s/photos/boutique-clothing-store, image CDN URL `https://images.unsplash.com/photo-1445205170230-053b83016050`
+
+## Sales-Ready Sample Business Sources
+
+All images below are sourced from Unsplash and used under the Unsplash license: https://unsplash.com/license. They are sample/demo visuals only and do not represent real customer work.
+
+- Ridgeline Roofing / roofer on residential shingle roof: https://unsplash.com/s/photos/roofing, image CDN URL `https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1`
+- Greenline Landscaping / landscaped lawn and planting beds: https://unsplash.com/s/photos/landscaping-yard, image CDN URL `https://images.unsplash.com/photo-1605117882932-f9e32b03fea9`
+- Northstar Air / HVAC technician and equipment: https://unsplash.com/s/photos/hvac-technician, image CDN URL `https://images.unsplash.com/photo-1621905252507-b35492cc74b4`
+- Harbor Wellness Clinic / wellness clinic treatment room: https://unsplash.com/s/photos/clinic-room, image CDN URL `https://images.unsplash.com/photo-1576091160550-2173dba999ef`
+- Atlas Advisory Group / consulting strategy session: https://unsplash.com/s/photos/business-consulting, image CDN URL `https://images.unsplash.com/photo-1556761175-b413da4baf72`
+- Table & Hearth / restaurant table with plated food: https://unsplash.com/s/photos/restaurant-table, image CDN URL `https://images.unsplash.com/photo-1414235077428-338989a2e8c0`
+- Mainline Plumbing / water heater and utility piping: https://unsplash.com/s/photos/water-heater-plumber, image CDN URL `https://images.unsplash.com/photo-1620653713380-7a34b773fef8`

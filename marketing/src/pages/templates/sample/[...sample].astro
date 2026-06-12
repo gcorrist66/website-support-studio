@@ -1,0 +1,24 @@
+---
+import SampleBusinessLayout from "../../../components/sample-sites/SampleBusinessLayout.astro";
+import { SAMPLE_BUSINESSES, type SamplePage } from "../../../sampleBusinesses";
+
+export function getStaticPaths() {
+  const samplePages: { suffix: string; page: SamplePage }[] = [
+    { suffix: "", page: "home" },
+    { suffix: "services", page: "services" },
+    { suffix: "about", page: "about" },
+    { suffix: "work", page: "proof" },
+    { suffix: "contact", page: "contact" },
+  ];
+
+  return SAMPLE_BUSINESSES.flatMap((business) =>
+    samplePages.map(({ suffix, page }) => ({
+      params: { sample: suffix ? `${business.slug}/${suffix}` : business.slug },
+      props: { business, page },
+    }))
+  );
+}
+
+const { business, page } = Astro.props;
+---
+<SampleBusinessLayout business={business} page={page} />

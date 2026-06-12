@@ -87,17 +87,10 @@ const schemas = [
                   <ul class="model-signals" aria-label={`${t.name} visual signals`}>
                     {t.preview.signals.map((signal) => <li>{signal}</li>)}
                   </ul>
-                  {t.key === "luna" ? (
-                    <div class="design-system-adapt-box">
-                      <p><strong>Finished sample sites:</strong> Marigold & Mane, Moonroom Coffee, Willow Thread</p>
-                      <p><strong>Good for:</strong> salon, coffee shop, boutique, restaurant, wellness, and other atmosphere-led businesses.</p>
-                    </div>
-                  ) : (
-                    <div class="design-system-adapt-box">
-                      <p><strong>Originally built for:</strong> {t.adaptableFrom}</p>
-                      <p><strong>Could become:</strong> {t.adaptableTo.join(", ")}</p>
-                    </div>
-                  )}
+                  <div class="design-system-adapt-box">
+                    <p><strong>Finished sample sites:</strong> {t.sampleSites.map((site) => site.label.replace(" Sample", "")).join(", ")}</p>
+                    <p><strong>Good for:</strong> {t.fits.join(", ")}.</p>
+                  </div>
                   <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Industries it fits</p>
                   <ul class="model-signals" aria-label={`${t.name} industries`}>
                     {t.fits.map((fit) => <li>{fit}</li>)}
@@ -124,23 +117,11 @@ const schemas = [
                     >
                       Start With This Style
                     </a>
-                    {t.key === "luna" ? (
-                      <>
-                        <a class="btn btn-ghost" href="/templates/luna/salon" data-ga-event="click_sample_site" data-ga-label="luna_salon">
-                          View Salon Sample
-                        </a>
-                        <a class="btn btn-ghost" href="/templates/luna/coffee-shop" data-ga-event="click_sample_site" data-ga-label="luna_coffee">
-                          View Coffee Sample
-                        </a>
-                        <a class="btn btn-ghost" href="/templates/luna/boutique" data-ga-event="click_sample_site" data-ga-label="luna_boutique">
-                          View Boutique Sample
-                        </a>
-                      </>
-                    ) : (
-                      <a class="btn btn-ghost" href="#whats-customizable" data-ga-event="click_template_compare" data-ga-label={t.key}>
-                        Compare Adaptability
+                    {t.sampleSites.map((site) => (
+                      <a class="btn btn-ghost" href={site.href} data-ga-event="click_sample_site" data-ga-label={`${t.key}_${site.label.toLowerCase().replaceAll(" ", "_")}`}>
+                        {site.label}
                       </a>
-                    )}
+                    ))}
                   </div>
                 </div>
               </div>

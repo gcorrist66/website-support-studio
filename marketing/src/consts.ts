@@ -114,6 +114,9 @@ export const DESIGN_SYSTEMS = [
     industry: "Professional services, medical, wellness, home services",
     pages: ["Home", "Services", "Proof", "Service Areas", "Contact"],
     demoRoute: undefined,
+    sampleSites: [
+      { label: "Wellness Sample", href: "/templates/sample/harbor-wellness" },
+    ],
     fits: ["Professional services", "Medical offices", "Wellness", "Home services"],
     exampleBusinesses: ["Dental office", "Bookkeeping firm", "Physical therapy clinic", "Home inspection company"],
     adaptableFrom: "Dental office",
@@ -145,6 +148,11 @@ export const DESIGN_SYSTEMS = [
     industry: "Salon, boutique, cafe, restaurant, wellness",
     pages: ["Home", "Services/Menu/Collections", "Gallery/Events/Visit", "About", "Contact"],
     demoRoute: "/templates/luna/salon",
+    sampleSites: [
+      { label: "Salon Sample", href: "/templates/luna/salon" },
+      { label: "Coffee Sample", href: "/templates/luna/coffee-shop" },
+      { label: "Boutique Sample", href: "/templates/luna/boutique" },
+    ],
     fits: ["Salons", "Boutiques", "Coffee shops", "Restaurants", "Wellness studios"],
     exampleBusinesses: ["Hair salon", "Local boutique", "Candle shop", "Yoga studio", "Brunch cafe"],
     adaptableFrom: "Salon",
@@ -176,6 +184,11 @@ export const DESIGN_SYSTEMS = [
     industry: "Contractors, roofing, landscaping, outdoor services",
     pages: ["Home", "Services", "Service Areas", "Proof", "Contact"],
     demoRoute: undefined,
+    sampleSites: [
+      { label: "Roofing Sample", href: "/templates/sample/ridgeline-roofing" },
+      { label: "Landscaping Sample", href: "/templates/sample/greenline-landscaping" },
+      { label: "HVAC Sample", href: "/templates/sample/northstar-air" },
+    ],
     fits: ["Roofing", "Landscaping", "Tree service", "Exterior painting", "Outdoor services"],
     exampleBusinesses: ["Roofing company", "Landscaping crew", "Tree service", "Window installer", "Exterior painter"],
     adaptableFrom: "Roofing company",
@@ -207,6 +220,9 @@ export const DESIGN_SYSTEMS = [
     industry: "Trades, manufacturing, auto, construction, B2B services",
     pages: ["Home", "Services", "Process", "Service Areas", "Contact"],
     demoRoute: undefined,
+    sampleSites: [
+      { label: "Plumbing Sample", href: "/templates/sample/mainline-plumbing" },
+    ],
     fits: ["Plumbing", "HVAC", "Auto repair", "Manufacturing", "Commercial contractors"],
     exampleBusinesses: ["Plumbing company", "HVAC service", "Machine shop", "Auto repair shop", "Commercial contractor"],
     adaptableFrom: "Auto repair shop",
@@ -238,6 +254,9 @@ export const DESIGN_SYSTEMS = [
     industry: "Restaurants, coffee shops, bakeries, bars, food trucks",
     pages: ["Home", "Menu", "Hours", "Events", "Contact"],
     demoRoute: undefined,
+    sampleSites: [
+      { label: "Restaurant Sample", href: "/templates/sample/table-and-hearth" },
+    ],
     fits: ["Restaurants", "Coffee shops", "Bakeries", "Bars", "Caterers"],
     exampleBusinesses: ["Coffee shop", "Pizza restaurant", "Bakery", "Brunch cafe", "Catering company"],
     adaptableFrom: "Coffee shop",
@@ -269,6 +288,9 @@ export const DESIGN_SYSTEMS = [
     industry: "Consulting, legal, accounting, IT, B2B services",
     pages: ["Home", "Services", "Approach", "Proof", "Contact"],
     demoRoute: undefined,
+    sampleSites: [
+      { label: "Consultant Sample", href: "/templates/sample/atlas-advisory" },
+    ],
     fits: ["Consultants", "Law firms", "Accounting", "IT services", "Agencies"],
     exampleBusinesses: ["Marketing consultant", "Law office", "IT services company", "Accounting firm", "Fractional CFO"],
     adaptableFrom: "Consulting firm",
