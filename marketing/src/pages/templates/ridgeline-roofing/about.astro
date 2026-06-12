@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const milestones = [
+  "Founded as a local family-owned fictional operation serving Denver neighborhoods.",
+  "Expanded from repairs to replacement and claim support after seasonal demand growth.",
+  "Built an inspection-first workflow so homeowners get clear recommendations before approvals.",
+  "Now uses scheduled updates and written checklists for every service call.",
+];
+---
+
+<BaseLayout
+  title="About Ridgeline Roofing — Model Home"
+  description="About Ridgeline Roofing demo copy for the Founder Website Package model home. Fictional, complete, and ready-to-fill sample content."
+  path="/templates/ridgeline-roofing/about"
+>
+  <main>
+    <section class="hero">
+      <div class="container" style="max-width: 780px;">
+        <p class="demo-disclaimer">Demo website · Fictional demo company</p>
+        <p class="kicker">Our story</p>
+        <h1>Built for Denver homes, designed for clarity.</h1>
+        <p class="lede">Ridgeline Roofing is a demo site that demonstrates the result of a complete 5-page Founder Website Package build.</p>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--surface-muted);">
+      <div class="container" style="max-width: 840px;">
+        <h2>About the business (sample)</h2>
+        <p>
+          Ridgeline Roofing focuses on straightforward residential roofing work for homeowners who want practical service notes and clear timelines.
+          It is positioned as a modern, mobile-first local business with quick access points for inspection scheduling and emergency calls.
+          The team in this demo is intentionally modest and practical, highlighting transparent communication as a core trust signal.
+        </p>
+        <p>
+          This section intentionally reads like a real operations narrative while staying fully fictional for ethical demo use.
+        </p>
+        <div class="timeline">
+          {milestones.map((item) => (
+            <div class="card">
+              <p style="margin-top:0;">{item}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container" style="max-width: 840px;">
+        <h2>Core service promise</h2>
+        <p>
+          Every estimate and communication is presented as plain language: what is done, when it is done, and what the customer should expect next.
+          Ridgeline Roofing model copy keeps this simple and readable on mobile as a first-class priority.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-green" href="/templates/ridgeline-roofing/contact#estimate">Request a Roof Estimate</a>
+          <a class="btn btn-ghost" href="/templates/ridgeline-roofing/contact">Contact</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style is:inline>
+    .demo-disclaimer {
+      display: inline-block;
+      border: 1px dashed var(--border-strong);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.72rem;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    @media (max-width: 820px) {
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

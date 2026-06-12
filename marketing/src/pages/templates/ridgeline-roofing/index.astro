@@ -1,0 +1,176 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const townList = ["Denver", "Aurora", "Lakewood", "Golden", "Arvada", "Englewood", "Commerce City", "Wheat Ridge", "Centennial", "Westminster", "Broomfield", "Parker"]; 
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "RoofingContractor",
+  name: "Ridgeline Roofing",
+  url: "https://websitesupportstudio.com/templates/ridgeline-roofing",
+  description: "Residential roofing services for Denver-area homeowners, including repairs, replacements, and storm recovery support.",
+  areaServed: {
+    "@type": "City",
+    name: "Denver",
+    addressRegion: "Colorado",
+    addressCountry: "US",
+  },
+  telephone: "+13035550198",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Denver Metro Demo Area",
+    addressLocality: "Denver",
+    addressRegion: "CO",
+    postalCode: "80202",
+    addressCountry: "US",
+  },
+  sameAs: [
+    "https://www.websitesupportstudio.com/contact",
+  ],
+};
+---
+
+<BaseLayout
+  title="Ridgeline Roofing — Model Home Demo"
+  description="Fictional model website for a Denver residential roofing company. Use this as a sample of a finished $500 Founder Website Package result."
+  path="/templates/ridgeline-roofing"
+>
+  <main>
+    <section class="hero" style="padding-top:3rem;">
+      <div class="container">
+        <p class="demo-disclaimer">Demo website · Fictional demo company</p>
+        <h1>Denver Roofing That Stays Solid Through Every Season.</h1>
+        <p class="lede">
+          Ridgeline Roofing provides residential roof replacement, repair, and storm response in Denver and surrounding neighborhoods. Every section below is sample copy for the Founder Website Package model home.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-green btn-cta" href="tel:+13035550198" data-ga-event="demo_call">Call Now</a>
+          <a class="btn btn-ghost" href="/templates/ridgeline-roofing/contact" data-ga-event="demo_schedule_inspection">Schedule Inspection</a>
+          <a class="btn btn-ghost" href="/templates/ridgeline-roofing/contact#estimate" data-ga-event="demo_estimate">Request a Roof Estimate</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--surface-muted);">
+      <div class="container">
+        <p class="kicker">Frictionless sample</p>
+        <h2>Services homeowners asked for most</h2>
+        <div class="demo-grid">
+          <article class="card">
+            <h3 style="margin-top:0;">Roof Replacement</h3>
+            <p style="margin:0.45rem 0 0; color:var(--text-muted);">Full roof system replacement and material guidance for Denver-area weather and exposure patterns.</p>
+            <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
+          </article>
+          <article class="card">
+            <h3 style="margin-top:0;">Roof Repair</h3>
+            <p style="margin:0.45rem 0 0; color:var(--text-muted);">Leak fixes, flashing repair, shingle lift corrections, and storm-breathing vent checks.</p>
+            <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
+          </article>
+          <article class="card">
+            <h3 style="margin-top:0;">Storm Damage</h3>
+            <p style="margin:0.45rem 0 0; color:var(--text-muted);">Same-day triage after hail or wind events with temporary protection planning and photos for claims.</p>
+            <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
+          </article>
+          <article class="card">
+            <h3 style="margin-top:0;">Insurance Claim Support</h3>
+            <p style="margin:0.45rem 0 0; color:var(--text-muted);">Clear documentation support for claims teams and transparent communication during adjustments.</p>
+            <a class="btn btn-ghost" href="/templates/ridgeline-roofing/services#services">See details</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <p class="kicker">Trust points</p>
+        <h2>How Ridgeline Roofing builds confidence</h2>
+        <div class="demo-grid demo-checks">
+          <p class="card" style="margin:0;">Licensed and insured contractors for demo sample projects.</p>
+          <p class="card" style="margin:0;">Fast callback promise: initial response within one business day.</p>
+          <p class="card" style="margin:0;">Service in Denver, Aurora, Lakewood, Golden, and Englewood.</p>
+          <p class="card" style="margin:0;">Clear estimate walk-through and invoice-friendly follow-up notes.</p>
+        </div>
+        <div class="cta-line">
+          <a class="btn btn-green" href="/templates/ridgeline-roofing/services">Browse all services</a>
+          <a class="btn btn-ghost" href="/templates/ridgeline-roofing/service-area">Service area details</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--surface-muted);">
+      <div class="container">
+        <p class="marker">Service area coverage</p>
+        <p class="lede" style="margin-top:0.45rem;">Denver metro households and neighborhoods we can model around:</p>
+        <div class="demo-list">
+          {townList.map((town) => <span>{town}</span>)}
+        </div>
+        <p style="margin-top:0.9rem; color:var(--text-muted);">Demo route for model-home reference only. <strong>Not an actual customer profile.</strong></p>
+      </div>
+    </section>
+  </main>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessSchema)} />
+
+  <style is:inline>
+    .demo-disclaimer {
+      display: inline-block;
+      border: 1px dashed var(--border-strong);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.72rem;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .demo-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+    .demo-checks {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: start;
+    }
+    .demo-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .demo-list span {
+      padding: 0.24rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface-elevated);
+      font-size: 0.86rem;
+    }
+    .cta-line {
+      margin-top: 1.1rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .demo-grid .card .btn {
+      margin-top: 0.8rem;
+    }
+    .demo-checks .card {
+      margin: 0;
+      min-height: 95px;
+      display: flex;
+      align-items: center;
+      color: var(--text);
+    }
+
+    @media (max-width: 800px) {
+      .demo-grid,
+      .demo-checks {
+        grid-template-columns: 1fr;
+      }
+      .hero-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</BaseLayout>

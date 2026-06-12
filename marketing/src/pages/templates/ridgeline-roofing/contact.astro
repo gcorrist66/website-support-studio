@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const faqs = [
+  {
+    q: "Do you handle insurance photos?",
+    a: "In this demo model, the service includes documentation-ready photo updates to support homeowner updates and claim communications.",
+  },
+  {
+    q: "Can I get an estimate today?",
+    a: "This demo includes an estimate request form and direct call-to-action for a fast sample workflow.",
+  },
+  {
+    q: "Do you serve the Denver metro area?",
+    a: "The sample service area includes core Denver, Aurora, Lakewood, Golden, and Englewood neighborhoods.",
+  },
+];
+---
+
+<BaseLayout
+  title="Contact Ridgeline Roofing — Model Home"
+  description="Contact page for the Ridgeline Roofing fictional demo. Includes demo CTAs and non-submitting form handling for safe preview."
+  path="/templates/ridgeline-roofing/contact"
+>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <p class="demo-disclaimer">Demo website · Fictional demo company</p>
+        <p class="kicker">Contact</p>
+        <h1>Request a Roof Estimate</h1>
+        <p class="lede">This page uses safe demo handling with a non-submitting request form for model-home demonstration.</p>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--surface-muted);">
+      <div class="container" style="max-width: 900px;">
+        <div class="contact-grid">
+          <div class="card">
+            <h2 style="margin-top:0;">Get started</h2>
+            <p>Use one of the options below to request help in this demo layout.</p>
+            <p><a class="btn btn-green btn-cta" href="tel:+13035550198">Call Now</a> <a class="btn btn-ghost" href="#">Schedule Inspection</a></p>
+            <p class="marker" style="margin-top:1rem;">Demo call script: Monday–Friday, 8am–6pm.</p>
+            <p style="color:var(--text-muted);">License/insured language is sample-marked to avoid implying real contractor registrations.</p>
+          </div>
+
+          <div class="card">
+            <h2 style="margin-top:0;">Estimate request</h2>
+            <form id="ridgeline-estimate" class="demo-form">
+              <label>
+                Name
+                <input class="input" name="name" required />
+              </label>
+              <label>
+                Email
+                <input class="input" name="email" type="email" required />
+              </label>
+              <label>
+                City
+                <input class="input" name="city" required />
+              </label>
+              <label>
+                Service Needed
+                <select class="input" name="service" required>
+                  <option value="">Choose one</option>
+                  <option>Roof Replacement</option>
+                  <option>Roof Repair</option>
+                  <option>Storm Damage</option>
+                  <option>Insurance Claim Support</option>
+                  <option>Roof Inspection</option>
+                  <option>Emergency Tarping</option>
+                </select>
+              </label>
+              <button class="btn btn-green" type="submit">Request a Roof Estimate</button>
+              <p id="ridgeline-estimate-status" role="status" style="margin:0; color:var(--text-muted); min-height:1.2rem;"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container" style="max-width: 900px;">
+        <h2>Common questions</h2>
+        <div class="faq" style="margin-top:0.8rem;">
+          {faqs.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+    document.addEventListener("submit", (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || form.id !== "ridgeline-estimate") return;
+      event.preventDefault();
+      const status = document.getElementById("ridgeline-estimate-status");
+      if (status instanceof HTMLElement) {
+        status.textContent = "This is a demo form. Add your production contact flow to capture leads securely.";
+      }
+    });
+  </script>
+
+  <style is:inline>
+    .demo-disclaimer {
+      display: inline-block;
+      border: 1px dashed var(--border-strong);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.72rem;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .demo-form {
+      display: grid;
+      gap: 0.8rem;
+    }
+    label {
+      display: grid;
+      gap: 0.45rem;
+      font-weight: 700;
+      color: var(--text-strong);
+      font-size: 0.9rem;
+    }
+    .input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      background: #fff;
+      font: inherit;
+    }
+    .input:focus-visible {
+      outline: 2px solid var(--brand-blue);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 860px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

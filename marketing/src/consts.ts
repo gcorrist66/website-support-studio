@@ -89,9 +89,10 @@ export const WEBSITE_PACKAGE = {
 
 // ---- Founder Website templates (the $500 package, made tangible) ------------
 // Three launch templates for local service businesses. Preview images are
-// committed wireframe placeholders (no demo sites exist yet — do not imply
-// live demos). The "Start With This Template" CTA reuses the existing Founder
-// Website Package Stripe Payment Link unchanged.
+// committed representations; Ridgeline Roofing now points to a complete
+// fictional model home at /templates/ridgeline-roofing. The
+// "Start With This Template" CTA reuses the existing Founder Website Package
+// Stripe Payment Link unchanged.
 export const FOUNDER_WEBSITE_INCLUDES = [
   "5 pages",
   "Mobile optimization",
@@ -111,6 +112,7 @@ export const TEMPLATES = [
     name: "Ridgeline Roofing",
     industry: "Roofing",
     pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    demoRoute: "/templates/ridgeline-roofing",
     features: [
       "Free estimate request form",
       "Storm damage callout section",
@@ -128,6 +130,7 @@ export const TEMPLATES = [
     name: "Airflow HVAC",
     industry: "Heating & Cooling",
     pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    demoRoute: undefined,
     features: [
       "Service request form",
       "Emergency service callout section",
@@ -145,6 +148,7 @@ export const TEMPLATES = [
     name: "Mainline Plumbing",
     industry: "Plumbing",
     pages: ["Home", "Services", "Service Areas", "About", "Contact"],
+    demoRoute: undefined,
     features: [
       "Estimate request form",
       "Emergency plumbing callout section",

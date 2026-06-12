@@ -1,22 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 780" role="img" aria-label="Ridgeline Roofing mobile preview placeholder">
-  <rect width="390" height="780" rx="34" fill="#fafaf7" stroke="#d6d2c5"/>
-  <rect x="140" y="16" width="110" height="14" rx="7" fill="#e5e3dc"/>
-  <rect x="26" y="52" width="110" height="16" rx="5" fill="#f4b142"/>
-  <rect x="320" y="48" width="44" height="26" rx="7" fill="#f4b142"/>
-  <rect x="26" y="96" width="338" height="200" rx="12" fill="#fef3da"/>
-  <rect x="48" y="130" width="240" height="22" rx="8" fill="#0b1220" opacity="0.82"/>
-  <rect x="48" y="164" width="200" height="12" rx="6" fill="#64748b" opacity="0.55"/>
-  <rect x="48" y="186" width="170" height="12" rx="6" fill="#64748b" opacity="0.45"/>
-  <rect x="48" y="226" width="160" height="38" rx="10" fill="#f4b142"/>
-  <rect x="26" y="324" width="338" height="110" rx="12" fill="#fff" stroke="#e5e3dc"/>
-  <rect x="26" y="452" width="338" height="110" rx="12" fill="#fff" stroke="#e5e3dc"/>
-  <rect x="48" y="348" width="110" height="12" rx="6" fill="#f4b142"/>
-  <rect x="48" y="372" width="260" height="10" rx="5" fill="#cbd5e1"/><rect x="48" y="392" width="220" height="10" rx="5" fill="#e2e8f0"/>
-  <rect x="48" y="476" width="110" height="12" rx="6" fill="#f4b142"/>
-  <rect x="48" y="500" width="260" height="10" rx="5" fill="#cbd5e1"/><rect x="48" y="520" width="220" height="10" rx="5" fill="#e2e8f0"/>
-  <rect x="26" y="590" width="338" height="56" rx="14" fill="#f4b142"/>
-  <text x="195" y="624" text-anchor="middle" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" fill="#0b1220">call now</text>
-  <rect x="26" y="664" width="338" height="72" rx="12" fill="#0b1220"/>
-  <text x="195" y="320" text-anchor="middle" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" fill="#0b1220">Ridgeline Roofing</text>
-  <text x="195" y="764" text-anchor="middle" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#94a3b8">placeholder — mobile</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 780" role="img" aria-label="Ridgeline Roofing mobile demo preview">
+  <rect width="390" height="780" rx="26" fill="#f3f4f8" stroke="#d6d2c5"/>
+
+  <!-- header -->
+  <rect x="16" y="18" width="140" height="30" rx="8" fill="#0f172a"/>
+  <text x="24" y="38" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#ffffff" font-weight="700">RIDGELINE</text>
+  <text x="90" y="38" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" fill="#ff8f24" font-weight="700">ROOFING</text>
+  <rect x="220" y="18" width="154" height="30" rx="14" fill="#ff8f24"/>
+  <text x="235" y="38" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#0b1220" font-weight="700">Call Now</text>
+
+  <!-- hero -->
+  <rect x="16" y="62" width="358" height="220" rx="14" fill="#1f2937"/>
+  <rect x="30" y="84" width="198" height="34" rx="8" fill="#ff9b35"/>
+  <text x="42" y="106" font-family="'JetBrains Mono', Menlo, monospace" font-size="9" fill="#0b1220" font-weight="700">DEMO SAMPLE</text>
+  <text x="30" y="138" font-family="'JetBrains Mono', Menlo, monospace" font-size="18" fill="#fff" font-weight="700">Denver Roofing That Holds Up</text>
+  <text x="30" y="170" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" fill="#e2e8f0">Reliable estimates, storm support, and inspection scheduling.</text>
+  <rect x="30" y="184" width="145" height="34" rx="8" fill="#ff8f24"/>
+  <text x="48" y="205" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#0b1220" font-weight="700">Request a Roof Estimate</text>
+
+  <!-- card list -->
+  <rect x="16" y="300" width="358" height="118" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
+  <text x="32" y="326" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" fill="#0b1220" font-weight="700">Roof Repair</text>
+  <text x="32" y="348" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#64748b">Leak mitigation, flashing, and full integrity checks.</text>
+  <text x="32" y="366" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#64748b">Average estimate turnaround: same business day.</text>
+
+  <rect x="16" y="430" width="358" height="118" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
+  <text x="32" y="456" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" fill="#0b1220" font-weight="700">Insurance Claim Support</text>
+  <text x="32" y="478" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#64748b">Photo log and report support to keep adjusters moving.</text>
+  <text x="32" y="496" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#64748b">Licensed contractor language and clear project notes.</text>
+
+  <rect x="16" y="560" width="358" height="118" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
+  <text x="32" y="586" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" fill="#0b1220" font-weight="700">Schedule Inspection</text>
+  <text x="32" y="608" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#64748b">In-person walkthrough with condition report and recommendations.</text>
+  <text x="32" y="626" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#64748b">Service areas include Denver, Aurora, Lakewood, and Englewood.</text>
+
+  <rect x="16" y="699" width="178" height="36" rx="9" fill="#ff8f24"/>
+  <text x="51" y="722" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" fill="#0b1220" font-weight="700">Request Estimate</text>
+  <text x="210" y="722" font-family="'JetBrains Mono', Menlo, monospace" font-size="9" fill="#475569">Demo sample — fictional business</text>
 </svg>

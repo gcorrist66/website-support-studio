@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const services = [
+  {
+    title: "Roof Replacement",
+    body: "Comprehensive replacement plans for older roofs, including permit coordination and weatherproofing details for Denver-specific conditions.",
+  },
+  {
+    title: "Roof Repair",
+    body: "Targeted repair workflows for leaks, flashing failures, shingle wear, and ridge ridgeline stress points with transparent repair notes.",
+  },
+  {
+    title: "Storm Damage",
+    body: "24-hour incident triage and temporary stabilization, then restoration scope with photo documentation for homeowners and adjusters.",
+  },
+  {
+    title: "Insurance Claim Support",
+    body: "Claim-ready documentation support, estimate summaries, and timeline updates before contractor submission.",
+  },
+  {
+    title: "Roof Inspections",
+    body: "Pre-season inspections and post-repair checks that include concise scoring and prioritized repair recommendations.",
+  },
+  {
+    title: "Emergency Tarping",
+    body: "Immediate temporary coverage when weather events occur, minimizing interior damage while a permanent repair is planned.",
+  },
+];
+---
+
+<BaseLayout
+  title="Ridgeline Roofing Services — Model Home"
+  description="Service list for Ridgeline Roofing fictional demo: replacement, repair, storm response, inspections, and claim support for Denver-area homeowners."
+  path="/templates/ridgeline-roofing/services"
+>
+  <main>
+    <section class="hero" style="padding-bottom:1.25rem;">
+      <div class="container">
+        <p class="demo-disclaimer">Demo website · Fictional demo company</p>
+        <p class="kicker">Denver residential roofing</p>
+        <h1>Services</h1>
+        <p class="lede">All service pages and content in this model home are complete and production-ready examples for a $500 build.</p>
+        <p><a class="btn btn-green" href="/templates/ridgeline-roofing/contact#estimate">Request a Roof Estimate</a> <a class="btn btn-ghost" href="tel:+13035550198">Call Now</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="container">
+        <div class="grid grid-2">
+          {services.map((service) => (
+            <article class="card" id={service.title.toLowerCase().replace(/ /g, "-")}> 
+              <h3 style="margin-top:0;">{service.title}</h3>
+              <p style="color:var(--text-muted);">{service.body}</p>
+            </article>
+          ))}
+        </div>
+        <div class="hero-actions" style="margin-top:1.5rem;">
+          <a class="btn btn-green btn-cta" href="/templates/ridgeline-roofing/contact">Schedule Inspection</a>
+          <a class="btn btn-ghost" href="/templates/ridgeline-roofing/service-area">See service areas</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style is:inline>
+    .demo-disclaimer {
+      display: inline-block;
+      border: 1px dashed var(--border-strong);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.72rem;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</BaseLayout>

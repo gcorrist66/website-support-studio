@@ -72,7 +72,7 @@ const schemas = [
                   <img
                     class="template-preview-desktop"
                     src={t.images.desktop}
-                    alt={`${t.name} template — desktop preview placeholder`}
+                    alt={`${t.name} template — desktop preview`}
                     width="1200"
                     height="750"
                     loading="lazy"
@@ -80,7 +80,7 @@ const schemas = [
                   <img
                     class="template-preview-mobile"
                     src={t.images.mobile}
-                    alt={`${t.name} template — mobile preview placeholder`}
+                    alt={`${t.name} template — mobile preview`}
                     width="390"
                     height="780"
                     loading="lazy"
@@ -111,6 +111,11 @@ const schemas = [
                     >
                       Start With This Template
                     </a>
+                    {t.demoRoute ? (
+                      <a class="btn btn-ghost" href={t.demoRoute} data-ga-event="click_template_live_demo" data-ga-label={t.key}>
+                        View Demo
+                      </a>
+                    ) : null}
                   </div>
                 </div>
               </div>
