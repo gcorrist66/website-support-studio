@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import AdaptableStyleProof from "../AdaptableStyleProof.astro";
-import { APP_URL, WEBSITE_PACKAGE } from "../../consts";
+import { WEBSITE_PACKAGE } from "../../consts";
 import type { SampleBusiness, SamplePage } from "../../sampleBusinesses";
 import { samplePath } from "../../sampleBusinesses";
 
@@ -40,14 +40,14 @@ const stylePalettes = {
 const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePalettes] ?? stylePalettes.summit;
 ---
 
-<BaseLayout title={title} description={description} path={currentPath}>
+<BaseLayout title={title} description={description} path={currentPath} hideChrome>
   <div class="sb-site" style={`--sb-accent:${business.accent};--sb-dark:${business.dark};--sb-soft:${business.soft};`}>
     <header class="sb-header">
       <a class="sb-logo" href="/" aria-label="Back to Website Support Studio homepage"><span>{business.name}</span><small>{business.category}</small></a>
       <nav class="sb-nav" aria-label={`${business.name} navigation`}>
         {business.nav.map((item) => <a href={item.href} aria-current={item.page === page ? "page" : undefined}>{item.label}</a>)}
       </nav>
-      <div class="sb-header-actions"><a class="sb-login" href={APP_URL} data-ga-event={`click_${business.slug}_login`}>Client Login</a><a class="sb-top-cta" href={checkoutHref} data-ga-event={`click_${business.slug}_header_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+      <div class="sb-header-actions"><a class="sb-login" href="/templates/sample/back-office" data-ga-event={`click__back_office`}>Preview Back Office</a><a class="sb-top-cta" href={checkoutHref} data-ga-event={`click_${business.slug}_header_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
     </header>
 
     <section class="sb-conversion-strip" aria-label="Founder Website Package actions">
@@ -55,7 +55,7 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
       <div>
         <a href={checkoutHref} data-ga-event={`click_${business.slug}_strip_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a href={checkoutHref} data-ga-event={`click_${business.slug}_strip_start`} data-ga-secondary-event="stripe_payment_link_click">Start With {business.systemName}</a>
-        <a href={checkoutHref} data-ga-event={`click_${business.slug}_strip_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href={APP_URL} data-ga-event={`click_${business.slug}_strip_login`}>Client Login</a>
+        <a href={checkoutHref} data-ga-event={`click_${business.slug}_strip_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href="/templates/sample/back-office" data-ga-event={`click__strip_back_office`}>Preview Back Office</a>
       </div>
     </section>
 

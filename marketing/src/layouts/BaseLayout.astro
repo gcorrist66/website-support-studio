@@ -18,6 +18,7 @@ interface Props {
   noindex?: boolean;
   publishedTime?: string;
   modifiedTime?: string;
+  hideChrome?: boolean;
   /** Page-specific JSON-LD nodes (Service, FAQ, Breadcrumb, Article, …). */
   schemas?: (Record<string, unknown> | Record<string, unknown>[])[];
 }
@@ -49,11 +50,11 @@ const globalSchemas = [organizationSchema(), websiteSchema()];
         </noscript>
       )
     }
-    <a class="skip-link" href="#main">skip to content</a>
-    <Header />
+    {!head.hideChrome && <a class="skip-link" href="#main">skip to content</a>}
+    {!head.hideChrome && <Header />}
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    {!head.hideChrome && <Footer />}
   </body>
 </html>

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AdaptableStyleProof from "./AdaptableStyleProof.astro";
-import { APP_URL } from "../consts";
 import { moonroom, moonroomNav } from "../moonroomCoffee";
 
 const { title, description, path } = Astro.props as { title: string; description: string; path: string };
@@ -12,21 +11,21 @@ const lunaPalettes = [
 ];
 ---
 
-<BaseLayout title={title} description={description} path={path}>
+<BaseLayout title={title} description={description} path={path} hideChrome>
   <div class="mc-site">
     <header class="mc-header">
       <a class="mc-logo" href="/" aria-label="Back to Website Support Studio homepage"><span>Moonroom</span><small>Coffee</small></a>
       <nav class="mc-nav" aria-label="Moonroom Coffee navigation">
         {moonroomNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
-      <div class="mc-header-actions"><a class="mc-login" href={APP_URL} data-ga-event="click_moonroom_login">Client Login</a><a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a></div>
+      <div class="mc-header-actions"><a class="mc-login" href="/templates/sample/back-office" data-ga-event="click_moonroom_back_office">Preview Back Office</a><a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a></div>
     </header>
     <section class="mc-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this coffee shop website?</p>
       <div>
         <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_luna" data-ga-secondary-event="stripe_payment_link_click">Start With Luna</a>
-        <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href={APP_URL} data-ga-event="click_moonroom_strip_login">Client Login</a>
+        <a href={moonroom.checkoutHref} data-ga-event="click_moonroom_strip_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href="/templates/sample/back-office" data-ga-event="click_moonroom_strip_back_office">Preview Back Office</a>
       </div>
     </section>
     <slot />

@@ -1,0 +1,173 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { WEBSITE_PACKAGE } from "../../../../consts";
+
+const inboxItems = [
+  { label: "New lead", title: "Patio estimate request", detail: "Sample contact form submission from a homeowner asking about timeline and pricing.", status: "New" },
+  { label: "Website request", title: "Update spring service photos", detail: "Upload three new project photos and swap the homepage seasonal CTA.", status: "In progress" },
+  { label: "Feedback", title: "Change headline wording", detail: "Owner note: make the hero copy sound more local and less formal.", status: "Needs review" },
+  { label: "Bug report", title: "Mobile menu wording", detail: "Sample visitor noticed one service label could be clearer on phones.", status: "Queued" },
+];
+
+const approvalItems = [
+  "Two testimonials awaiting owner approval",
+  "One gallery photo set ready to publish",
+  "Draft service-area update prepared for review",
+];
+
+const requestTypes = ["Copy updates", "Photo swaps", "New services", "Bug fixes", "SEO/local edits", "Launch support"];
+---
+
+<BaseLayout
+  title="Sample Back Office | Website Support Studio"
+  description="Preview the fictional customer Back Office included with a Website Support Studio Founder Website Package."
+  path="/templates/sample/back-office"
+  hideChrome
+>
+  <main class="back-office-preview">
+    <section class="bo-hero">
+      <div class="bo-shell bo-hero-grid">
+        <div>
+          <p class="bo-pill">Sample Back Office · Fictional example data</p>
+          <h1>See what your website workspace can look like after launch.</h1>
+          <p class="bo-lede">This public preview shows a safe, fictional version of the customer Back Office: leads, requests, feedback, bug reports, approvals, plan details, and upgrade paths in one calm place.</p>
+          <div class="bo-actions">
+            <a class="bo-btn bo-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_back_office_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+            <a class="bo-btn bo-secondary" href="/templates" data-ga-event="click_back_office_samples">View Sample Sites</a>
+            <a class="bo-btn bo-quiet" href="/" data-ga-event="click_back_office_home">Back to Website Support Studio</a>
+          </div>
+        </div>
+        <aside class="bo-panel bo-plan" aria-label="Sample current plan">
+          <p class="bo-kicker">Current Plan</p>
+          <h2>Founder Website Package</h2>
+          <p><strong>$500 one-time build</strong></p>
+          <p><strong>$199/month</strong> while the account remains active.</p>
+          <ul>
+            <li>Website requests included</li>
+            <li>Lead and feedback tracking</li>
+            <li>Launch support and ongoing edits</li>
+          </ul>
+          <span>Fictional account preview</span>
+        </aside>
+      </div>
+    </section>
+
+    <section class="bo-section">
+      <div class="bo-shell bo-dashboard">
+        <div class="bo-board">
+          <div class="bo-board-head">
+            <div>
+              <p class="bo-kicker">Lead Inbox</p>
+              <h2>New work, questions, and requests</h2>
+            </div>
+            <span>Sample data only</span>
+          </div>
+          <div class="bo-inbox">
+            {inboxItems.map((item) => (
+              <article class="bo-inbox-card">
+                <div>
+                  <p>{item.label}</p>
+                  <h3>{item.title}</h3>
+                  <span>{item.detail}</span>
+                </div>
+                <strong>{item.status}</strong>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <aside class="bo-side">
+          <div class="bo-panel">
+            <p class="bo-kicker">Website Requests</p>
+            <h2>Ask for changes without hunting through emails.</h2>
+            <div class="bo-tags">
+              {requestTypes.map((type) => <span>{type}</span>)}
+            </div>
+          </div>
+          <div class="bo-panel">
+            <p class="bo-kicker">Approvals</p>
+            <h2>Ready for owner review</h2>
+            <ul>
+              {approvalItems.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="bo-section bo-soft">
+      <div class="bo-shell bo-grid-3">
+        <article class="bo-panel">
+          <p class="bo-kicker">Feedback</p>
+          <h2>Keep notes tied to the website.</h2>
+          <p>Send copy, photo, and page feedback in one place so the support team knows what changed and why.</p>
+        </article>
+        <article class="bo-panel">
+          <p class="bo-kicker">Bug Reports</p>
+          <h2>Report issues without guessing who to email.</h2>
+          <p>Submit mobile problems, broken links, form issues, or confusing page behavior directly from the workspace.</p>
+        </article>
+        <article class="bo-panel">
+          <p class="bo-kicker">Upgrade Options</p>
+          <h2>Grow when the website is ready.</h2>
+          <p>Preview optional add-ons like advanced SEO pages, seasonal campaigns, conversion audits, and expanded support.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="bo-section">
+      <div class="bo-shell bo-final">
+        <p class="bo-pill">Marketing-safe preview</p>
+        <h2>No real customer data. No admin access. Just a clear look at the customer experience.</h2>
+        <p>This is a fictional public preview for prospects. The real Back Office is private and only available after purchase and onboarding.</p>
+        <div class="bo-actions">
+          <a class="bo-btn bo-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_back_office_final_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+          <a class="bo-btn bo-secondary" href="/templates" data-ga-event="click_back_office_final_samples">View Sample Sites</a>
+          <a class="bo-btn bo-quiet" href="/" data-ga-event="click_back_office_final_home">Back to Website Support Studio</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .back-office-preview { --bo-ink:#172033; --bo-muted:#657089; --bo-line:rgba(23,32,51,.13); --bo-soft:#eef5f2; --bo-green:#1f6b4d; --bo-gold:#d7a647; color:var(--bo-ink); background:linear-gradient(180deg,#fbfcf8,#eef5f2 48%,#fff); }
+    .bo-shell { width:min(1120px, calc(100% - 2rem)); margin:0 auto; }
+    .bo-hero { padding:clamp(4rem,9vw,7rem) 0 3rem; }
+    .bo-hero-grid,.bo-dashboard { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.72fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:start; }
+    .bo-pill,.bo-kicker { font-family:var(--font-mono); font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .bo-pill { display:inline-flex; border:1px dashed rgba(31,107,77,.4); border-radius:999px; padding:.45rem .7rem; background:#fff; color:var(--bo-green); font-size:.76rem; }
+    .bo-kicker { margin:0 0 .65rem; color:var(--bo-green); font-size:.76rem; }
+    .bo-hero h1 { max-width:12ch; margin:.8rem 0 0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(3rem,8vw,6rem); line-height:.94; letter-spacing:-.055em; }
+    .bo-lede { max-width:62ch; color:var(--bo-muted); font-size:1.12rem; line-height:1.75; }
+    .bo-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.25rem; }
+    .bo-btn { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; min-height:2.9rem; padding:.85rem 1.1rem; border:1px solid var(--bo-line); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
+    .bo-primary { background:var(--bo-green); color:#fff; border-color:var(--bo-green); box-shadow:0 16px 34px rgba(31,107,77,.2); }
+    .bo-secondary { background:#fff; color:var(--bo-ink); }
+    .bo-quiet { color:var(--bo-ink); background:transparent; }
+    .bo-panel,.bo-board { border:1px solid var(--bo-line); border-radius:1.6rem; background:rgba(255,255,255,.9); box-shadow:0 24px 70px rgba(23,32,51,.08); }
+    .bo-panel { padding:1.25rem; }
+    .bo-plan { position:relative; overflow:hidden; }
+    .bo-plan:before { content:""; position:absolute; inset:auto -20% -35% 20%; height:180px; background:radial-gradient(circle,var(--bo-gold),transparent 68%); opacity:.28; }
+    .bo-plan h2,.bo-panel h2,.bo-board h2,.bo-final h2 { margin:.15rem 0 .5rem; font-family:Georgia,"Times New Roman",serif; line-height:1; letter-spacing:-.04em; }
+    .bo-plan ul,.bo-panel ul { margin:1rem 0 0; padding-left:1.1rem; color:var(--bo-muted); line-height:1.65; }
+    .bo-plan span,.bo-board-head span { display:inline-flex; margin-top:1rem; border-radius:999px; padding:.35rem .6rem; background:var(--bo-soft); color:var(--bo-green); font-family:var(--font-mono); font-size:.72rem; font-weight:900; text-transform:uppercase; }
+    .bo-section { padding:clamp(3rem,7vw,5rem) 0; }
+    .bo-board { padding:1rem; }
+    .bo-board-head { display:flex; align-items:start; justify-content:space-between; gap:1rem; padding:.4rem .4rem 1rem; }
+    .bo-inbox { display:grid; gap:.75rem; }
+    .bo-inbox-card { display:flex; justify-content:space-between; gap:1rem; padding:1rem; border-radius:1.2rem; background:#f8faf7; border:1px solid var(--bo-line); }
+    .bo-inbox-card p { margin:0 0 .35rem; color:var(--bo-green); font-family:var(--font-mono); font-size:.74rem; font-weight:900; text-transform:uppercase; }
+    .bo-inbox-card h3 { margin:0; font-size:1.05rem; }
+    .bo-inbox-card span,.bo-panel p,.bo-final p { color:var(--bo-muted); line-height:1.65; }
+    .bo-inbox-card strong { flex:0 0 auto; height:fit-content; border-radius:999px; padding:.35rem .55rem; background:#fff; color:var(--bo-ink); border:1px solid var(--bo-line); font-family:var(--font-mono); font-size:.72rem; }
+    .bo-side { display:grid; gap:1rem; }
+    .bo-tags { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+    .bo-tags span { border-radius:999px; padding:.45rem .65rem; background:var(--bo-soft); color:var(--bo-ink); font-family:var(--font-mono); font-size:.74rem; font-weight:900; }
+    .bo-soft { background:rgba(238,245,242,.72); }
+    .bo-grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+    .bo-final { text-align:center; max-width:820px; }
+    .bo-final h2 { font-size:clamp(2rem,5vw,3.6rem); }
+    .bo-final .bo-actions { justify-content:center; }
+    @media (max-width:900px) { .bo-hero-grid,.bo-dashboard,.bo-grid-3 { grid-template-columns:1fr; } .bo-hero h1 { max-width:100%; font-size:clamp(2.8rem,16vw,4.6rem); } .bo-inbox-card,.bo-board-head { display:grid; } .bo-btn { width:100%; } }
+  </style>
+</BaseLayout>
