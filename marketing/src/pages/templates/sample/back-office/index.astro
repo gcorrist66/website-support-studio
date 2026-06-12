@@ -1,173 +1,276 @@
 ---
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
-import { WEBSITE_PACKAGE } from "../../../../consts";
+import { APP_URL, WEBSITE_PACKAGE } from "../../../../consts";
 
-const inboxItems = [
-  { label: "New lead", title: "Patio estimate request", detail: "Sample contact form submission from a homeowner asking about timeline and pricing.", status: "New" },
-  { label: "Website request", title: "Update spring service photos", detail: "Upload three new project photos and swap the homepage seasonal CTA.", status: "In progress" },
-  { label: "Feedback", title: "Change headline wording", detail: "Owner note: make the hero copy sound more local and less formal.", status: "Needs review" },
-  { label: "Bug report", title: "Mobile menu wording", detail: "Sample visitor noticed one service label could be clearer on phones.", status: "Queued" },
+const summaryCards = [
+  { label: "Website Visits", value: "1,248", detail: "+18% from last month" },
+  { label: "New Leads", value: "23", detail: "From forms and phone taps" },
+  { label: "Website Requests", value: "4", detail: "Two updates completed" },
+  { label: "Testimonials", value: "7", detail: "Two ready to approve" },
+  { label: "Plan Status", value: "Active", detail: "Founder pricing locked" },
 ];
 
-const approvalItems = [
-  "Two testimonials awaiting owner approval",
-  "One gallery photo set ready to publish",
-  "Draft service-area update prepared for review",
+const analytics = [
+  { label: "Visits this month", value: "1,248" },
+  { label: "Form submissions", value: "23" },
+  { label: "Top page", value: "Services" },
+  { label: "Traffic trend", value: "Up 18%" },
 ];
 
-const requestTypes = ["Copy updates", "Photo swaps", "New services", "Bug fixes", "SEO/local edits", "Launch support"];
+const leads = [
+  { name: "Maya R.", date: "June 11", source: "Contact page", status: "New" },
+  { name: "Chris D.", date: "June 10", source: "Services page", status: "Replied" },
+  { name: "Jordan P.", date: "June 8", source: "Homepage CTA", status: "Booked" },
+];
+
+const testimonials = [
+  { title: "Pending approval", count: "2", note: "Review before publishing" },
+  { title: "Approved", count: "5", note: "Ready on your website" },
+  { title: "Request a testimonial", count: "+", note: "Send a simple review link" },
+];
+
+const requestExamples = ["Request an update", "Report an issue", "Ask for a new page", "Send feedback"];
 ---
 
 <BaseLayout
-  title="Sample Back Office | Website Support Studio"
-  description="Preview the fictional customer Back Office included with a Website Support Studio Founder Website Package."
+  title="Sample Customer Dashboard | Website Support Studio"
+  description="Preview the simple fictional customer dashboard included with a Website Support Studio Founder Website Package."
   path="/templates/sample/back-office"
   hideChrome
 >
-  <main class="back-office-preview">
-    <section class="bo-hero">
-      <div class="bo-shell bo-hero-grid">
+  <main class="dashboard-preview">
+    <header class="dash-top">
+      <a class="dash-logo" href="/" aria-label="Back to Website Support Studio homepage">
+        <span>Website Support Studio</span>
+        <small>Back Office</small>
+      </a>
+      <nav class="dash-nav" aria-label="Sample dashboard actions">
+        <a href="/templates">View Sample Sites</a>
+        <a href={APP_URL} data-ga-event="click_sample_dashboard_login">Log In To WSS</a>
+      </nav>
+    </header>
+
+    <section class="dash-hero">
+      <div class="dash-shell dash-hero-grid">
         <div>
-          <p class="bo-pill">Sample Back Office · Fictional example data</p>
-          <h1>See what your website workspace can look like after launch.</h1>
-          <p class="bo-lede">This public preview shows a safe, fictional version of the customer Back Office: leads, requests, feedback, bug reports, approvals, plan details, and upgrade paths in one calm place.</p>
-          <div class="bo-actions">
-            <a class="bo-btn bo-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_back_office_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-            <a class="bo-btn bo-secondary" href="/templates" data-ga-event="click_back_office_samples">View Sample Sites</a>
-            <a class="bo-btn bo-quiet" href="/" data-ga-event="click_back_office_home">Back to Website Support Studio</a>
+          <p class="dash-pill">Sample customer dashboard · Fictional preview data · No real customer data</p>
+          <h1>Your website stuff, in one simple place.</h1>
+          <p class="dash-lede">After launch, your Back Office gives you a calm owner dashboard for website activity, leads, testimonials, business info, plan details, and website requests.</p>
+          <div class="dash-actions">
+            <a class="dash-btn dash-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_sample_dashboard_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+            <a class="dash-btn dash-secondary" href="/templates" data-ga-event="click_sample_dashboard_samples">View Sample Sites</a>
+            <a class="dash-btn dash-quiet" href={APP_URL} data-ga-event="click_sample_dashboard_real_login">Log In To WSS</a>
           </div>
         </div>
-        <aside class="bo-panel bo-plan" aria-label="Sample current plan">
-          <p class="bo-kicker">Current Plan</p>
-          <h2>Founder Website Package</h2>
-          <p><strong>$500 one-time build</strong></p>
-          <p><strong>$199/month</strong> while the account remains active.</p>
-          <ul>
-            <li>Website requests included</li>
-            <li>Lead and feedback tracking</li>
-            <li>Launch support and ongoing edits</li>
-          </ul>
-          <span>Fictional account preview</span>
+        <aside class="dash-card dash-welcome" aria-label="Sample dashboard welcome card">
+          <p class="dash-kicker">Today at a glance</p>
+          <h2>Marigold & Mane</h2>
+          <p>Your website is live, your plan is active, and two new leads came in this week.</p>
+          <a href="#sample-request">Submit Sample Request</a>
         </aside>
       </div>
     </section>
 
-    <section class="bo-section">
-      <div class="bo-shell bo-dashboard">
-        <div class="bo-board">
-          <div class="bo-board-head">
+    <section class="dash-section dash-summary" aria-label="Sample dashboard summary">
+      <div class="dash-shell dash-summary-grid">
+        {summaryCards.map((card) => (
+          <article class="dash-stat">
+            <p>{card.label}</p>
+            <strong>{card.value}</strong>
+            <span>{card.detail}</span>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="dash-section">
+      <div class="dash-shell dash-two-col">
+        <article class="dash-card dash-main-card">
+          <div class="dash-card-head">
             <div>
-              <p class="bo-kicker">Lead Inbox</p>
-              <h2>New work, questions, and requests</h2>
+              <p class="dash-kicker">Analytics</p>
+              <h2>How your website is doing</h2>
             </div>
-            <span>Sample data only</span>
+            <span>Sample numbers</span>
           </div>
-          <div class="bo-inbox">
-            {inboxItems.map((item) => (
-              <article class="bo-inbox-card">
-                <div>
-                  <p>{item.label}</p>
-                  <h3>{item.title}</h3>
-                  <span>{item.detail}</span>
-                </div>
-                <strong>{item.status}</strong>
-              </article>
+          <div class="dash-metrics">
+            {analytics.map((item) => (
+              <div>
+                <p>{item.label}</p>
+                <strong>{item.value}</strong>
+              </div>
             ))}
           </div>
-        </div>
+          <div class="dash-trend" aria-label="Sample traffic trend">
+            <span style="height:36%"></span>
+            <span style="height:52%"></span>
+            <span style="height:46%"></span>
+            <span style="height:68%"></span>
+            <span style="height:74%"></span>
+            <span style="height:88%"></span>
+          </div>
+        </article>
 
-        <aside class="bo-side">
-          <div class="bo-panel">
-            <p class="bo-kicker">Website Requests</p>
-            <h2>Ask for changes without hunting through emails.</h2>
-            <div class="bo-tags">
-              {requestTypes.map((type) => <span>{type}</span>)}
+        <article class="dash-card dash-main-card">
+          <div class="dash-card-head">
+            <div>
+              <p class="dash-kicker">Leads</p>
+              <h2>People who reached out</h2>
             </div>
+            <span>Fictional leads</span>
           </div>
-          <div class="bo-panel">
-            <p class="bo-kicker">Approvals</p>
-            <h2>Ready for owner review</h2>
-            <ul>
-              {approvalItems.map((item) => <li>{item}</li>)}
-            </ul>
+          <div class="dash-leads">
+            {leads.map((lead) => (
+              <div class="dash-lead-row">
+                <div>
+                  <strong>{lead.name}</strong>
+                  <p>{lead.date} · {lead.source}</p>
+                </div>
+                <span>{lead.status}</span>
+              </div>
+            ))}
           </div>
-        </aside>
-      </div>
-    </section>
-
-    <section class="bo-section bo-soft">
-      <div class="bo-shell bo-grid-3">
-        <article class="bo-panel">
-          <p class="bo-kicker">Feedback</p>
-          <h2>Keep notes tied to the website.</h2>
-          <p>Send copy, photo, and page feedback in one place so the support team knows what changed and why.</p>
-        </article>
-        <article class="bo-panel">
-          <p class="bo-kicker">Bug Reports</p>
-          <h2>Report issues without guessing who to email.</h2>
-          <p>Submit mobile problems, broken links, form issues, or confusing page behavior directly from the workspace.</p>
-        </article>
-        <article class="bo-panel">
-          <p class="bo-kicker">Upgrade Options</p>
-          <h2>Grow when the website is ready.</h2>
-          <p>Preview optional add-ons like advanced SEO pages, seasonal campaigns, conversion audits, and expanded support.</p>
         </article>
       </div>
     </section>
 
-    <section class="bo-section">
-      <div class="bo-shell bo-final">
-        <p class="bo-pill">Marketing-safe preview</p>
-        <h2>No real customer data. No admin access. Just a clear look at the customer experience.</h2>
-        <p>This is a fictional public preview for prospects. The real Back Office is private and only available after purchase and onboarding.</p>
-        <div class="bo-actions">
-          <a class="bo-btn bo-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_back_office_final_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-          <a class="bo-btn bo-secondary" href="/templates" data-ga-event="click_back_office_final_samples">View Sample Sites</a>
-          <a class="bo-btn bo-quiet" href="/" data-ga-event="click_back_office_final_home">Back to Website Support Studio</a>
-        </div>
+    <section class="dash-section dash-soft">
+      <div class="dash-shell dash-three-col">
+        <article class="dash-card">
+          <p class="dash-kicker">Testimonials</p>
+          <h2>Reviews you can approve</h2>
+          <div class="dash-testimonials">
+            {testimonials.map((item) => (
+              <div>
+                <strong>{item.count}</strong>
+                <span>{item.title}</span>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article class="dash-card">
+          <p class="dash-kicker">Profile</p>
+          <h2>Your business info</h2>
+          <dl class="dash-profile">
+            <div><dt>Business</dt><dd>Marigold & Mane</dd></div>
+            <div><dt>Phone</dt><dd>(555) 018-2044</dd></div>
+            <div><dt>Email</dt><dd>hello@example-salon.com</dd></div>
+            <div><dt>Website</dt><dd>example-salon.com</dd></div>
+            <div><dt>Service area</dt><dd>Tampa, FL</dd></div>
+          </dl>
+        </article>
+
+        <article class="dash-card" id="sample-request">
+          <p class="dash-kicker">Support</p>
+          <h2>Submit a Website Request</h2>
+          <p>Need a change? Send it from one simple place.</p>
+          <div class="dash-request-list">
+            {requestExamples.map((item) => <span>{item}</span>)}
+          </div>
+          <button type="button">Submit Sample Request</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="dash-section">
+      <div class="dash-shell dash-plan-grid">
+        <article class="dash-card dash-plan">
+          <p class="dash-kicker">Plan</p>
+          <h2>Founder Website Package</h2>
+          <div class="dash-price">
+            <strong>$199/month</strong>
+            <span>locked while your account remains active</span>
+          </div>
+          <ul>
+            <li>Website Requests included</li>
+            <li>You own your website, domain, and content</li>
+            <li>Support continues after launch</li>
+          </ul>
+        </article>
+        <article class="dash-final">
+          <p class="dash-pill">Sample dashboard · fictional preview</p>
+          <h2>This is where a small business owner checks their website.</h2>
+          <p>No complicated board. No internal workflow. Just website activity, leads, testimonials, profile details, plan status, and a simple way to ask for help.</p>
+          <div class="dash-actions">
+            <a class="dash-btn dash-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_sample_dashboard_final_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+            <a class="dash-btn dash-secondary" href="/templates" data-ga-event="click_sample_dashboard_final_samples">View Sample Sites</a>
+            <a class="dash-btn dash-quiet" href="/" data-ga-event="click_sample_dashboard_final_home">Back to Website Support Studio</a>
+          </div>
+        </article>
       </div>
     </section>
   </main>
 
   <style>
-    .back-office-preview { --bo-ink:#172033; --bo-muted:#657089; --bo-line:rgba(23,32,51,.13); --bo-soft:#eef5f2; --bo-green:#1f6b4d; --bo-gold:#d7a647; color:var(--bo-ink); background:linear-gradient(180deg,#fbfcf8,#eef5f2 48%,#fff); }
-    .bo-shell { width:min(1120px, calc(100% - 2rem)); margin:0 auto; }
-    .bo-hero { padding:clamp(4rem,9vw,7rem) 0 3rem; }
-    .bo-hero-grid,.bo-dashboard { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.72fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:start; }
-    .bo-pill,.bo-kicker { font-family:var(--font-mono); font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
-    .bo-pill { display:inline-flex; border:1px dashed rgba(31,107,77,.4); border-radius:999px; padding:.45rem .7rem; background:#fff; color:var(--bo-green); font-size:.76rem; }
-    .bo-kicker { margin:0 0 .65rem; color:var(--bo-green); font-size:.76rem; }
-    .bo-hero h1 { max-width:12ch; margin:.8rem 0 0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(3rem,8vw,6rem); line-height:.94; letter-spacing:-.055em; }
-    .bo-lede { max-width:62ch; color:var(--bo-muted); font-size:1.12rem; line-height:1.75; }
-    .bo-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.25rem; }
-    .bo-btn { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; min-height:2.9rem; padding:.85rem 1.1rem; border:1px solid var(--bo-line); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
-    .bo-primary { background:var(--bo-green); color:#fff; border-color:var(--bo-green); box-shadow:0 16px 34px rgba(31,107,77,.2); }
-    .bo-secondary { background:#fff; color:var(--bo-ink); }
-    .bo-quiet { color:var(--bo-ink); background:transparent; }
-    .bo-panel,.bo-board { border:1px solid var(--bo-line); border-radius:1.6rem; background:rgba(255,255,255,.9); box-shadow:0 24px 70px rgba(23,32,51,.08); }
-    .bo-panel { padding:1.25rem; }
-    .bo-plan { position:relative; overflow:hidden; }
-    .bo-plan:before { content:""; position:absolute; inset:auto -20% -35% 20%; height:180px; background:radial-gradient(circle,var(--bo-gold),transparent 68%); opacity:.28; }
-    .bo-plan h2,.bo-panel h2,.bo-board h2,.bo-final h2 { margin:.15rem 0 .5rem; font-family:Georgia,"Times New Roman",serif; line-height:1; letter-spacing:-.04em; }
-    .bo-plan ul,.bo-panel ul { margin:1rem 0 0; padding-left:1.1rem; color:var(--bo-muted); line-height:1.65; }
-    .bo-plan span,.bo-board-head span { display:inline-flex; margin-top:1rem; border-radius:999px; padding:.35rem .6rem; background:var(--bo-soft); color:var(--bo-green); font-family:var(--font-mono); font-size:.72rem; font-weight:900; text-transform:uppercase; }
-    .bo-section { padding:clamp(3rem,7vw,5rem) 0; }
-    .bo-board { padding:1rem; }
-    .bo-board-head { display:flex; align-items:start; justify-content:space-between; gap:1rem; padding:.4rem .4rem 1rem; }
-    .bo-inbox { display:grid; gap:.75rem; }
-    .bo-inbox-card { display:flex; justify-content:space-between; gap:1rem; padding:1rem; border-radius:1.2rem; background:#f8faf7; border:1px solid var(--bo-line); }
-    .bo-inbox-card p { margin:0 0 .35rem; color:var(--bo-green); font-family:var(--font-mono); font-size:.74rem; font-weight:900; text-transform:uppercase; }
-    .bo-inbox-card h3 { margin:0; font-size:1.05rem; }
-    .bo-inbox-card span,.bo-panel p,.bo-final p { color:var(--bo-muted); line-height:1.65; }
-    .bo-inbox-card strong { flex:0 0 auto; height:fit-content; border-radius:999px; padding:.35rem .55rem; background:#fff; color:var(--bo-ink); border:1px solid var(--bo-line); font-family:var(--font-mono); font-size:.72rem; }
-    .bo-side { display:grid; gap:1rem; }
-    .bo-tags { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
-    .bo-tags span { border-radius:999px; padding:.45rem .65rem; background:var(--bo-soft); color:var(--bo-ink); font-family:var(--font-mono); font-size:.74rem; font-weight:900; }
-    .bo-soft { background:rgba(238,245,242,.72); }
-    .bo-grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
-    .bo-final { text-align:center; max-width:820px; }
-    .bo-final h2 { font-size:clamp(2rem,5vw,3.6rem); }
-    .bo-final .bo-actions { justify-content:center; }
-    @media (max-width:900px) { .bo-hero-grid,.bo-dashboard,.bo-grid-3 { grid-template-columns:1fr; } .bo-hero h1 { max-width:100%; font-size:clamp(2.8rem,16vw,4.6rem); } .bo-inbox-card,.bo-board-head { display:grid; } .bo-btn { width:100%; } }
+    .dashboard-preview { --dash-ink:#162131; --dash-muted:#617086; --dash-line:rgba(22,33,49,.12); --dash-soft:#eef5f0; --dash-wash:#fbfcf8; --dash-green:#216b4c; --dash-mint:#dceee5; --dash-gold:#e4b85f; min-height:100vh; color:var(--dash-ink); background:linear-gradient(180deg,#fbfcf8 0%,#eef5f0 48%,#fff 100%); }
+    .dash-shell { width:min(1120px, calc(100% - 2rem)); margin:0 auto; }
+    .dash-top { position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem clamp(1rem,4vw,3rem); border-bottom:1px solid var(--dash-line); background:rgba(251,252,248,.9); backdrop-filter:blur(14px); }
+    .dash-logo { display:grid; color:var(--dash-ink); line-height:1; text-decoration:none; font-weight:950; }
+    .dash-logo small { color:var(--dash-green); font-family:var(--font-mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; }
+    .dash-nav { display:flex; align-items:center; gap:.65rem; flex-wrap:wrap; }
+    .dash-nav a { display:inline-flex; align-items:center; justify-content:center; min-height:2.35rem; border-radius:999px; padding:.65rem .85rem; color:var(--dash-ink); border:1px solid var(--dash-line); background:#fff; font-family:var(--font-mono); font-size:.78rem; font-weight:900; text-decoration:none; }
+    .dash-nav a:last-child { background:var(--dash-ink); color:#fff; }
+    .dash-hero { padding:clamp(3.5rem,8vw,6.5rem) 0 2rem; }
+    .dash-hero-grid,.dash-two-col,.dash-plan-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.72fr); gap:clamp(1.25rem,4vw,2rem); align-items:start; }
+    .dash-pill,.dash-kicker { font-family:var(--font-mono); font-weight:900; letter-spacing:.07em; text-transform:uppercase; }
+    .dash-pill { display:inline-flex; width:fit-content; border:1px dashed rgba(33,107,76,.45); border-radius:999px; padding:.45rem .7rem; background:#fff; color:var(--dash-green); font-size:.74rem; }
+    .dash-kicker { margin:0 0 .65rem; color:var(--dash-green); font-size:.74rem; }
+    .dash-hero h1 { max-width:13ch; margin:.85rem 0 0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(3rem,8vw,6rem); line-height:.95; letter-spacing:-.055em; }
+    .dash-lede { max-width:64ch; color:var(--dash-muted); font-size:1.12rem; line-height:1.75; }
+    .dash-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.25rem; }
+    .dash-btn,.dash-welcome a,.dash-card button { display:inline-flex; align-items:center; justify-content:center; min-height:2.9rem; border-radius:999px; padding:.85rem 1.05rem; border:1px solid var(--dash-line); font-family:var(--font-mono); font-weight:900; font-size:.84rem; text-decoration:none; cursor:pointer; }
+    .dash-primary,.dash-welcome a,.dash-card button { background:var(--dash-green); color:#fff; border-color:var(--dash-green); box-shadow:0 16px 34px rgba(33,107,76,.2); }
+    .dash-secondary { background:#fff; color:var(--dash-ink); }
+    .dash-quiet { background:transparent; color:var(--dash-ink); }
+    .dash-card,.dash-stat { border:1px solid var(--dash-line); border-radius:1.5rem; background:rgba(255,255,255,.92); box-shadow:0 22px 60px rgba(22,33,49,.07); }
+    .dash-card { padding:1.25rem; }
+    .dash-card h2,.dash-final h2 { margin:.15rem 0 .55rem; font-family:Georgia,"Times New Roman",serif; line-height:1.02; letter-spacing:-.04em; }
+    .dash-card p,.dash-final p { color:var(--dash-muted); line-height:1.65; }
+    .dash-welcome { position:relative; overflow:hidden; }
+    .dash-welcome:before { content:""; position:absolute; right:-4rem; bottom:-5rem; width:14rem; height:14rem; border-radius:999px; background:var(--dash-mint); }
+    .dash-welcome > * { position:relative; }
+    .dash-section { padding:clamp(2.5rem,6vw,4.5rem) 0; }
+    .dash-summary { padding-top:1rem; }
+    .dash-summary-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.85rem; }
+    .dash-stat { padding:1rem; }
+    .dash-stat p { margin:0 0 .6rem; color:var(--dash-muted); font-family:var(--font-mono); font-size:.72rem; font-weight:900; text-transform:uppercase; }
+    .dash-stat strong { display:block; font-family:Georgia,"Times New Roman",serif; font-size:2rem; line-height:1; letter-spacing:-.04em; }
+    .dash-stat span { display:block; margin-top:.55rem; color:var(--dash-muted); font-size:.9rem; }
+    .dash-main-card { min-height:100%; }
+    .dash-card-head { display:flex; justify-content:space-between; gap:1rem; align-items:start; margin-bottom:1rem; }
+    .dash-card-head span { border-radius:999px; padding:.35rem .55rem; background:var(--dash-soft); color:var(--dash-green); font-family:var(--font-mono); font-size:.7rem; font-weight:900; text-transform:uppercase; }
+    .dash-metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+    .dash-metrics div { border-radius:1rem; padding:.9rem; background:var(--dash-wash); border:1px solid var(--dash-line); }
+    .dash-metrics p { margin:0 0 .35rem; color:var(--dash-muted); font-size:.9rem; }
+    .dash-metrics strong { font-size:1.35rem; }
+    .dash-trend { display:flex; align-items:end; gap:.45rem; height:110px; margin-top:1rem; padding:1rem; border-radius:1rem; background:linear-gradient(180deg,#fff,var(--dash-soft)); border:1px solid var(--dash-line); }
+    .dash-trend span { flex:1; min-height:18px; border-radius:999px 999px .35rem .35rem; background:linear-gradient(180deg,var(--dash-gold),var(--dash-green)); }
+    .dash-leads { display:grid; gap:.7rem; }
+    .dash-lead-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem; border-radius:1rem; background:var(--dash-wash); border:1px solid var(--dash-line); }
+    .dash-lead-row p { margin:.2rem 0 0; font-size:.9rem; }
+    .dash-lead-row span { border-radius:999px; padding:.35rem .55rem; background:#fff; border:1px solid var(--dash-line); font-family:var(--font-mono); font-size:.72rem; font-weight:900; }
+    .dash-soft { background:rgba(238,245,240,.72); }
+    .dash-three-col { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+    .dash-testimonials { display:grid; gap:.65rem; }
+    .dash-testimonials div { display:grid; grid-template-columns:auto 1fr; gap:.05rem .75rem; align-items:center; padding:.75rem; border-radius:1rem; background:var(--dash-wash); border:1px solid var(--dash-line); }
+    .dash-testimonials strong { grid-row:span 2; display:inline-grid; place-items:center; width:2.4rem; height:2.4rem; border-radius:999px; background:var(--dash-green); color:#fff; }
+    .dash-testimonials span { font-weight:900; }
+    .dash-testimonials p { margin:0; font-size:.88rem; }
+    .dash-profile { display:grid; gap:.55rem; margin:0; }
+    .dash-profile div { display:flex; justify-content:space-between; gap:1rem; padding:.65rem 0; border-bottom:1px solid var(--dash-line); }
+    .dash-profile dt { color:var(--dash-muted); font-family:var(--font-mono); font-size:.72rem; font-weight:900; text-transform:uppercase; }
+    .dash-profile dd { margin:0; font-weight:850; text-align:right; }
+    .dash-request-list { display:flex; flex-wrap:wrap; gap:.45rem; margin:1rem 0; }
+    .dash-request-list span { border-radius:999px; padding:.45rem .62rem; background:var(--dash-soft); color:var(--dash-ink); font-family:var(--font-mono); font-size:.72rem; font-weight:900; }
+    .dash-plan-grid { align-items:center; }
+    .dash-price { display:grid; gap:.35rem; padding:1rem; border-radius:1rem; background:var(--dash-soft); }
+    .dash-price strong { font-family:Georgia,"Times New Roman",serif; font-size:2rem; letter-spacing:-.04em; }
+    .dash-price span { color:var(--dash-muted); }
+    .dash-plan ul { margin:1rem 0 0; padding-left:1.1rem; color:var(--dash-muted); line-height:1.75; }
+    .dash-final h2 { font-size:clamp(2.1rem,5vw,4rem); }
+    @media (max-width:980px) { .dash-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .dash-hero-grid,.dash-two-col,.dash-three-col,.dash-plan-grid { grid-template-columns:1fr; } .dash-hero h1 { max-width:100%; font-size:clamp(2.75rem,15vw,4.7rem); } }
+    @media (max-width:640px) { .dash-top { align-items:start; } .dash-nav { justify-content:flex-end; } .dash-nav a:first-child { display:none; } .dash-summary-grid,.dash-metrics { grid-template-columns:1fr; } .dash-actions,.dash-btn,.dash-card button,.dash-welcome a { width:100%; } .dash-lead-row,.dash-card-head,.dash-profile div { display:grid; } .dash-profile dd { text-align:left; } }
   </style>
 </BaseLayout>
