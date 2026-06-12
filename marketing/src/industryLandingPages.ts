@@ -3,6 +3,7 @@ import { WEBSITE_PACKAGE } from "./consts";
 export type IndustryLandingPage = {
   slug:
     | "roofing"
+    | "construction"
     | "salon"
     | "coffee-shop"
     | "hvac"
@@ -62,6 +63,37 @@ export const INDUSTRY_LANDING_PAGES: Record<IndustryLandingPage["slug"], Industr
       "The monthly plan after launch is optional. Cancel anytime; the website is yours either way.",
     ],
     intakeItems: ["Services", "Service area", "Phone number", "Hours", "Logo/photos if you have them"],
+  },
+  construction: {
+    slug: "construction",
+    industry: "Construction",
+    eyebrow: "websites for construction companies",
+    title: "A construction website that turns project interest into estimate requests.",
+    description:
+      "Show your services, project types, service area, consultation path, and trust signals in a site homeowners and property managers can understand quickly.",
+    heroImage: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=82",
+    heroAlt: "Construction worker reviewing plans on an active job site",
+    accent: "#f97316",
+    demoName: "Ridgeline Roofing",
+    demoRoute: "/templates/sample/ridgeline-roofing",
+    demoType: "Summit construction and exterior-services sample",
+    problems: [
+      "Construction prospects need to know what kind of work you do, where you work, and how to start a project conversation.",
+      "A thin website can make a capable contractor look less established than the work deserves.",
+      "Estimate requests should be obvious on mobile, especially when someone is comparing multiple local companies.",
+    ],
+    exampleBullets: [
+      "Project and service sections built around estimate requests",
+      "Strong exterior-service visual direction",
+      "Service area and consultation paths",
+      "Trust structure without fake project results",
+    ],
+    trustBullets: [
+      "You own your domain, website, content, and accounts.",
+      "We adapt the Summit style around your construction services, project types, towns, photos, and estimate flow.",
+      "The monthly plan after launch is optional. Cancel anytime; the website is yours either way.",
+    ],
+    intakeItems: ["Services", "Project types", "Service area", "Phone number", "Photos/logo if available"],
   },
   salon: {
     slug: "salon",
@@ -338,7 +370,7 @@ export const INDUSTRY_LANDING_PAGES: Record<IndustryLandingPage["slug"], Industr
     trustBullets: [
       "You own your domain, website, content, and accounts.",
       "We adapt Harbor around your services, appointment process, location, and patient-facing language.",
-      "The  build includes launch and 30 days of post-launch support.",
+      "The $500 build includes launch and 30 days of post-launch support.",
     ],
     intakeItems: ["Services", "Appointment process", "Location", "Hours", "Provider/clinic photos if available"],
   },
@@ -383,18 +415,18 @@ export const INDUSTRY_LANDING_PAGES: Record<IndustryLandingPage["slug"], Industr
     heroImage: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Law office desk with legal books and paperwork",
     accent: "#334155",
-    demoName: "Atlas Advisory Group",
-    demoRoute: "/templates/sample/atlas-advisory",
-    demoType: "Atlas professional-services sample",
+    demoName: "Harbor Legal Group",
+    demoRoute: "/templates/sample/harbor-legal-group",
+    demoType: "Atlas legal sample",
     problems: [
       "Legal prospects need to understand practice fit, consultation next steps, and how to contact the office.",
       "A vague professional-services site can make a serious practice feel generic or hard to evaluate.",
       "Attorney websites need authority, clarity, and restraint without fake case results or testimonials.",
     ],
     exampleBullets: [
-      "Professional-services structure for practice-area clarity",
+      "Practice-area structure for small law firms",
       "Consultation and inquiry CTAs",
-      "Process-led trust sections",
+      "Process and resources sections",
       "No fake outcomes, reviews, or case claims",
     ],
     trustBullets: [

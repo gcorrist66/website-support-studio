@@ -290,6 +290,7 @@ export const DESIGN_SYSTEMS = [
     demoRoute: undefined,
     sampleSites: [
       { label: "Consultant Sample", href: "/templates/sample/atlas-advisory" },
+      { label: "Legal Sample", href: "/templates/sample/harbor-legal-group" },
     ],
     fits: ["Consultants", "Law firms", "Accounting", "IT services", "Agencies"],
     exampleBusinesses: ["Marketing consultant", "Law office", "IT services company", "Accounting firm", "Fractional CFO"],

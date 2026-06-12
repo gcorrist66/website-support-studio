@@ -32,5 +32,7 @@ All images below are sourced from Unsplash and used under the Unsplash license: 
 - Northstar Air / HVAC technician and equipment: https://unsplash.com/s/photos/hvac-technician, image CDN URL `https://images.unsplash.com/photo-1621905252507-b35492cc74b4`
 - Harbor Wellness Clinic / wellness clinic treatment room: https://unsplash.com/s/photos/clinic-room, image CDN URL `https://images.unsplash.com/photo-1576091160550-2173dba999ef`
 - Atlas Advisory Group / consulting strategy session: https://unsplash.com/s/photos/business-consulting, image CDN URL `https://images.unsplash.com/photo-1556761175-b413da4baf72`
+- Harbor Legal Group / law office desk with legal books and paperwork: https://unsplash.com/s/photos/law-office, image CDN URL `https://images.unsplash.com/photo-1589829545856-d10d557cf95f`
+- Construction landing page / construction worker reviewing plans on job site: https://unsplash.com/s/photos/construction-worker, image CDN URL `https://images.unsplash.com/photo-1504307651254-35680f356dfd`
 - Table & Hearth / restaurant table with plated food: https://unsplash.com/s/photos/restaurant-table, image CDN URL `https://images.unsplash.com/photo-1414235077428-338989a2e8c0`
 - Mainline Plumbing / water heater and utility piping: https://unsplash.com/s/photos/water-heater-plumber, image CDN URL `https://images.unsplash.com/photo-1620653713380-7a34b773fef8`
