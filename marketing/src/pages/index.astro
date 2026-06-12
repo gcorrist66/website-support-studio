@@ -9,7 +9,7 @@ const schemas = [
   serviceSchema({
     name: "Website Support Studio",
     description:
-      "A $500 one-time Founder Website Package: a professional, mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support — then optional managed operations from $199/month. Operated by Corriston Consulting, LLC. Customers own their analytics and advertising accounts.",
+      "A $500 one-time Founder Website Package: a professional, mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support — then optional managed operations at $199/month. Founder pricing is locked in while your account remains active. Operated by Corriston Consulting, LLC. Customers own their analytics and advertising accounts.",
     path: "/",
   }),
 ];
@@ -19,7 +19,7 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
 
 <BaseLayout
   title="Website Support Studio — Get a Professional Website for $500"
-  description="Get a professional website for $500 — mobile-optimized, contact forms, basic SEO, and launch, plus 30 days of post-launch support. Then optional managed operations from $199/month. You own your website and all your accounts."
+  description="Get a professional website for $500 — mobile-optimized, contact forms, basic SEO, and launch, plus 30 days of post-launch support. Then optional managed operations at $199/month, locked in while your account remains active. You own your website and all your accounts."
   path="/"
   schemas={schemas}
 >
@@ -30,8 +30,8 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
       <h1>Get a professional website for $500.</h1>
       <p class="lede">
         A complete, mobile-optimized website — with contact forms, basic SEO, and launch included, plus
-        30 days of post-launch support. Then we keep it running: $199/month for your first 6 months,
-        $399/month after. You own your website and all your accounts.
+        30 days of post-launch support. Then optional managed operations are $199/month, locked in
+        while your account remains active. You own your website and all your accounts.
       </p>
       <div class="hero-actions">
         <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_build_my_website" data-ga-secondary-event="stripe_payment_link_click"><Label text="_build_my_website" /></a>
@@ -103,8 +103,8 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
       <div class="summary" style="max-width:760px;">
         <strong>In one sentence.</strong> Website Support Studio builds and launches a professional
         website for a one-time $500 — then optionally keeps it running with managed operations
-        ($199/month for your first six months, $399/month after) — while you keep ownership of your
-        website and every analytics and advertising account.
+        at $199/month, locked in while your account remains active — while you keep ownership of
+        your website and every analytics and advertising account.
       </div>
     </div>
   </section>

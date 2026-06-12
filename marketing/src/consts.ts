@@ -55,8 +55,7 @@ export const FOUNDER_PRICING = {
   active: true,
   totalSpots: 25,
   spotsLeft: 17,
-  discountPercent: 50,
-  discountMonths: 6,
+  lockPolicy: "Founder pricing is locked in while your account remains active.",
   appliesTo: ["operations"],
 } as const;
 
@@ -80,8 +79,8 @@ export const WEBSITE_PACKAGE = {
     "30 days post-launch support",
   ],
   afterLaunch: {
-    founder: "$199/month for months 2–7",
-    standard: "$399/month from month 8",
+    founder: "$199/month",
+    standard: "Founder pricing is locked in while your account remains active.",
   },
   ctaLabel: "_build_my_website",
   ctaHref: "https://buy.stripe.com/5kQ14f8gycXJ4ea4Tt9Zm08",
@@ -339,16 +338,16 @@ export const PLANS = [
   {
     key: "operations",
     name: "Operations",
-    price: "$399",
-    founderPrice: "$199.50",
-    founderDiscountLabel: "50% off",
+    price: "$199",
+    founderPrice: "$199",
+    founderDiscountLabel: "Founder rate",
     founderAvailability: "17 founder spots remaining",
     founderPlanKey: "operations_founder",
     cadence: "/month",
     sites: "1 website",
     cu: "50 Capacity Units / month",
     blurb: "Managed website operations for a single revenue-critical site.",
-    founderBlurb: "Same Operations plan at founder pricing for the first 6 months, then standard pricing after the founder period ends.",
+    founderBlurb: "Same Operations plan at founder pricing, locked in while your account remains active.",
     points: [
       "Single-desk request intake",
       "Operator-led support with mandatory human approval",

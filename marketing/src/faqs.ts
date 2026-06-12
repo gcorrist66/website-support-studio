@@ -43,7 +43,7 @@ export const FOUNDER_WEBSITE_FAQS: Faq[] = [
   },
   {
     q: "What happens after launch?",
-    a: "You get 30 days of post-launch support included. After that, the Operations plan is optional: $199/month for your first 6 months, then $399/month. Cancel anytime. The website is yours either way.",
+    a: "You get 30 days of post-launch support included. After that, the Operations plan is optional: $199/month, locked in while your account remains active. Cancel anytime. The website is yours either way.",
   },
 ];
 
@@ -82,10 +82,10 @@ export const FAQ_GROUPS: FaqGroup[] = [
   {
     marker: "_pricing",
     items: [
-      { q: "How much does a website cost?", a: "A complete professional website is a $500 one-time Founder Website Package: a mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support. After launch, ongoing operations are optional — $199/month for your first 6 months (months 2–7), then $399/month standard. Growth ($899/month, up to 5 websites) and custom Enterprise are also available." },
+      { q: "How much does a website cost?", a: "A complete professional website is a $500 one-time Founder Website Package: a mobile-optimized website with contact forms, basic SEO, and launch, plus 30 days of post-launch support. After launch, ongoing operations are optional — $199/month, locked in while your account remains active. Growth ($899/month, up to 5 websites) and custom Enterprise are also available." },
       { q: "What's included in the $500 website?", a: "A professional website, mobile optimization, contact forms, basic SEO setup, website launch, and 30 days of post-launch support." },
-      { q: "What happens after launch?", a: "You get 30 days of post-launch support included. After that, the Operations plan keeps your site updated and monitored — $199/month for your first 6 months, then $399/month. It is optional and you can cancel anytime." },
-      { q: "How does founder pricing work?", a: "After your website launches, ongoing operations start at the founder rate of $199/month for months 2 through 7, then move to the standard $399/month from month 8. Customers can see founder timing reminders in the profile billing area so the standard-price change is not a surprise." },
+      { q: "What happens after launch?", a: "You get 30 days of post-launch support included. After that, the Operations plan keeps your site updated and monitored — $199/month, locked in while your account remains active. It is optional and you can cancel anytime." },
+      { q: "How does founder pricing work?", a: "Founder customers who join now get ongoing Operations for $199/month after launch. That rate stays locked in for as long as the account remains active." },
       { q: "What is a Capacity Unit?", a: "Capacity Units measure the effort of each request on the Operations plan. Every plan includes a monthly allotment; a simple change costs fewer units, more involved work costs more. Monthly Capacity Units refresh each month and do not roll over." },
       { q: "What happens if I run out?", a: "In a busy month you can add a top-up — 50, 100, or 250 Capacity Units — at any time from your account. Purchased top-up credits stay on your account until used, do roll over, and are used after your monthly credits run out. DNS assistance is available as a $100 one-time add-on." },
       { q: "How do I get started?", a: "Start with the Founder Website Package — contact us to kick off your $500 build. We build and launch your site, then set up optional ongoing operations. For Growth or Enterprise, contact us and we'll scope it." },

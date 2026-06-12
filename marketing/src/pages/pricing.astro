@@ -9,7 +9,7 @@ const schemas = [
   serviceSchema({
     name: "Website Support Studio — Founder Website Package & Plans",
     description:
-      "Founder Website Package: a $500 one-time professional website (mobile optimization, contact forms, basic SEO, launch, and 30 days of support). After launch, optional managed operations — $199/month for months 2–7, then $399/month standard. Growth is $899/month; Enterprise custom. Customers own their analytics and advertising accounts.",
+      "Founder Website Package: a $500 one-time professional website (mobile optimization, contact forms, basic SEO, launch, and 30 days of support). After launch, optional managed operations are $199/month, locked in while your account remains active. Growth is $899/month; Enterprise custom. Customers own their analytics and advertising accounts.",
     path: "/pricing",
   }),
   breadcrumbSchema([
@@ -21,7 +21,7 @@ const schemas = [
 
 <BaseLayout
   title="Pricing — Founder Website Package $500, then operations from $199/mo"
-  description="Founder Website Package: a $500 one-time professional website (mobile, contact forms, basic SEO, launch, 30 days of support). After launch, optional managed operations — $199/month for months 2–7, then $399/month. You own your accounts."
+  description="Founder Website Package: a $500 one-time professional website (mobile, contact forms, basic SEO, launch, 30 days of support). After launch, optional managed operations are $199/month, locked in while your account remains active. You own your accounts."
   path="/pricing"
   schemas={schemas}
 >
@@ -48,7 +48,7 @@ const schemas = [
           {WEBSITE_PACKAGE.includes.map((item) => <li style="margin-bottom:0.4rem;">{item}</li>)}
         </ul>
         <p style="margin:0 0 1.25rem; color:var(--text-muted);">
-          After launch: <strong>{WEBSITE_PACKAGE.afterLaunch.founder}</strong>, then {WEBSITE_PACKAGE.afterLaunch.standard}.
+          After launch: optional managed operations at <strong>{WEBSITE_PACKAGE.afterLaunch.founder}</strong>. {WEBSITE_PACKAGE.afterLaunch.standard}
         </p>
         <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} style="width:100%; justify-content:center;" data-ga-event="click_founder_package_payment" data-ga-secondary-event="stripe_payment_link_click">
           <Label text={WEBSITE_PACKAGE.ctaLabel} />
@@ -64,8 +64,8 @@ const schemas = [
       <p class="kicker"><Label text="_after_launch" /></p>
       <h2 style="margin:0.4rem 0 0;">Keep it running with managed operations</h2>
       <p class="lede" style="margin-top:0.75rem; max-width:62ch;">
-        Optional after your website launches. Founder rate $199/month for months 2–7, then $399/month
-        standard. Cancel anytime.
+        Optional after your website launches. Founder operations are $199/month and stay locked in
+        while your account remains active. Cancel anytime.
       </p>
       <div class="grid grid-3" style="margin-top:2rem; align-items:start;">
         {
@@ -88,18 +88,15 @@ const schemas = [
                         <span class="founder-badge"><Label text="_founder_pricing" /></span>
                         <span class="founder-spots">{FOUNDER_PRICING.spotsLeft} of {FOUNDER_PRICING.totalSpots} spots left</span>
                       </div>
-                      <p class="founder-discount">{plan.founderDiscountLabel} for your first {FOUNDER_PRICING.discountMonths} months</p>
+                      <p class="founder-discount">Founder rate locked while your account remains active</p>
                       <p class="founder-price-line">
                         <span class="founder-price">{plan.founderPrice}</span>
                         <span class="founder-cadence">{plan.cadence}</span>
                       </p>
                       <p class="founder-regular">
-                        for {FOUNDER_PRICING.discountMonths} months, then <strong>{plan.price}{plan.cadence}</strong>
+                        Founder customers keep this rate for as long as their account remains active.
                       </p>
-                      <p class="founder-regular">regularly <s>{plan.price}{plan.cadence}</s></p>
-                      <p class="founder-note">
-                        limited to the first {FOUNDER_PRICING.totalSpots} customers. _join_now uses founder checkout automatically while spots remain.
-                      </p>
+                      <p class="founder-note">Limited to the first {FOUNDER_PRICING.totalSpots} customers. _join_now uses founder checkout automatically while spots remain.</p>
                     </div>
                   ) : (
                     <p style="margin:0.25rem 0 0;">
@@ -133,7 +130,7 @@ const schemas = [
       </div>
       <p style="margin-top:1.25rem; color:var(--text-muted); max-width:62ch;">
         All plans operate inside the same defined response workflow with a mandatory human approval gate.
-        Founder pricing currently applies to Operations only. Plans differ in monthly Capacity Units and the number of websites covered.
+        Founder pricing is locked in while your account remains active. Plans differ in monthly Capacity Units and the number of websites covered.
       </p>
     </div>
   </section>
