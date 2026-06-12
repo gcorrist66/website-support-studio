@@ -1,8 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import AdaptableStyleProof from "./AdaptableStyleProof.astro";
 import { willow, willowNav } from "../willowThread";
 
 const { title, description, path } = Astro.props as { title: string; description: string; path: string };
+const lunaPalettes = [
+  { label: "Salon palette", colors: ["#2f211c", "#bf6f5e", "#fff8ef"] },
+  { label: "Coffee palette", colors: ["#21150f", "#b8783f", "#f6efe2"] },
+  { label: "Boutique palette", colors: ["#261b21", "#8f5b74", "#fbf5ed"] },
+];
 ---
 
 <BaseLayout title={title} description={description} path={path}>
@@ -23,6 +29,7 @@ const { title, description, path } = Astro.props as { title: string; description
       </div>
     </section>
     <slot />
+    <AdaptableStyleProof systemName="Luna" examples={lunaPalettes} />
     <section class="wt-founder-cta">
       <div>
         <p class="wt-eyebrow">Founder Website Package</p>

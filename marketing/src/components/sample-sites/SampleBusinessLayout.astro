@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import AdaptableStyleProof from "../AdaptableStyleProof.astro";
 import { WEBSITE_PACKAGE } from "../../consts";
 import type { SampleBusiness, SamplePage } from "../../sampleBusinesses";
 import { samplePath } from "../../sampleBusinesses";
@@ -9,6 +10,34 @@ const title = page === "home" ? `${business.name} — ${business.category} Sampl
 const description = `${business.name} is a ${business.badge.toLowerCase()} ${business.category.toLowerCase()} website for ${business.location}.`;
 const currentPath = samplePath(business, page);
 const checkoutHref = WEBSITE_PACKAGE.ctaHref;
+const stylePalettes = {
+  summit: [
+    { label: "Roofing palette", colors: ["#172033", "#f97316", "#eef2f7"] },
+    { label: "HVAC palette", colors: ["#0f172a", "#0284c7", "#e0f2fe"] },
+    { label: "Landscaping palette", colors: ["#1f2a1f", "#65a30d", "#f0f7ea"] },
+  ],
+  harbor: [
+    { label: "Wellness palette", colors: ["#0f3a4a", "#7dd3fc", "#eff6ff"] },
+    { label: "Clinic palette", colors: ["#12313f", "#14b8a6", "#ecfeff"] },
+    { label: "Professional palette", colors: ["#1e293b", "#3b82f6", "#f8fafc"] },
+  ],
+  atlas: [
+    { label: "Advisory palette", colors: ["#172033", "#c59b49", "#f8f5ef"] },
+    { label: "Consultant palette", colors: ["#111827", "#64748b", "#f8fafc"] },
+    { label: "Finance palette", colors: ["#0f172a", "#16a34a", "#ecfdf5"] },
+  ],
+  ember: [
+    { label: "Restaurant palette", colors: ["#3a1f16", "#c2410c", "#fff7ed"] },
+    { label: "Bakery palette", colors: ["#4a2c2a", "#d97706", "#fff8eb"] },
+    { label: "Bar palette", colors: ["#1f1115", "#be123c", "#fff1f2"] },
+  ],
+  foundry: [
+    { label: "Plumbing palette", colors: ["#102a2a", "#0f766e", "#ecfeff"] },
+    { label: "Auto palette", colors: ["#171717", "#dc2626", "#f5f5f5"] },
+    { label: "Trades palette", colors: ["#1f2937", "#f59e0b", "#fffbeb"] },
+  ],
+};
+const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePalettes] ?? stylePalettes.summit;
 ---
 
 <BaseLayout title={title} description={description} path={currentPath}>
@@ -55,6 +84,7 @@ const checkoutHref = WEBSITE_PACKAGE.ctaHref;
       <><section class="sb-section sb-hero"><div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">Contact</p><h1>Contact {business.name}.</h1><p class="sb-lede">{business.contactPrompt} This is a sample business form UI; production lead capture is added during the real build.</p></div></section><section class="sb-section sb-soft"><div class="sb-container sb-split"><form class="sb-card sb-form"><h2>Send a request</h2><label>Name<input name="name" required /></label><label>Email<input name="email" type="email" required /></label><label>Topic<select name="topic" required><option value="">Choose one</option>{business.services.slice(0, 5).map((item) => <option>{item.name}</option>)}<option>General question</option></select></label><label>What should {business.name} know?<textarea name="notes"></textarea></label><button class="sb-btn sb-btn-primary" type="button">Send Request</button><p style="min-height:1.2rem;margin:0;">Sample form only. No message is sent from this demo.</p></form><div class="sb-card"><h2>Visit details</h2><p>{business.address}</p><p><a href={business.phoneHref}>{business.phoneLabel}</a></p><ul class="sb-list">{business.hours.map((hour) => <li>{hour}</li>)}</ul></div></div></section></>
     )}
 
+    <AdaptableStyleProof systemName={business.systemName} examples={paletteExamples} />
     <section class="sb-founder-cta"><div><p class="sb-eyebrow">Founder Website Package</p><h2>Want a website like {business.name}?</h2><p>This sample business shows the style and completeness your $500 Founder Website can start from. We customize the words, photos, services, and local details for your business.</p></div><div class="sb-actions"><a class="sb-btn sb-btn-primary" href={checkoutHref} data-ga-event={`click_${business.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a><a class="sb-btn sb-btn-secondary" href={checkoutHref} data-ga-event={`click_${business.slug}_start`} data-ga-secondary-event="stripe_payment_link_click">Start With {business.systemName}</a><a class="sb-btn sb-btn-quiet" href={checkoutHref} data-ga-event={`click_${business.slug}_use_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a></div></section>
     <footer class="sb-footer"><div><strong>{business.name}</strong><p>{business.location}</p><p>{business.badge} · Fictional example. Not a real customer.</p></div><div><p>{business.address}</p><p><a href={business.phoneHref}>{business.phoneLabel}</a></p></div></footer>
     <div class="sb-sticky"><a href={checkoutHref} data-ga-event={`click_${business.slug}_mobile_sticky`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
