@@ -466,6 +466,88 @@ main {
   font-size: 0.82rem;
   color: var(--text);
 }
+.model-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+  align-items: stretch;
+}
+.model-card h3 {
+  margin: 0.55rem 0 0;
+}
+.model-preview {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 11;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-dark);
+}
+.model-preview-large {
+  margin-bottom: 0;
+}
+.model-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.model-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.04), rgba(11, 18, 32, 0.68));
+}
+.model-preview-ui {
+  position: absolute;
+  z-index: 1;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  color: #fff;
+  display: grid;
+  gap: 0.2rem;
+}
+.model-preview-ui span {
+  width: max-content;
+  max-width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 999px;
+  padding: 0.18rem 0.48rem;
+  background: rgba(11, 18, 32, 0.62);
+  color: #fff7ed;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.model-preview-ui strong {
+  font-size: 1.05rem;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.42);
+}
+.model-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+}
+.model-signals li {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text);
+  padding: 0.22rem 0.58rem;
+  font-size: 0.76rem;
+}
+
+@media (max-width: 920px) {
+  .model-gallery {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Accent bar cycling brand colors */
 .accent-bar {

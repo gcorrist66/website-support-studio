@@ -124,6 +124,13 @@ export const TEMPLATES = [
       desktop: "/templates/ridgeline-roofing-desktop.svg",
       mobile: "/templates/ridgeline-roofing-mobile.svg",
     },
+    preview: {
+      image: "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?auto=format&fit=crop&w=1100&q=82",
+      alt: "Roofer working on a residential shingle roof",
+      label: "Model website",
+      headline: "Residential roofing website with estimate-first calls to action.",
+      signals: ["Roof work", "Shingles", "Inspection", "Storm response"],
+    },
   },
   {
     key: "airflow-hvac",
@@ -142,6 +149,13 @@ export const TEMPLATES = [
       desktop: "/templates/airflow-hvac-desktop.svg",
       mobile: "/templates/airflow-hvac-mobile.svg",
     },
+    preview: {
+      image: "https://images.unsplash.com/photo-1660330590022-9f4ff56b63f6?auto=format&fit=crop&w=1100&q=82",
+      alt: "HVAC technician servicing equipment",
+      label: "Example starting point",
+      headline: "Heating and cooling site built around emergency calls and maintenance.",
+      signals: ["AC service", "Technician", "Equipment", "Maintenance"],
+    },
   },
   {
     key: "mainline-plumbing",
@@ -159,6 +173,13 @@ export const TEMPLATES = [
     images: {
       desktop: "/templates/mainline-plumbing-desktop.svg",
       mobile: "/templates/mainline-plumbing-mobile.svg",
+    },
+    preview: {
+      image: "https://images.unsplash.com/photo-1620653713380-7a34b773fef8?auto=format&fit=crop&w=1100&q=82",
+      alt: "Plumbing work on a water heater and pipes",
+      label: "Demo business",
+      headline: "Plumbing website focused on fast service requests and local coverage.",
+      signals: ["Water heater", "Pipes", "Repair", "Service calls"],
     },
   },
 ] as const;
