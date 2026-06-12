@@ -1,0 +1,712 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CONTACT } from "../consts";
+
+const OFFER_START_PATH = "/contact?source=revenue-leak-audit";
+
+const painTiles = [
+  {
+    title: "How many calls went to voicemail last month?",
+    body: "In many local businesses this is still unknown. If we don't know it, we can't reduce it.",
+  },
+  {
+    title: "Does your contact form actually work?",
+    body: "We test every form as a real lead. Some never arrive, and many replies are slow enough to lose momentum.",
+  },
+  {
+    title: "Which ad dollars become booked jobs?",
+    body: "Most reporting stops at clicks or leads in a spreadsheet. The question is what turned into booked, paid work.",
+  },
+  {
+    title: "What happened to unanswered quotes?",
+    body: "A frequent leak: one quote request becomes silence unless someone actively chases it.",
+  },
+];
+
+const deliverables = [
+  {
+    title: "Revenue Leak Score",
+    body: "Sample scorecard format with a 0–100 score and 5 weighted pillars from the published rubric.",
+  },
+  {
+    title: "Conversion Review",
+    body: "Service-page route-to-contact checks on the real mobile path: click-to-call, form friction, and trust signals.",
+  },
+  {
+    title: "Form Audit",
+    body: "Live test submissions against each intake/contact form to verify delivery, routing, notifications, and response timing.",
+  },
+  {
+    title: "Call Audit",
+    body: "Business-hours and after-hours mystery-shop calls logged for answer time, voicemail behavior, and callback workflow.",
+  },
+  {
+    title: "Tracking Review",
+    body: "GA4/events, call tracking, conversion tags, and measurement health verified with a simple evidence list.",
+  },
+  {
+    title: "Attribution Review",
+    body: "Spend-vs-proof table mapping channels to what can be proved today and where assumptions break.",
+  },
+  {
+    title: "Lead Quality Review",
+    body: "Lead source reliability, junk ratio, geography fit, and job-type fit compared to your stated business priorities.",
+  },
+  {
+    title: "Service Area Review",
+    body: "Coverage and visibility gap check: where you serve vs where you actually show up in local search presence.",
+  },
+  {
+    title: "Roadmap",
+    body: "Prioritized fixes by impact and effort, with owners and estimated monthly recovery potential.",
+  },
+];
+
+const scoreBars = [
+  { label: "Conversion", weight: "30%", score: "64", note: "Do visitors become calls and qualified forms?" },
+  { label: "Follow-up", weight: "25%", score: "56", note: "Is anyone chasing active leads and quotes?" },
+  { label: "Visibility", weight: "15%", score: "68", note: "Can your service areas actually find you?" },
+  { label: "Tracking", weight: "15%", score: "49", note: "Can you count calls, forms, outcomes?" },
+  { label: "Attribution", weight: "15%", score: "58", note: "Can spend be tied to booked jobs?" },
+];
+
+const workflow = [
+  {
+    step: "01",
+    title: "Discovery",
+    span: "Days 1–3",
+    body: "Short intake form + read-only access grants + 30-minute kickoff call.",
+    effort: "Your effort: ~45 minutes",
+  },
+  {
+    step: "02",
+    title: "Audit",
+    span: "Days 3–10",
+    body: "Mystery-shop calls, test submissions, and tracking/visibility checks against the published method.",
+    effort: "Your effort: none",
+  },
+  {
+    step: "03",
+    title: "Review",
+    span: "Days 10–12",
+    body: "60-minute findings walkthrough: score, top leaks, and three prioritized actions.",
+    effort: "Your effort: 1 hour",
+  },
+  {
+    step: "04",
+    title: "Delivery",
+    span: "Within 24h",
+    body: "Final report, evidence appendix, and implementation roadmap arrive in your inbox.",
+    effort: "Your effort: read it",
+  },
+  {
+    step: "05",
+    title: "Implementation",
+    span: "Day 30+",
+    body: "Use the roadmap yourself, with fixed-scope implementation support on a separate scope.",
+    effort: "Your effort: a decision",
+  },
+];
+
+const objections = [
+  {
+    q: "“We already have a website.”",
+    a: "Great — this is not a website redesign pitch. Many businesses are leak-prone even when the site is fine. The audit shows what is fixed around it.",
+  },
+  {
+    q: "“We already run ads.”",
+    a: "That can be a strength. A leak in response and follow-up makes ad spend more expensive. The audit quantifies what each channel returns, if trackable.",
+  },
+  {
+    q: "“We already have an SEO company.”",
+    a: "That relationship can stay. This focuses on what happens after click: call handling, forms, follow-up, and measurement quality.",
+  },
+  {
+    q: "“We already use CallRail.”",
+    a: "Installed does not equal reliable. We check coverage, page-level behavior, and whether calls are actually traceable to outcomes.",
+  },
+  {
+    q: "“$750 feels expensive.”",
+    a: "If the result is one recoverable job per month, it is usually paid for quickly in local service work. The product itself is the deliverable: a scored report with evidence.",
+  },
+  {
+    q: "“Will there be another upsell?”",
+    a: "Roadmap items are tagged by owner and effort. If your score is strong, the recommendation is explicit: maintain or minimal change.",
+  },
+  {
+    q: "“I don’t have time.”",
+    a: "Expected total effort is about 2 hours across 2 weeks: intake, one review call, and report reading.",
+  },
+  {
+    q: "“My office answers every call.”",
+    a: "That may be true in one part of the day. We test business-hours and after-hours response paths, not assumptions.",
+  },
+  {
+    q: "“We already know where leads come from.”",
+    a: "Often the reported source is not enough for spend decisions. We show what recorded data can prove and where it does not.",
+  },
+  {
+    q: "“Can’t I do this myself?”",
+    a: "You can do some pieces. This gives you objective evidence and a recovery plan before you spend the next marketing dollar.",
+  },
+];
+---
+
+<BaseLayout
+  title="Revenue Leak Audit"
+  description="A $750 diagnostic for roofing, HVAC, plumbing, and electrical businesses: measure where revenue is leaking in your lead path and get an evidence-based, prioritized roadmap."
+  path="/revenue-leak-audit"
+>
+  <section class="hero audit-hero">
+    <div class="container">
+      <p class="kicker">for roofing, hvac, plumbing &amp; electrical</p>
+      <h1>You don't need more leads. You need to stop losing the ones you have.</h1>
+      <p class="lede">
+        Missed calls, silent forms, quotes that die without follow-up, and ad spend nobody can tie to a booked job. The Revenue Leak
+        Audit identifies where your business leaks money — with evidence — and shows what each gap likely costs you per month.
+      </p>
+      <p class="corriston-label">
+        One recovered job usually pays for it. (Average roof replacement: ~$8,000–$10,000.)
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-green btn-cta" href={OFFER_START_PATH} data-ga-event="click_audit_start">$750 — Start My Audit</a>
+        <a class="btn btn-ghost" href="#sample-report">See a sample report first →</a>
+      </div>
+      <p class="kicker" style="margin-top:1.1rem;">This is a Corriston Consulting, LLC offer and productized as a fixed diagnostic.</p>
+      <div class="sample-scorecard">
+        <h2>Sample scorecard preview</h2>
+        <p>SAMPLE DEMO: 0–100 gauge, pillar bars, and leak map snapshot (for illustration only).</p>
+        <div class="sample-mock">
+          <p style="font-weight:700; margin:0;">Revenue Leak Score</p>
+          <p class="score-badge">SAMPLE — 58</p>
+          <div class="bar-line"><span style="--width: 58%">Pillar score shown via 58% sample reading</span></div>
+          <p style="margin:0.4rem 0 0; font-size:0.84rem; color:var(--text-muted);">
+            Sample business placeholder, not client data.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <p class="kicker">The leak strip</p>
+      <h2>Four places owners stop being certain about results.</h2>
+      <div class="grid grid-2" style="margin-top:1.5rem;">
+        {
+          painTiles.map((tile) => (
+            <article class="card">
+              <h3 style="margin-top:0;">{tile.title}</h3>
+              <p style="margin:0.4rem 0 0; color:var(--text-muted);">{tile.body}</p>
+            </article>
+          ))
+        }
+      </div>
+      <p style="margin-top:1rem; color:var(--text-muted);">
+        In our analysis of 88 local service businesses, the most common issue was not the website itself.
+        It was the system around it.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker">Your website can be fine</p>
+      <h2>This is not a website pitch.</h2>
+      <p style="max-width:66ch;">
+        Most websites are serviceable. This audit is for the lead path between that website and booked jobs: phone handling, form delivery,
+        follow-up, attribution, and local presence.
+      </p>
+      <div class="summary" style="margin-top:1rem;">
+        If your score is high, the report can show that the current system is already healthy and no immediate changes are needed.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <p class="kicker">What $750 buys</p>
+      <h2>Nine deliverables. Two weeks. Fixed scope.</h2>
+      <div class="grid grid-3" style="margin-top:1.5rem; align-items:stretch;">
+        {
+          deliverables.map((item) => (
+            <article class="card">
+              <h3 style="margin-top:0;">{item.title}</h3>
+              <p style="margin:0.4rem 0 0; color:var(--text-muted); font-size:0.9rem;">{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+      <p style="margin-top:1rem; color:var(--text-muted);">
+        A 15–20 page report package plus a 60-minute review call and implementation roadmap are delivered consistently with this structure.
+      </p>
+      <div class="hero-actions" style="margin-top:1.25rem;">
+        <a class="btn btn-green btn-cta" href={OFFER_START_PATH} data-ga-event="click_audit_start_mid">Start My Audit — $750</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker">Revenue Leak Score</p>
+      <h2>One number you can act on — and check our work against.</h2>
+      <div class="score-section">
+        <div class="gauge-block" aria-label="Sample score instrument with published rubric">
+          <div class="gauge" role="img">
+            <span class="needle" style="--needle-angle:-42deg;"></span>
+            <div class="bands">
+              <span>85–100 Tight ship</span>
+              <span>65–84 Leaking</span>
+              <span>40–64 Significant</span>
+              <span>0–39 Critical</span>
+            </div>
+            <div class="sample-value">SAMPLE DEMO: 58</div>
+          </div>
+        </div>
+        <div class="pillars">
+          <p class="marker">Pillar bars with published weights</p>
+          {
+            scoreBars.map((item) => (
+              <div class="pillar-row">
+                <div class="pillar-top">
+                  <span>{item.label}</span>
+                  <span>{item.score}</span>
+                </div>
+                <div class="pillar-track"><span style={`--pillar:${item.score}%`}></span></div>
+                <div class="pillar-note">
+                  <span>{item.weight}</span>
+                  <span>{item.note}</span>
+                </div>
+              </div>
+            ))
+          }
+          <div class="summary" style="margin-top:1rem;">
+            SAMPLE DEMO only. Scoring uses a published 0/1/2 rubric with floor rules and published weights.
+            85+ means: strong controls, minimal action.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <p class="kicker">How it works</p>
+      <h2>Five-step customer journey, two-week cadence.</h2>
+      <div class="timeline">
+        {
+          workflow.map((item) => (
+            <article class="timeline-item">
+              <p class="timeline-step">{item.step}</p>
+              <h3 style="margin:0; font-size:1rem;">{item.title} <span style="font-size:0.85rem; color:var(--text-muted);">{item.span}</span></h3>
+              <p style="margin-top:0.4rem; color:var(--text);">{item.body}</p>
+              <p class="timeline-effort">{item.effort}</p>
+            </article>
+          ))
+        }
+      </div>
+      <p style="margin-top:1rem;">
+        Report delivery commitment: within 10 business days of read-only access granted, or the audit is free.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="sample-report">
+    <div class="container">
+      <p class="kicker">Proof and transparency</p>
+      <h2>No fake testimonials. Real framework. Structured evidence.</h2>
+      <div class="grid grid-2" style="margin-top:1.25rem; align-items:start;">
+        <article class="card">
+          <h3 style="margin-top:0;">Sample Report</h3>
+          <p class="marker">SAMPLE PLACEHOLDER</p>
+          <p style="font-size:0.9rem; color:var(--text-muted);">
+            Watermarked demonstration report placeholder (report layout + scorecard + leak map + spend-vs-proof table concept) for review before purchase.
+          </p>
+          <a class="btn btn-ghost" href="/revenue-leak-audit#sample-report">Open sample report</a>
+        </article>
+        <article class="card">
+          <h3 style="margin-top:0;">Methodology</h3>
+          <p style="color:var(--text-muted);">Published rubric, scored fields, evidence appendix, and fixed report template for every engagement.</p>
+          <ul style="padding-left:1rem; margin:1rem 0 0; color:var(--text);">
+            <li>0/1/2 scoring on each item</li>
+            <li>Catastrophic single-failure floor behavior</li>
+            <li>Dollar estimates with assumptions documented</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="section-divider" style="margin-top:1.25rem;"></div>
+
+      <h3>Findings wall (placeholders)</h3>
+      <div class="grid grid-3" style="margin-top:1rem;">
+        <div class="card">
+          <p style="margin-top:0;" class="marker">Example finding</p>
+          <p style="color:var(--text-muted);">“After-hours call route: no callback capture in place.”</p>
+          <p style="font-size:0.8rem; color:var(--text-subtle);">Sample data placeholder</p>
+        </div>
+        <div class="card">
+          <p style="margin-top:0;" class="marker">Example finding</p>
+          <p style="color:var(--text-muted);">“Form test logged at 10:14am, response landed next business day.”</p>
+          <p style="font-size:0.8rem; color:var(--text-subtle);">Sample timestamp placeholder</p>
+        </div>
+        <div class="card">
+          <p style="margin-top:0;" class="marker">Example finding</p>
+          <p style="color:var(--text-muted);">“Spend in one channel cannot be tied to booked jobs today.”</p>
+          <p style="font-size:0.8rem; color:var(--text-subtle);">Sample analysis placeholder</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:1.6rem;">Case Study placeholders</h3>
+      <div class="grid grid-3" style="margin-top:1rem;">
+        <div class="card">
+          <p class="marker">Case 1</p>
+          <p style="color:var(--text-muted);">Roofing placeholder · score placeholder · roadmap placeholder</p>
+        </div>
+        <div class="card">
+          <p class="marker">Case 2</p>
+          <p style="color:var(--text-muted);">HVAC placeholder · score placeholder · leakage area placeholder</p>
+        </div>
+        <div class="card">
+          <p class="marker">Case 3</p>
+          <p style="color:var(--text-muted);">Plumbing placeholder · score placeholder · follow-up fix placeholder</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem;">
+        <p class="kicker" style="margin:0 0 0.6rem;">Founder context</p>
+        <p style="margin:0.4rem 0 0;">
+          Gary Corriston, Corriston Consulting, LLC — local service-lead systems specialist and owner.
+        </p>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.55rem;">
+          Email: <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> · Booking: <a href={CONTACT.bookingUrl} target="_blank" rel="noopener">Book a call</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker">The math</p>
+      <h2>The audit can pay for itself with one recovered job.</h2>
+      <p>
+        Average local-service jobs are high enough that one recovered missed call, one recovered quote, or one new
+        visible service-area win often exceeds this fixed fee. If the audit finds no meaningful leak, it still delivers a formal
+        validation of what is already working.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <p class="kicker">Objections</p>
+      <h2>Top 10 concerns, answered.</h2>
+      <div class="faq" style="margin-top:1.25rem;">
+        {
+          objections.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker">Need to get started</p>
+      <h2>Corriston Consulting audit flow</h2>
+      <p class="lede">
+        Primary: <strong>Start My Audit — $750</strong> (no sales call required for intake).  
+        Secondary: <strong>See Sample Report</strong> for method confidence.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-green btn-cta" href={OFFER_START_PATH} data-ga-event="click_audit_start_final">Start My Audit — $750</a>
+        <a class="btn btn-ghost" href="#sample-report">See Sample Report</a>
+      </div>
+      <p style="margin-top:1rem;">
+        Questions? <a href={CONTACT.bookingUrl} target="_blank" rel="noopener">Talk to Gary</a>
+      </p>
+    </div>
+  </section>
+
+  <div id="audit-mobile-sticky" class="audit-sticky">
+    <a class="btn btn-green btn-cta" href={OFFER_START_PATH} data-ga-event="click_audit_sticky">Start My Audit — $750</a>
+    <a class="btn btn-ghost" href="#sample-report">Sample Report</a>
+  </div>
+
+  <style is:inline>
+    .audit-hero .sample-scorecard {
+      margin-top: 1.8rem;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      max-width: 560px;
+    }
+    .audit-hero .sample-scorecard h2 {
+      margin: 0;
+    }
+    .audit-hero .sample-scorecard p {
+      margin: 0.45rem 0 0;
+    }
+    .audit-hero .sample-mock {
+      margin-top: 0.8rem;
+      border: 1px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 0.85rem;
+      background: var(--surface-muted);
+    }
+    .corriston-label {
+      margin: 0.7rem 0 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .score-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    .gauge-block {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface-elevated);
+      padding: 1rem;
+    }
+    .gauge {
+      position: relative;
+      max-width: 360px;
+      margin: 0 auto;
+      aspect-ratio: 2 / 1;
+      border-radius: 100% 100% 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      background:
+        linear-gradient(90deg, var(--brand-amber), var(--brand-cyan), var(--brand-mulberry), var(--brand-blue));
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0.8rem 0.8rem 0;
+    }
+    .needle {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 4px;
+      height: 60%;
+      background: var(--text-strong);
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(var(--needle-angle));
+      border-radius: 4px;
+    }
+    .needle::after {
+      content: "58";
+      position: absolute;
+      top: -20px;
+      left: -11px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 5px;
+    }
+    .bands {
+      position: absolute;
+      left: 50%;
+      bottom: 2px;
+      transform: translateX(-50%);
+      width: calc(100% - 1.4rem);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.73rem;
+      color: #fff;
+      font-weight: 700;
+      text-transform: lowercase;
+      text-align: center;
+      gap: 0.2rem;
+    }
+    .bands span {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.17);
+      padding: 0.28rem 0.18rem;
+      border-radius: 6px;
+      line-height: 1.15;
+    }
+    .sample-value {
+      position: absolute;
+      right: 0.7rem;
+      bottom: 0.5rem;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.2rem 0.5rem;
+      color: var(--text-strong);
+      font-weight: 700;
+    }
+    .pillars {
+      display: grid;
+      gap: 0.85rem;
+    }
+    .pillar-row {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem;
+    }
+    .pillar-top {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+    }
+    .pillar-track {
+      margin-top: 0.45rem;
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-strong);
+    }
+    .pillar-track span {
+      display: block;
+      height: 100%;
+      width: var(--pillar);
+      background: linear-gradient(90deg, var(--brand-blue), var(--brand-cyan));
+    }
+    .pillar-note {
+      margin-top: 0.45rem;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .timeline {
+      display: grid;
+      gap: 0.95rem;
+      grid-template-columns: 1fr;
+    }
+    .timeline-item {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .timeline-step {
+      margin: 0;
+      font-weight: 700;
+      color: var(--brand-blue);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+    .timeline-effort {
+      margin: 0.6rem 0 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .bar-line {
+      margin-top: 0.6rem;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 0.75rem;
+    }
+    .bar-line span {
+      display: inline-block;
+      height: 10px;
+      background: linear-gradient(90deg, var(--brand-blue), var(--brand-cyan));
+      width: var(--width);
+      border-radius: 999px;
+    }
+    .score-badge {
+      display: inline-flex;
+      margin: 0.55rem 0 0;
+      padding: 0.2rem 0.56rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: rgba(255, 255, 255, 0.85);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-strong);
+      width: fit-content;
+    }
+    .section-divider {
+      border-top: 1px dashed var(--border);
+    }
+    .audit-sticky {
+      position: fixed;
+      left: 0.5rem;
+      right: 0.5rem;
+      bottom: 0.55rem;
+      z-index: 80;
+      display: flex;
+      gap: 0.55rem;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(140%);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .audit-sticky .btn {
+      flex: 1;
+      justify-content: center;
+    }
+    .audit-sticky.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    :global(body[data-page="/revenue-leak-audit"] .site-nav),
+    :global(body[data-page="/revenue-leak-audit"] .mobile-menu),
+    :global(body[data-page="/revenue-leak-audit"] .mobile-menu-toggle) {
+      display: none !important;
+    }
+    :global(body[data-page="/revenue-leak-audit"] .site-header .nav-toggle) {
+      display: none !important;
+    }
+    :global(body[data-page="/revenue-leak-audit"] .site-header .bar) {
+      justify-content: flex-start;
+    }
+    :global(body[data-page="/revenue-leak-audit"] .site-header .btn-ghost),
+    :global(body[data-page="/revenue-leak-audit"] .site-header .btn-green) {
+      display: none;
+    }
+
+    @media (min-width: 840px) {
+      .score-section {
+        grid-template-columns: 1fr 1fr;
+      }
+      .timeline {
+        grid-template-columns: 1fr 1fr;
+      }
+      .audit-sticky {
+        display: none;
+      }
+    }
+    @media (max-width: 839px) {
+      .audit-sticky {
+        display: flex;
+      }
+    }
+  </style>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    const sticky = document.getElementById("audit-mobile-sticky");
+    if (!sticky) return;
+    const onScroll = () => {
+      const show = window.innerWidth <= 839 && window.scrollY > window.innerHeight * 0.5;
+      sticky.classList.toggle("is-visible", show);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+  })();
+</script>

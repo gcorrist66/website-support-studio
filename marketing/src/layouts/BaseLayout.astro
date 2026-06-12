@@ -35,7 +35,7 @@ const globalSchemas = [organizationSchema(), websiteSchema()];
     {schemas.map((s) => <JsonLd schema={s} />)}
     <Analytics />
   </head>
-  <body>
+  <body data-page={head.path}>
     {
       gtmId && (
         <noscript>
