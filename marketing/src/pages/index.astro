@@ -88,11 +88,6 @@ const schemas = [
                   <a class="btn btn-ghost" href={`/templates#${t.key}`} data-ga-event="click_template_details" data-ga-label={t.key}>
                     View Details
                   </a>
-                  {t.demoRoute ? (
-                    <a class="btn btn-ghost" href={t.demoRoute} data-ga-event="click_template_live_demo" data-ga-label={t.key}>
-                      View Demo
-                    </a>
-                  ) : null}
                 </div>
             </div>
           ))
