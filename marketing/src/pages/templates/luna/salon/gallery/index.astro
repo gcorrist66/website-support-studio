@@ -1,0 +1,8 @@
+---
+import MarigoldManeLayout from "../../../../../components/MarigoldManeLayout.astro";
+import { marigold, marigoldGallery } from "../../../../../marigoldMane";
+---
+<MarigoldManeLayout title="Gallery — Marigold & Mane" description="Gallery page for the fictional Marigold & Mane sample salon website." path="/templates/luna/salon/gallery">
+  <section class="mm-section mm-hero"><div class="mm-container"><p class="mm-sample">{marigold.badge}</p><p class="mm-eyebrow">Gallery</p><h1>Soft color, clean shape, quiet finish.</h1><p class="mm-lede">This gallery uses labeled sample moments instead of fake before-and-after claims or invented testimonials.</p></div></section>
+  <section class="mm-section mm-soft"><div class="mm-container"><div class="mm-gallery-grid">{marigoldGallery.map((item) => <div class="mm-gallery-tile">{item}</div>)}</div><div class="mm-actions"><a class="mm-btn mm-btn-primary" href="/templates/luna/salon/contact#appointment">Request Appointment</a></div></div></section>
+</MarigoldManeLayout>

@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { marigold, marigoldNav } from "../marigoldMane";
+
+const { title, description, path } = Astro.props as { title: string; description: string; path: string };
+---
+
+<BaseLayout title={title} description={description} path={path}>
+  <div class="mm-site">
+    <header class="mm-header">
+      <a class="mm-logo" href="/templates/luna/salon" aria-label="Marigold & Mane home"><span>Marigold</span><small>& Mane</small></a>
+      <nav class="mm-nav" aria-label="Marigold & Mane navigation">
+        {marigoldNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <a class="mm-book" href="/templates/luna/salon/contact#appointment">Request Appointment</a>
+    </header>
+    <slot />
+    <section class="mm-founder-cta">
+      <div>
+        <p class="mm-eyebrow">Founder Website Package</p>
+        <h2>Want a website like Marigold & Mane?</h2>
+        <p>This sample business shows the style and completeness your $500 Founder Website can start from. We customize the words, photos, services, and local details for your business.</p>
+      </div>
+      <div class="mm-actions">
+        <a class="mm-btn mm-btn-primary" href={marigold.checkoutHref} data-ga-event="click_marigold_build_my_website" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+        <a class="mm-btn mm-btn-secondary" href={marigold.checkoutHref} data-ga-event="click_marigold_start_luna" data-ga-secondary-event="stripe_payment_link_click">Start With Luna</a>
+        <a class="mm-btn mm-btn-quiet" href={marigold.checkoutHref} data-ga-event="click_marigold_use_style" data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+      </div>
+    </section>
+    <footer class="mm-footer">
+      <div><strong>{marigold.name}</strong><p>{marigold.location}</p><p>{marigold.badge} · Fictional example. Not a real salon.</p></div>
+      <div><p>{marigold.address}</p><p><a href={marigold.phoneHref}>{marigold.phoneLabel}</a></p></div>
+    </footer>
+    <div class="mm-sticky"><a href={marigold.checkoutHref} data-ga-event="click_marigold_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+  </div>
+
+  <style is:inline>
+    body[data-page^="/templates/luna/salon"] .site-header,
+    body[data-page^="/templates/luna/salon"] .site-footer,
+    body[data-page^="/templates/luna/salon"] .skip-link { display: none; }
+    body[data-page^="/templates/luna/salon"] { background: #fff8ef; }
+    .mm-site { --mm-ink:#2f211c; --mm-muted:#7d6258; --mm-cream:#fff8ef; --mm-blush:#f6dfd6; --mm-clay:#bf6f5e; --mm-gold:#d89b53; --mm-card:rgba(255,255,255,.72); min-height:100vh; color:var(--mm-ink); background: radial-gradient(circle at top left, rgba(216,155,83,.18), transparent 32rem), linear-gradient(180deg,#fff8ef,#f9eee7 55%,#fff8ef); font-family: Georgia,"Times New Roman",serif; }
+    .mm-site h1,.mm-site h2,.mm-site h3 { color:var(--mm-ink); font-family: Georgia,"Times New Roman",serif; letter-spacing:-.055em; }
+    .mm-site p,.mm-site li { color:var(--mm-muted); }
+    .mm-header { position:sticky; top:0; z-index:70; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem clamp(1rem,4vw,3rem); border-bottom:1px solid rgba(191,111,94,.18); background:rgba(255,248,239,.9); backdrop-filter:blur(14px); }
+    .mm-logo { display:grid; color:var(--mm-ink); line-height:.9; font-size:1.45rem; font-weight:800; }
+    .mm-logo small { color:var(--mm-clay); font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; }
+    .mm-nav { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-family:var(--font-mono); font-size:.82rem; }
+    .mm-nav a,.mm-footer a { color:var(--mm-ink); }
+    .mm-nav a[aria-current="page"] { color:var(--mm-clay); font-weight:900; }
+    .mm-book,.mm-btn,.mm-sticky a { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.85rem 1.1rem; border:1px solid var(--mm-clay); font-family:var(--font-mono); font-weight:900; font-size:.86rem; text-decoration:none; }
+    .mm-book,.mm-btn-primary,.mm-sticky a { background:var(--mm-clay); color:#fff; }
+    .mm-btn-secondary { background:#fff; color:var(--mm-ink); }
+    .mm-btn-quiet { color:var(--mm-ink); background:transparent; }
+    .mm-section { padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem); }
+    .mm-container { max-width:1120px; margin:0 auto; }
+    .mm-eyebrow,.mm-sample { display:inline-flex; width:fit-content; border-radius:999px; font-family:var(--font-mono); font-size:.76rem; font-weight:900; letter-spacing:.04em; text-transform:uppercase; }
+    .mm-eyebrow { color:var(--mm-clay); }
+    .mm-sample { padding:.32rem .65rem; border:1px dashed rgba(191,111,94,.55); color:var(--mm-muted); background:rgba(255,255,255,.6); }
+    .mm-hero-grid,.mm-split { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.85fr); gap:clamp(1.4rem,5vw,3.5rem); align-items:center; }
+    .mm-hero h1 { max-width:11ch; margin:.8rem 0 0; font-size:clamp(3.2rem,12vw,7.5rem); line-height:.86; }
+    .mm-lede { max-width:58ch; font-size:1.12rem; line-height:1.75; }
+    .mm-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.25rem; }
+    .mm-photo-card { position:relative; min-height:480px; overflow:hidden; border-radius:2rem; border:1px solid rgba(191,111,94,.2); box-shadow:0 34px 90px rgba(47,33,28,.16); background:var(--mm-blush); }
+    .mm-photo-card img,.mm-image { display:block; width:100%; height:100%; object-fit:cover; }
+    .mm-caption { position:absolute; left:1rem; right:1rem; bottom:1rem; border-radius:999px; padding:.55rem .8rem; color:#fff; background:rgba(47,33,28,.78); font-family:var(--font-mono); font-size:.78rem; font-weight:800; }
+    .mm-card-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.4rem; }
+    .mm-card { border:1px solid rgba(191,111,94,.2); border-radius:1.4rem; padding:1.25rem; background:var(--mm-card); box-shadow:0 18px 50px rgba(47,33,28,.07); }
+    .mm-card h3 { margin:0; font-size:1.35rem; }
+    .mm-price { margin:.7rem 0 0; color:var(--mm-clay) !important; font-family:var(--font-mono); font-weight:900; font-size:.9rem; }
+    .mm-soft { background:rgba(246,223,214,.58); }
+    .mm-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.9rem; margin-top:1.4rem; }
+    .mm-gallery-tile { min-height:220px; display:flex; align-items:end; border-radius:1.6rem; padding:1rem; color:#fff; font-weight:900; background:linear-gradient(180deg,transparent,rgba(47,33,28,.78)), radial-gradient(circle at 15% 10%,#f5c8b8,var(--mm-clay)); }
+    .mm-info-list { display:grid; gap:.7rem; padding:0; margin:1rem 0 0; list-style:none; }
+    .mm-info-list li { padding:.8rem; border-radius:1rem; background:rgba(255,255,255,.7); border:1px solid rgba(191,111,94,.16); }
+    .mm-form { display:grid; gap:.85rem; }
+    .mm-form label { display:grid; gap:.4rem; color:var(--mm-ink); font-family:var(--font-mono); font-weight:800; font-size:.82rem; }
+    .mm-form input,.mm-form select,.mm-form textarea { width:100%; border:1px solid rgba(191,111,94,.24); border-radius:1rem; padding:.8rem; background:#fff; font:inherit; }
+    .mm-form textarea { min-height:120px; resize:vertical; }
+    .mm-founder-cta { display:flex; align-items:center; justify-content:space-between; gap:1.25rem; margin:0 clamp(1rem,4vw,3rem) 2rem; padding:clamp(1.25rem,4vw,2rem); border-radius:2rem; background:var(--mm-ink); color:#fff; }
+    .mm-founder-cta h2,.mm-founder-cta p { color:#fff; }
+    .mm-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(191,111,94,.18); }
+    .mm-sticky { display:none; }
+    @media (max-width:900px) { .mm-header{align-items:start}.mm-nav,.mm-book{display:none}.mm-hero-grid,.mm-split,.mm-card-grid,.mm-gallery-grid,.mm-founder-cta,.mm-footer{grid-template-columns:1fr;display:grid}.mm-photo-card{min-height:330px}.mm-hero h1{max-width:100%}.mm-section{padding-left:1rem;padding-right:1rem}.mm-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,248,239,.92);border:1px solid rgba(191,111,94,.28);box-shadow:0 16px 44px rgba(47,33,28,.2);backdrop-filter:blur(12px)}.mm-sticky a{width:100%} }
+  </style>
+</BaseLayout>

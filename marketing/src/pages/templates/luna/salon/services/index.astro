@@ -1,0 +1,8 @@
+---
+import MarigoldManeLayout from "../../../../../components/MarigoldManeLayout.astro";
+import { marigold, marigoldServices } from "../../../../../marigoldMane";
+---
+<MarigoldManeLayout title="Services — Marigold & Mane" description="Service menu for the fictional Marigold & Mane sample salon website." path="/templates/luna/salon/services">
+  <section class="mm-section mm-hero"><div class="mm-container"><p class="mm-sample">{marigold.badge}</p><p class="mm-eyebrow">Services</p><h1>Hair services with clear pricing and calm planning.</h1><p class="mm-lede">A complete salon service page should answer what you do, what it starts at, how long it takes, and how to book.</p></div></section>
+  <section class="mm-section mm-soft"><div class="mm-container"><div class="mm-card-grid">{marigoldServices.map((service) => <article class="mm-card"><h3>{service.name}</h3><p class="mm-price">{service.price} · {service.time}</p><p>{service.body}</p></article>)}</div><div class="mm-actions"><a class="mm-btn mm-btn-primary" href="/templates/luna/salon/contact#appointment">Request Appointment</a></div></div></section>
+</MarigoldManeLayout>
