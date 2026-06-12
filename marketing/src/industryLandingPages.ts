@@ -30,6 +30,24 @@ export type IndustryLandingPage = {
   exampleBullets: string[];
   trustBullets: string[];
   intakeItems: string[];
+  demoCtaLabel?: string;
+  ownerMessage?: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    points: string[];
+  };
+  serviceFocus?: {
+    eyebrow: string;
+    title: string;
+    items: { title: string; body: string }[];
+  };
+  opportunityPaths?: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    items: { title: string; body: string }[];
+  };
 };
 
 export const INDUSTRY_LANDING_PAGES: Record<IndustryLandingPage["slug"], IndustryLandingPage> = {
@@ -160,33 +178,71 @@ export const INDUSTRY_LANDING_PAGES: Record<IndustryLandingPage["slug"], Industr
   hvac: {
     slug: "hvac",
     industry: "HVAC",
-    eyebrow: "websites for hvac companies",
-    title: "An HVAC website built for urgent comfort calls.",
+    eyebrow: "websites for ac and hvac companies",
+    title: "An AC/HVAC website built for service calls, installs, and tune-ups.",
     description:
-      "Show heating, cooling, tune-ups, repairs, emergency service, and seasonal maintenance in a website homeowners can act on quickly.",
+      "Your team should be running service calls, replacement installs, maintenance plans, and seasonal rush work. We handle the website path that turns hot and cold houses into clear requests.",
     heroImage: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "HVAC technician servicing residential equipment",
     accent: "#0284c7",
     demoName: "Northstar Air",
     demoRoute: "/templates/sample/northstar-air",
-    demoType: "Summit HVAC sample",
+    demoType: "Sample AC/HVAC website",
+    demoCtaLabel: "View HVAC Example",
     problems: [
-      "HVAC visitors are often hot, cold, or worried their system is failing. The service path needs to be immediate.",
-      "Repair, replacement, tune-up, and emergency calls should not compete for attention in one generic paragraph.",
-      "A strong HVAC site gives homeowners confidence before they call: service area, timing, maintenance options, and clear next steps.",
+      "HVAC visitors are often hot, cold, or worried their system is failing. AC repair, heating repair, and emergency service paths need to be obvious immediately.",
+      "Replacement installs, financing questions, maintenance plans, and tune-ups should not compete for attention in one generic paragraph.",
+      "A strong AC/HVAC site gives homeowners confidence before they call: service areas, seasonal availability, reviews, quote requests, and clear next steps.",
     ],
     exampleBullets: [
-      "Repair-first and tune-up-ready page structure",
-      "Heating, cooling, maintenance, and urgent service paths",
-      "Strong click-to-call and estimate CTAs",
-      "Service proof without fake reviews or fake results",
+      "AC repair, heating service, maintenance plan, and replacement install paths",
+      "Emergency service and seasonal rush messaging",
+      "Quote, financing, and request-service CTAs",
+      "Service-area and trust sections without fake reviews or fake results",
     ],
     trustBullets: [
       "You own your domain, website, content, and accounts.",
       "We adapt the Summit style around your HVAC services, service area, hours, phone number, and seasonal offers.",
       "The monthly plan after launch is optional. Cancel anytime; the website is yours either way.",
     ],
-    intakeItems: ["Heating/cooling services", "Service area", "Phone number", "Hours", "Maintenance offers/photos if available"],
+    intakeItems: ["AC/heating services", "Service areas", "Phone number", "Hours", "Maintenance plans or install offers", "Photos/logo if available"],
+    ownerMessage: {
+      eyebrow: "_hvac_owner_focus",
+      title: "You run the HVAC work. We keep the website from costing you calls.",
+      body:
+        "You should not be updating pages during the summer AC rush, rewriting heating service copy before a cold snap, or wondering whether a broken form is costing you jobs. Website Support Studio gives HVAC owners a clean website path and a simple place to request updates after launch.",
+      points: [
+        "AC repair calls and no-cool requests stay easy to find.",
+        "Heating repair, furnace service, and winter calls get their own path.",
+        "Maintenance plans, replacements, financing, and quote requests are separated clearly.",
+        "Service-area pages help homeowners confirm you work in their city.",
+      ],
+    },
+    serviceFocus: {
+      eyebrow: "_hvac_service_paths",
+      title: "Built around the calls HVAC companies actually want.",
+      items: [
+        { title: "Emergency service calls", body: "Make urgent no-heat and no-cool requests visible without making the page feel panicked." },
+        { title: "AC repair", body: "Give cooling prospects a direct path for warm air, short cycling, airflow issues, and system checks." },
+        { title: "Heating repair", body: "Separate furnace, heat pump, thermostat, and winter comfort problems from general service copy." },
+        { title: "Maintenance plans", body: "Explain spring and fall tune-ups, priority scheduling, and recurring comfort checks." },
+        { title: "Replacement installs", body: "Create a cleaner path for quote requests, right-sized options, and financing conversations." },
+        { title: "Reviews and trust signals", body: "Show service area, hours, phone paths, and proof cues without inventing testimonials." },
+      ],
+    },
+    opportunityPaths: {
+      eyebrow: "_meet_you_where_you_are",
+      title: "Whether Clay flags a first website or a missed-jobs problem, the path is simple.",
+      intro:
+        "HVAC companies do not all need the same thing. Some need a first real website. Some need a refresh. Some need ongoing support or a better way to capture calls and quote requests.",
+      items: [
+        { title: "Founder Website Package", body: "For HVAC companies that need a clean, professional first site fast." },
+        { title: "Website Refresh", body: "For companies with an existing site that feels dated, thin, or hard to use on mobile." },
+        { title: "Website Operations", body: "For teams that need ongoing updates, service pages, seasonal changes, and support requests handled." },
+        { title: "Conversion Optimization", body: "For HVAC sites that get traffic but bury call, quote, financing, or maintenance-plan actions." },
+        { title: "Missed Jobs Review", body: "For companies where weak forms, unclear services, or hidden CTAs may be leaking service calls." },
+      ],
+    },
   },
   plumbing: {
     slug: "plumbing",

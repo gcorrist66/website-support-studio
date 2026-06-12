@@ -18,7 +18,7 @@ const path = `/for/${page.slug}`;
         <p class="lede">{page.description}</p>
         <div class="industry-actions">
           <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-          <a class="btn btn-ghost" href={page.demoRoute} data-ga-event={`click_for_${page.slug}_demo`}>View Live Example</a>
+          <a class="btn btn-ghost" href={page.demoRoute} data-ga-event={`click_for_${page.slug}_demo`}>{page.demoCtaLabel ?? "View Live Example"}</a>
           <a class="btn btn-ghost" href="/templates/sample/back-office/" data-ga-event={`click_for_${page.slug}_back_office`}>Preview Back Office</a>
         </div>
         <p class="industry-strip">Pay $500 once → 10-minute intake → we build and you preview → launch with 30 days of included support.</p>
@@ -29,6 +29,38 @@ const path = `/for/${page.slug}`;
       </figure>
     </div>
   </section>
+
+  {page.ownerMessage && (
+    <section class="section industry-owner-section">
+      <div class="container industry-owner-card">
+        <div>
+          <p class="kicker"><Label text={page.ownerMessage.eyebrow} /></p>
+          <h2>{page.ownerMessage.title}</h2>
+          <p>{page.ownerMessage.body}</p>
+        </div>
+        <ul class="industry-checks">
+          {page.ownerMessage.points.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {page.serviceFocus && (
+    <section class="section industry-muted">
+      <div class="container">
+        <p class="kicker"><Label text={page.serviceFocus.eyebrow} /></p>
+        <h2 style="margin-top:0.4rem;">{page.serviceFocus.title}</h2>
+        <div class="industry-service-grid">
+          {page.serviceFocus.items.map((item) => (
+            <article class="industry-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="container industry-split">
@@ -59,7 +91,7 @@ const path = `/for/${page.slug}`;
           {page.exampleBullets.map((item) => <li>{item}</li>)}
         </ul>
         <div class="industry-actions">
-          <a class="btn btn-primary" href={page.demoRoute}>View Live Example</a>
+          <a class="btn btn-primary" href={page.demoRoute}>{page.demoCtaLabel ?? "View Live Example"}</a>
           <a class="btn btn-ghost" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
         </div>
       </div>
@@ -69,6 +101,30 @@ const path = `/for/${page.slug}`;
       </a>
     </div>
   </section>
+
+  {page.opportunityPaths && (
+    <section class="section">
+      <div class="container industry-split">
+        <div>
+          <p class="kicker"><Label text={page.opportunityPaths.eyebrow} /></p>
+          <h2>{page.opportunityPaths.title}</h2>
+          <p>{page.opportunityPaths.intro}</p>
+          <div class="industry-actions">
+            <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_opportunity_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+            <a class="btn btn-ghost" href={page.demoRoute}>{page.demoCtaLabel ?? "View Live Example"}</a>
+          </div>
+        </div>
+        <div class="industry-card-list">
+          {page.opportunityPaths.items.map((item) => (
+            <article class="industry-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="container industry-trust-grid">
@@ -113,7 +169,7 @@ const path = `/for/${page.slug}`;
       </div>
       <div class="industry-actions">
         <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-ga-event={`click_for_${page.slug}_final_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-        <a class="btn btn-ghost" href={page.demoRoute}>View Live Example</a>
+        <a class="btn btn-ghost" href={page.demoRoute}>{page.demoCtaLabel ?? "View Live Example"}</a>
         <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
       </div>
     </div>
@@ -124,6 +180,6 @@ const path = `/for/${page.slug}`;
   </div>
 
   <style is:inline>
-    .industry-hero{padding:clamp(3.5rem,8vw,6rem) 0;background:radial-gradient(circle at 78% 10%,color-mix(in srgb,var(--industry-accent) 18%,transparent),transparent 28rem),linear-gradient(180deg,#fff,var(--surface-muted));overflow:hidden}.industry-hero-grid,.industry-split,.industry-example,.industry-trust-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:clamp(1.5rem,5vw,3.5rem);align-items:center}.industry-hero h1{max-width:13ch;font-size:clamp(2.4rem,7.5vw,5rem);line-height:.94;margin:.5rem 0 1rem}.industry-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.35rem}.industry-strip{max-width:62ch;margin-top:1rem;padding:1rem;border:1px solid color-mix(in srgb,var(--industry-accent) 30%,var(--border));border-left:4px solid var(--industry-accent);border-radius:14px;background:#fff;font-size:.92rem;font-weight:700}.industry-photo,.industry-preview{position:relative;display:block;overflow:hidden;border-radius:28px;border:1px solid var(--border);background:#fff;box-shadow:0 28px 80px rgba(11,18,32,.16)}.industry-photo{min-height:470px;margin:0}.industry-photo img,.industry-preview img{display:block;width:100%;height:100%;object-fit:cover}.industry-photo figcaption,.industry-preview span{position:absolute;left:1rem;right:1rem;bottom:1rem;border-radius:999px;padding:.65rem .85rem;background:rgba(11,18,32,.82);color:#fff;font-size:.78rem;font-weight:800}.industry-card-list{display:grid;gap:.85rem}.industry-card,.industry-trust-panel,.industry-steps article,.industry-final-cta{border:1px solid var(--border);border-radius:22px;background:#fff;padding:1.25rem;box-shadow:0 18px 48px rgba(11,18,32,.06)}.industry-card p{margin:0}.industry-muted{background:var(--surface-muted)}.industry-example{align-items:stretch}.industry-preview{min-height:420px;color:#fff}.industry-checks{display:grid;gap:.7rem;margin:1rem 0 0;padding:0;list-style:none}.industry-checks li{position:relative;padding-left:1.4rem}.industry-checks li::before{content:"";position:absolute;left:0;top:.55rem;width:.55rem;height:.55rem;border-radius:999px;background:var(--industry-accent)}.industry-trust-panel{height:100%;padding:clamp(1.3rem,3vw,2rem)}.industry-trust-panel--dark{background:var(--surface-dark);color:#fff}.industry-trust-panel--dark h2,.industry-trust-panel--dark p,.industry-trust-panel--dark .kicker{color:#fff}.industry-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:1.5rem}.industry-steps strong{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border-radius:999px;background:var(--industry-accent);color:#fff}.industry-steps h3{margin:.9rem 0 .4rem}.industry-steps p{margin:0}.industry-final-cta{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:clamp(1.5rem,4vw,2.5rem);border-left:6px solid var(--industry-accent)}.industry-final-cta h2{margin-top:.25rem}.industry-mobile-cta{display:none}@media(max-width:820px){.industry-hero-grid,.industry-split,.industry-example,.industry-trust-grid,.industry-steps,.industry-final-cta{grid-template-columns:1fr;display:grid}.industry-photo,.industry-preview{min-height:320px}.industry-actions .btn{width:100%;justify-content:center}.industry-final-cta{margin-bottom:4.5rem}.industry-mobile-cta{position:fixed;z-index:95;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--industry-accent) 32%,var(--border));box-shadow:0 16px 44px rgba(11,18,32,.22);backdrop-filter:blur(12px)}.industry-mobile-cta a{display:flex;align-items:center;justify-content:center;min-height:3rem;border-radius:999px;background:var(--cta-green);color:var(--text-strong);font-weight:800}.industry-mobile-cta a:hover{text-decoration:none}}
+    .industry-hero{padding:clamp(3.5rem,8vw,6rem) 0;background:radial-gradient(circle at 78% 10%,color-mix(in srgb,var(--industry-accent) 18%,transparent),transparent 28rem),linear-gradient(180deg,#fff,var(--surface-muted));overflow:hidden}.industry-hero-grid,.industry-split,.industry-example,.industry-trust-grid,.industry-owner-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:clamp(1.5rem,5vw,3.5rem);align-items:center}.industry-hero h1{max-width:13ch;font-size:clamp(2.4rem,7.5vw,5rem);line-height:.94;margin:.5rem 0 1rem}.industry-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.35rem}.industry-strip{max-width:62ch;margin-top:1rem;padding:1rem;border:1px solid color-mix(in srgb,var(--industry-accent) 30%,var(--border));border-left:4px solid var(--industry-accent);border-radius:14px;background:#fff;font-size:.92rem;font-weight:700}.industry-photo,.industry-preview{position:relative;display:block;overflow:hidden;border-radius:28px;border:1px solid var(--border);background:#fff;box-shadow:0 28px 80px rgba(11,18,32,.16)}.industry-photo{min-height:470px;margin:0}.industry-photo img,.industry-preview img{display:block;width:100%;height:100%;object-fit:cover}.industry-photo figcaption,.industry-preview span{position:absolute;left:1rem;right:1rem;bottom:1rem;border-radius:999px;padding:.65rem .85rem;background:rgba(11,18,32,.82);color:#fff;font-size:.78rem;font-weight:800}.industry-card-list{display:grid;gap:.85rem}.industry-card,.industry-trust-panel,.industry-steps article,.industry-final-cta,.industry-owner-card{border:1px solid var(--border);border-radius:22px;background:#fff;padding:1.25rem;box-shadow:0 18px 48px rgba(11,18,32,.06)}.industry-card h3{margin:0 0 .45rem}.industry-card p{margin:0}.industry-owner-section{background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--industry-accent) 8%,#fff))}.industry-owner-card{padding:clamp(1.4rem,4vw,2.2rem);border-left:6px solid var(--industry-accent)}.industry-service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.5rem}.industry-muted{background:var(--surface-muted)}.industry-example{align-items:stretch}.industry-preview{min-height:420px;color:#fff}.industry-checks{display:grid;gap:.7rem;margin:1rem 0 0;padding:0;list-style:none}.industry-checks li{position:relative;padding-left:1.4rem}.industry-checks li::before{content:"";position:absolute;left:0;top:.55rem;width:.55rem;height:.55rem;border-radius:999px;background:var(--industry-accent)}.industry-trust-panel{height:100%;padding:clamp(1.3rem,3vw,2rem)}.industry-trust-panel--dark{background:var(--surface-dark);color:#fff}.industry-trust-panel--dark h2,.industry-trust-panel--dark p,.industry-trust-panel--dark .kicker{color:#fff}.industry-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:1.5rem}.industry-steps strong{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border-radius:999px;background:var(--industry-accent);color:#fff}.industry-steps h3{margin:.9rem 0 .4rem}.industry-steps p{margin:0}.industry-final-cta{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:clamp(1.5rem,4vw,2.5rem);border-left:6px solid var(--industry-accent)}.industry-final-cta h2{margin-top:.25rem}.industry-mobile-cta{display:none}@media(max-width:820px){.industry-hero-grid,.industry-split,.industry-example,.industry-trust-grid,.industry-steps,.industry-final-cta,.industry-owner-card,.industry-service-grid{grid-template-columns:1fr;display:grid}.industry-photo,.industry-preview{min-height:320px}.industry-actions .btn{width:100%;justify-content:center}.industry-final-cta{margin-bottom:4.5rem}.industry-mobile-cta{position:fixed;z-index:95;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--industry-accent) 32%,var(--border));box-shadow:0 16px 44px rgba(11,18,32,.22);backdrop-filter:blur(12px)}.industry-mobile-cta a{display:flex;align-items:center;justify-content:center;min-height:3rem;border-radius:999px;background:var(--cta-green);color:var(--text-strong);font-weight:800}.industry-mobile-cta a:hover{text-decoration:none}}
   </style>
 </BaseLayout>
