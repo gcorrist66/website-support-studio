@@ -1,0 +1,89 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { lunaDesignLanguage, lunaVariantList } from "../../../luna";
+---
+
+<BaseLayout
+  title="Luna Design System — Salon, Coffee Shop, Boutique"
+  description="Explore the Luna design system and see how one warm, image-led website style adapts across salon, coffee shop, and boutique businesses."
+  path="/templates/luna"
+>
+  <main class="luna-overview">
+    <section class="hero">
+      <div class="container" style="max-width:900px;">
+        <p class="demo-disclaimer">Design system demo · Fictional businesses</p>
+        <p class="kicker">Luna design system</p>
+        <h1>One warm website style. Three different businesses.</h1>
+        <p class="lede">{lunaDesignLanguage.thesis} Luna proves the Website Support Studio model: choose a style you like, then adapt it to the business you actually run.</p>
+        <div class="hero-actions">
+          <a class="btn btn-green btn-cta" href="/templates/luna/salon">View Salon</a>
+          <a class="btn btn-ghost" href="/templates/luna/coffee-shop">View Coffee Shop</a>
+          <a class="btn btn-ghost" href="/templates/luna/boutique">View Boutique</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--surface-muted);">
+      <div class="container">
+        <p class="kicker">Design language</p>
+        <h2>{lunaDesignLanguage.personality}</h2>
+        <p class="lede">{lunaDesignLanguage.visualStyle}</p>
+        <div class="grid grid-2" style="margin-top:2rem; align-items:start;">
+          <div class="card">
+            <h3>What stays consistent</h3>
+            <ul>
+              {lunaDesignLanguage.staysConsistent.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div class="card">
+            <h3>What changes</h3>
+            <ul>
+              {lunaDesignLanguage.changesByBusiness.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <p class="kicker">Adaptations</p>
+        <h2>Same Luna system, different business type.</h2>
+        <div class="grid grid-3" style="margin-top:2rem;">
+          {lunaVariantList.map((variant) => (
+            <article class="card luna-overview-card">
+              <img src={variant.image} alt={variant.imageAlt} width="900" height="620" loading="lazy" />
+              <p class="marker">{variant.name}</p>
+              <h3>{variant.businessName}</h3>
+              <p>{variant.description}</p>
+              <a class="btn btn-green" href={`/templates/luna/${variant.key}`}>Open {variant.name}</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style is:inline>
+    .demo-disclaimer {
+      display: inline-block;
+      border: 1px dashed var(--border-strong);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.72rem;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .luna-overview-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 11;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+  </style>
+</BaseLayout>

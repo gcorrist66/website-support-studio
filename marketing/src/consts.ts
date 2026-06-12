@@ -145,7 +145,7 @@ export const DESIGN_SYSTEMS = [
     visualStyle: "Soft contrast, editorial imagery, rounded cards, refined type, warm neutrals, and boutique spacing.",
     industry: "Salon, boutique, cafe, restaurant, wellness",
     pages: ["Home", "Services", "Gallery", "About", "Contact"],
-    demoRoute: undefined,
+    demoRoute: "/templates/luna",
     fits: ["Salons", "Boutiques", "Coffee shops", "Restaurants", "Wellness studios"],
     exampleBusinesses: ["Hair salon", "Local boutique", "Candle shop", "Yoga studio", "Brunch cafe"],
     adaptableFrom: "Salon",

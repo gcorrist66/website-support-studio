@@ -16,3 +16,9 @@ Images are sourced from Unsplash and used under the Unsplash license, which perm
 - Ember design system alternate / restaurant dining and plated food: https://unsplash.com/s/photos/restaurant-food, image CDN URL `https://images.unsplash.com/photo-1414235077428-338989a2e8c0`
 - Ember design system / coffee shop counter and menu boards: https://unsplash.com/s/photos/coffee-shop-counter, image CDN URL `https://images.unsplash.com/photo-1551529563-fce9529e67ac`
 - Luna design system alternate / clothing racks and retail display: https://unsplash.com/s/photos/boutique-clothing-store, image CDN URL `https://images.unsplash.com/photo-1445205170230-053b83016050`
+
+## Luna Design System Sources
+
+- Luna Salon / salon interior: https://unsplash.com/s/photos/hair-salon, image CDN URL `https://images.unsplash.com/photo-1560066984-138dadb4c035`
+- Luna Coffee Shop / coffee shop counter: https://unsplash.com/s/photos/coffee-shop-counter, image CDN URL `https://images.unsplash.com/photo-1551529563-fce9529e67ac`
+- Luna Boutique / clothing racks and retail display: https://unsplash.com/s/photos/boutique-clothing-store, image CDN URL `https://images.unsplash.com/photo-1445205170230-053b83016050`

@@ -116,9 +116,15 @@ const schemas = [
                     >
                       Start With This Style
                     </a>
-                    <a class="btn btn-ghost" href="#whats-customizable" data-ga-event="click_template_compare" data-ga-label={t.key}>
-                      Compare Adaptability
-                    </a>
+                    {t.demoRoute ? (
+                      <a class="btn btn-ghost" href={t.demoRoute} data-ga-event="click_design_system_demo" data-ga-label={t.key}>
+                        View System Demo
+                      </a>
+                    ) : (
+                      <a class="btn btn-ghost" href="#whats-customizable" data-ga-event="click_template_compare" data-ga-label={t.key}>
+                        Compare Adaptability
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

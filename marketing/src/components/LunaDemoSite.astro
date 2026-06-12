@@ -1,0 +1,340 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { lunaDesignLanguage, lunaVariantList } from "../luna";
+
+type LunaVariant = (typeof lunaVariantList)[number];
+
+const { variant } = Astro.props as { variant: LunaVariant };
+const variantLinks = lunaVariantList.map((item) => ({
+  href: `/templates/luna/${item.key}`,
+  label: item.businessName,
+  name: item.name,
+}));
+---
+
+<BaseLayout
+  title={`${variant.name} — Luna Design System Demo`}
+  description={variant.description}
+  path={`/templates/luna/${variant.key}`}
+>
+  <main class="luna-demo" style={`--luna-accent:${variant.accent}; --luna-dark:${variant.dark}; --luna-soft:${variant.soft};`}>
+    <section class="luna-hero">
+      <div class="container luna-hero-grid">
+        <div>
+          <p class="luna-disclosure">{variant.disclosure}</p>
+          <p class="luna-kicker">{variant.eyebrow}</p>
+          <h1>{variant.title}</h1>
+          <p class="lede">{variant.description}</p>
+          <div class="luna-actions">
+            <a class="luna-btn luna-btn-primary" href="#demo-form">{variant.primaryCta}</a>
+            <a class="luna-btn luna-btn-secondary" href="#luna-sections">{variant.secondaryCta}</a>
+          </div>
+        </div>
+        <figure class="luna-hero-image">
+          <img src={variant.image} alt={variant.imageAlt} width="1400" height="980" loading="eager" />
+          <figcaption>{variant.businessName} · fictional Luna adaptation</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="luna-section luna-soft-section">
+      <div class="container luna-split">
+        <div>
+          <p class="luna-kicker">Design language</p>
+          <h2>{lunaDesignLanguage.name}: {lunaDesignLanguage.thesis}</h2>
+          <p>{lunaDesignLanguage.visualStyle}</p>
+        </div>
+        <div class="luna-card">
+          <h3>Who this version is for</h3>
+          <p>{variant.audience}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="luna-section" id="luna-sections">
+      <div class="container">
+        <p class="luna-kicker">{variant.sectionsLabel}</p>
+        <h2>The same section system, rewritten for {variant.businessName}.</h2>
+        <div class="luna-card-grid">
+          {variant.items.map((item) => (
+            <article class="luna-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="luna-section luna-soft-section">
+      <div class="container">
+        <p class="luna-kicker">Visual proof area</p>
+        <h2>Gallery labels change. The Luna rhythm stays consistent.</h2>
+        <div class="luna-gallery">
+          {variant.gallery.map((item) => <span>{item}</span>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="luna-section">
+      <div class="container luna-split">
+        <div>
+          <p class="luna-kicker">What stays consistent</p>
+          <h2>One system, three industries.</h2>
+          <ul class="luna-list">
+            {lunaDesignLanguage.staysConsistent.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <p class="luna-kicker">What changes</p>
+          <h2>Business-specific content and conversion.</h2>
+          <ul class="luna-list">
+            {lunaDesignLanguage.changesByBusiness.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="luna-section luna-soft-section">
+      <div class="container luna-split">
+        <div>
+          <p class="luna-kicker">Adaptations</p>
+          <h2>See Luna in three business types.</h2>
+          <div class="luna-variant-links">
+            {variantLinks.map((link) => (
+              <a href={link.href} aria-current={link.name === variant.name ? "page" : undefined}>
+                <strong>{link.label}</strong>
+                <span>{link.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+        <form id="demo-form" class="luna-card luna-form">
+          <h3>{variant.formLabel}</h3>
+          <label>Name<input name="name" /></label>
+          {variant.formFields.map((field) => <label>{field}<input name={field.toLowerCase().replaceAll(" ", "-")} /></label>)}
+          <button class="luna-btn luna-btn-primary" type="submit">{variant.contactCta}</button>
+          <p id={`luna-${variant.key}-status`} class="luna-status" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+    document.addEventListener("submit", (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || form.id !== "demo-form") return;
+      event.preventDefault();
+      const status = form.querySelector("[role='status']");
+      if (status instanceof HTMLElement) {
+        status.textContent = "This is a Luna demo form. Production lead capture is added during the real build.";
+      }
+    });
+  </script>
+
+  <style is:inline>
+    .luna-demo {
+      background: #fffaf4;
+      color: var(--luna-dark);
+    }
+    .luna-demo h1,
+    .luna-demo h2,
+    .luna-demo h3 {
+      color: var(--luna-dark);
+      letter-spacing: -0.045em;
+    }
+    .luna-hero {
+      padding: 4.5rem 0 3.25rem;
+      background:
+        radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--luna-soft) 80%, transparent), transparent 34%),
+        linear-gradient(135deg, #fffaf4, var(--luna-soft));
+    }
+    .luna-hero-grid,
+    .luna-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
+      gap: 2rem;
+      align-items: center;
+    }
+    .luna-disclosure,
+    .luna-kicker {
+      display: inline-flex;
+      width: fit-content;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+    .luna-disclosure {
+      border: 1px dashed color-mix(in srgb, var(--luna-accent) 55%, #fff);
+      color: color-mix(in srgb, var(--luna-dark) 72%, #fff);
+      padding: 0.35rem 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(255,255,255,0.54);
+    }
+    .luna-kicker {
+      margin: 0.8rem 0 0.85rem;
+      color: var(--luna-accent);
+    }
+    .luna-hero h1 {
+      max-width: 13ch;
+      font-size: clamp(2.45rem, 8vw, 5.7rem);
+      line-height: 0.92;
+      margin: 0;
+    }
+    .luna-actions,
+    .luna-variant-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.4rem;
+    }
+    .luna-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0.82rem 1.2rem;
+      border: 1px solid var(--luna-accent);
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .luna-btn-primary {
+      color: #fff;
+      background: var(--luna-accent);
+    }
+    .luna-btn-secondary {
+      color: var(--luna-dark);
+      background: rgba(255,255,255,0.62);
+    }
+    .luna-hero-image {
+      position: relative;
+      min-height: 430px;
+      margin: 0;
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: 0 28px 70px rgba(51,36,28,0.18);
+      border: 1px solid rgba(255,255,255,0.72);
+    }
+    .luna-hero-image img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .luna-hero-image figcaption {
+      position: absolute;
+      left: 1rem;
+      bottom: 1rem;
+      max-width: calc(100% - 2rem);
+      border-radius: 999px;
+      background: rgba(45,36,48,0.78);
+      color: #fff;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+    .luna-section {
+      padding: 4rem 0;
+    }
+    .luna-soft-section {
+      background: var(--luna-soft);
+    }
+    .luna-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    .luna-card {
+      border: 1px solid color-mix(in srgb, var(--luna-accent) 24%, #fff);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.72);
+      padding: 1.25rem;
+      box-shadow: 0 18px 48px rgba(51,36,28,0.08);
+    }
+    .luna-card p {
+      color: color-mix(in srgb, var(--luna-dark) 72%, #fff);
+    }
+    .luna-gallery {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+    .luna-gallery span {
+      min-height: 150px;
+      display: flex;
+      align-items: end;
+      border-radius: 24px;
+      padding: 1rem;
+      color: #fff;
+      font-weight: 900;
+      background:
+        linear-gradient(180deg, transparent, rgba(45,36,48,0.72)),
+        radial-gradient(circle at top left, color-mix(in srgb, var(--luna-accent) 68%, #fff), var(--luna-dark));
+    }
+    .luna-list {
+      display: grid;
+      gap: 0.55rem;
+      padding-left: 1.1rem;
+    }
+    .luna-variant-links a {
+      display: grid;
+      min-width: 180px;
+      border: 1px solid color-mix(in srgb, var(--luna-accent) 35%, #fff);
+      border-radius: 18px;
+      padding: 0.85rem;
+      background: rgba(255,255,255,0.7);
+      color: var(--luna-dark);
+    }
+    .luna-variant-links a[aria-current="page"] {
+      background: var(--luna-dark);
+      color: #fff;
+    }
+    .luna-variant-links span {
+      color: inherit;
+      opacity: 0.72;
+      font-size: 0.82rem;
+    }
+    .luna-form {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .luna-form label {
+      display: grid;
+      gap: 0.35rem;
+      font-weight: 800;
+      font-size: 0.86rem;
+    }
+    .luna-form input {
+      width: 100%;
+      border: 1px solid color-mix(in srgb, var(--luna-accent) 30%, #fff);
+      border-radius: 14px;
+      padding: 0.72rem;
+      background: #fff;
+      font: inherit;
+    }
+    .luna-status {
+      min-height: 1.2rem;
+      margin: 0;
+      color: color-mix(in srgb, var(--luna-dark) 68%, #fff);
+      font-size: 0.84rem;
+    }
+    @media (max-width: 900px) {
+      .luna-hero-grid,
+      .luna-split,
+      .luna-card-grid,
+      .luna-gallery {
+        grid-template-columns: 1fr;
+      }
+      .luna-hero-image {
+        min-height: 320px;
+      }
+      .luna-hero h1 {
+        max-width: 100%;
+      }
+    }
+  </style>
+</BaseLayout>
