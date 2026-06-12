@@ -15,6 +15,8 @@ const faqs = [
     a: "The sample service area includes core Denver, Aurora, Lakewood, Golden, and Englewood neighborhoods.",
   },
 ];
+
+const contactImage = "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?auto=format&fit=crop&w=900&q=82";
 ---
 
 <BaseLayout
@@ -37,6 +39,7 @@ const faqs = [
       <div class="container" style="max-width: 900px;">
         <div class="contact-grid">
           <div class="card">
+            <img class="contact-roof-photo" src={contactImage} alt="Roofing contractor inspecting a residential shingle roof" width="900" height="560" loading="lazy" />
             <h2 style="margin-top:0;">Get started</h2>
             <p>Use one of the options below to request help in this demo layout.</p>
             <p><a class="btn btn-green btn-cta" href="tel:+13035550198">Call Now</a> <a class="btn btn-ghost" href="#">Schedule Inspection</a></p>
@@ -136,6 +139,15 @@ const faqs = [
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
+    }
+    .contact-roof-photo {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
     }
     .demo-form {
       display: grid;

@@ -32,7 +32,7 @@
 
   <!-- Inspection + truck -->
   <rect x="16" y="542" width="358" height="146" rx="12" fill="#ffffff" stroke="#e5e3dc"/>
-  <text x="32" y="568" font-family="Inter, Arial, sans-serif" font-size="14" fill="#0b1220" font-weight="700">Inspection & Truck Support</text>
+  <text x="32" y="568" font-family="Inter, Arial, sans-serif" font-size="14" fill="#0b1220" font-weight="700">Inspection &amp; Truck Support</text>
   <rect x="42" y="584" width="90" height="40" fill="#334155"/>
   <text x="56" y="603" font-family="Inter, Arial, sans-serif" font-size="9" fill="#ffffff">TRUCK</text>
   <rect x="136" y="600" width="80" height="22" fill="#0f172a"/>

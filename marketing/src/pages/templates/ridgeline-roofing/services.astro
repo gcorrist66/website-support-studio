@@ -6,31 +6,43 @@ const services = [
     icon: "[Roofing]",
     title: "Roof Replacement",
     body: "Comprehensive replacement plans for older roofs, including permit coordination and weatherproofing details for Denver-specific conditions.",
+    image: "https://images.unsplash.com/photo-1643225523483-e2c434191bba?auto=format&fit=crop&w=900&q=80",
+    alt: "Roofing materials staged on a residential roof",
   },
   {
     icon: "[Repair]",
     title: "Roof Repair",
     body: "Targeted repair workflows for leaks, flashing failures, shingle wear, and ridge ridgeline stress points with transparent repair notes.",
+    image: "https://images.unsplash.com/photo-1634853982486-c06f0e17940f?auto=format&fit=crop&w=900&q=80",
+    alt: "Rainwater running over roof shingles during a repair inspection",
   },
   {
     icon: "[Storm]",
     title: "Storm Damage",
     body: "24-hour incident triage and temporary stabilization, then restoration scope with photo documentation for homeowners and adjusters.",
+    image: "https://images.unsplash.com/photo-1657878054629-28cf610801bf?auto=format&fit=crop&w=900&q=80",
+    alt: "Heavy rain hitting a roof during storm conditions",
   },
   {
     icon: "[Claims]",
     title: "Insurance Claim Support",
     body: "Claim-ready documentation support, estimate summaries, and timeline updates before contractor submission.",
+    image: "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?auto=format&fit=crop&w=900&q=80",
+    alt: "Roofer inspecting shingles on a residential roof",
   },
   {
     icon: "[Inspect]",
     title: "Roof Inspections",
     body: "Pre-season inspections and post-repair checks that include concise scoring and prioritized repair recommendations.",
+    image: "https://images.unsplash.com/photo-1635424825057-7fb6dcd651ef?auto=format&fit=crop&w=900&q=80",
+    alt: "Roofing contractor checking shingle condition",
   },
   {
     icon: "[Truck]",
     title: "Emergency Tarping",
     body: "Immediate temporary coverage when weather events occur, minimizing interior damage while a permanent repair is planned.",
+    image: "https://images.unsplash.com/photo-1635424709845-3a85ad5e1f5e?auto=format&fit=crop&w=900&q=80",
+    alt: "Roofing crew working on a residential roof",
   },
 ];
 ---
@@ -56,6 +68,7 @@ const services = [
         <div class="grid grid-2">
           {services.map((service) => (
             <article class="card" id={service.title.toLowerCase().replace(/ /g, "-")}> 
+              <img class="service-image" src={service.image} alt={service.alt} width="900" height="560" loading="lazy" />
               <p class="service-badge" aria-label={`${service.title} roofing service`}><span>{service.icon}</span>{service.title}</p>
               <h3 style="margin-top:0;">{service.title}</h3>
               <p style="color:var(--text-muted);">{service.body}</p>
@@ -94,6 +107,15 @@ const services = [
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+    }
+    .service-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 0.9rem;
     }
   </style>
 </BaseLayout>
