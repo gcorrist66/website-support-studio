@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { WEBSITE_PACKAGE } from "../consts";
 import { lunaDesignLanguage, lunaVariantList } from "../luna";
 
 type LunaVariant = (typeof lunaVariantList)[number];
@@ -10,6 +11,7 @@ const variantLinks = lunaVariantList.map((item) => ({
   label: item.businessName,
   name: item.name,
 }));
+const otherVariantLinks = variantLinks.filter((link) => link.name !== variant.name);
 ---
 
 <BaseLayout
@@ -22,11 +24,14 @@ const variantLinks = lunaVariantList.map((item) => ({
       <div class="container luna-hero-grid">
         <div>
           <p class="luna-disclosure">{variant.disclosure}</p>
+          <p class="luna-sample-label">Sample business · Built from the Luna design system</p>
           <p class="luna-kicker">{variant.eyebrow}</p>
           <h1>{variant.title}</h1>
           <p class="lede">{variant.description}</p>
           <div class="luna-actions">
-            <a class="luna-btn luna-btn-primary" href="#demo-form">{variant.primaryCta}</a>
+            <a class="luna-btn luna-btn-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_luna_build_my_website" data-ga-secondary-event="stripe_payment_link_click" data-ga-label={variant.key}>Build My Website</a>
+            <a class="luna-btn luna-btn-secondary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_luna_start" data-ga-secondary-event="stripe_payment_link_click" data-ga-label={variant.key}>Start With Luna</a>
+            <a class="luna-btn luna-btn-text" href="#demo-form">{variant.primaryCta}</a>
             <a class="luna-btn luna-btn-secondary" href="#luna-sections">{variant.secondaryCta}</a>
           </div>
         </div>
@@ -77,6 +82,22 @@ const variantLinks = lunaVariantList.map((item) => ({
     </section>
 
     <section class="luna-section">
+      <div class="container">
+        <p class="luna-kicker">This design system can also become...</p>
+        <h2>Luna is a style, not a single-industry layout.</h2>
+        <div class="luna-card-grid">
+          {otherVariantLinks.map((link) => (
+            <article class="luna-card">
+              <h3>{link.name}</h3>
+              <p>Same Luna warmth, photography rhythm, rounded cards, and calm conversion flow. Different business content.</p>
+              <a class="luna-inline-link" href={link.href}>View {link.name}</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="luna-section">
       <div class="container luna-split">
         <div>
           <p class="luna-kicker">What stays consistent</p>
@@ -103,8 +124,8 @@ const variantLinks = lunaVariantList.map((item) => ({
           <div class="luna-variant-links">
             {variantLinks.map((link) => (
               <a href={link.href} aria-current={link.name === variant.name ? "page" : undefined}>
-                <strong>{link.label}</strong>
-                <span>{link.name}</span>
+                <strong>View {link.name}</strong>
+                <span>{link.label}</span>
               </a>
             ))}
           </div>
@@ -118,6 +139,24 @@ const variantLinks = lunaVariantList.map((item) => ({
         </form>
       </div>
     </section>
+
+    <section class="luna-sales-cta">
+      <div class="container luna-sales-card">
+        <div>
+          <p class="luna-kicker">Start with Luna</p>
+          <h2>Want this design system for your business?</h2>
+          <p>We keep the Luna design language and customize the words, photos, colors, services, calls to action, and local trust signals around your business.</p>
+        </div>
+        <div class="luna-actions">
+          <a class="luna-btn luna-btn-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_luna_final_build" data-ga-secondary-event="stripe_payment_link_click" data-ga-label={variant.key}>Build My Website</a>
+          <a class="luna-btn luna-btn-secondary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_luna_final_start" data-ga-secondary-event="stripe_payment_link_click" data-ga-label={variant.key}>Start With Luna</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="luna-sticky-cta" aria-label="Start Luna website">
+      <a href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_luna_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click" data-ga-label={variant.key}>Start With Luna</a>
+    </div>
   </main>
 
   <script is:inline>
@@ -157,6 +196,7 @@ const variantLinks = lunaVariantList.map((item) => ({
       align-items: center;
     }
     .luna-disclosure,
+    .luna-sample-label,
     .luna-kicker {
       display: inline-flex;
       width: fit-content;
@@ -175,6 +215,13 @@ const variantLinks = lunaVariantList.map((item) => ({
     .luna-kicker {
       margin: 0.8rem 0 0.85rem;
       color: var(--luna-accent);
+    }
+    .luna-sample-label {
+      margin: 0 0 0.85rem;
+      padding: 0.35rem 0.72rem;
+      color: var(--luna-dark);
+      background: rgba(255,255,255,0.72);
+      border: 1px solid color-mix(in srgb, var(--luna-accent) 28%, #fff);
     }
     .luna-hero h1 {
       max-width: 13ch;
@@ -207,6 +254,13 @@ const variantLinks = lunaVariantList.map((item) => ({
     .luna-btn-secondary {
       color: var(--luna-dark);
       background: rgba(255,255,255,0.62);
+    }
+    .luna-btn-text {
+      color: var(--luna-dark);
+      background: transparent;
+      border-color: transparent;
+      text-decoration: underline;
+      text-underline-offset: 4px;
     }
     .luna-hero-image {
       position: relative;
@@ -280,6 +334,12 @@ const variantLinks = lunaVariantList.map((item) => ({
       gap: 0.55rem;
       padding-left: 1.1rem;
     }
+    .luna-inline-link {
+      display: inline-flex;
+      margin-top: 0.6rem;
+      color: var(--luna-accent);
+      font-weight: 900;
+    }
     .luna-variant-links a {
       display: grid;
       min-width: 180px;
@@ -322,6 +382,28 @@ const variantLinks = lunaVariantList.map((item) => ({
       color: color-mix(in srgb, var(--luna-dark) 68%, #fff);
       font-size: 0.84rem;
     }
+    .luna-sales-cta {
+      padding: 4rem 0 5rem;
+      background: var(--luna-dark);
+    }
+    .luna-sales-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      border-radius: 28px;
+      padding: 1.6rem;
+      background: #fffaf4;
+    }
+    .luna-sales-card h2 {
+      margin-top: 0;
+    }
+    .luna-sales-card p {
+      max-width: 62ch;
+    }
+    .luna-sticky-cta {
+      display: none;
+    }
     @media (max-width: 900px) {
       .luna-hero-grid,
       .luna-split,
@@ -334,6 +416,32 @@ const variantLinks = lunaVariantList.map((item) => ({
       }
       .luna-hero h1 {
         max-width: 100%;
+      }
+      .luna-sales-card {
+        display: grid;
+      }
+      .luna-sticky-cta {
+        position: fixed;
+        z-index: 80;
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 0.75rem;
+        display: block;
+        padding: 0.35rem;
+        border-radius: 999px;
+        background: rgba(255,250,244,0.92);
+        border: 1px solid color-mix(in srgb, var(--luna-accent) 40%, #fff);
+        box-shadow: 0 16px 40px rgba(45,36,48,0.22);
+        backdrop-filter: blur(10px);
+      }
+      .luna-sticky-cta a {
+        display: flex;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0.9rem 1rem;
+        background: var(--luna-accent);
+        color: #fff;
+        font-weight: 900;
       }
     }
   </style>
