@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import QueryParamPreserver from "../../../../components/QueryParamPreserver.astro";
 import { APP_URL, WEBSITE_PACKAGE } from "../../../../consts";
 
 const summaryCards = [
@@ -63,9 +64,9 @@ const navItems = ["Dashboard", "Analytics", "Leads", "Testimonials", "Website Re
             <h1>Marigold & Mane Back Office</h1>
           </div>
           <div class="backend-actions">
-            <a href={APP_URL} data-ga-event="click_backend_preview_login">Log In To WSS</a>
-            <a href="/templates" data-ga-event="click_backend_preview_samples">View Sample Sites</a>
-            <a href="/" data-ga-event="click_backend_preview_home">Back to Website Support Studio</a>
+            <a href={APP_URL} data-track="back-office-log-in-to-wss" data-ga-event="click_backend_preview_login">Log In To WSS</a>
+            <a href="/templates" data-track="back-office-view-sample-sites" data-ga-event="click_backend_preview_samples">View Sample Sites</a>
+            <a href="/" data-track="back-office-back-to-wss" data-ga-event="click_backend_preview_home">Back to Website Support Studio</a>
           </div>
         </header>
 
@@ -192,13 +193,15 @@ const navItems = ["Dashboard", "Analytics", "Leads", "Testimonials", "Website Re
             <span>Start with a sample website, then use your Back Office to manage the basics after launch.</span>
           </div>
           <div class="backend-footer-actions">
-            <a class="build" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_backend_preview_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-            <a href="/templates" data-ga-event="click_backend_preview_footer_samples">View Sample Sites</a>
+            <a class="build" href={WEBSITE_PACKAGE.ctaHref} data-track="back-office-build-my-website" data-ga-event="click_backend_preview_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+            <a href="/templates" data-track="back-office-view-sample-sites" data-ga-event="click_backend_preview_footer_samples">View Sample Sites</a>
           </div>
         </footer>
       </section>
     </div>
   </main>
+
+  <QueryParamPreserver />
 
   <style>
     .backend-preview { --ink:#1b2433; --muted:#667386; --line:#dfe6df; --paper:#ffffff; --wash:#f3f6f1; --soft:#e8f1e9; --green:#216b4c; --green-dark:#174f38; --gold:#d7a647; min-height:100vh; color:var(--ink); background:#e8ece8; font-family:var(--font-sans); }

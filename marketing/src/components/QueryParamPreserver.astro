@@ -1,0 +1,43 @@
+<script is:inline>
+  (function () {
+    var allowedParams = [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_content",
+      "industry",
+      "city",
+      "state",
+      "opportunity_type",
+    ];
+    var current = new URLSearchParams(window.location.search);
+    var hasAllowedParam = allowedParams.some(function (key) {
+      return current.has(key);
+    });
+    if (!hasAllowedParam) return;
+
+    document.querySelectorAll("a[href]").forEach(function (link) {
+      var rawHref = link.getAttribute("href");
+      if (!rawHref || rawHref.charAt(0) === "#") return;
+      if (/^(mailto:|tel:|javascript:)/i.test(rawHref)) return;
+
+      var url;
+      try {
+        url = new URL(rawHref, window.location.href);
+      } catch (_) {
+        return;
+      }
+
+      if (url.origin !== window.location.origin) return;
+
+      allowedParams.forEach(function (key) {
+        if (!current.has(key) || url.searchParams.has(key)) return;
+        current.getAll(key).forEach(function (value) {
+          url.searchParams.append(key, value);
+        });
+      });
+
+      link.setAttribute("href", url.pathname + url.search + url.hash);
+    });
+  })();
+</script>
