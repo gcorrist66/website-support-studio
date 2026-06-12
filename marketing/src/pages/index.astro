@@ -81,9 +81,23 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
                 >
                   Start With This Style
                 </a>
-                <a class="btn btn-ghost" href={t.demoRoute || `/templates#${t.key}`} data-ga-event="click_template_details" data-ga-label={t.key}>
-                  {t.demoRoute ? "View Sample Site" : "Compare Website Styles"}
-                </a>
+                {t.key === "luna" ? (
+                  <>
+                    <a class="btn btn-ghost" href="/templates/luna/salon" data-ga-event="click_home_sample_site" data-ga-label="luna_salon">
+                      Salon Sample
+                    </a>
+                    <a class="btn btn-ghost" href="/templates/luna/coffee-shop" data-ga-event="click_home_sample_site" data-ga-label="luna_coffee">
+                      Coffee Sample
+                    </a>
+                    <a class="btn btn-ghost" href="/templates/luna/boutique" data-ga-event="click_home_sample_site" data-ga-label="luna_boutique">
+                      Boutique Sample
+                    </a>
+                  </>
+                ) : (
+                  <a class="btn btn-ghost" href={`/templates#${t.key}`} data-ga-event="click_template_details" data-ga-label={t.key}>
+                    Compare Website Styles
+                  </a>
+                )}
               </div>
             </article>
           ))
