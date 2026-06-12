@@ -40,7 +40,9 @@ export function trackPageView(path: string, title = document.title): void {
     return;
   }
   initAnalytics();
+  const measurementId = readMeasurementId();
   window.gtag?.("event", "page_view", {
+    send_to: measurementId,
     page_path: path,
     page_title: title,
     page_location: window.location.href,
@@ -52,5 +54,9 @@ export function trackEvent(eventName: string, params: Record<string, unknown> = 
     return;
   }
   initAnalytics();
-  window.gtag?.("event", eventName, params);
+  const measurementId = readMeasurementId();
+  window.gtag?.("event", eventName, {
+    send_to: measurementId,
+    ...params,
+  });
 }
