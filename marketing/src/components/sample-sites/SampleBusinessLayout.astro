@@ -12,6 +12,14 @@ const description = `${business.name} is a ${business.badge.toLowerCase()} ${bus
 const currentPath = samplePath(business, page);
 const checkoutHref = WEBSITE_PACKAGE.ctaHref;
 const trackPrefix = business.slug === "northstar-air" ? "hvac" : business.slug;
+const serviceArea = business.serviceArea;
+const financingTopics = business.financingTopics ?? [];
+const serviceAreaPins = (serviceArea?.cityGroups ?? []).slice(0, 6).map((entry, index) => {
+  const columns = 3;
+  const x = 130 + (index % columns) * 230 + (Math.floor(index / columns) % 2) * 35;
+  const y = 72 + Math.floor(index / columns) * 98;
+  return { city: entry.city, x, y };
+});
 const stylePalettes = {
   summit: [
     { label: "Roofing palette", colors: ["#172033", "#f97316", "#eef2f7"] },
@@ -49,7 +57,10 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
       <nav class="sb-nav" aria-label={`${business.name} navigation`}>
         {business.nav.map((item) => <a href={item.href} aria-current={item.page === page ? "page" : undefined}>{item.label}</a>)}
       </nav>
-      <div class="sb-header-actions"><a class="sb-login" href="/templates/sample/back-office" data-track={`${trackPrefix}-preview-back-office`} data-ga-event={`click__back_office`}>Preview Back Office</a><a class="sb-top-cta" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_header_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+      <div class="sb-header-actions">
+        <a class="sb-login" href="/templates/sample/back-office" data-track={`${trackPrefix}-preview-back-office`} data-ga-event={`click__back_office`}>Preview Back Office</a>
+        <a class="sb-top-cta" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_header_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+      </div>
     </header>
 
     <section class="sb-conversion-strip" aria-label="Founder Website Package actions">
@@ -57,46 +68,412 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
       <div>
         <a href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_strip_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
         <a href={checkoutHref} data-track={`${trackPrefix}-start-with-${business.systemName.toLowerCase()}`} data-ga-event={`click_${business.slug}_strip_start`} data-ga-secondary-event="stripe_payment_link_click">Start With {business.systemName}</a>
-        <a href={checkoutHref} data-track={`${trackPrefix}-use-this-website-style`} data-ga-event={`click_${business.slug}_strip_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a><a href="/templates/sample/back-office" data-track={`${trackPrefix}-preview-back-office`} data-ga-event={`click__strip_back_office`}>Preview Back Office</a>
+        <a href={checkoutHref} data-track={`${trackPrefix}-use-this-website-style`} data-ga-event={`click_${business.slug}_strip_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+        <a href="/templates/sample/back-office" data-track={`${trackPrefix}-preview-back-office`} data-ga-event={`click__strip_back_office`}>Preview Back Office</a>
       </div>
     </section>
 
+    {business.emergencyServiceNote ? (
+      <section class="sb-section sb-urgent">
+        <div class="sb-container">
+          <p class="sb-eyebrow">Emergency service</p>
+          <p class="sb-emergency-text">{business.emergencyServiceNote}</p>
+          <div class="sb-actions">
+            <a class="sb-btn sb-btn-primary" href={business.phoneHref}>Call now</a>
+            <a class="sb-btn sb-btn-secondary" href={samplePath(business, "contact")}>{business.primaryCtaLabel ?? "Request Service"}</a>
+          </div>
+        </div>
+      </section>
+    ) : null}
+
     {page === "home" && (
       <>
-        <section class="sb-section sb-hero"><div class="sb-container sb-hero-grid"><div><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">{business.systemName} · {business.location}</p><h1>{business.headline}</h1><p class="sb-lede">{business.tagline} {business.description}</p><div class="sb-actions"><a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")} data-track={`${trackPrefix}-request-service`}>{business.primaryCtaLabel ?? "Request Info"}</a><a class="sb-btn sb-btn-secondary" href={samplePath(business, "services")}>{business.nav.find((item) => item.page === "services")?.label}</a><a class="sb-btn sb-btn-quiet" href={checkoutHref} data-track={`${trackPrefix}-use-this-website-style`} data-ga-event={`click_${business.slug}_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a></div></div><figure class="sb-photo"><img src={business.heroImage} alt={business.heroAlt} width="1400" height="980" loading="eager" /><figcaption>{business.name} · fictional sample business</figcaption></figure></div></section>
-        <section class="sb-section sb-soft"><div class="sb-container"><p class="sb-eyebrow">{business.servicesLabel}</p><h2>{business.servicesIntro}</h2><div class="sb-card-grid">{business.services.slice(0, 3).map((item) => <article class="sb-card"><h3>{item.name}</h3><p class="sb-meta">{item.meta}</p><p>{item.body}</p></article>)}</div><div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "services")}>See details</a></div>{business.serviceSectionImage ? <figure class="sb-photo sb-trust-photo"><img src={business.serviceSectionImage} alt={business.serviceSectionImageAlt ?? `${business.name} service context`} width="1400" height="980" loading="lazy" /><figcaption>Technician service context · service team in action</figcaption></figure> : null}</div></section>
-        {business.ownerSection && <section class="sb-section"><div class="sb-container sb-split"><div><p class="sb-eyebrow">{business.ownerSection.eyebrow}</p><h2>{business.ownerSection.title}</h2><p>{business.ownerSection.body}</p><div class="sb-check-grid">{business.ownerSection.bullets.map((item) => <span>{item}</span>)}</div></div><div class="sb-card sb-owner-card"><h3>{business.ownerSection.cardTitle}</h3><ul class="sb-list">{business.ownerSection.cardItems.map((item) => <li>{item}</li>)}</ul></div></div></section>}
-        <section class="sb-section"><div class="sb-container sb-split">{business.trustSectionImage ? <figure class="sb-photo sb-trust-photo"><img src={business.trustSectionImage} alt={business.trustSectionImageAlt ?? `${business.name} trust signal`} width="1400" height="980" loading="lazy" /><figcaption>Comfort-ready HVAC signal</figcaption></figure> : null}<div><p class="sb-eyebrow">About</p><h2>{business.aboutHeadline}</h2><p>{business.aboutBody}</p><div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "about")}>Read more</a></div></div><div class="sb-card"><h3>{business.trustHeadline ?? "What makes it sales-ready"}</h3>{business.trustIntro && <p>{business.trustIntro}</p>}<ul class="sb-list">{business.trust.map((item) => <li>{item}</li>)}</ul></div></div></section>
-        {business.localSection && <section class="sb-section sb-soft"><div class="sb-container sb-split"><div><p class="sb-eyebrow">{business.localSection.eyebrow}</p><h2>{business.localSection.title}</h2><p>{business.localSection.body}</p></div><div class="sb-chip-panel" aria-label="Sample service-area examples">{business.localSection.items.map((item) => <span>{item}</span>)}</div></div></section>}
-        <section class="sb-section sb-soft"><div class="sb-container"><p class="sb-eyebrow">{business.proofLabel}</p><h2>{business.proofIntro}</h2><div class="sb-proof-grid">{business.proofItems.slice(0, 3).map((item) => <div class="sb-proof">{item}</div>)}</div></div></section>
+        <section class="sb-section sb-hero">
+          <div class="sb-container sb-hero-grid">
+            <div>
+              <p class="sb-sample">{business.badge}</p>
+              <p class="sb-eyebrow">{business.systemName} · {business.location}</p>
+              <h1>{business.headline}</h1>
+              <p class="sb-lede">{business.tagline} {business.description}</p>
+              <div class="sb-actions">
+                <a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")} data-track={`${trackPrefix}-request-service`}>{business.primaryCtaLabel ?? "Request Info"}</a>
+                <a class="sb-btn sb-btn-secondary" href={samplePath(business, "services")}>{business.nav.find((item) => item.page === "services")?.label}</a>
+                <a class="sb-btn sb-btn-quiet" href={checkoutHref} data-track={`${trackPrefix}-use-this-website-style`} data-ga-event={`click_${business.slug}_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+              </div>
+            </div>
+            <figure class="sb-photo sb-hero-photo">
+              <img src={business.heroImage} alt={business.heroAlt} width="1400" height="980" loading="eager" />
+              <figcaption>{business.name} · fictional sample business</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="sb-section sb-soft">
+          <div class="sb-container">
+            <p class="sb-eyebrow">{business.servicesLabel}</p>
+            <h2>{business.servicesIntro}</h2>
+            <div class="sb-card-grid">{business.services.slice(0, 3).map((item) => <article class="sb-card"><h3>{item.name}</h3><p class="sb-meta">{item.meta}</p><p>{item.body}</p></article>)}</div>
+            <div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "services")}>See details</a></div>
+          </div>
+        </section>
+
+        <section class="sb-section sb-soft">
+          <div class="sb-container">
+            <p class="sb-eyebrow">{business.proofLabel}</p>
+            <h2>Sample service proof</h2>
+            <div class="sb-proof-grid">{business.proofItems.slice(0, 3).map((item) => <div class="sb-proof">{item}</div>)}</div>
+            <div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "proof")}>See sample scenarios</a></div>
+          </div>
+        </section>
+
+        {serviceArea ? (
+          <section class="sb-section">
+            <div class="sb-container">
+              <p class="sb-eyebrow">Service Areas</p>
+              <h2>{serviceArea.dma} coverage</h2>
+              <p>{serviceArea.coverageCopy}</p>
+              <div class="sb-service-map" role="img" aria-label={`${business.name} service coverage map`}> 
+                <span class="sb-map-label">{serviceArea.mapLabel ?? "Coverage area"}</span>
+                {serviceAreaPins.map((pin) => <span class="sb-map-pin" style={`left:${pin.x}px;top:${pin.y}px;`}>{pin.city}</span>)}
+              </div>
+              <div class="sb-chip-panel" aria-label={`${serviceArea.dma} coverage list`}>
+                {serviceArea.cityGroups.map((entry) => <span>{entry.city}</span>)}
+              </div>
+              <div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "service-area")}>View full coverage</a></div>
+            </div>
+          </section>
+        ) : null}
+
+        {financingTopics.length > 0 ? (
+          <section class="sb-section sb-soft">
+            <div class="sb-container">
+              <p class="sb-eyebrow">Financing visibility</p>
+              <h2>{business.financingIntro ?? "Financing questions are introduced where projects are larger."}</h2>
+              <div class="sb-financing-grid">
+                {financingTopics.map((topic) => <article class="sb-card"><h3>{topic}</h3><p>Financing may be discussed as part of a pre-estimate conversation.</p></article>)}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {business.ownerSection && (
+          <section class="sb-section">
+            <div class="sb-container sb-split">
+              <div>
+                <p class="sb-eyebrow">{business.ownerSection.eyebrow}</p>
+                <h2>{business.ownerSection.title}</h2>
+                <p>{business.ownerSection.body}</p>
+                <div class="sb-check-grid">{business.ownerSection.bullets.map((item) => <span>{item}</span>)}</div>
+              </div>
+              <div class="sb-card sb-owner-card">
+                <h3>{business.ownerSection.cardTitle}</h3>
+                <ul class="sb-list">{business.ownerSection.cardItems.map((item) => <li>{item}</li>)}</ul>
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section class="sb-section sb-soft">
+          <div class="sb-container sb-split">
+            {business.trustSectionImage ? (
+              <figure class="sb-photo sb-trust-photo">
+                <img src={business.trustSectionImage} alt={business.trustSectionImageAlt ?? `${business.name} trust signal`} width="1400" height="980" loading="lazy" />
+                <figcaption>HVAC trust and comfort signal</figcaption>
+              </figure>
+            ) : null}
+            <div>
+              <p class="sb-eyebrow">About</p>
+              <h2>{business.aboutHeadline}</h2>
+              <p>{business.aboutBody}</p>
+              <div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "about")}>Read more</a></div>
+            </div>
+            <div class="sb-card">
+              <h3>{business.trustHeadline ?? "What makes it sales-ready"}</h3>
+              {business.trustIntro && <p>{business.trustIntro}</p>}
+              <ul class="sb-list">{business.trust.map((item) => <li>{item}</li>)}</ul>
+            </div>
+          </div>
+        </section>
+
+        {business.serviceSectionImage ? (
+          <section class="sb-section">
+            <div class="sb-container">
+              <figure class="sb-photo sb-trust-photo">
+                <img src={business.serviceSectionImage} alt={business.serviceSectionImageAlt ?? `${business.name} service context`} width="1400" height="980" loading="lazy" />
+                <figcaption>Technician service context · service team in action</figcaption>
+              </figure>
+            </div>
+          </section>
+        ) : null}
       </>
     )}
 
     {page === "services" && (
-      <><section class="sb-section sb-hero"><div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">{business.servicesLabel}</p><h1>{business.servicesLabel} with clear next steps.</h1><p class="sb-lede">{business.servicesIntro}</p></div></section><section class="sb-section sb-soft"><div class="sb-container">{business.serviceSectionImage ? <figure class="sb-photo sb-trust-photo"><img src={business.serviceSectionImage} alt={business.serviceSectionImageAlt ?? `${business.name} service context`} width="1400" height="980" loading="lazy" /><figcaption>Comfort-focused HVAC service context</figcaption></figure> : null}<div class="sb-card-grid">{business.services.map((item) => <article class="sb-card"><h3>{item.name}</h3><p class="sb-meta">{item.meta}</p><p>{item.body}</p></article>)}</div><div class="sb-actions"><a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")} data-track={`${trackPrefix}-request-service`}>{business.primaryCtaLabel ?? `Contact ${business.name}`}</a></div></div></section></>
+      <>
+        <section class="sb-section sb-hero">
+          <div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">{business.servicesLabel}</p><h1>{business.servicesLabel} with clear next steps.</h1><p class="sb-lede">{business.servicesIntro}</p></div>
+        </section>
+        <section class="sb-section sb-soft">
+          <div class="sb-container">
+            {business.serviceSectionImage ? (
+              <figure class="sb-photo sb-trust-photo">
+                <img src={business.serviceSectionImage} alt={business.serviceSectionImageAlt ?? `${business.name} service context`} width="1400" height="980" loading="lazy" />
+                <figcaption>Comfort-focused HVAC service context</figcaption>
+              </figure>
+            ) : null}
+            <div class="sb-card-grid">{business.services.map((item) => <article class="sb-card"><h3>{item.name}</h3><p class="sb-meta">{item.meta}</p><p>{item.body}</p></article>)}</div>
+            <div class="sb-actions"><a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")} data-track={`${trackPrefix}-request-service`}>{business.primaryCtaLabel ?? `Contact ${business.name}`}</a></div>
+          </div>
+        </section>
+        {serviceArea ? (
+          <section class="sb-section">
+            <div class="sb-container sb-split">
+              <div>
+                <p class="sb-eyebrow">Coverage</p>
+                <h2>{serviceArea.dma}</h2>
+                <p>{serviceArea.coverageCopy}</p>
+              </div>
+              <div class="sb-card">
+                <h3>Service-area context</h3>
+                <div class="sb-chip-panel">{serviceArea.cityGroups.slice(0, 5).map((entry) => <span>{entry.city}</span>)}</div>
+                <a class="sb-btn sb-btn-secondary" href={samplePath(business, "service-area")}>
+                  View all neighborhoods
+                </a>
+              </div>
+            </div>
+          </section>
+        ) : null}
+      </>
     )}
 
     {page === "about" && (
-      <><section class="sb-section sb-hero"><div class="sb-container sb-split"><div><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">About</p><h1>{business.aboutHeadline}</h1><p class="sb-lede">{business.aboutBody}</p></div><div class="sb-card"><h3>Sample business profile</h3><p>This is a fictional example created to show how a finished Founder Website can communicate a business category, offer, location, and next step without invented endorsements.</p></div></div></section>{business.ownerSection && <section class="sb-section"><div class="sb-container sb-split">{business.trustSectionImage ? <figure class="sb-photo sb-trust-photo"><img src={business.trustSectionImage} alt={business.trustSectionImageAlt ?? `${business.name} trust signal`} width="1400" height="980" loading="lazy" /><figcaption>HVAC trust and comfort signal</figcaption></figure> : null}<div><p class="sb-eyebrow">{business.ownerSection.eyebrow}</p><h2>{business.ownerSection.title}</h2><p>{business.ownerSection.body}</p></div><div class="sb-card sb-owner-card"><h3>{business.ownerSection.cardTitle}</h3><ul class="sb-list">{business.ownerSection.cardItems.map((item) => <li>{item}</li>)}</ul></div></div></section>}<section class="sb-section sb-soft"><div class="sb-container sb-split"><div><h2>{business.trustHeadline ?? "Trust built into the page"}</h2><p>{business.trustIntro ?? "Real-looking business websites explain what the visitor can do next, where the company serves, and why the business fits the need."}</p></div><div class="sb-card"><ul class="sb-list">{business.trust.map((item) => <li>{item}</li>)}</ul></div></div></section></>
+      <>
+        <section class="sb-section sb-hero">
+          <div class="sb-container sb-split">
+            <div>
+              <p class="sb-sample">{business.badge}</p>
+              <p class="sb-eyebrow">About</p>
+              <h1>{business.aboutHeadline}</h1>
+              <p class="sb-lede">{business.aboutBody}</p>
+            </div>
+            <div class="sb-card">
+              <h3>Sample business profile</h3>
+              <p>This is a fictional example created to show how a finished Founder Website can communicate a business category, offer, location, and next step without invented endorsements.</p>
+            </div>
+          </div>
+        </section>
+        {business.ownerSection && (
+          <section class="sb-section">
+            <div class="sb-container sb-split">
+              {business.trustSectionImage ? (
+                <figure class="sb-photo sb-trust-photo">
+                  <img src={business.trustSectionImage} alt={business.trustSectionImageAlt ?? `${business.name} trust signal`} width="1400" height="980" loading="lazy" />
+                  <figcaption>HVAC trust and comfort signal</figcaption>
+                </figure>
+              ) : null}
+              <div>
+                <p class="sb-eyebrow">{business.ownerSection.eyebrow}</p>
+                <h2>{business.ownerSection.title}</h2>
+                <p>{business.ownerSection.body}</p>
+              </div>
+              <div class="sb-card sb-owner-card">
+                <h3>{business.ownerSection.cardTitle}</h3>
+                <ul class="sb-list">{business.ownerSection.cardItems.map((item) => <li>{item}</li>)}</ul>
+              </div>
+            </div>
+          </section>
+        )}
+        <section class="sb-section sb-soft">
+          <div class="sb-container sb-split">
+            <div>
+              <h2>{business.trustHeadline ?? "Trust built into the page"}</h2>
+              <p>{business.trustIntro ?? "Real-looking business websites explain what the visitor can do next, where the company serves, and why the business fits the need."}</p>
+            </div>
+            <div class="sb-card"><ul class="sb-list">{business.trust.map((item) => <li>{item}</li>)}</ul></div>
+          </div>
+        </section>
+        {serviceArea ? (
+          <section class="sb-section">
+            <div class="sb-container">
+              <p class="sb-eyebrow">Service Area signal</p>
+              <h2>Where {business.name} serves</h2>
+              <div class="sb-chip-panel">{serviceArea.cityGroups.map((entry) => <span>{entry.city}</span>)}</div>
+            </div>
+          </section>
+        ) : null}
+      </>
     )}
 
     {page === "proof" && (
-      <><section class="sb-section sb-hero"><div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">{business.proofLabel}</p><h1>{business.proofHeadline ?? "Specific examples without fake results."}</h1><p class="sb-lede">{business.proofIntro}</p></div></section><section class="sb-section sb-soft"><div class="sb-container"><div class="sb-proof-grid">{business.proofItems.map((item) => <div class="sb-proof">{item}</div>)}</div><div class="sb-actions"><a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")}>{business.primaryCtaLabel ?? "Ask a Question"}</a></div></div></section></>
+      <>
+        <section class="sb-section sb-hero">
+          <div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">{business.proofLabel}</p><h1>{business.proofHeadline ?? "Specific examples without fake results."}</h1><p class="sb-lede">{business.proofIntro}</p></div>
+        </section>
+        <section class="sb-section sb-soft">
+          <div class="sb-container">
+            <div class="sb-proof-grid">{business.proofItems.map((item) => <div class="sb-proof">{item}</div>)}</div>
+            <div class="sb-actions"><a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")}>{business.primaryCtaLabel ?? "Ask a Question"}</a></div>
+          </div>
+        </section>
+      </>
+    )}
+
+    {page === "service-area" && serviceArea && (
+      <>
+        <section class="sb-section sb-hero">
+          <div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">Service Areas</p><h1>{serviceArea.dma} service map and coverage.</h1><p class="sb-lede">{serviceArea.coverageCopy}</p></div>
+        </section>
+        <section class="sb-section sb-soft">
+          <div class="sb-container">
+            <div class="sb-service-map sb-service-map--detail" role="img" aria-label={`${business.name} ${serviceArea.dma} service coverage map`}>
+              <span class="sb-map-label">{serviceArea.dma}</span>
+              {serviceAreaPins.map((pin) => <span class="sb-map-pin" style={`left:${pin.x}px;top:${pin.y}px;`}>{pin.city}</span>)}
+            </div>
+            <div class="sb-area-grid">
+              {serviceArea.cityGroups.map((entry) => (
+                <article class="sb-card">
+                  <h3>{entry.city}</h3>
+                  <ul class="sb-list">{entry.neighborhoods.map((item) => <li>{item}</li>)}</ul>
+                </article>
+              ))}
+            </div>
+            <div class="sb-actions"><a class="sb-btn sb-btn-primary" href={business.phoneHref}>Call to confirm coverage</a></div>
+          </div>
+        </section>
+      </>
     )}
 
     {page === "contact" && (
-      <><section class="sb-section sb-hero"><div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">Contact</p><h1>{business.contactTitle ?? `Contact ${business.name}.`}</h1><p class="sb-lede">{business.contactPrompt} This is a sample business form UI; production lead capture is added during the real build.</p></div></section><section class="sb-section sb-soft"><div class="sb-container sb-split"><form class="sb-card sb-form"><h2>{business.formTitle ?? "Send a request"}</h2><label>Name<input name="name" required /></label><label>Email<input name="email" type="email" required /></label><label>Topic<select name="topic" required><option value="">Choose one</option>{business.services.slice(0, 5).map((item) => <option>{item.name}</option>)}<option>General question</option></select></label><label>What should {business.name} know?<textarea name="notes"></textarea></label><button class="sb-btn sb-btn-primary" type="button">{business.formButtonLabel ?? "Send Request"}</button><p style="min-height:1.2rem;margin:0;">Sample form only. No message is sent from this demo.</p></form><div class="sb-card"><h2>Visit details</h2><p>{business.address}</p><p><a href={business.phoneHref}>{business.phoneLabel}</a></p><ul class="sb-list">{business.hours.map((hour) => <li>{hour}</li>)}</ul></div></div></section></>
+      <>
+        <section class="sb-section sb-hero">
+          <div class="sb-container"><p class="sb-sample">{business.badge}</p><p class="sb-eyebrow">Contact</p><h1>{business.contactTitle ?? `Contact ${business.name}.`}</h1><p class="sb-lede">{business.contactPrompt} This is a sample business form UI; production lead capture is added during the real build.</p></div>
+        </section>
+        <section class="sb-section sb-soft">
+          <div class="sb-container sb-split">
+            <form class="sb-card sb-form">
+              <h2>{business.formTitle ?? "Send a request"}</h2>
+              <label>Name<input name="name" required /></label>
+              <label>Email<input name="email" type="email" required /></label>
+              <label>Topic<select name="topic" required><option value="">Choose one</option>{business.services.slice(0, 5).map((item) => <option>{item.name}</option>)}<option>General question</option></select></label>
+              <label>What should {business.name} know?<textarea name="notes"></textarea></label>
+              <button class="sb-btn sb-btn-primary" type="button">{business.formButtonLabel ?? "Send Request"}</button>
+              <p style="min-height:1.2rem;margin:0;">Sample form only. No message is sent from this demo.</p>
+            </form>
+            <div class="sb-card">
+              <h2>Visit details</h2>
+              <p>{business.address}</p>
+              <p><a href={business.phoneHref}>{business.phoneLabel}</a></p>
+              <ul class="sb-list">{business.hours.map((hour) => <li>{hour}</li>)}</ul>
+            </div>
+          </div>
+        </section>
+        {serviceArea ? (
+          <section class="sb-section">
+            <div class="sb-container">
+              <p class="sb-eyebrow">Service area before requesting</p>
+              <h2>Coverage and response</h2>
+              <p>{serviceArea.coverageCopy}</p>
+              <div class="sb-service-map" role="img" aria-label={`Local coverage for ${business.name}`}>
+                <span class="sb-map-label">{serviceArea.dma}</span>
+                {serviceAreaPins.slice(0, 4).map((pin) => <span class="sb-map-pin" style={`left:${pin.x}px;top:${pin.y}px;`}>{pin.city}</span>)}
+              </div>
+              <div class="sb-chip-panel">{serviceArea.cityGroups.map((entry) => <span>{entry.city}</span>)}</div>
+            </div>
+          </section>
+        ) : null}
+        {financingTopics.length > 0 ? (
+          <section class="sb-section sb-soft">
+            <div class="sb-container">
+              <p class="sb-eyebrow">Financing support</p>
+              <h2>{business.financingIntro ?? "For major jobs, financing language stays close to service details."}</h2>
+              <div class="sb-financing-grid">
+                {financingTopics.map((topic) => <div class="sb-card"><h3>{topic}</h3><p>Request financing context during discovery before final scope.</p></div>)}
+              </div>
+            </div>
+          </section>
+        ) : null}
+      </>
     )}
 
     <AdaptableStyleProof systemName={business.systemName} examples={paletteExamples} />
-    <section class="sb-founder-cta"><div><p class="sb-eyebrow">Founder Website Package</p><h2>Want a website like {business.name}?</h2><p>This sample business shows the style and completeness your $500 Founder Website can start from. We customize the words, photos, services, and local details for your business.</p></div><div class="sb-actions"><a class="sb-btn sb-btn-primary" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a><a class="sb-btn sb-btn-secondary" href={checkoutHref} data-track={`${trackPrefix}-start-with-${business.systemName.toLowerCase()}`} data-ga-event={`click_${business.slug}_start`} data-ga-secondary-event="stripe_payment_link_click">Start With {business.systemName}</a><a class="sb-btn sb-btn-quiet" href={checkoutHref} data-track={`${trackPrefix}-use-this-website-style`} data-ga-event={`click_${business.slug}_use_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a></div></section>
-    <footer class="sb-footer"><div><strong>{business.name}</strong><p>{business.location}</p><p>{business.badge} · Fictional example. Not a real customer.</p></div><div><p>{business.address}</p><p><a href={business.phoneHref}>{business.phoneLabel}</a></p></div></footer>
+    <section class="sb-founder-cta">
+      <div>
+        <p class="sb-eyebrow">Founder Website Package</p>
+        <h2>Want a website like {business.name}?</h2>
+        <p>This sample business shows the style and completeness your $500 Founder Website can start from. We customize the words, photos, services, and local details for your business.</p>
+      </div>
+      <div class="sb-actions">
+        <a class="sb-btn sb-btn-primary" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+        <a class="sb-btn sb-btn-secondary" href={checkoutHref} data-track={`${trackPrefix}-start-with-${business.systemName.toLowerCase()}`} data-ga-event={`click_${business.slug}_start`} data-ga-secondary-event="stripe_payment_link_click">Start With {business.systemName}</a>
+        <a class="sb-btn sb-btn-quiet" href={checkoutHref} data-track={`${trackPrefix}-use-this-website-style`} data-ga-event={`click_${business.slug}_use_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+      </div>
+    </section>
+
+    <footer class="sb-footer">
+      <div><strong>{business.name}</strong><p>{business.location}</p><p>{business.badge} · Fictional example. Not a real customer.</p></div>
+      <div><p>{business.address}</p><p><a href={business.phoneHref}>{business.phoneLabel}</a></p></div>
+    </footer>
+
     <div class="sb-sticky"><a href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_mobile_sticky`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
   </div>
 
   <QueryParamPreserver />
 
   <style is:inline>
-    body[data-page^="/templates/sample/"] .site-header,body[data-page^="/templates/sample/"] .site-footer,body[data-page^="/templates/sample/"] .skip-link{display:none}body[data-page^="/templates/sample/"]{background:#f8f6f1}.sb-site{min-height:100vh;color:var(--sb-dark);background:radial-gradient(circle at 82% 6%,color-mix(in srgb,var(--sb-accent) 18%,transparent),transparent 30rem),linear-gradient(180deg,#fff,var(--sb-soft) 58%,#fff);font-family:Georgia,"Times New Roman",serif}.sb-site h1,.sb-site h2,.sb-site h3{color:var(--sb-dark);font-family:Georgia,"Times New Roman",serif;letter-spacing:-.052em}.sb-site p,.sb-site li{color:color-mix(in srgb,var(--sb-dark) 62%,#fff)}.sb-header{position:sticky;top:0;z-index:70;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem clamp(1rem,4vw,3rem);border-bottom:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);background:rgba(255,255,255,.9);backdrop-filter:blur(14px)}.sb-logo{display:grid;color:var(--sb-dark);line-height:.95;font-size:1.35rem;font-weight:900}.sb-logo small{color:var(--sb-accent);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.sb-nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;font-family:var(--font-mono);font-size:.82rem}.sb-nav a,.sb-footer a{color:var(--sb-dark)}.sb-nav a[aria-current="page"]{color:var(--sb-dark);font-weight:950;text-decoration:underline;text-decoration-color:var(--sb-accent);text-underline-offset:.25rem}.sb-top-cta,.sb-login,.sb-btn,.sb-sticky a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.85rem 1.1rem;border:1px solid var(--sb-accent);font-family:var(--font-mono);font-weight:900;font-size:.86rem;text-decoration:none}.sb-top-cta,.sb-btn-primary,.sb-sticky a{background:var(--sb-dark);color:#fff;border-color:var(--sb-dark)}.sb-login{background:#fff;color:var(--sb-dark);border-color:color-mix(in srgb,var(--sb-dark) 22%,transparent)}.sb-header-actions{display:flex;align-items:center;gap:.55rem}.sb-btn-secondary{background:#fff;color:var(--sb-dark)}.sb-btn-quiet{color:var(--sb-dark);background:transparent}.sb-conversion-strip{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;padding:.75rem 1rem;background:linear-gradient(90deg,var(--sb-dark),color-mix(in srgb,var(--sb-dark) 82%,var(--sb-accent)));color:#fff}.sb-conversion-strip p{margin:0;color:#fff;font-family:var(--font-mono);font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.sb-conversion-strip div{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center}.sb-conversion-strip a{display:inline-flex;align-items:center;justify-content:center;min-height:2.15rem;padding:0 .85rem;border-radius:999px;background:#fff;color:var(--sb-dark);border:2px solid color-mix(in srgb,var(--sb-accent) 70%,#fff);font-family:var(--font-mono);font-size:.74rem;font-weight:950;text-decoration:none;text-transform:uppercase;letter-spacing:.04em;box-shadow:0 10px 26px rgba(0,0,0,.16)}.sb-section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem)}.sb-container{max-width:1120px;margin:0 auto}.sb-eyebrow,.sb-sample{display:inline-flex;width:fit-content;border-radius:999px;font-family:var(--font-mono);font-size:.76rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}.sb-eyebrow{color:var(--sb-accent)}.sb-sample{padding:.32rem .65rem;border:1px dashed color-mix(in srgb,var(--sb-accent) 55%,transparent);background:rgba(255,255,255,.68)}.sb-hero-grid,.sb-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:clamp(1.4rem,5vw,3.5rem);align-items:center}.sb-hero h1{max-width:13.5ch;margin:.8rem 0 0;font-size:clamp(2.45rem,7.5vw,5.15rem);line-height:.96;overflow-wrap:normal;word-break:normal}.sb-lede{max-width:60ch;font-size:1.12rem;line-height:1.75}.sb-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.25rem}.sb-photo{position:relative;min-height:480px;overflow:hidden;border-radius:2rem;border:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);box-shadow:0 34px 90px rgba(20,20,20,.16);background:var(--sb-soft)}.sb-photo img{display:block;width:100%;height:100%;object-fit:cover}.sb-photo figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;border-radius:999px;padding:.55rem .8rem;color:#fff;background:rgba(0,0,0,.78);font-family:var(--font-mono);font-size:.78rem;font-weight:800}.sb-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.4rem}.sb-card{border:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);border-radius:1.4rem;padding:1.25rem;background:rgba(255,255,255,.84);box-shadow:0 18px 50px rgba(20,20,20,.07)}.sb-card h3{margin:0;font-size:1.35rem}.sb-meta{margin:.7rem 0 0;color:var(--sb-dark)!important;font-family:var(--font-mono);font-weight:950;font-size:.9rem}.sb-soft{background:color-mix(in srgb,var(--sb-soft) 72%,#fff)}.sb-proof-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1.4rem}.sb-proof{min-height:210px;display:flex;align-items:end;border-radius:1.6rem;padding:1rem;color:#fff;font-weight:900;background:linear-gradient(180deg,transparent,rgba(0,0,0,.82)),radial-gradient(circle at 18% 12%,var(--sb-accent),var(--sb-dark))}.sb-list{display:grid;gap:.7rem;padding:0;margin:1rem 0 0;list-style:none}.sb-list li{padding:.8rem;border-radius:1rem;background:rgba(255,255,255,.82);border:1px solid color-mix(in srgb,var(--sb-dark) 12%,transparent)}.sb-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:1.2rem}.sb-check-grid span,.sb-chip-panel span{border-radius:999px;background:color-mix(in srgb,var(--sb-accent) 12%,#fff);border:1px solid color-mix(in srgb,var(--sb-accent) 24%,#dbeafe);color:var(--sb-dark);font-family:var(--font-mono);font-size:.78rem;font-weight:950;padding:.72rem .9rem}.sb-owner-card{background:linear-gradient(135deg,rgba(255,255,255,.96),color-mix(in srgb,var(--sb-accent) 10%,#fff));border-color:color-mix(in srgb,var(--sb-accent) 28%,#dbeafe)}.sb-chip-panel{display:flex;flex-wrap:wrap;gap:.75rem;align-content:flex-start;padding:1.25rem;border:1px solid rgba(15,23,42,.1);border-radius:1.6rem;background:rgba(255,255,255,.78);box-shadow:0 20px 48px rgba(15,23,42,.08)}.sb-form{display:grid;gap:.85rem}.sb-form label{display:grid;gap:.4rem;color:var(--sb-dark);font-family:var(--font-mono);font-weight:800;font-size:.82rem}.sb-form input,.sb-form select,.sb-form textarea{width:100%;border:1px solid color-mix(in srgb,var(--sb-dark) 20%,transparent);border-radius:1rem;padding:.8rem;background:#fff;font:inherit}.sb-form textarea{min-height:120px;resize:vertical}.sb-founder-cta{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;margin:0 clamp(1rem,4vw,3rem) 2rem;padding:clamp(1.25rem,4vw,2rem);border-radius:2rem;background:linear-gradient(135deg,var(--sb-dark),color-mix(in srgb,var(--sb-dark) 78%,var(--sb-accent)));color:#fff;border:4px solid color-mix(in srgb,var(--sb-accent) 68%,#fff);box-shadow:0 26px 70px rgba(0,0,0,.2)}.sb-founder-cta h2,.sb-founder-cta p{color:#fff}.sb-founder-cta .sb-btn-primary{background:#fff;color:var(--sb-dark);border-color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.22)}.sb-founder-cta .sb-btn-secondary,.sb-founder-cta .sb-btn-quiet{background:transparent;color:#fff;border-color:rgba(255,255,255,.78)}.sb-footer{display:flex;justify-content:space-between;gap:1rem;padding:2rem clamp(1rem,4vw,3rem) 6rem;border-top:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent)}.sb-sticky{display:none}@media(max-width:900px){.sb-header{align-items:start}.sb-nav,.sb-header-actions{display:none}.sb-hero-grid,.sb-split,.sb-card-grid,.sb-proof-grid,.sb-founder-cta,.sb-footer{grid-template-columns:1fr;display:grid}.sb-check-grid{grid-template-columns:1fr}.sb-conversion-strip{padding:.65rem .85rem}.sb-conversion-strip a{width:100%}.sb-photo{min-height:330px}.sb-hero h1{max-width:100%}.sb-section{padding-left:1rem;padding-right:1rem}.sb-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--sb-accent) 28%,transparent);box-shadow:0 16px 44px rgba(0,0,0,.2);backdrop-filter:blur(12px)}.sb-sticky a{width:100%}}
+    body[data-page^="/templates/sample/"] .site-header,body[data-page^="/templates/sample/"] .site-footer,body[data-page^="/templates/sample/"] .skip-link{display:none}
+    body[data-page^="/templates/sample/"]{background:#f8f6f1}
+    .sb-site{min-height:100vh;color:var(--sb-dark);background:radial-gradient(circle at 82% 6%,color-mix(in srgb,var(--sb-accent) 18%,transparent),transparent 30rem),linear-gradient(180deg,#fff,var(--sb-soft) 58%,#fff);font-family:Georgia,"Times New Roman",serif}
+    .sb-site h1,.sb-site h2,.sb-site h3{color:var(--sb-dark);font-family:Georgia,"Times New Roman",serif;letter-spacing:-.052em}
+    .sb-site p,.sb-site li{color:color-mix(in srgb,var(--sb-dark) 62%,#fff)}
+    .sb-header{position:sticky;top:0;z-index:70;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem clamp(1rem,4vw,3rem);border-bottom:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);background:rgba(255,255,255,.9);backdrop-filter:blur(14px)}
+    .sb-logo{display:grid;color:var(--sb-dark);line-height:.95;font-size:1.35rem;font-weight:900}.sb-logo small{color:var(--sb-accent);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+    .sb-nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;font-family:var(--font-mono);font-size:.82rem}
+    .sb-nav a,.sb-footer a{color:var(--sb-dark)}.sb-nav a[aria-current="page"]{color:var(--sb-dark);font-weight:950;text-decoration:underline;text-decoration-color:var(--sb-accent);text-underline-offset:.25rem}
+    .sb-top-cta,.sb-login,.sb-btn,.sb-sticky a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.85rem 1.1rem;border:1px solid var(--sb-accent);font-family:var(--font-mono);font-weight:900;font-size:.86rem;text-decoration:none}
+    .sb-top-cta,.sb-btn-primary,.sb-sticky a{background:var(--sb-dark);color:#fff;border-color:var(--sb-dark)}
+    .sb-login{background:#fff;color:var(--sb-dark);border-color:color-mix(in srgb,var(--sb-dark) 22%,transparent)}
+    .sb-header-actions{display:flex;align-items:center;gap:.55rem}
+    .sb-btn-secondary{background:#fff;color:var(--sb-dark)}
+    .sb-btn-quiet{color:var(--sb-dark);background:transparent}
+    .sb-conversion-strip{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;padding:.75rem 1rem;background:linear-gradient(90deg,var(--sb-dark),color-mix(in srgb,var(--sb-dark) 82%,var(--sb-accent)));color:#fff}.sb-conversion-strip p{margin:0;color:#fff;font-family:var(--font-mono);font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.sb-conversion-strip div{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center}.sb-conversion-strip a{display:inline-flex;align-items:center;justify-content:center;min-height:2.15rem;padding:0 .85rem;border-radius:999px;background:#fff;color:var(--sb-dark);border:2px solid color-mix(in srgb,var(--sb-accent) 70%,#fff);font-family:var(--font-mono);font-size:.74rem;font-weight:950;text-decoration:none;text-transform:uppercase;letter-spacing:.04em;box-shadow:0 10px 26px rgba(0,0,0,.16)}
+    .sb-section{padding:clamp(2.5rem,6vw,4.3rem) clamp(1rem,4vw,3rem)}
+    .sb-urgent{background:color-mix(in srgb,var(--sb-accent) 12%,#fff)}
+    .sb-emergency-text{margin:.6rem 0 0;font-size:1.15rem;line-height:1.5}
+    .sb-container{max-width:1120px;margin:0 auto}.sb-eyebrow,.sb-sample{display:inline-flex;width:fit-content;border-radius:999px;font-family:var(--font-mono);font-size:.76rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+    .sb-eyebrow{color:var(--sb-accent)}.sb-sample{padding:.32rem .65rem;border:1px dashed color-mix(in srgb,var(--sb-accent) 55%,transparent);background:rgba(255,255,255,.68)}
+    .sb-hero-grid,.sb-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:clamp(1.4rem,5vw,3.5rem);align-items:center}
+    .sb-hero h1{max-width:13.5ch;margin:.8rem 0 0;font-size:clamp(2rem,6vw,4rem);line-height:.96;overflow-wrap:normal;word-break:normal}
+    .sb-lede{max-width:60ch;font-size:1.05rem;line-height:1.7}
+    .sb-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.25rem}
+    .sb-photo{position:relative;min-height:300px;overflow:hidden;border-radius:2rem;border:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);box-shadow:0 34px 90px rgba(20,20,20,.16);background:var(--sb-soft)}
+    .sb-hero-photo{min-height:340px}.sb-trust-photo{min-height:220px}
+    .sb-photo img{display:block;width:100%;height:100%;object-fit:cover}
+    .sb-photo figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;border-radius:999px;padding:.55rem .8rem;color:#fff;background:rgba(0,0,0,.78);font-family:var(--font-mono);font-size:.78rem;font-weight:800}
+    .sb-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.4rem}
+    .sb-card{border:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);border-radius:1.4rem;padding:1.25rem;background:rgba(255,255,255,.84);box-shadow:0 18px 50px rgba(20,20,20,.07)}
+    .sb-card h3{margin:0;font-size:1.35rem}
+    .sb-meta{margin:.7rem 0 0;color:var(--sb-dark)!important;font-family:var(--font-mono);font-weight:950;font-size:.9rem}
+    .sb-soft{background:color-mix(in srgb,var(--sb-soft) 72%,#fff)}
+    .sb-proof-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1.4rem}
+    .sb-proof{min-height:170px;display:flex;align-items:end;border-radius:1.6rem;padding:1rem;color:#fff;font-weight:900;background:linear-gradient(180deg,transparent,rgba(0,0,0,.82)),radial-gradient(circle at 18% 12%,var(--sb-accent),var(--sb-dark))}
+    .sb-list{display:grid;gap:.7rem;padding:0;margin:1rem 0 0;list-style:none}.sb-list li{padding:.8rem;border-radius:1rem;background:rgba(255,255,255,.82);border:1px solid color-mix(in srgb,var(--sb-dark) 12%,transparent)}
+    .sb-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:1.2rem}.sb-check-grid span,.sb-chip-panel span{border-radius:999px;background:color-mix(in srgb,var(--sb-accent) 12%,#fff);border:1px solid color-mix(in srgb,var(--sb-accent) 24%,#dbeafe);color:var(--sb-dark);font-family:var(--font-mono);font-size:.78rem;font-weight:950;padding:.72rem .9rem}
+    .sb-owner-card{background:linear-gradient(135deg,rgba(255,255,255,.96),color-mix(in srgb,var(--sb-accent) 10%,#fff));border-color:color-mix(in srgb,var(--sb-accent) 28%,#dbeafe)}
+    .sb-chip-panel{display:flex;flex-wrap:wrap;gap:.75rem;align-content:flex-start;padding:1.25rem;border:1px solid rgba(15,23,42,.1);border-radius:1.6rem;background:rgba(255,255,255,.78);box-shadow:0 20px 48px rgba(15,23,42,.08)}
+    .sb-form{display:grid;gap:.85rem}.sb-form label{display:grid;gap:.4rem;color:var(--sb-dark);font-family:var(--font-mono);font-weight:800;font-size:.82rem}.sb-form input,.sb-form select,.sb-form textarea{width:100%;border:1px solid color-mix(in srgb,var(--sb-dark) 20%,transparent);border-radius:1rem;padding:.8rem;background:#fff;font:inherit}.sb-form textarea{min-height:120px;resize:vertical}
+    .sb-service-map{position:relative;border:1px solid color-mix(in srgb,var(--sb-dark) 18%,transparent);border-radius:1.25rem;background:linear-gradient(180deg,color-mix(in srgb,var(--sb-dark) 10%,#fff),var(--sb-soft));height:215px;overflow:hidden;margin:1rem 0;padding:.8rem .8rem 1rem}
+    .sb-service-map--detail{height:260px}.sb-service-map .sb-map-label{display:inline-flex;background:var(--sb-dark);color:#fff;border-radius:999px;padding:.35rem .65rem;font-size:.74rem;font-family:var(--font-mono);font-weight:900}
+    .sb-map-pin{position:absolute;transform:translate(-50%,-100%);padding:.2rem .45rem;border-radius:999px;background:var(--sb-accent);color:#fff;font-size:.72rem;font-family:var(--font-mono);font-weight:900;box-shadow:0 10px 25px rgba(0,0,0,.2)}
+    .sb-area-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1rem}
+    .sb-financing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1rem}
+    .sb-founder-cta{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;margin:0 clamp(1rem,4vw,3rem) 2rem;padding:clamp(1.25rem,4vw,2rem);border-radius:2rem;background:linear-gradient(135deg,var(--sb-dark),color-mix(in srgb,var(--sb-dark) 78%,var(--sb-accent)));color:#fff;border:4px solid color-mix(in srgb,var(--sb-accent) 68%,#fff);box-shadow:0 26px 70px rgba(0,0,0,.2)}.sb-founder-cta h2,.sb-founder-cta p{color:#fff}.sb-founder-cta .sb-btn-primary{background:#fff;color:var(--sb-dark);border-color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.22)}.sb-founder-cta .sb-btn-secondary,.sb-founder-cta .sb-btn-quiet{background:transparent;color:#fff;border-color:rgba(255,255,255,.78)}
+    .sb-footer{display:flex;justify-content:space-between;gap:1rem;padding:2rem clamp(1rem,4vw,3rem) 6rem;border-top:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent)}
+    .sb-sticky{display:none}
+    @media(max-width:900px){
+      .sb-header{align-items:start}.sb-nav,.sb-header-actions{display:none}.sb-hero-grid,.sb-split,.sb-card-grid,.sb-proof-grid,.sb-founder-cta,.sb-footer,.sb-area-grid,.sb-financing-grid{grid-template-columns:1fr;display:grid}
+      .sb-check-grid{grid-template-columns:1fr}.sb-conversion-strip{padding:.65rem .85rem}.sb-conversion-strip a{width:100%}
+      .sb-photo{min-height:280px}.sb-hero-photo{min-height:230px}.sb-hero h1{max-width:100%}.sb-section{padding-left:1rem;padding-right:1rem}.sb-service-map{height:180px}.sb-map-pin{font-size:.65rem;padding:.15rem .32rem}
+      .sb-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--sb-accent) 28%,transparent);box-shadow:0 16px 44px rgba(0,0,0,.2);backdrop-filter:blur(12px)}.sb-sticky a{width:100%}
+    }
   </style>
 </BaseLayout>

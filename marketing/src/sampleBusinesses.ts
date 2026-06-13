@@ -1,3 +1,15 @@
+export type ServiceAreaCity = {
+  city: string;
+  neighborhoods: string[];
+};
+
+export type ServiceAreaInfo = {
+  dma: string;
+  mapLabel?: string;
+  coverageCopy: string;
+  cityGroups: ServiceAreaCity[];
+};
+
 export type SampleBusiness = {
   slug: string;
   systemKey: string;
@@ -55,13 +67,23 @@ export type SampleBusiness = {
   formTitle?: string;
   formButtonLabel?: string;
   primaryCtaLabel?: string;
+  emergencyServiceNote?: string;
+  financingTopics?: string[];
+  financingIntro?: string;
+  serviceArea?: ServiceAreaInfo;
 };
 
-export type SamplePage = "home" | "services" | "about" | "proof" | "contact";
+export type SamplePage = "home" | "services" | "about" | "proof" | "service-area" | "contact";
 
-const nav = (base: string, servicesLabel = "Services", proofLabel = "Work") => [
+const nav = (
+  base: string,
+  servicesLabel = "Services",
+  proofLabel = "Work",
+  includeServiceArea = false,
+) => [
   { href: base, label: "Home", page: "home" as const },
   { href: `${base}/services`, label: servicesLabel, page: "services" as const },
+  ...(includeServiceArea ? [{ href: `${base}/service-area`, label: "Service Areas", page: "service-area" as const }] : []),
   { href: `${base}/about`, label: "About", page: "about" as const },
   { href: `${base}/work`, label: proofLabel, page: "proof" as const },
   { href: `${base}/contact`, label: "Contact", page: "contact" as const },
@@ -89,7 +111,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     accent: "#f97316",
     dark: "#172033",
     soft: "#eef2f7",
-    nav: nav("/templates/sample/ridgeline-roofing", "Services", "Projects"),
+    nav: nav("/templates/sample/ridgeline-roofing", "Services", "Projects", true),
     servicesLabel: "Roofing services",
     servicesIntro: "A roofing site should separate urgent repair, planned replacement, inspection, and insurance-support paths clearly.",
     services: [
@@ -105,6 +127,20 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Hail inspection checklist", "Shingle replacement scope", "Flashing repair detail", "Emergency tarp plan", "Ventilation review", "Final cleanup walkthrough"],
     aboutHeadline: "A roofing company presented with clear service confidence.",
     aboutBody: "Ridgeline Roofing is a fictional Denver roofing sample built around homeowner urgency: visible phone paths, service details, storm context, and straightforward estimate requests.",
+    emergencyServiceNote: "Emergency roof openings and storm damage should surface a call-first action.",
+    financingTopics: ["Roof replacement", "Storm-related replacement", "Major re-tile projects"],
+    financingIntro: "For large jobs, this sample keeps financing language next to replacement and major repair conversations.",
+    serviceArea: {
+      dma: "Denver DMA",
+      coverageCopy: "This service-area structure clarifies which nearby cities are supported before owners request estimates.",
+      cityGroups: [
+        { city: "Denver", neighborhoods: ["Downtown", "Cap Hill", "Stapleton", "Highland", "Cherry Creek"] },
+        { city: "Aurora", neighborhoods: ["Aurora Central", "Skyline", "Green Valley Ranch"] },
+        { city: "Lakewood", neighborhoods: ["Downtown Lakewood", "Cultural District", "Morrison"] },
+        { city: "Golden", neighborhoods: ["Downtown Golden", "Foothills"] },
+        { city: "Englewood", neighborhoods: ["Cherry Hills", "Littleton", "Berkley"] },
+      ],
+    },
     trust: ["Estimate-first conversion path", "Roofing imagery above the fold", "Service area and emergency language", "No fake reviews or unverifiable claims"],
     contactPrompt: "Tell Ridgeline what happened, what kind of roof you have, and whether there is active leaking.",
   },
@@ -129,7 +165,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     accent: "#65a30d",
     dark: "#1f2a1f",
     soft: "#f0f7ea",
-    nav: nav("/templates/sample/greenline-landscaping", "Services", "Projects"),
+    nav: nav("/templates/sample/greenline-landscaping", "Services", "Projects", true),
     servicesLabel: "Landscaping services",
     servicesIntro: "A landscaping site needs service packages, seasonal timing, and examples of curb-appeal work.",
     services: [
@@ -145,6 +181,20 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Front bed refresh", "Lawn maintenance route", "Backyard cleanup", "Mulch install", "Stone border detail", "Seasonal planting plan"],
     aboutHeadline: "A local landscaping site with immediate service clarity.",
     aboutBody: "Greenline Landscaping is a fictional Raleigh landscaping sample built for estimate requests, seasonal service education, and fast mobile contact.",
+    emergencyServiceNote: "For storm or weather events, add a visible urgent response path before quote details.",
+    financingTopics: ["Major landscape refreshes", "Irrigation upgrades", "Small hardscape replacements"],
+    financingIntro: "When projects are larger than routine care, this sample surfaces payment timing options alongside project-specific requests.",
+    serviceArea: {
+      dma: "Raleigh DMA",
+      coverageCopy: "A local contractor sample should state coverage clearly so visitors can confirm service fit before reaching out.",
+      cityGroups: [
+        { city: "Raleigh", neighborhoods: ["North Hills", "Five Points", "Cameron Village", "Downtown"] },
+        { city: "Wake Forest", neighborhoods: ["South Wake", "Eastwood", "Forestville"] },
+        { city: "Cary", neighborhoods: ["Preston", "West Cary", "Briarcreek"] },
+        { city: "Apex", neighborhoods: ["Summerfield", "Muirfield", "Downtown Apex"] },
+        { city: "Holly Springs", neighborhoods: ["Holly Square", "East Holly", "Cedar Drive"] },
+      ],
+    },
     trust: ["Trade-specific hero image", "Clear service list", "Project-style visual cues", "Click-to-call and estimate paths"],
     contactPrompt: "Share your address area, yard size, and whether you need maintenance, cleanup, planting, or a project estimate.",
   },
@@ -173,7 +223,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     accent: "#0ea5e9",
     dark: "#0f2437",
     soft: "#eaf6fb",
-    nav: nav("/templates/sample/northstar-air", "AC/HVAC Services", "Service Proof"),
+    nav: nav("/templates/sample/northstar-air", "AC/HVAC Services", "Service Proof", true),
     servicesLabel: "AC/HVAC services",
     servicesIntro: "A strong HVAC website separates urgent repair, planned maintenance, replacement installs, air-quality questions, and quote requests so homeowners can choose the right next step fast.",
     services: [
@@ -193,6 +243,20 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     aboutBody: "Northstar Air is a fictional Minneapolis HVAC sample with a calm, service-first voice: what is wrong, where the homeowner is, how urgent it is, and what happens next.",
     trustHeadline: "Why homeowners would feel safe calling",
     trustIntro: "Northstar avoids vague contractor language and puts the homeowner's immediate question first: can you help, how do I ask, and what should I expect next?",
+    emergencyServiceNote: "When comfort is unsafe, a direct call option should sit near the top of every important page.",
+    financingTopics: ["Replacement installs", "Major repairs", "System upgrades"],
+    financingIntro: "For high-cost HVAC decisions, show financing options near replacement and upgrade pathways before estimate requests.",
+    serviceArea: {
+      dma: "Minneapolis DMA",
+      coverageCopy: "Service coverage is organized by city and neighborhood so homeowners can confirm local fit before submitting details.",
+      cityGroups: [
+        { city: "Minneapolis", neighborhoods: ["Downtown", "Northeast", "Southeast", "South Minneapolis", "Nicollet Island"] },
+        { city: "St. Paul", neighborhoods: ["Macalester", "Summit Hill", "Summit Avenue", "West Side"] },
+        { city: "Bloomington", neighborhoods: ["Normandale", "Wayzata Circle", "Eden Prairie"] },
+        { city: "Edina", neighborhoods: ["Morningside", "Highlands", "West Country"] },
+        { city: "Plymouth", neighborhoods: ["Meadow Ridge", "The Highlands", "Northridge"] },
+      ],
+    },
     ownerSection: {
       eyebrow: "Human trust",
       title: "Meet the kind of HVAC company this site is built for.",
@@ -316,7 +380,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     accent: "#334155",
     dark: "#121826",
     soft: "#f3f5f8",
-    nav: nav("/templates/sample/harbor-legal-group", "Practice Areas", "Process"),
+    nav: nav("/templates/sample/harbor-legal-group", "Practice Areas", "Process", true),
     servicesLabel: "Practice areas",
     servicesIntro: "A small law firm site should help visitors understand fit, consultation steps, and how to ask for help without making guidance promises.",
     services: [
@@ -332,6 +396,19 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Consultation request", "Conflict check note", "Document list", "Practice-area fit", "Next-step email", "Private follow-up"],
     aboutHeadline: "A law firm site that feels professional without overpromising.",
     aboutBody: "Harbor Legal Group is a fictional small law firm sample built to show practice-area clarity, attorney positioning, consultation paths, and appropriate disclaimers without invented reviews, outcomes, or guidance promises.",
+    emergencyServiceNote: "For time-sensitive legal deadlines, keep a clear call-forward option and a concise intake note before scheduling.",
+    financingTopics: ["Consultation payment terms", "Project-based billing structure", "Retainer planning support"],
+    financingIntro: "For longer matters, this sample supports financing-style payment conversation without naming lenders or guaranteed rates.",
+    serviceArea: {
+      dma: "Tampa DMA",
+      coverageCopy: "A legal practice can still include local service clarity so prospects can confirm where office-style assistance is offered.",
+      cityGroups: [
+        { city: "Tampa", neighborhoods: ["Hyde Park", "Ybor City", "Channelside", "Downtown", "Carrollwood"] },
+        { city: "St. Petersburg", neighborhoods: ["Downtown St. Pete", "Grand Central", "Lakewood"] },
+        { city: "Clearwater", neighborhoods: ["Tierra Verde", "Dunedin", "Moss Park"] },
+        { city: "Sarasota", neighborhoods: ["North Sarasota", "Gulf Gate", "Downtown Sarasota"] },
+      ],
+    },
     trust: ["Practice-area cards", "Consultation-first CTA", "Professional legal tone", "No fake results or testimonials"],
     contactPrompt: "Share the practice area, a short description of the question, and the best way to contact you. This sample form does not create an attorney-client relationship.",
   },
@@ -396,7 +473,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     accent: "#f59e0b",
     dark: "#202124",
     soft: "#f5f3ef",
-    nav: nav("/templates/sample/mainline-plumbing", "Services", "Work"),
+    nav: nav("/templates/sample/mainline-plumbing", "Services", "Work", true),
     servicesLabel: "Plumbing services",
     servicesIntro: "A plumbing site needs urgent categories, clear service scope, and strong phone-first conversion.",
     services: [
@@ -412,6 +489,19 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Utility room repair", "Water heater replacement", "Kitchen faucet install", "Clogged drain call", "Basement pump check", "Service truck checklist"],
     aboutHeadline: "A no-nonsense plumbing site for urgent service calls.",
     aboutBody: "Mainline Plumbing is a fictional trades sample built to show how service categories, urgency, and contact paths can be clear within seconds.",
+    emergencyServiceNote: "For active water loss or backups, make the call-to-ask-now path visible before all other options.",
+    financingTopics: ["Water heater replacement", "Whole-home repipe planning", "Pump and system upgrades"],
+    financingIntro: "For larger plumbing projects, this sample places financing discussion inside the service request path for transparency.",
+    serviceArea: {
+      dma: "Columbus DMA",
+      coverageCopy: "A trade-style sample should communicate neighborhood and city coverage plainly so callers can confirm if a visit is in scope.",
+      cityGroups: [
+        { city: "Columbus", neighborhoods: ["Short North", "German Village", "Clintonville", "Bexley", "Worthington"] },
+        { city: "Dublin", neighborhoods: ["Bridgeport", "Woodruff Farm", "Dublin Heights"] },
+        { city: "Worthington", neighborhoods: ["Kessler", "Oakridge", "North Ridge"] },
+        { city: "Grove City", neighborhoods: ["Morse Crossing", "South Grove", "Riverside"] },
+      ],
+    },
     trust: ["Phone-forward repair CTA", "Specific service menu", "Industrial visual style", "No fake emergency claims"],
     contactPrompt: "Tell Mainline where the plumbing issue is, what changed, and whether water is actively leaking.",
   },
@@ -421,5 +511,7 @@ export const SAMPLE_BUSINESS_BY_SLUG = Object.fromEntries(SAMPLE_BUSINESSES.map(
 
 export const samplePath = (business: SampleBusiness, page: SamplePage = "home") => {
   const base = `/templates/sample/${business.slug}`;
-  return page === "home" ? base : `${base}/${page === "proof" ? "work" : page}`;
+  if (page === "home") return base;
+  if (page === "proof") return `${base}/work`;
+  return `${base}/${page}`;
 };
