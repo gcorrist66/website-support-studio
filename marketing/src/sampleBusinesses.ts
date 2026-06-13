@@ -44,6 +44,8 @@ export type SampleBusiness = {
   proofItems: string[];
   aboutHeadline: string;
   aboutBody: string;
+  localNeighborhoods?: string[];
+  localCoverageIntro?: string;
   trustHeadline?: string;
   trustIntro?: string;
   ownerSection?: {
@@ -141,8 +143,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
         { city: "Englewood", neighborhoods: ["Cherry Hills", "Littleton", "Berkley"] },
       ],
     },
-    trust: ["Estimate-first conversion path", "Roofing imagery above the fold", "Service area and emergency language", "No fake reviews or unverifiable claims"],
-    contactPrompt: "Tell Ridgeline what happened, what kind of roof you have, and whether there is active leaking.",
+  trust: ["Estimate-first conversion path", "Roofing imagery above the fold", "Service area and emergency language", "No fake reviews or unverifiable claims"],
+  contactPrompt: "Tell Ridgeline what happened, what kind of roof you have, and whether there is active leaking.",
+  localCoverageIntro: "This sample shows metro coverage for Denver-area roofing with explicit coverage transparency before estimate requests.",
+  localNeighborhoods: ["Denver", "Aurora", "Lakewood", "Golden", "Englewood"],
   },
   {
     slug: "greenline-landscaping",
@@ -181,11 +185,11 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Front bed refresh", "Lawn maintenance route", "Backyard cleanup", "Mulch install", "Stone border detail", "Seasonal planting plan"],
     aboutHeadline: "A local landscaping site with immediate service clarity.",
     aboutBody: "Greenline Landscaping is a fictional Raleigh landscaping sample built for estimate requests, seasonal service education, and fast mobile contact.",
-    emergencyServiceNote: "For storm or weather events, add a visible urgent response path before quote details.",
+    emergencyServiceNote: "For weather events and urgent heat/cool exposure, keep call-first support at the top of service pages.",
     financingTopics: ["Major landscape refreshes", "Irrigation upgrades", "Small hardscape replacements"],
     financingIntro: "When projects are larger than routine care, this sample surfaces payment timing options alongside project-specific requests.",
     serviceArea: {
-      dma: "Raleigh-Durham DMA",
+      dma: "Raleigh DMA",
       coverageCopy: "A local contractor sample should state coverage clearly so visitors can confirm service fit before reaching out.",
       cityGroups: [
         { city: "Raleigh", neighborhoods: ["North Hills", "Five Points", "Cameron Village", "Downtown"] },
@@ -195,8 +199,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
         { city: "Holly Springs", neighborhoods: ["Holly Square", "East Holly", "Cedar Drive"] },
       ],
     },
-    trust: ["Trade-specific hero image", "Clear service list", "Project-style visual cues", "Click-to-call and estimate paths"],
-    contactPrompt: "Share your address area, yard size, and whether you need maintenance, cleanup, planting, or a project estimate.",
+  trust: ["Trade-specific hero image", "Clear service list", "Project-style visual cues", "Click-to-call and estimate paths"],
+  contactPrompt: "Share your address area, yard size, and whether you need maintenance, cleanup, planting, or a project estimate.",
+  localCoverageIntro: "This sample demonstrates area clarity for core Raleigh neighborhoods in a practical exterior-services context.",
+  localNeighborhoods: ["Raleigh", "Cary", "Wake Forest", "Apex", "Holly Springs"],
   },
   {
     slug: "northstar-air",
@@ -271,8 +277,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
       body: "A real HVAC site should make service areas, urgent availability, maintenance plans, replacement quotes, and financing questions easy to find before someone fills out a form.",
       items: ["Minneapolis", "St. Paul", "Edina", "Bloomington", "Maple Grove", "Plymouth"],
     },
-    trust: ["Clear no-cool and no-heat request paths", "Phone-forward service calls", "Maintenance and replacement options separated", "Service areas stated before the form"],
-    contactPrompt: "Tell Northstar what is happening, whether comfort is currently out, your city, and whether this is repair, maintenance, replacement, or a financing question.",
+  trust: ["Clear no-cool and no-heat request paths", "Phone-forward service calls", "Maintenance and replacement options separated", "Service areas stated before the form"],
+  contactPrompt: "Tell Northstar what is happening, whether comfort is currently out, your city, and whether this is repair, maintenance, replacement, or a financing question.",
+  localCoverageIntro: "This HVAC sample keeps comfort outcomes first and confirms local service fit before estimate or follow-up steps.",
+  localNeighborhoods: ["Minneapolis", "St. Paul", "Edina", "Bloomington", "Plymouth"],
     proofHeadline: "Real HVAC situations, shown without fake results.",
     contactTitle: "Tell Northstar what is happening.",
     formTitle: "Request service",
@@ -316,8 +324,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Intake conversation", "Movement screen", "Plan explanation", "Home exercise handout", "Progress check", "Next-visit planning"],
     aboutHeadline: "A calm clinic website for people comparing care options.",
     aboutBody: "Harbor Wellness Clinic is a fictional sample built to show how a wellness provider can explain services, appointments, and ownership of care without overclaiming results.",
-    trust: ["Plain-language care pages", "Appointment request path", "Calm clinical imagery", "No medical promises or testimonials"],
-    contactPrompt: "Share what you are hoping to work on, whether this is a new issue, and your preferred appointment window.",
+  trust: ["Plain-language care pages", "Appointment request path", "Calm clinical imagery", "No medical promises or testimonials"],
+  contactPrompt: "Share what you are hoping to work on, whether this is a new issue, and your preferred appointment window.",
+  localCoverageIntro: "This wellness sample shows clear local visit framing and appointment-first communication for neighboring clinics and treatment planning.",
+  localNeighborhoods: ["Charleston", "Downtown Charleston", "West Ashley", "Moultrie"],
   },
   {
     slug: "atlas-advisory",
@@ -356,8 +366,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Discovery call", "Workflow map", "Priority matrix", "Roadmap session", "Operating dashboard", "Founder handoff"],
     aboutHeadline: "A professional-services site that sells clarity, not fluff.",
     aboutBody: "Atlas Advisory Group is a fictional consulting sample built for authority, service fit, process clarity, and consultation conversion.",
-    trust: ["Specific advisory offers", "Consultation-first CTA", "Process-led proof", "No fake case studies"],
-    contactPrompt: "Share what kind of operating problem you are trying to solve and what decision you need to make next.",
+  trust: ["Specific advisory offers", "Consultation-first CTA", "Process-led proof", "No fake case studies"],
+  contactPrompt: "Share what kind of operating problem you are trying to solve and what decision you need to make next.",
+  localCoverageIntro: "This advisory sample presents a local office context while staying open to remote consultation paths and practical next steps.",
+  localNeighborhoods: ["Austin", "Downtown", "South Congress", "East Austin"],
   },
   {
     slug: "harbor-legal-group",
@@ -409,8 +421,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
         { city: "Sarasota", neighborhoods: ["North Sarasota", "Gulf Gate", "Downtown Sarasota"] },
       ],
     },
-    trust: ["Practice-area cards", "Consultation-first CTA", "Professional legal tone", "No fake results or testimonials"],
-    contactPrompt: "Share the practice area, a short description of the question, and the best way to contact you. This sample form does not create an attorney-client relationship.",
+  trust: ["Practice-area cards", "Consultation-first CTA", "Professional legal tone", "No fake results or testimonials"],
+  contactPrompt: "Share the practice area, a short description of the question, and the best way to contact you. This sample form does not create an attorney-client relationship.",
+  localCoverageIntro: "This legal sample includes a practice-area contact context for nearby Florida communities and consultation follow-up.",
+  localNeighborhoods: ["Tampa", "St. Petersburg", "Brandon", "Clearwater", "Seminole"],
   },
   {
     slug: "table-and-hearth",
@@ -449,8 +463,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     proofItems: ["Dinner service", "Sunday brunch", "Private table", "Seasonal side", "Wine corner", "Open kitchen detail"],
     aboutHeadline: "A restaurant sample built around atmosphere and action.",
     aboutBody: "Table & Hearth is a fictional restaurant sample that shows menu, hours, location, and gathering inquiries in a warm local voice.",
-    trust: ["Menu-first structure", "Hours and location up front", "Event inquiry path", "No fake diner reviews"],
-    contactPrompt: "Ask about a table, private dinner, menu question, or event date.",
+  trust: ["Menu-first structure", "Hours and location up front", "Event inquiry path", "No fake diner reviews"],
+  contactPrompt: "Ask about a table, private dinner, menu question, or event date.",
+  localCoverageIntro: "This dining sample shows a local neighborhood-first service context for reservations and event planning.",
+  localNeighborhoods: ["Downtown Savannah", "Forsyth Park", "Historic District", "River Street"],
   },
   {
     slug: "mainline-plumbing",
@@ -502,8 +518,10 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
         { city: "Grove City", neighborhoods: ["Morse Crossing", "South Grove", "Riverside"] },
       ],
     },
-    trust: ["Phone-forward repair CTA", "Specific service menu", "Industrial visual style", "No fake emergency claims"],
-    contactPrompt: "Tell Mainline where the plumbing issue is, what changed, and whether water is actively leaking.",
+  trust: ["Phone-forward repair CTA", "Specific service menu", "Industrial visual style", "No fake emergency claims"],
+  contactPrompt: "Tell Mainline where the plumbing issue is, what changed, and whether water is actively leaking.",
+  localCoverageIntro: "This plumbing sample ties local call-forward and estimate paths to neighborhoods in the Columbus metro area.",
+  localNeighborhoods: ["Columbus", "Bexley", "Dublin", "Grove City", "Worthington"],
   },
 ];
 

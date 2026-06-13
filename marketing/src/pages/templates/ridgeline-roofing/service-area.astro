@@ -37,6 +37,16 @@ const localBusinessSchema = {
 
     <section class="section" style="background:var(--surface-muted);">
       <div class="container">
+        <p class="kicker">Service coverage map</p>
+        <div class="ridgeline-service-map" role="img" aria-label="Denver metro roofing service coverage map">
+          <span class="ridgeline-service-map-label">Denver metro coverage</span>
+          <span class="ridgeline-service-map-pin" style="left:72px; top:79px;">Denver</span>
+          <span class="ridgeline-service-map-pin" style="left:153px; top:126px;">Aurora</span>
+          <span class="ridgeline-service-map-pin" style="left:54px; top:142px;">Lakewood</span>
+          <span class="ridgeline-service-map-pin" style="left:27px; top:165px;">Golden</span>
+          <span class="ridgeline-service-map-pin" style="left:98px; top:170px;">Englewood</span>
+          <span class="ridgeline-service-map-pin" style="left:178px; top:104px;">Commerce City</span>
+        </div>
         <div class="service-grid">
           {serviceAreas.map((entry) => (
             <article class="card">
@@ -82,6 +92,40 @@ const localBusinessSchema = {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
     }
+    .ridgeline-service-map {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      height: 205px;
+      overflow: hidden;
+      margin: 0.9rem 0 1rem;
+      background: linear-gradient(180deg, #f8fafc, var(--surface-muted));
+    }
+    .ridgeline-service-map-label {
+      position: absolute;
+      left: 0.72rem;
+      top: 0.72rem;
+      background: var(--text-strong);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.22rem 0.56rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+    .ridgeline-service-map-pin {
+      position: absolute;
+      transform: translate(-50%, -75%);
+      background: var(--brand-blue);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.14rem 0.44rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+      white-space: nowrap;
+    }
     .roofing-badge {
       display: inline-flex;
       align-items: center;
@@ -99,6 +143,9 @@ const localBusinessSchema = {
     @media (max-width: 860px) {
       .service-grid {
         grid-template-columns: 1fr;
+      }
+      .ridgeline-service-map {
+        height: 170px;
       }
     }
   </style>

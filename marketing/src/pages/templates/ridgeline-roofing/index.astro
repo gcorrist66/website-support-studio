@@ -43,7 +43,7 @@ const localBusinessSchema = {
   path="/templates/ridgeline-roofing"
 >
   <main>
-    <section class="hero" style="padding-top:3rem;">
+    <section class="hero" style="padding-top:2.05rem;">
       <div class="container demo-hero-layout">
         <div>
           <p class="demo-disclaimer">Demo website · Fictional demo company</p>
@@ -133,7 +133,7 @@ const localBusinessSchema = {
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessSchema)} />
 
-  <style is:inline>
+    <style is:inline>
     .demo-disclaimer {
       display: inline-block;
       border: 1px dashed var(--border-strong);
@@ -160,7 +160,7 @@ const localBusinessSchema = {
     .roof-photo-panel {
       position: relative;
       overflow: hidden;
-      min-height: 360px;
+      min-height: 275px;
       border: 1px solid var(--border-strong);
       border-radius: 14px;
       background: #0b1220;
@@ -189,6 +189,7 @@ const localBusinessSchema = {
       aspect-ratio: 16 / 10;
       height: auto;
       border-radius: 8px;
+      max-height: 190px;
       margin-bottom: 0.9rem;
       border: 1px solid var(--border);
     }
@@ -251,7 +252,7 @@ const localBusinessSchema = {
         grid-template-columns: 1fr;
       }
       .roof-photo-panel {
-        min-height: 260px;
+        min-height: 220px;
       }
       .demo-grid,
       .demo-checks {
