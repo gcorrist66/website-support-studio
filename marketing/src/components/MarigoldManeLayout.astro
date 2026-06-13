@@ -1,0 +1,16 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+}
+
+const { title, description, path } = Astro.props as Props;
+---
+<SiteLayout title={title} description={description} path={path} type="default">
+  <div class="site-shell">
+    <slot />
+  </div>
+</SiteLayout>

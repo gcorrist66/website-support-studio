@@ -1,0 +1,85 @@
+---
+import { siteConfig } from "../data/site";
+
+type JsonLdType = "home" | "services" | "gallery" | "about" | "contact" | "default";
+interface Props {
+  path: string;
+  title: string;
+  description: string;
+  type?: JsonLdType;
+}
+
+const { path, title, description, type = "default" } = Astro.props as Props;
+const canonical = new URL(path, siteConfig.siteUrl).href;
+
+const website = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.siteName,
+  url: canonical,
+  description: siteConfig.description,
+  inLanguage: "en-US"
+};
+
+const localBusiness = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${canonical}#business`,
+  name: siteConfig.legalName,
+  url: canonical,
+  description,
+  knowsAbout: siteConfig.category,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: siteConfig.city,
+    addressRegion: siteConfig.state,
+    addressCountry: siteConfig.country
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: siteConfig.ratingValue,
+    reviewCount: siteConfig.reviewCount
+  }
+};
+
+const breadcrumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: siteConfig.siteUrl
+    },
+    path !== "/" && {
+      "@type": "ListItem",
+      position: 2,
+      name: title.replace(/\s+—.*/u, ""),
+      item: canonical
+    }
+  ].filter(Boolean)
+};
+
+const servicePage = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: title,
+  description,
+  url: canonical,
+  about: {
+    "@type": "LocalBusiness",
+    name: siteConfig.legalName
+  }
+};
+
+const schema = [
+  website,
+  localBusiness,
+  ...(type === "home" ? [breadcrumbs] : []),
+  type === "services" ? servicePage : null
+].filter(Boolean);
+
+const content = schema;
+---
+<script type="application/ld+json" set:html={JSON.stringify(content)} />

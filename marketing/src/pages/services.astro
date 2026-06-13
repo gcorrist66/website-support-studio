@@ -1,0 +1,39 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { serviceCatalog } from "../data/site";
+---
+<SiteLayout
+  title="Services"
+  description="Explore MH Electrical and Solar services and the next steps to get started."
+  path="/services"
+  type="services"
+>
+  <section>
+    <p class="eyebrow">Services</p>
+    <h1>Service details and next-step planning</h1>
+    <p class="lead">Pricing and timing are available once the project details are reviewed.</p>
+  </section>
+  <section>
+    <div class="card-grid">
+      {serviceCatalog.map((service) => (
+        <article class="card">
+          <h2>{service.title}</h2>
+          <p class="service-meta">{service.duration} · {service.price}</p>
+          <p>{service.summary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section>
+    <div class="card-grid">
+      <article class="card">
+        <h2>How to book</h2>
+        <p>Submit your request through the form with project details, urgency, and access notes. A team member will follow up with next-step options.</p>
+      </article>
+      <article class="card">
+        <h2>Service support</h2>
+        <p>This page is designed to move you quickly from details to confirmation, with clear request flow and follow-up options.</p>
+      </article>
+    </div>
+  </section>
+</SiteLayout>

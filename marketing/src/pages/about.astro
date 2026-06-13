@@ -1,0 +1,35 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { siteConfig } from "../data/site";
+---
+<SiteLayout
+  title="About"
+  description="MH Electrical and Solar serves Denver, CO as a local electrician."
+  path="/about"
+  type="about"
+>
+  <section>
+    <p class="eyebrow">About</p>
+    <h1>About MH Electrical and Solar</h1>
+    <p class="lead">
+      MH Electrical and Solar is presented as an {siteConfig.category} in {siteConfig.city}, {siteConfig.state}.
+      We focus on clear, practical project conversations for home and business needs.
+    </p>
+  </section>
+  <section>
+    <div class="card-grid">
+      <article class="card">
+        <h2>Profile snapshot</h2>
+        <p>Rating is {siteConfig.ratingValue}. Review count is {siteConfig.reviewCount}.</p>
+      </article>
+      <article class="card">
+        <h2>Project details</h2>
+        <p>Project details are confirmed during your estimate and scheduling conversation.</p>
+      </article>
+      <article class="card">
+        <h2>What users can do</h2>
+        <p>Use the service request form to share location details, access constraints, and preferred timing.</p>
+      </article>
+    </div>
+  </section>
+</SiteLayout>

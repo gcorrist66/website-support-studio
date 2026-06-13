@@ -1,0 +1,71 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { siteConfig } from "../data/site";
+---
+<SiteLayout
+  title="Contact"
+  description="Submit a service request for MH Electrical and Solar with your project details."
+  path="/contact"
+  type="contact"
+>
+  <section>
+    <p class="eyebrow">Contact</p>
+    <h1>Request a service estimate</h1>
+    <p class="lead">Tell us your service type, timeline, and site constraints. We respond with next steps and scheduling options.</p>
+  </section>
+
+  <section>
+    <form id="contact-form" aria-labelledby="appointment-heading">
+      <h2 id="appointment-heading">Service request</h2>
+      <label for="name">Name
+        <input id="name" name="name" autocomplete="name" required />
+      </label>
+      <label for="email">Email
+        <input id="email" name="email" type="email" autocomplete="email" required />
+      </label>
+      <label for="service">Service
+        <select id="service" name="service" required>
+          <option value="">Choose a service</option>
+          <option value="Residential Electrical Services">Residential Electrical Services</option>
+          <option value="Panel & Electrical Upgrades">Panel &amp; Electrical Upgrades</option>
+          <option value="Electrical Troubleshooting">Electrical Troubleshooting</option>
+          <option value="Solar Related Support">Solar Related Support</option>
+        </select>
+      </label>
+      <label for="notes">Project details
+        <textarea id="notes" name="notes" maxlength="500"></textarea>
+      </label>
+      <button type="submit">Send request</button>
+      <p id="contact-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section>
+    <h2>Visit</h2>
+    <p>{siteConfig.city}, {siteConfig.state}</p>
+    <p>Project details, access requirements, and timing are collected in the form above.</p>
+    <p class="muted">
+      {siteConfig.googleBusinessProfileSearchUrl
+        ? "Google Business Profile details are available through the source link."
+        : "Google Business Profile link can be added once the source URL is provided."}
+    </p>
+  </section>
+</SiteLayout>
+
+<script is:inline>
+  const form = document.getElementById("contact-form");
+  const status = document.getElementById("contact-status");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!(form instanceof HTMLFormElement) || !(status instanceof HTMLElement)) return;
+    const data = new FormData(form);
+    const response = await fetch("/api/contact", { method: "POST", body: data });
+    if (response.ok) {
+      status.textContent = "Thanks! Your appointment request was received. We will reply shortly.";
+      form.reset();
+      return;
+    }
+    status.textContent = "Unable to send right now. Please submit again and we’ll follow up as soon as possible.";
+  });
+</script>

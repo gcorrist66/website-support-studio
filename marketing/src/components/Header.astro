@@ -1,0 +1,26 @@
+---
+import { navItems } from "../data/site";
+---
+<header class="site-header">
+  <a class="skip-to-content sr-only-focusable" href="#main-content">Skip to content</a>
+  <div class="site-shell">
+    <a class="brand" href="/">MH Electrical &amp; Solar</a>
+    <details class="mobile-menu">
+      <summary aria-label="Open navigation menu">Menu</summary>
+      <nav aria-label="Mobile">
+        <ul>
+          {navItems.map((item) => (
+            <li><a href={item.path}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+    <nav class="desktop-nav" aria-label="Main">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.path}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,74 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { featuredServices, siteConfig, galleryHighlights } from "../data/site";
+---
+<SiteLayout
+  title="Home"
+  description="MH Electrical and Solar is a Denver, CO electrician helping users request services and get project clarity."
+  path="/"
+  type="home"
+>
+  <section class="hero">
+    <p class="eyebrow">Electrical Services</p>
+    <h1>Reliable electrical support from Denver, CO.</h1>
+    <p class="lead">
+      MH Electrical and Solar helps you get started with clear next steps, transparent request handling, and realistic service planning.
+      Google Business profile rating: {siteConfig.ratingValue} from {siteConfig.reviewCount} customer reviews.
+    </p>
+    <div class="cta-row">
+      <a class="button" href="/services">View Services</a>
+      <a class="button" href="/contact">Request Appointment</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>What you can request today</h2>
+    <div class="card-grid">
+      {featuredServices.map((service) => (
+        <article class="card">
+          <h2>{service.title}</h2>
+          <p class="service-meta">{service.duration} · {service.price}</p>
+          <p>{service.summary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2>Why this page is structured this way</h2>
+    <div class="card-grid">
+      <article class="card">
+        <h3>Designed to convert</h3>
+        <p>Clear sections and fast loading let you move from details to a request quickly.</p>
+      </article>
+      <article class="card">
+        <h3>Conversion-focused flow</h3>
+        <p>Primary actions lead visitors to service details and a request form with direct contact follow-up.</p>
+      </article>
+      <article class="card">
+        <h3>Mobile-first form</h3>
+        <p>Fast loading sections and accessible controls support users on any device.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Service planning examples</h2>
+    <div class="gallery">
+      {galleryHighlights.slice(0, 4).map((item) => (
+        <article class="gallery-item">
+          <p>{item}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2>Next action</h2>
+    <p class="muted">Use the form to share your project details, timeline, and contact window.</p>
+    <div class="cta-row">
+      <a class="button" href="/contact">Open request form</a>
+      {siteConfig.googleBusinessProfileSearchUrl && <a class="button" href={siteConfig.googleBusinessProfileSearchUrl} rel="nofollow">Google Business Profile</a>}
+    </div>
+  </section>
+</SiteLayout>

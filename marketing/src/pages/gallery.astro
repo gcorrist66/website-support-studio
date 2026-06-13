@@ -1,0 +1,25 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { galleryHighlights } from "../data/site";
+---
+<SiteLayout
+  title="Gallery"
+  description="View sample planning scenarios and project examples for MH Electrical and Solar."
+  path="/gallery"
+  type="gallery"
+>
+  <section>
+    <p class="eyebrow">Gallery</p>
+    <h1>Planning scenarios (non-promotional examples)</h1>
+    <p class="lead">These cards describe example contexts and planning patterns only, not completed work or claims.</p>
+  </section>
+  <section>
+    <div class="gallery">
+      {galleryHighlights.map((item) => (
+        <article class="gallery-item">
+          <p>{item}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</SiteLayout>

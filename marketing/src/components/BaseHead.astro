@@ -1,0 +1,37 @@
+---
+import { siteConfig } from "../data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+}
+
+const { title, description, path, image } = Astro.props as Props;
+const siteHost = new URL(siteConfig.siteUrl);
+const canonical = new URL(path, siteHost.href).href;
+const robots = "noindex, nofollow, noarchive";
+const imageUrl = new URL(image ?? "/og-image.svg", siteHost.href).href;
+---
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={robots} />
+<meta name="googlebot" content="noindex, nofollow, noarchive" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content={siteConfig.siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:alt" content={siteConfig.tagLine} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<link rel="canonical" href={canonical} />
+<meta name="theme-color" content="#2f3b52" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />

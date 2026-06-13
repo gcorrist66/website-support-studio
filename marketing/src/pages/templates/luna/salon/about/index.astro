@@ -1,0 +1,32 @@
+---
+import MarigoldManeLayout from "../../../../../components/MarigoldManeLayout.astro";
+import { marigold } from "../../../../../marigoldMane";
+---
+<MarigoldManeLayout title="About — MH Electrical and Solar" description="About page for MH Electrical and Solar." path="/templates/luna/salon/about">
+  <section class="mm-section mm-hero">
+    <div class="mm-container mm-split">
+      <div>
+        <p class="mm-sample">{marigold.badge}</p>
+        <p class="mm-eyebrow">About</p>
+        <h1>About MH Electrical and Solar.</h1>
+        <p class="mm-lede">Clear service information for projects in and around Denver.</p>
+      </div>
+      <div class="mm-card">
+        <h3>Business overview</h3>
+        <p>Company: MH Electrical and Solar · Category: Electrician · Location: {marigold.city}, {marigold.state}.</p>
+      </div>
+    </div>
+  </section>
+  <section class="mm-section mm-soft">
+    <div class="mm-container mm-split">
+      <div>
+        <h2>How we help</h2>
+        <p>Share your project details to move quickly into a focused estimate discussion.</p>
+      </div>
+      <div class="mm-card">
+        <h3>Client snapshot</h3>
+        <ul class="mm-info-list"><li>Rating: {marigold.ratingValue}</li><li>Reviews: {marigold.reviewCount}</li><li>Project details are confirmed during your estimate conversation.</li></ul>
+      </div>
+    </div>
+  </section>
+</MarigoldManeLayout>
