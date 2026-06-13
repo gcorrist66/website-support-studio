@@ -59,13 +59,7 @@ import { siteConfig } from "../data/site";
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!(form instanceof HTMLFormElement) || !(status instanceof HTMLElement)) return;
-    const data = new FormData(form);
-    const response = await fetch("/api/contact", { method: "POST", body: data });
-    if (response.ok) {
-      status.textContent = "Thanks! Your appointment request was received. We will reply shortly.";
-      form.reset();
-      return;
-    }
-    status.textContent = "Unable to send right now. Please submit again and we’ll follow up as soon as possible.";
+    status.textContent = "Thanks for sharing your project details. We will follow up once this preview is connected to a form endpoint.";
+    form.reset();
   });
 </script>
