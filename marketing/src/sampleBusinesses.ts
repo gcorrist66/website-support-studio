@@ -83,7 +83,7 @@ const nav = (
 ) => [
   { href: base, label: "Home", page: "home" as const },
   { href: `${base}/services`, label: servicesLabel, page: "services" as const },
-  ...(includeServiceArea ? [{ href: `${base}/service-area`, label: "Service Areas", page: "service-area" as const }] : []),
+  ...(includeServiceArea ? [{ href: `${base}/service-areas`, label: "Service Areas", page: "service-area" as const }] : []),
   { href: `${base}/about`, label: "About", page: "about" as const },
   { href: `${base}/work`, label: proofLabel, page: "proof" as const },
   { href: `${base}/contact`, label: "Contact", page: "contact" as const },
@@ -185,7 +185,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     financingTopics: ["Major landscape refreshes", "Irrigation upgrades", "Small hardscape replacements"],
     financingIntro: "When projects are larger than routine care, this sample surfaces payment timing options alongside project-specific requests.",
     serviceArea: {
-      dma: "Raleigh DMA",
+      dma: "Raleigh-Durham DMA",
       coverageCopy: "A local contractor sample should state coverage clearly so visitors can confirm service fit before reaching out.",
       cityGroups: [
         { city: "Raleigh", neighborhoods: ["North Hills", "Five Points", "Cameron Village", "Downtown"] },
@@ -247,7 +247,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     financingTopics: ["Replacement installs", "Major repairs", "System upgrades"],
     financingIntro: "For high-cost HVAC decisions, show financing options near replacement and upgrade pathways before estimate requests.",
     serviceArea: {
-      dma: "Minneapolis DMA",
+      dma: "Minneapolis-St. Paul DMA",
       coverageCopy: "Service coverage is organized by city and neighborhood so homeowners can confirm local fit before submitting details.",
       cityGroups: [
         { city: "Minneapolis", neighborhoods: ["Downtown", "Northeast", "Southeast", "South Minneapolis", "Nicollet Island"] },
@@ -513,5 +513,6 @@ export const samplePath = (business: SampleBusiness, page: SamplePage = "home") 
   const base = `/templates/sample/${business.slug}`;
   if (page === "home") return base;
   if (page === "proof") return `${base}/work`;
+  if (page === "service-area") return `${base}/service-areas`;
   return `${base}/${page}`;
 };

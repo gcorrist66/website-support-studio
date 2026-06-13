@@ -13,7 +13,14 @@ export function getStaticPaths() {
 
   return SAMPLE_BUSINESSES.flatMap((business) =>
     samplePages
-      .concat(business.serviceArea ? [{ suffix: "service-area", page: "service-area" as const }] : [])
+      .concat(
+        business.serviceArea
+          ? [
+              { suffix: "service-area", page: "service-area" as const },
+              { suffix: "service-areas", page: "service-area" as const },
+            ]
+          : [],
+      )
       .map(({ suffix, page }) => ({
         params: { sample: suffix ? `${business.slug}/${suffix}` : business.slug },
         props: { business, page },
