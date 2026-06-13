@@ -147,6 +147,12 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   contactPrompt: "Tell Ridgeline what happened, what kind of roof you have, and whether there is active leaking.",
   localCoverageIntro: "This sample shows metro coverage for Denver-area roofing with explicit coverage transparency before estimate requests.",
   localNeighborhoods: ["Denver", "Aurora", "Lakewood", "Golden", "Englewood"],
+  localSection: {
+    eyebrow: "Metro service clarity",
+    title: "Confirm coverage before choosing your next step.",
+    body: "A homeowner should be able to confirm city coverage, then click repair, replacement, or storm support with confidence.",
+    items: ["Denver", "Aurora", "Lakewood", "Golden", "Englewood", "Commerce City"],
+  },
   },
   {
     slug: "greenline-landscaping",
@@ -203,6 +209,12 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   contactPrompt: "Share your address area, yard size, and whether you need maintenance, cleanup, planting, or a project estimate.",
   localCoverageIntro: "This sample demonstrates area clarity for core Raleigh neighborhoods in a practical exterior-services context.",
   localNeighborhoods: ["Raleigh", "Cary", "Wake Forest", "Apex", "Holly Springs"],
+  localSection: {
+    eyebrow: "City and neighborhood fit",
+    title: "Area confirmation before project planning.",
+    body: "This sample should confirm where service coverage applies before users choose seasonal maintenance, plant refresh, or estimate requests.",
+    items: ["Raleigh", "Cary", "Apex", "Holly Springs", "Wake Forest"],
+  },
   },
   {
     slug: "northstar-air",
@@ -253,7 +265,7 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     financingTopics: ["Replacement installs", "Major repairs", "System upgrades"],
     financingIntro: "For high-cost HVAC decisions, show financing options near replacement and upgrade pathways before estimate requests.",
     serviceArea: {
-      dma: "Minneapolis-St. Paul DMA",
+      dma: "Minneapolis DMA",
       coverageCopy: "Service coverage is organized by city and neighborhood so homeowners can confirm local fit before submitting details.",
       cityGroups: [
         { city: "Minneapolis", neighborhoods: ["Downtown", "Northeast", "Southeast", "South Minneapolis", "Nicollet Island"] },
@@ -327,7 +339,22 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   trust: ["Plain-language care pages", "Appointment request path", "Calm clinical imagery", "No medical promises or testimonials"],
   contactPrompt: "Share what you are hoping to work on, whether this is a new issue, and your preferred appointment window.",
   localCoverageIntro: "This wellness sample shows clear local visit framing and appointment-first communication for neighboring clinics and treatment planning.",
+  serviceArea: {
+    dma: "Charleston metro",
+    coverageCopy: "This sample shows a practical service footprint for nearby Charleston neighborhoods before a visit is requested.",
+    cityGroups: [
+      { city: "Charleston", neighborhoods: ["Downtown", "West Ashley", "Moultrie", "South of Broad"] },
+      { city: "Mount Pleasant", neighborhoods: ["Old Village", "Hollingsworth", "Wando Highlands"] },
+      { city: "North Charleston", neighborhoods: ["Northwoods", "Dauphin", "Pine Grove"] },
+    ],
+  },
   localNeighborhoods: ["Charleston", "Downtown Charleston", "West Ashley", "Moultrie"],
+  localSection: {
+    eyebrow: "Visit context",
+    title: "Confirm care areas before booking an appointment.",
+    body: "A clinic should make it easy to confirm neighborhood reach, visit expectations, and communication paths before asking for a full consultation.",
+    items: ["Charleston", "Mount Pleasant", "North Charleston", "Daniel Island", "West Ashley"],
+  },
   },
   {
     slug: "atlas-advisory",
@@ -369,7 +396,22 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   trust: ["Specific advisory offers", "Consultation-first CTA", "Process-led proof", "No fake case studies"],
   contactPrompt: "Share what kind of operating problem you are trying to solve and what decision you need to make next.",
   localCoverageIntro: "This advisory sample presents a local office context while staying open to remote consultation paths and practical next steps.",
+  serviceArea: {
+    dma: "Austin metro",
+    coverageCopy: "The firm sample keeps consultation availability clear across nearby neighborhoods before project planning begins.",
+    cityGroups: [
+      { city: "Austin", neighborhoods: ["South Congress", "Downtown", "North Loop", "East Austin", "West Austin"] },
+      { city: "Round Rock", neighborhoods: ["Cypress Creek", "Barton Creek", "Mopac"] },
+      { city: "Cedar Park", neighborhoods: ["Easton Park", "Northlake", "Brushy Creek"] },
+    ],
+  },
   localNeighborhoods: ["Austin", "Downtown", "South Congress", "East Austin"],
+  localSection: {
+    eyebrow: "Consultation footprint",
+    title: "Know where we support clients before scheduling.",
+    body: "Professional advisory demos should state practical market context and consultation pathways so prospects can quickly confirm fit.",
+    items: ["Austin", "Round Rock", "Cedar Park", "Lakeway"],
+  },
   },
   {
     slug: "harbor-legal-group",
@@ -425,6 +467,12 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   contactPrompt: "Share the practice area, a short description of the question, and the best way to contact you. This sample form does not create an attorney-client relationship.",
   localCoverageIntro: "This legal sample includes a practice-area contact context for nearby Florida communities and consultation follow-up.",
   localNeighborhoods: ["Tampa", "St. Petersburg", "Brandon", "Clearwater", "Seminole"],
+  localSection: {
+    eyebrow: "Consultation fit",
+    title: "Local consultation support for nearby markets.",
+    body: "The legal sample confirms whether a matter is in-service before request timing and next-step recommendations.",
+    items: ["Tampa", "St. Petersburg", "Clearwater", "Largo", "Brandon"],
+  },
   },
   {
     slug: "table-and-hearth",
@@ -467,6 +515,12 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   contactPrompt: "Ask about a table, private dinner, menu question, or event date.",
   localCoverageIntro: "This dining sample shows a local neighborhood-first service context for reservations and event planning.",
   localNeighborhoods: ["Downtown Savannah", "Forsyth Park", "Historic District", "River Street"],
+  localSection: {
+    eyebrow: "Visit neighborhood fit",
+    title: "Know if this table fits your neighborhood visit.",
+    body: "A restaurant sample should make walkability, reservation timing, and local neighborhood fit clear before a guest sends in an inquiry.",
+    items: ["Savannah", "Forsyth Park", "Downtown Savannah", "Historic District", "River Street", "Ardsley Park"],
+  },
   },
   {
     slug: "mainline-plumbing",
@@ -522,6 +576,12 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
   contactPrompt: "Tell Mainline where the plumbing issue is, what changed, and whether water is actively leaking.",
   localCoverageIntro: "This plumbing sample ties local call-forward and estimate paths to neighborhoods in the Columbus metro area.",
   localNeighborhoods: ["Columbus", "Bexley", "Dublin", "Grove City", "Worthington"],
+  localSection: {
+    eyebrow: "Neighborhood service coverage",
+    title: "Get a fit check before submitting details.",
+    body: "A clear neighborhood snapshot reduces uncertainty and helps the visitor move to emergency or estimate paths faster.",
+    items: ["Columbus", "Bexley", "Dublin", "Worthington", "Grove City"],
+  },
   },
 ];
 

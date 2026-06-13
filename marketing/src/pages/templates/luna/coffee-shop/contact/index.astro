@@ -1,9 +1,80 @@
 ---
 import MoonroomCoffeeLayout from "../../../../../components/MoonroomCoffeeLayout.astro";
 import { moonroom } from "../../../../../moonroomCoffee";
+
+const mapPins = [
+  { area: "Seminole Heights", x: 58, y: 48 },
+  { area: "Tampa Downtown", x: 76, y: 56 },
+  { area: "Ybor", x: 47, y: 73 },
+];
+
+const neighborhoods = ["Seminole Heights", "Carrollwood", "Tampa Heights", "Ybor", "Lutz"];
 ---
 <MoonroomCoffeeLayout title="Contact — Moonroom Coffee" description="Contact and visit page for the fictional Moonroom Coffee sample website." path="/templates/luna/coffee-shop/contact">
-  <section class="mc-section mc-hero"><div class="mc-container"><p class="mc-sample">{moonroom.badge}</p><p class="mc-eyebrow">Contact</p><h1>Plan a visit or ask about coffee boxes.</h1><p class="mc-lede">Send a simple note about a visit, small event, or office coffee order. This form is non-submitting for demo safety.</p></div></section>
-  <section class="mc-section mc-soft" id="visit"><div class="mc-container mc-split"><form class="mc-card mc-form" id="moonroom-form"><h2>Coffee inquiry</h2><label>Name<input name="name" required /></label><label>Email<input name="email" type="email" required /></label><label>Reason<select name="reason" required><option value="">Choose one</option><option>Planning a visit</option><option>Office coffee box</option><option>Community pop-up</option><option>General question</option></select></label><label>What should Moonroom know?<textarea name="notes"></textarea></label><button class="mc-btn mc-btn-primary" type="submit">Send Inquiry</button><p id="moonroom-status" role="status" style="min-height:1.2rem; margin:0;"></p></form><div class="mc-card"><h2>Visit details</h2><p>{moonroom.address}</p><p><a href={moonroom.phoneHref}>{moonroom.phoneLabel}</a></p><ul class="mc-info-list">{moonroom.hours.map((hour) => <li>{hour}</li>)}</ul></div></div></section>
-  <script is:inline>document.addEventListener("submit",(event)=>{const form=event.target;if(!(form instanceof HTMLFormElement)||form.id!=="moonroom-form")return;event.preventDefault();const status=document.getElementById("moonroom-status");if(status instanceof HTMLElement)status.textContent="This is a sample business form. Production lead capture is added during the real build.";});</script>
+  <section class="mc-section mc-hero">
+    <div class="mc-container">
+      <p class="mc-sample">{moonroom.badge}</p>
+      <p class="mc-eyebrow">Contact</p>
+      <h1>Plan a visit or ask about coffee boxes.</h1>
+      <p class="mc-lede">Send a simple note about a visit, small event, or office coffee order. This form is non-submitting for demo safety.</p>
+    </div>
+  </section>
+  <section class="mc-section mc-soft" id="visit">
+    <div class="mc-container mc-split">
+      <form class="mc-card mc-form" id="moonroom-form">
+        <h2>Coffee inquiry</h2>
+        <label>Name<input name="name" required /></label>
+        <label>Email<input name="email" type="email" required /></label>
+        <label>
+          Reason
+          <select name="reason" required>
+            <option value="">Choose one</option>
+            <option>Planning a visit</option>
+            <option>Office coffee box</option>
+            <option>Community pop-up</option>
+            <option>General question</option>
+          </select>
+        </label>
+        <label>What should Moonroom know?
+          <textarea name="notes"></textarea>
+        </label>
+        <button class="mc-btn mc-btn-primary" type="submit">Send Inquiry</button>
+        <p id="moonroom-status" role="status" style="min-height:1.2rem; margin:0;"></p>
+      </form>
+      <div class="mc-card">
+        <h2>Visit details</h2>
+        <p>{moonroom.address}</p>
+        <p><a href={moonroom.phoneHref}>{moonroom.phoneLabel}</a></p>
+        <ul class="mc-info-list">
+          {moonroom.hours.map((hour) => <li>{hour}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section class="mc-section">
+    <div class="mc-container">
+      <p class="mc-eyebrow">Neighborhood service area</p>
+      <h2>Visit map and neighborhood signals</h2>
+      <p>Use this local context to confirm coverage before requesting pop-ups, catering, or visit timing.</p>
+      <div class="mc-location-map" role="img" aria-label="Coffee shop neighborhood service area map">
+        <span class="mc-location-label">Seminole Heights service area</span>
+        {mapPins.map((pin) => <span class="mc-location-pin" style={`left:${pin.x}%;top:${pin.y}%;`}>{pin.area}</span>)}
+      </div>
+      <div class="mc-location-chipset">
+        {neighborhoods.map((item) => <span>{item}</span>)}
+      </div>
+      <p style="margin-top:0.75rem;color:var(--mc-muted);">This is a sample site only. Map and visit scope are local-market context, not live routing.</p>
+    </div>
+  </section>
+  <script is:inline>
+    document.addEventListener("submit", (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || form.id !== "moonroom-form") return;
+      event.preventDefault();
+      const status = document.getElementById("moonroom-status");
+      if (status instanceof HTMLElement) {
+        status.textContent = "This is a sample business form. Production lead capture is added during the real build.";
+      }
+    });
+  </script>
 </MoonroomCoffeeLayout>

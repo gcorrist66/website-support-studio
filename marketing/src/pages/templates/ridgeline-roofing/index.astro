@@ -43,7 +43,7 @@ const localBusinessSchema = {
   path="/templates/ridgeline-roofing"
 >
   <main>
-    <section class="hero" style="padding-top:2.05rem;">
+    <section class="hero" style="padding-top:1.35rem;">
       <div class="container demo-hero-layout">
         <div>
           <p class="demo-disclaimer">Demo website · Fictional demo company</p>
@@ -107,7 +107,7 @@ const localBusinessSchema = {
         <p class="kicker">Trust points</p>
         <h2>How Ridgeline Roofing builds confidence</h2>
         <div class="demo-grid demo-checks">
-          <p class="card" style="margin:0;">Licensed and insured contractors for demo sample projects.</p>
+          <p class="card" style="margin:0;">Sample trust signals are written for clarity: local process, response priorities, and estimate flow.</p>
           <p class="card" style="margin:0;">Fast callback promise: initial response within one business day.</p>
           <p class="card" style="margin:0;">Service in Denver, Aurora, Lakewood, Golden, and Englewood.</p>
           <p class="card" style="margin:0;">Clear estimate walk-through and invoice-friendly follow-up notes.</p>
@@ -127,6 +127,18 @@ const localBusinessSchema = {
           {townList.map((town) => <span>{town}</span>)}
         </div>
         <p style="margin-top:0.9rem; color:var(--text-muted);">Demo route for model-home reference only. <strong>Not an actual customer profile.</strong></p>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--surface-muted);">
+      <div class="container">
+        <p class="kicker">Urgent support</p>
+        <h2>Storm, leak, or active exposure? Call first.</h2>
+        <p class="lede" style="max-width:64ch;">Urgent service is surfaced early so homeowners see the fastest path before reading long service details.</p>
+        <div class="hero-actions" style="margin-top:0.95rem;">
+          <a class="btn btn-green btn-cta" href="tel:+13035550198" data-ga-event="demo_call_urgent">Call Now</a>
+          <a class="btn btn-ghost" href="/templates/ridgeline-roofing/contact#estimate">Request estimate details</a>
+        </div>
       </div>
     </section>
   </main>
