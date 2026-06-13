@@ -16,6 +16,10 @@ export type SampleBusiness = {
   hours: string[];
   heroImage: string;
   heroAlt: string;
+  serviceSectionImage?: string;
+  serviceSectionImageAlt?: string;
+  trustSectionImage?: string;
+  trustSectionImageAlt?: string;
   accent: string;
   dark: string;
   soft: string;
@@ -160,8 +164,12 @@ export const SAMPLE_BUSINESSES: SampleBusiness[] = [
     email: "service@northstarair.example",
     address: "2448 Lyndale Ave S, Minneapolis, MN 55405",
     hours: ["Monday-Friday 7:30am-6pm", "Saturday 8am-2pm", "Priority no-cool and no-heat requests by phone"],
-    heroImage: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=82",
-    heroAlt: "HVAC technician servicing indoor equipment",
+    heroImage: "https://images.pexels.com/photos/32497161/pexels-photo-32497161.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1400&q=80",
+    heroAlt: "HVAC technician inspecting an outdoor condenser unit for servicing and diagnostics",
+    serviceSectionImage: "https://images.pexels.com/photos/6471911/pexels-photo-6471911.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1400&q=80",
+    serviceSectionImageAlt: "Technician checking gauges on an outdoor AC unit during HVAC maintenance",
+    trustSectionImage: "/templates/airflow-hvac-desktop.svg",
+    trustSectionImageAlt: "HVAC airflow and temperature flow diagram",
     accent: "#0ea5e9",
     dark: "#0f2437",
     soft: "#eaf6fb",
