@@ -1,0 +1,124 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { breadcrumbSchema } from "../schema";
+import { ORG, CONTACT, LEGAL_EFFECTIVE_DATE } from "../consts";
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Cookie Policy", path: "/cookie-policy" },
+  ]),
+];
+
+const cookieRows = [
+  {
+    category: "Analytics",
+    examples: "_ga, _ga_*",
+    provider: "Google Analytics 4",
+    purpose: "Measure public marketing site usage, page views, referrals, and interaction events when GA4 is configured.",
+  },
+  {
+    category: "Functional account storage",
+    examples: "Supabase auth browser storage",
+    provider: "Supabase",
+    purpose: "Maintain authenticated app sessions when real login is enabled. Supabase stores session data in browser storage rather than WSS writing document.cookie.",
+  },
+  {
+    category: "Third-party checkout and OAuth",
+    examples: "Stripe, Google cookies/storage on their own domains",
+    provider: "Stripe and Google",
+    purpose: "Process checkout, prevent fraud, complete Google OAuth login, and maintain those providers' own service sessions.",
+  },
+];
+---
+
+<BaseLayout
+  title="Cookie Policy"
+  description="Cookies and browser storage used by Website Support Studio across the public site, analytics, checkout, and app login."
+  path="/cookie-policy"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="prose">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">home</a><span class="sep">/</span><span><Label text="cookie_policy" /></span>
+      </nav>
+      <p class="kicker"><Label text="_legal" /></p>
+      <h1><Label text="cookie_policy" /></h1>
+      <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
+
+      <div class="summary" style="margin:1.5rem 0;">
+        <strong>Summary.</strong> The public marketing site currently uses Google Analytics 4 when configured.
+        The app uses Supabase browser session storage when real authentication is enabled. WSS source does
+        not write first-party cookies directly with <code>document.cookie</code>, and no advertising or
+        retargeting pixels were found in the current implementation.
+      </div>
+
+      <h2>1. What this policy covers</h2>
+      <p>
+        This policy explains cookies and similar browser technologies used by Website Support Studio,
+        operated by {ORG.legalName}, across the public site, checkout links, and app login.
+      </p>
+
+      <h2>2. Cookies and storage currently used</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:1rem;">
+          <thead>
+            <tr style="text-align:left; border-bottom:2px solid var(--border-strong);">
+              <th style="padding:0.6rem 0.5rem;">Category</th>
+              <th style="padding:0.6rem 0.5rem;">Examples</th>
+              <th style="padding:0.6rem 0.5rem;">Provider</th>
+              <th style="padding:0.6rem 0.5rem;">Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              cookieRows.map((row) => (
+                <tr style="border-bottom:1px solid var(--border); vertical-align:top;">
+                  <td style="padding:0.6rem 0.5rem; font-weight:600;">{row.category}</td>
+                  <td style="padding:0.6rem 0.5rem;">{row.examples}</td>
+                  <td style="padding:0.6rem 0.5rem;">{row.provider}</td>
+                  <td style="padding:0.6rem 0.5rem;">{row.purpose}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3. Analytics cookies</h2>
+      <p>
+        The production public site currently loads Google Analytics 4. GA4 may set first-party analytics
+        cookies such as <code>_ga</code> and <code>_ga_*</code>. We use analytics to understand aggregate site
+        usage and improve pages. The implementation configures GA4 with IP anonymization.
+      </p>
+
+      <h2>4. Functional storage</h2>
+      <p>
+        When real app authentication is enabled, Supabase Auth persists session information in browser
+        storage so a signed-in user can stay signed in and refresh the app. Disabling browser storage or
+        blocking necessary provider cookies may prevent login or checkout from working.
+      </p>
+
+      <h2>5. What we do not use</h2>
+      <p>
+        We do not currently use advertising cookies, retargeting pixels, or cross-site marketing pixels in
+        the WSS implementation.
+      </p>
+
+      <h2>6. Your controls</h2>
+      <ul>
+        <li>Use your browser settings to block, delete, or limit cookies and local storage.</li>
+        <li>Use Google's browser add-on to opt out of Google Analytics at <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">tools.google.com/dlpage/gaoptout</a>.</li>
+        <li>Manage cookies directly with third-party providers such as Stripe and Google when you use their checkout, OAuth, calendar, or account services.</li>
+      </ul>
+
+      <h2>7. Contact</h2>
+      <p>
+        Questions about cookies can be sent to <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+

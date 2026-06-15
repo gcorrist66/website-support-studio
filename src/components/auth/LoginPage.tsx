@@ -60,6 +60,11 @@ export function LoginPage() {
           new to website_support_studio?{" "}
           <a href="https://websitesupportstudio.com/pricing">join now</a>
         </p>
+        <nav className="auth-legal-links" aria-label="Legal">
+          <a href="https://websitesupportstudio.com/privacy-policy">privacy policy</a>
+          <a href="https://websitesupportstudio.com/terms-of-service">terms of service</a>
+          <a href="https://websitesupportstudio.com/cookie-policy">cookie policy</a>
+        </nav>
       </div>
     </div>
   );

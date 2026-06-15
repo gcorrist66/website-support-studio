@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { breadcrumbSchema } from "../schema";
+import { ORG, CONTACT, LEGAL_EFFECTIVE_DATE } from "../consts";
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Terms of Service", path: "/terms-of-service" },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description="Terms governing use of the Website Support Studio website, checkout, accounts, customer portal, and managed website support services."
+  path="/terms-of-service"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="prose">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">home</a><span class="sep">/</span><span><Label text="terms_of_service" /></span>
+      </nav>
+      <p class="kicker"><Label text="_legal" /></p>
+      <h1><Label text="terms_of_service" /></h1>
+      <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
+
+      <div class="summary" style="margin:1.5rem 0;">
+        <strong>Summary.</strong> These terms govern use of Website Support Studio's public site, checkout,
+        account access, customer portal, and managed website services. Paid engagements may also be governed
+        by an order form, statement of work, or written agreement.
+      </div>
+
+      <h2>1. Agreement to these terms</h2>
+      <p>
+        By using Website Support Studio (the "Service"), you agree to these Terms. If you use the Service
+        for an organization, you represent that you have authority to bind that organization.
+      </p>
+
+      <h2>2. Who provides the service</h2>
+      <p>
+        The Service is operated by {ORG.legalName}, organized in the {ORG.jurisdiction}, with its principal
+        place of business in {ORG.address.locality}, {ORG.address.region}.
+      </p>
+
+      <h2>3. Website and service usage</h2>
+      <p>
+        You may use the public website to learn about WSS, view pricing, contact us, book a call, or start
+        checkout. You may use the app only through an authorized account. You must not interfere with,
+        reverse engineer, scrape, overload, or misuse the website, app, checkout flow, or support workflow.
+      </p>
+
+      <h2>4. Accounts and customer responsibilities</h2>
+      <p>You are responsible for:</p>
+      <ul>
+        <li>using the same email or authorized account needed to connect checkout, onboarding, and workspace access;</li>
+        <li>keeping account access secure and telling us promptly about suspected unauthorized use;</li>
+        <li>providing accurate company, website, contact, platform, and request information;</li>
+        <li>having the rights to any content, files, screenshots, credentials, domains, or website materials you provide;</li>
+        <li>reviewing and approving work before launch or publication when approval is required;</li>
+        <li>not submitting unlawful, infringing, malicious, confidential, or sensitive information unless it is necessary and you are authorized to share it.</li>
+      </ul>
+
+      <h2>5. Customer portal and request workflow</h2>
+      <p>
+        The portal supports onboarding, website project visibility, website requests, attachments, status
+        updates, and customer/operator workflow records. WSS may triage, draft, prepare, deliver, or close
+        work based on the request details and the applicable plan or agreement. Some features may be staged,
+        feature-gated, or unavailable in a given environment.
+      </p>
+
+      <h2>6. Payments</h2>
+      <p>
+        Payments and subscriptions are processed by Stripe. WSS may receive payment identifiers,
+        subscription status, buyer email, customer identifiers, and related webhook data from Stripe to
+        provision and manage your account. Fees, included work, renewal terms, cancellation terms, and
+        refund terms are governed by the checkout flow and any applicable written agreement.
+      </p>
+
+      <h2>7. Intellectual property</h2>
+      <p>
+        WSS owns the Website Support Studio name, brand, public website, app interface, workflow system,
+        documentation, software, and templates except for content owned by others. You retain ownership of
+        materials you provide. You grant WSS the rights needed to use those materials to perform the
+        Service. For website builds, ownership of final website deliverables is governed by the purchased
+        package or written agreement.
+      </p>
+
+      <h2>8. Third-party services</h2>
+      <p>
+        The Service uses third-party providers including Vercel, Supabase, Stripe, Google services, and
+        email/notification providers. Your use of third-party services, including Stripe Checkout, Google
+        OAuth, Google Calendar, and LinkedIn, may be governed by their own terms and policies.
+      </p>
+
+      <h2>9. Service changes and availability</h2>
+      <p>
+        We may update, change, suspend, or discontinue parts of the website, app, checkout flow, or service
+        features. We try to operate the Service reliably, but we do not guarantee uninterrupted or error-free
+        operation.
+      </p>
+
+      <h2>10. Disclaimers</h2>
+      <p>
+        Except as expressly stated in a signed agreement, the Service and website are provided "as is" and
+        "as available" without warranties of any kind, express or implied, including implied warranties of
+        merchantability, fitness for a particular purpose, title, and non-infringement. Website, SEO,
+        analytics, lead, and business outcomes can vary and are not guaranteed unless expressly agreed in
+        writing.
+      </p>
+
+      <h2>11. Limitation of liability</h2>
+      <p>
+        To the maximum extent permitted by law, {ORG.legalName} and its owners, personnel, contractors, and
+        providers will not be liable for indirect, incidental, special, consequential, exemplary, or punitive
+        damages, or for lost profits, lost revenue, lost data, loss of goodwill, or business interruption.
+        To the maximum extent permitted by law, total liability arising from the Service will not exceed the
+        greater of the amount you paid WSS for the Service in the three months before the event giving rise
+        to the claim or US$100. Some jurisdictions do not allow certain limits, so some limits may not apply.
+      </p>
+
+      <h2>12. Suspension or termination</h2>
+      <p>
+        We may suspend or terminate access if you breach these Terms, fail to pay amounts due, misuse the
+        Service, create security risk, or if suspension is needed to protect WSS, customers, providers, or
+        the public. Terms that by their nature should survive will survive termination.
+      </p>
+
+      <h2>13. Governing law</h2>
+      <p>
+        These Terms are governed by the laws of the {ORG.jurisdiction}, without regard to conflict-of-law
+        rules. Courts located in Florida will have exclusive jurisdiction unless a signed agreement says
+        otherwise.
+      </p>
+
+      <h2>14. Contact</h2>
+      <p>
+        Questions about these Terms can be sent to <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+

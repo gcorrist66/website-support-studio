@@ -27,7 +27,10 @@ export default defineConfig({
         !page.includes("/admin") &&
         !page.includes("/api/") &&
         !page.includes("/login") &&
-        !page.includes("/account"),
+        !page.includes("/account") &&
+        !["/privacy", "/privacy/", "/terms", "/terms/", "/cookies", "/cookies/"].some((path) =>
+          page.endsWith(path),
+        ),
     }),
   ],
 });

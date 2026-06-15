@@ -1,0 +1,137 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { breadcrumbSchema } from "../schema";
+import { ORG, CONTACT, SUBPROCESSORS, LEGAL_EFFECTIVE_DATE } from "../consts";
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Privacy Policy", path: "/privacy-policy" },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="How Website Support Studio collects, uses, protects, and shares information across the public site, checkout, customer accounts, and support portal."
+  path="/privacy-policy"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="prose">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">home</a><span class="sep">/</span><span><Label text="privacy_policy" /></span>
+      </nav>
+      <p class="kicker"><Label text="_legal" /></p>
+      <h1><Label text="privacy_policy" /></h1>
+      <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
+
+      <div class="summary" style="margin:1.5rem 0;">
+        <strong>Summary.</strong> Website Support Studio is operated by {ORG.legalName}. We collect the
+        information needed to respond to inquiries, process checkout, authenticate users, onboard customer
+        websites, receive website requests, store request attachments, and operate the customer/operator
+        portal. We do not sell personal information.
+      </div>
+
+      <h2>1. Who we are</h2>
+      <p>
+        Website Support Studio ("WSS", "we", "us") is operated by {ORG.legalName}, organized in the
+        {ORG.jurisdiction}. Our principal place of business is in {ORG.address.locality}, {ORG.address.region}.
+        For questions, contact <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+      </p>
+
+      <h2>2. Services covered</h2>
+      <p>
+        This policy covers the public marketing website at websitesupportstudio.com, the customer/operator
+        app at app.websitesupportstudio.com, checkout and onboarding flows, and the support workflows used
+        to deliver Website Support Studio services. Third-party sites we link to have their own policies.
+      </p>
+
+      <h2>3. Information we collect</h2>
+      <h3>Information you provide</h3>
+      <ul>
+        <li><strong>Contact information</strong> such as your name, email address, company, message content, and booking details when you email us, book a call, or request information.</li>
+        <li><strong>Checkout information</strong> handled by Stripe, including buyer email, customer/payment identifiers, plan, subscription status, and billing period information returned to WSS through Stripe webhooks.</li>
+        <li><strong>Account information</strong> from Supabase Auth, including authenticated user ID, email address, OAuth provider/session data, and account state.</li>
+        <li><strong>Onboarding information</strong> including company name, website URL, website count, CMS/platform, primary contact name, primary contact email, and support email.</li>
+        <li><strong>Website request information</strong> including site, title, description, priority, request status, ticket number, submitter email, messages, approvals, audit events, and related workflow records.</li>
+        <li><strong>Attachments</strong> you upload to a request, including file name, file type, file size, storage path, and the file contents. Uploaded attachments may be retrievable through Supabase Storage public URLs used by the portal.</li>
+      </ul>
+      <h3>Information collected automatically</h3>
+      <ul>
+        <li><strong>Analytics information.</strong> The public marketing site currently uses Google Analytics 4 when configured. Analytics may collect pages viewed, referral source, approximate location derived from IP address, device/browser information, and interaction events. GA4 is configured with IP anonymization.</li>
+        <li><strong>Operational logs.</strong> Vercel, Supabase, Stripe, and other service providers may process IP address, request metadata, timestamps, error logs, and security events needed to host, secure, debug, and operate the service.</li>
+      </ul>
+
+      <h2>4. How we use information</h2>
+      <ul>
+        <li>To respond to inquiries, book calls, scope work, and provide support.</li>
+        <li>To process checkout, maintain subscription/payment status, and provision customer workspaces.</li>
+        <li>To authenticate users and route customers/operators to the correct workspace.</li>
+        <li>To complete onboarding, create site records, receive website requests, and track project status.</li>
+        <li>To store request attachments and maintain request history, approvals, and audit trails.</li>
+        <li>To measure and improve the public website and service experience.</li>
+        <li>To protect the service, prevent abuse, comply with legal obligations, and enforce agreements.</li>
+      </ul>
+
+      <h2>5. Cookies and analytics</h2>
+      <p>
+        The public marketing site currently uses Google Analytics 4 when configured. The app uses Supabase
+        Auth browser session storage when real login is enabled. We do not use advertising, retargeting, or
+        cross-site marketing pixels in the current implementation. See the <a href="/cookie-policy">Cookie Policy</a>
+        for more detail.
+      </p>
+
+      <h2>6. Communications</h2>
+      <p>
+        We may use your email address to respond to inquiries, send checkout or account-related messages,
+        communicate about requests, and provide service notices. Marketing emails, if introduced, will
+        include an appropriate way to opt out.
+      </p>
+
+      <h2>7. Third-party providers</h2>
+      <p>
+        We use service providers to operate WSS. They process information only for the services they provide
+        to us. Current providers reflected in the implementation include:
+      </p>
+      <ul>
+        {SUBPROCESSORS.map((s) => <li><strong>{s.name}</strong> — {s.role} ({s.region}).</li>)}
+        <li><strong>Google Calendar</strong> — appointment booking links.</li>
+        <li><strong>LinkedIn</strong> — outbound company profile link.</li>
+      </ul>
+
+      <h2>8. Data retention</h2>
+      <p>
+        We retain personal information for as long as needed to provide the service, maintain customer and
+        audit records, comply with legal/tax obligations, resolve disputes, and enforce agreements. Request
+        history, approvals, and audit records may be retained as part of the service accountability model.
+        When information is no longer needed, we delete or anonymize it where practical.
+      </p>
+
+      <h2>9. Security</h2>
+      <p>
+        We use technical and organizational safeguards such as authenticated access, role-aware routing,
+        tenant-scoped Supabase policies/RPCs, service-role separation for server functions, request audit
+        records, and Vercel security headers. No internet service can be guaranteed completely secure.
+      </p>
+
+      <h2>10. Your choices and rights</h2>
+      <p>
+        Depending on where you live, you may have rights to access, correct, delete, restrict, or receive a
+        copy of your personal information, or to object to certain processing. We do not sell personal
+        information. To make a request, email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. We may
+        need to verify your identity before responding.
+      </p>
+
+      <h2>11. Children</h2>
+      <p>Website Support Studio is a business service and is not directed to children under 16.</p>
+
+      <h2>12. Changes</h2>
+      <p>
+        We may update this policy as the service changes. The effective date above will be updated when the
+        policy changes materially.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

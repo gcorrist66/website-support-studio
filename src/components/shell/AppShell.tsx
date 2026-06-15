@@ -1098,6 +1098,12 @@ export function AppShell() {
         </main>
       </div>
 
+      <footer className="wss-legal-footer" aria-label="Legal">
+        <a href="https://websitesupportstudio.com/privacy-policy">Privacy Policy</a>
+        <a href="https://websitesupportstudio.com/terms-of-service">Terms of Service</a>
+        <a href="https://websitesupportstudio.com/cookie-policy">Cookie Policy</a>
+      </footer>
+
       <button type="button" className="wss-feedback-launcher" onClick={() => setFeedbackOpen(true)}>
         feedback
       </button>

@@ -139,9 +139,9 @@ export const NAV = [
 ] as const;
 
 export const FOOTER_LEGAL = [
-  { href: "/privacy", label: "privacy_policy" },
-  { href: "/terms", label: "terms_of_service" },
-  { href: "/cookies", label: "cookie_policy" },
+  { href: "/privacy-policy", label: "privacy_policy" },
+  { href: "/terms-of-service", label: "terms_of_service" },
+  { href: "/cookie-policy", label: "cookie_policy" },
 ] as const;
 
 // ---- Default social image ---------------------------------------------------
@@ -150,4 +150,4 @@ export const FOOTER_LEGAL = [
 export const DEFAULT_OG_IMAGE = "/og/og-default.png";
 
 // ---- Legal effective date ---------------------------------------------------
-export const LEGAL_EFFECTIVE_DATE = "June 8, 2026";
+export const LEGAL_EFFECTIVE_DATE = "June 15, 2026";

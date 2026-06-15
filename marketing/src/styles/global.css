@@ -483,6 +483,14 @@ main {
 .hero {
   padding: 4.5rem 0 3rem;
 }
+.hero-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+.hero-copy {
+  min-width: 0;
+}
 .hero h1 {
   max-width: 18ch;
 }
@@ -494,6 +502,65 @@ main {
   gap: 0.75rem;
   margin-top: 1.75rem;
   flex-wrap: wrap;
+}
+.hero-sample-card {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(185, 246, 221, 0.34), rgba(255, 255, 255, 0.92) 42%),
+    var(--surface-elevated);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.09);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+}
+.hero-sample-card h2 {
+  margin-top: 0.65rem;
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  letter-spacing: -0.04em;
+}
+.hero-sample-card p {
+  color: var(--text);
+  margin: 0.85rem 0 0;
+}
+.sample-request-form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+}
+.sample-request-form label {
+  display: grid;
+  gap: 0.35rem;
+}
+.sample-request-form span {
+  color: var(--text-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.sample-request-form input,
+.sample-request-form textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-strong);
+  font: inherit;
+  padding: 0.78rem 0.9rem;
+}
+.sample-request-form textarea {
+  resize: vertical;
+}
+.sample-request-form input::placeholder,
+.sample-request-form textarea::placeholder {
+  color: var(--text-subtle);
+}
+.sample-request-form .btn {
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 900px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
+  }
 }
 
 /* Definition / feature lists */
