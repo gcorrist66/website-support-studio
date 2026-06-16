@@ -5,45 +5,42 @@ import { serviceSchema, breadcrumbSchema } from "../schema";
 import { JOIN_PATH } from "../consts";
 
 const lifecycle = [
-  { step: "received", desc: "A request enters the desk through a single intake. It is logged, attributed to a site, and given an owner." },
-  { step: "triaged", desc: "The request is classified, scope is confirmed, and anything blocked, urgent, or sensitive is flagged." },
-  { step: "response_drafted", desc: "The change or reply is prepared — the edit, the fix, the verified configuration — ready for review." },
-  { step: "awaiting_approval", desc: "The drafted work is held at a mandatory approval gate. Nothing customer-facing proceeds without sign-off." },
-  { step: "approved", desc: "An authorized approver signs off. The platform records who approved it and when." },
-  { step: "delivered", desc: "The approved change is executed and the requester receives confirmation." },
-  { step: "closed", desc: "The request is closed with a closure note. The full record — source to sign-off — is retained." },
+  { step: "You send a request", desc: "Tell us exactly what needs help on your site." },
+  { step: "We confirm it", desc: "We review, then confirm timing and scope in plain language." },
+  { step: "We do the work", desc: "Our team makes the change and checks it works." },
+  { step: "You approve it", desc: "Nothing goes live without a person signing off." },
+  { step: "You get confirmation", desc: "The request closes with a clear note on what changed." },
 ];
 
-// What a customer can actually request — the concrete service offering.
+const sampleRoutes = [
+  { name: "Authentic Air Solutions", path: "/authentic-air-solutions/" },
+  { name: "Consistent Heating and Cooling", path: "/consistent-ac/" },
+  { name: "A Bartlett Roofing", path: "/a-bartlett/" },
+  { name: "Kam Roofing", path: "/kam-roofing/" },
+  { name: "Ability Air", path: "/ability-air/" },
+];
+
+// What a customer can actually request — simplified and non-technical.
 const offerings = [
-  { key: "content_updates", desc: "Copy, page, and content edits across your site." },
-  { key: "landing_page_changes", desc: "Build-outs and edits to campaign and landing pages." },
-  { key: "form_fixes", desc: "Repair broken forms, fields, validation, and submissions." },
-  { key: "tracking_repairs", desc: "Fix broken tags, events, and conversion tracking." },
-  { key: "schema_markup", desc: "Add or correct structured data so search engines read your pages." },
-  { key: "seo_updates", desc: "On-page SEO: metadata, headings, and internal links." },
-  { key: "cms_changes", desc: "Edits and configuration inside your CMS." },
-  { key: "webflow_updates", desc: "Webflow content, pages, and CMS collections." },
-  { key: "wordpress_updates", desc: "WordPress content, pages, and plugin configuration." },
-  { key: "asset_replacements", desc: "Swap images, logos, documents, and downloads." },
-  { key: "reporting_requests", desc: "Operational reports on requests, activity, and turnaround." },
-  { key: "conversion_reviews", desc: "Reviews and recommendations to improve conversion." },
-  { key: "configuration_help", desc: "Settings, redirects, and integration configuration." },
+  { key: "content_updates", desc: "Update text, pages, and buttons on your website." },
+  { key: "form_repairs", desc: "Fix broken forms and improve lead capture." },
+  { key: "site_bug_fixes", desc: "Patch broken links, broken embeds, and layout issues." },
+  { key: "campaign_pages", desc: "Add quick campaign pages, events, and offers." },
+  { key: "support_questions", desc: "Ask for routine website help without switching tools." },
 ];
 
-// What the customer actually receives back — outcomes, not just process.
 const deliverables = [
-  { title: "the change, made live", desc: "The requested edit, fix, or configuration is completed and published to your site — done for you, not just advised." },
-  { title: "a confirmation", desc: "You're notified when the work ships, with a closure note describing exactly what changed." },
-  { title: "a reviewed, recorded approval", desc: "Every change carries a mandatory human sign-off and a per-request audit trail: who approved what, and when." },
-  { title: "a single point of ownership", desc: "One desk owns the request end to end — no chasing, no hand-offs lost between inboxes." },
+  { title: "the change, made live", desc: "Your requested edit is completed and published." },
+  { title: "a confirmation", desc: "You receive a clear done note and what was changed." },
+  { title: "a reviewed, recorded approval", desc: "Every customer-facing change gets a human sign-off." },
+  { title: "single-point ownership", desc: "One desk owns each request end to end." },
 ];
 
 const schemas = [
   serviceSchema({
     name: "Website Support Studio — Managed Website Operations & Support",
     description:
-      "A managed support desk for revenue-critical websites: single-desk intake, deterministic response workflows, human-approved execution, and a complete audit trail per request.",
+      "A managed website support desk for small businesses: clear request handling, human review, and completed website updates you can trust.",
     path: "/services",
   }),
   breadcrumbSchema([
@@ -55,34 +52,32 @@ const schemas = [
 
 <BaseLayout
   title="Services"
-  description="What you receive from Website Support Studio's managed operations desk — completed changes, confirmation, and a recorded approval — plus what you can request (content, forms, tracking, SEO, CMS, Webflow, WordPress) and the workflow every request follows."
+  description="Professional website support and website help for small businesses. Request a change and get a clear result: updates, approvals, and a finished outcome."
   path="/services"
   schemas={schemas}
 >
   <section class="section">
     <div class="container">
       <p class="kicker"><Label text="_services" /></p>
-      <h1>a managed operations desk for revenue-critical websites.</h1>
+      <h1>professional website support and website help for small businesses.</h1>
       <p class="lede" style="margin-top:1rem;">
-        Website Support Studio is a service, not software you are left to run. An operator-led support
-        process, managed by Corriston Consulting, runs inside a defined workflow so every request is
-        visible, owned, reviewed, and recorded.
+        One place to request help for your site. You send what needs fixing, we handle it, and you get a clear
+        done notice when it is complete.
       </p>
       <div class="hero-actions">
         <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
-        <a class="btn btn-ghost" href="/pricing">How Engagements Are Priced</a>
+        <a class="btn btn-ghost" href="/pricing">See pricing</a>
       </div>
     </div>
   </section>
 
-  <!-- What you receive — the outcome the customer is actually buying -->
+  <!-- What you get — outcomes. -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container">
       <p class="kicker"><Label text="_what_you_receive" /></p>
-      <h2>Every request comes back as a finished outcome.</h2>
+      <h2>What you actually get.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        You're not buying advice or a tool to operate yourself — you're buying the completed work, delivered
-        and accounted for.
+        You are buying completed website changes, not a software product.
       </p>
       <div class="grid grid-2" style="margin-top:2rem;">
         {
@@ -97,40 +92,29 @@ const schemas = [
     </div>
   </section>
 
-  <!-- Service offering — what a customer can actually request -->
+  <!-- Sample websites / preview examples -->
   <section class="section">
     <div class="container">
-      <p class="kicker"><Label text="_what_you_can_request" /></p>
-      <h2>The kinds of work you can send to the desk.</h2>
+      <p class="kicker">sample websites</p>
+      <h2>Sample websites to review (example pages).</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Submit a request from your account and it enters the workflow below. These are the everyday changes
-        the desk handles.
+        Browse existing examples while you decide what format you need.
       </p>
-      <div class="grid grid-3" style="margin-top:2rem;">
-        {
-          offerings.map((o) => (
-            <div class="card">
-              <p class="marker"><Label text={`_${o.key}`} /></p>
-              <p style="margin:0.5rem 0 0; color:var(--text-muted); font-size:0.9rem;">{o.desc}</p>
-            </div>
-          ))
-        }
-      </div>
-      <p style="margin-top:1.5rem; color:var(--text-muted); max-width:64ch;">
-        Larger initiatives — full website redesigns, custom application development, and advanced platform
-        integrations — sit outside the standing desk and are scoped as separate engagements.
-      </p>
+      <ul style="margin-top:1rem; padding-left:1.1rem; max-width:68ch;">
+        {sampleRoutes.map((sample) => (
+          <li style="margin-bottom:0.5rem;"><a href={sample.path} style="font-weight:600;">{sample.name}</a></li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  <!-- Response workflow (kept) -->
+  <!-- How it works -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container">
-      <p class="kicker"><Label text="_response_workflow" /></p>
-      <h2>Every request follows the same defined lifecycle.</h2>
+      <p class="kicker">how it works</p>
+      <h2>How we handle your request.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        The workflow is deterministic and identical whether the request is a one-line copy change or a
-        multi-step operational fix — which is what makes it predictable and auditable.
+        You can send any small website task and we move it through a simple path.
       </p>
       <ol class="deflist" style="margin-top:2rem; counter-reset:step; list-style:none; padding:0;">
         {
@@ -142,6 +126,21 @@ const schemas = [
           ))
         }
       </ol>
+
+      <div style="margin-top:2rem;">
+        <p class="kicker"><Label text="_what_you_can_request" /></p>
+        <h3>Types of support we handle.</h3>
+        <div class="grid grid-3" style="margin-top:1rem;">
+          {
+            offerings.map((o) => (
+              <div class="card">
+                <p class="marker"><Label text={`_${o.key}`} /></p>
+                <p style="margin:0.5rem 0 0; color:var(--text-muted); font-size:0.9rem;">{o.desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
     </div>
   </section>
 
@@ -151,11 +150,26 @@ const schemas = [
       <p class="kicker"><Label text="_questions" /></p>
       <h2>Questions, answered.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Platforms, code changes, SEO, tracking, approvals, and more — all in one place.
+        Platforms, approvals, timing, and pricing details are all in one place.
       </p>
       <p style="margin-top:1.25rem;">
         <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
       </p>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container" style="max-width:820px;">
+      <p class="kicker">start now</p>
+      <h2>Ready to get website support you can trust?</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        Start with a small request and see how quickly your site gets improved.
+      </p>
+      <div class="hero-actions" style="margin-top:1.3rem;">
+        <a class="btn btn-green btn-cta" href={JOIN_PATH}><Label text="_join_now" /></a>
+        <a class="btn btn-ghost" href="/contact">Talk to us first</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
