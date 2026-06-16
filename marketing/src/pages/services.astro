@@ -12,14 +12,6 @@ const lifecycle = [
   { step: "You get confirmation", desc: "The request closes with a clear note on what changed." },
 ];
 
-const sampleRoutes = [
-  { name: "Authentic Air Solutions", path: "/authentic-air-solutions/" },
-  { name: "Consistent Heating and Cooling", path: "/consistent-ac/" },
-  { name: "A Bartlett Roofing", path: "/a-bartlett/" },
-  { name: "Kam Roofing", path: "/kam-roofing/" },
-  { name: "Ability Air", path: "/ability-air/" },
-];
-
 // What a customer can actually request — simplified and non-technical.
 const offerings = [
   { key: "content_updates", desc: "Update text, pages, and buttons on your website." },
@@ -95,22 +87,6 @@ const schemas = [
           ))
         }
       </div>
-    </div>
-  </section>
-
-  <!-- Sample websites / preview examples -->
-  <section class="section">
-    <div class="container">
-      <p class="kicker">sample websites</p>
-      <h2>Sample websites to review (example pages).</h2>
-      <p class="lede" style="margin-top:0.75rem;">
-        Browse existing examples while you decide what format you need.
-      </p>
-      <ul style="margin-top:1rem; padding-left:1.1rem; max-width:68ch;">
-        {sampleRoutes.map((sample) => (
-          <li style="margin-bottom:0.5rem;"><a href={sample.path} style="font-weight:600;">{sample.name}</a></li>
-        ))}
-      </ul>
     </div>
   </section>
 
