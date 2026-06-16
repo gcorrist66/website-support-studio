@@ -1,15 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
-  <title>MH Electrical & Solar</title>
+  <title>website_support_studio</title>
   <defs>
     <linearGradient id="hero" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0b1020" />
+      <stop offset="0%" stop-color="#0b1220" />
       <stop offset="100%" stop-color="#1a2848" />
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#hero)" />
-  <g fill="#f6f8ff">
-    <text x="80" y="240" font-size="72" font-family="Georgia, serif" font-weight="700">MH Electrical &amp; Solar</text>
-    <text x="80" y="320" font-size="38" font-family="Arial, sans-serif">Denver electrician services.</text>
-    <text x="80" y="380" font-size="28" font-family="Arial, sans-serif" fill="#b8bfd9">Verified listing: 5.0 · 85 Google reviews</text>
+  <g transform="translate(180 214)">
+    <rect width="84" height="84" rx="10" fill="#F4B142" />
+    <rect x="94" width="84" height="84" rx="10" fill="#35DCEA" />
+    <rect y="94" width="84" height="84" rx="10" fill="#A83489" />
+    <rect x="94" y="94" width="84" height="84" rx="10" fill="#0443FB" />
+    <text x="216" y="62"
+          font-family='"JetBrains Mono", "SF Mono", Menlo, Consolas, monospace'
+          font-size="56"
+          font-weight="800"
+          letter-spacing="-2"
+          style="font-feature-settings:'kern' 1;"><tspan fill="#F1F5F9">website</tspan><tspan fill="#5C8BFF">_</tspan><tspan fill="#F1F5F9">support</tspan><tspan fill="#5C8BFF">_</tspan><tspan fill="#F1F5F9">studio</tspan></text>
   </g>
 </svg>

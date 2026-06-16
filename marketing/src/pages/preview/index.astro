@@ -1,0 +1,27 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { previewProspects } from "../../data/prospectPreviews";
+---
+<SiteLayout
+  title="Preview list"
+  description="Preview index for outbound prospect build packets."
+  path="/preview"
+>
+  <section>
+    <p class="eyebrow">Prospect previews</p>
+    <h1>Outreach-ready prospect previews</h1>
+    <p class="lead">Campaign A is complete. Select a remaining prospect to review its updated preview.</p>
+  </section>
+  <section>
+    <div class="card-grid">
+      {previewProspects.map((prospect) => (
+        <article class="card">
+          <h2>{prospect.shortName}</h2>
+          <p class="service-meta">{prospect.designSystem}</p>
+          <p>{prospect.tagLine}</p>
+          <a class="button" href={`/preview/${prospect.slug}/`}>Open preview</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</SiteLayout>

@@ -1,0 +1,241 @@
+---
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import { getProspectConfig } from "../../../data/prospectPreviews";
+
+export function getStaticPaths() {
+  return [
+    { params: { prospect: "authentic-air-solutions" } },
+    { params: { prospect: "consistent-ac" } }
+  ];
+}
+
+const { prospect } = Astro.params;
+const prospectConfig = getProspectConfig(prospect);
+
+if (!prospectConfig) {
+  throw new Error(`Unknown prospect slug: ${prospect}`);
+}
+
+const basePath = `/preview/${prospectConfig.slug}`;
+const isLeadGeneration = prospectConfig.designSystem === "lead-generation";
+const isModernLocal = prospectConfig.designSystem === "modern-local";
+const phoneHref = `tel:${prospectConfig.phone.replace(/\\D/g, "")}`;
+const conversionSections = prospectConfig.leadConversionBlocks ?? [];
+const conversionChecklist = prospectConfig.conversionChecklist ?? [];
+const proofBar = prospectConfig.proofBar ?? [];
+const reviewWall = prospectConfig.reviewWall ?? [];
+const ownerStory = prospectConfig.ownerStory;
+const trustHierarchy = prospectConfig.localTrustHierarchy ?? [];
+const beforeAfterGallery = prospectConfig.beforeAfterGallery ?? [];
+const closingSection = prospectConfig.closingSection;
+
+const resolveProspectHref = (href: string) => {
+  if (href.startsWith("http") || href.startsWith("#")) {
+    return href;
+  }
+
+  if (href.startsWith(basePath)) {
+    return href;
+  }
+
+  return href.startsWith("/") ? `${basePath}${href}` : `${basePath}/${href}`;
+};
+---
+<SiteLayout
+  title={prospectConfig.siteName}
+  description={prospectConfig.description}
+  path={`${basePath}/`}
+  type="home"
+  basePath={basePath}
+  designSystem={prospectConfig.designSystem}
+  siteConfigOverride={prospectConfig}
+>
+  <section class="hero hero-compressed" class:list={isLeadGeneration ? "hero-lead" : "hero-local"}>
+    <p class="hero-urgency">{prospectConfig.emergencyHeadline ?? "Fast local service response"}</p>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">{prospectConfig.tagLine}</p>
+        <h1>{prospectConfig.homepageLead}</h1>
+        <p class="lead">{prospectConfig.homepageLeadCopy}</p>
+        <p class="hero-subcopy">{prospectConfig.emergencyCopy ?? prospectConfig.sectionCopy.mobileCopy}</p>
+        <p class="big-phone-row">
+          <a class="button button--phone" href={phoneHref}>Call {prospectConfig.phone}</a>
+        </p>
+        <div class="cta-row">
+          {prospectConfig.callFirstActions?.map((action) => (
+            <a
+              class:list={["button", action.variant === "accent" ? "button--green" : action.variant === "primary" ? "button--primary" : "button"]}
+              href={resolveProspectHref(action.href)}
+            >
+              {action.label}
+            </a>
+          ))}
+          <a class="button" href={`${basePath}/services`}>View Services</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        {isLeadGeneration ? (
+          <>
+            <p class="hero-card-kicker">Emergency intake</p>
+            <h2 id="service-request">Confirm your next step</h2>
+            <ul class="compact-list">
+              <li>No diagnosis required before initial callback.</li>
+              <li>Service type, urgency level, and property access in one message.</li>
+              <li>Dispatch-ready handoff to the lead coordinator.</li>
+            </ul>
+          </>
+        ) : (
+          <>
+            <p class="hero-card-kicker">Owner-backed confidence stack</p>
+            <h2>Proof-first local service</h2>
+            <ul class="compact-list">
+              <li>Directly visible service urgency and trust signals.</li>
+              <li>Simple, local-first service capture path.</li>
+              <li>Clear proof checkpoints before each workflow step.</li>
+            </ul>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section id="conversion-path">
+    <h2>{isLeadGeneration ? "Conversion-first flow" : "Local trust flow"}</h2>
+    <div class="card-grid">
+      {isLeadGeneration
+        ? (
+          <>
+            {conversionSections.map((block) => (
+              <article class="card">
+                <h3>Next step</h3>
+                <p>{block}</p>
+              </article>
+            ))}
+          </>
+        )
+        : (
+          <>
+            <article class="card">
+              <h3>{prospectConfig.sectionCopy.conversionTitle}</h3>
+              <p>{prospectConfig.sectionCopy.conversionCopy}</p>
+            </article>
+            <article class="card">
+              <h3>{prospectConfig.sectionCopy.mobileTitle}</h3>
+              <p>{prospectConfig.sectionCopy.mobileCopy}</p>
+            </article>
+            <article class="card">
+              <h3>{prospectConfig.sectionCopy.wssSectionTitle}</h3>
+              <p>{prospectConfig.sectionCopy.wssSectionCopy}</p>
+            </article>
+          </>
+        )
+      }
+    </div>
+  </section>
+
+  {isLeadGeneration && conversionChecklist.length > 0 && (
+    <section class="intent-strip">
+      <h2>Call and request checklist</h2>
+      <ul class="bullet-list">
+        {conversionChecklist.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+      <a class="button" href={`${basePath}/contact`}>Open request form</a>
+    </section>
+  )}
+
+  {isModernLocal && ownerStory && (
+    <section>
+      <p class="eyebrow">Owner story</p>
+      <article class="owner-story card">
+        <p class="owner-quote">“{ownerStory.quote}”</p>
+        <p class="owner-meta">{ownerStory.name}, {ownerStory.title}</p>
+        <p class="owner-result">Result: {ownerStory.outcome}</p>
+      </article>
+    </section>
+  )}
+
+  {isModernLocal && proofBar.length > 0 && (
+    <section class="proof-bar-section">
+      <h2>Proof bar</h2>
+      <div class="proof-bar">
+        {proofBar.map((item) => (
+          <span class="proof-chip">{item}</span>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section>
+    <h2>{isLeadGeneration ? "Featured service outcomes" : "Service catalog"}</h2>
+    <div class="card-grid">
+      {prospectConfig.serviceCatalog.map((service) => (
+        <article class="card">
+          <h3>{service.title}</h3>
+          <p class="service-meta">{service.duration} · {service.price}</p>
+          <p>{service.summary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {isModernLocal && trustHierarchy.length > 0 && (
+    <section>
+      <h2>Local trust hierarchy</h2>
+      <div class="trust-grid">
+        {trustHierarchy.map((item, index) => (
+          <article class="trust-tier card">
+            <p class="trust-level">Level {index + 1}</p>
+            <h3>{item}</h3>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {isModernLocal && reviewWall.length > 0 && (
+    <section class="review-wall">
+      <h2>Review wall</h2>
+      <div class="card-grid">
+        {reviewWall.map((review) => (
+          <article class="card">
+            <p class="eyebrow">{review.context}</p>
+            <p>“{review.quote}”</p>
+            <p class="review-meta">{review.author} · {review.rating}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {isModernLocal && beforeAfterGallery.length > 0 && (
+    <section>
+      <h2>Before / after gallery emphasis</h2>
+      <div class="before-after-grid">
+        {beforeAfterGallery.map((example) => (
+          <article class="card">
+            <h3>{example.title}</h3>
+            <p><strong>Before:</strong> {example.before}</p>
+            <p><strong>After:</strong> {example.after}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class:list={["closing-cta", isLeadGeneration ? "closing-cta--lead" : "closing-cta--modern"]}>
+    <h2>{closingSection.title}</h2>
+    <p class="lead">{closingSection.copy}</p>
+    <div class="cta-row">
+      <a class="button" href={resolveProspectHref(closingSection.primary.href)}>{closingSection.primary.label}</a>
+      {closingSection.secondary ? (
+        <a class="button button--green" href={resolveProspectHref(closingSection.secondary.href)}>
+          {closingSection.secondary.label}
+        </a>
+      ) : null}
+    </div>
+  </section>
+
+</SiteLayout>

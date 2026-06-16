@@ -1,0 +1,68 @@
+---
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import { getProspectConfig } from "../../../data/prospectPreviews";
+
+export function getStaticPaths() {
+  return [
+    { params: { prospect: "authentic-air-solutions" } },
+    { params: { prospect: "consistent-ac" } }
+  ];
+}
+
+const { prospect } = Astro.params;
+const prospectConfig = getProspectConfig(prospect);
+
+if (!prospectConfig) {
+  throw new Error(`Unknown prospect slug: ${prospect}`);
+}
+
+const basePath = `/preview/${prospectConfig.slug}`;
+const isLeadGeneration = prospectConfig.designSystem === "lead-generation";
+const closingSection = prospectConfig.closingSection;
+
+const resolveProspectHref = (href: string) => {
+  if (href.startsWith("http") || href.startsWith("#")) {
+    return href;
+  }
+  if (href.startsWith(basePath)) {
+    return href;
+  }
+  return href.startsWith("/") ? `${basePath}${href}` : `${basePath}/${href}`;
+};
+---
+<SiteLayout
+  title={prospectConfig.aboutHeadline}
+  description={prospectConfig.description}
+  path={`${basePath}/about`}
+  type="about"
+  basePath={basePath}
+  designSystem={prospectConfig.designSystem}
+  siteConfigOverride={prospectConfig}
+>
+  <section>
+    <p class="eyebrow">About</p>
+    <h1>{prospectConfig.aboutHeadline}</h1>
+    <p class="lead">{prospectConfig.aboutSummary}</p>
+  </section>
+  <section>
+    <div class="card-grid">
+      {prospectConfig.aboutCards.map((cardCopy) => (
+        <article class="card">
+          <p>{cardCopy}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class:list={["closing-cta", isLeadGeneration ? "closing-cta--lead" : "closing-cta--modern"]}>
+    <h2>{closingSection.title}</h2>
+    <p class="lead">{closingSection.copy}</p>
+    <div class="cta-row">
+      <a class="button" href={resolveProspectHref(closingSection.primary.href)}>{closingSection.primary.label}</a>
+      {closingSection.secondary ? (
+        <a class="button button--green" href={resolveProspectHref(closingSection.secondary.href)}>
+          {closingSection.secondary.label}
+        </a>
+      ) : null}
+    </div>
+  </section>
+</SiteLayout>

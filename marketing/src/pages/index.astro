@@ -9,15 +9,31 @@ import { featuredServices, siteConfig, galleryHighlights } from "../data/site";
   type="home"
 >
   <section class="hero">
-    <p class="eyebrow">Electrical Services</p>
-    <h1>Reliable electrical support from Denver, CO.</h1>
-    <p class="lead">
-      MH Electrical and Solar helps you get started with clear next steps, transparent request handling, and realistic service planning.
-      Google Business profile rating: {siteConfig.ratingValue} from {siteConfig.reviewCount} customer reviews.
-    </p>
-    <div class="cta-row">
-      <a class="button" href="/services">View Services</a>
-      <a class="button" href="/contact">Request Appointment</a>
+    <div class="hero-split">
+      <div class="hero-copy">
+        <p class="eyebrow">Electrical Services</p>
+        <h1>Reliable electrical support from Denver, CO.</h1>
+        <p class="lead">
+          MH Electrical and Solar helps you get started with clear next steps, transparent request handling, and realistic service planning.
+          Google Business profile rating: {siteConfig.ratingValue} from {siteConfig.reviewCount} customer reviews.
+        </p>
+        <div class="cta-row">
+          <a class="button" href="/services">View Services</a>
+          <a class="button" href="/contact">Request Appointment</a>
+        </div>
+      </div>
+
+      <form class="hero-card" id="wss-reimagine-form" novalidate>
+        <p class="hero-card-kicker">custom sample request</p>
+        <h2>Don't like our samples? Let us build you a sample site.</h2>
+        <p>Tell us what is working, what is not, and what your current website should finally be able to do.</p>
+        <label>Your website URL<input name="website" type="url" required autocomplete="url" placeholder="https://example.com" /></label>
+        <label>What do you like about your current site?<textarea name="what-you-like" required></textarea></label>
+        <label>What don't you like about your current site?<textarea name="what-you-dislike" required></textarea></label>
+        <label>What do you wish your website had?<textarea name="website-wishlist" required></textarea></label>
+        <button class="button button--green" type="submit">Build My Sample Site</button>
+        <p id="wss-reimagine-status" role="status" aria-live="polite" class="hero-form-status"></p>
+      </form>
     </div>
   </section>
 
@@ -71,4 +87,37 @@ import { featuredServices, siteConfig, galleryHighlights } from "../data/site";
       {siteConfig.googleBusinessProfileSearchUrl && <a class="button" href={siteConfig.googleBusinessProfileSearchUrl} rel="nofollow">Google Business Profile</a>}
     </div>
   </section>
+
+  <script is:inline>
+    (() => {
+      const form = document.getElementById("wss-reimagine-form");
+      const status = document.getElementById("wss-reimagine-status");
+      if (!(form instanceof HTMLFormElement) || !(status instanceof HTMLElement)) return;
+
+      // TODO: connect this submit hook to an email + CRM route later
+      // Example endpoint: /api/wss-reimagine-lead
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        status.textContent = "";
+
+        if (!form.checkValidity()) {
+          status.textContent = "Please complete all required fields before submitting.";
+          return;
+        }
+
+        const data = {
+          website: (form.querySelector('input[name="website"]').value || "").trim(),
+          whatYouLike: (form.querySelector('textarea[name="what-you-like"]').value || "").trim(),
+          whatYouDislike: (form.querySelector('textarea[name="what-you-dislike"]').value || "").trim(),
+          websiteWishlist: (form.querySelector('textarea[name="website-wishlist"]').value || "").trim()
+        };
+
+        // Simulated success response while backend is offline.
+        // Replace the block below with the actual submission call in the TODO hook above.
+        console.log("WSS reimagine form payload (TODO wire-up):", data);
+        status.textContent = "Thanks. Your sample-site brief is queued for review.";
+        form.reset();
+      });
+    })();
+  </script>
 </SiteLayout>

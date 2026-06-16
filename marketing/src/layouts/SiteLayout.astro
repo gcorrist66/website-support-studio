@@ -4,7 +4,8 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import JsonLd from "../components/JsonLd.astro";
-import { siteConfig } from "../data/site";
+import { siteConfig, type SiteConfig } from "../data/site";
+import type { DesignSystem } from "../data/prospectPreviews";
 
 type JsonLdType = "home" | "services" | "gallery" | "about" | "contact" | "default";
 
@@ -13,21 +14,33 @@ interface Props {
   description: string;
   path: string;
   type?: JsonLdType;
+  basePath?: string;
+  designSystem?: DesignSystem;
+  siteConfigOverride?: Partial<SiteConfig>;
 }
 
-const { title, description, path, type = "default" } = Astro.props as Props;
-const docTitle = `${title} · ${siteConfig.siteName}`;
+const {
+  title,
+  description,
+  path,
+  type = "default",
+  basePath = "/",
+  designSystem,
+  siteConfigOverride
+} = Astro.props as Props;
+const resolvedSiteConfig: SiteConfig = { ...siteConfig, ...(siteConfigOverride ?? {}) };
+const docTitle = `${title} · ${resolvedSiteConfig.siteName}`;
 ---
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={docTitle} description={description} path={path} />
-    <JsonLd title={title} description={description} path={path} type={type} />
+    <BaseHead title={docTitle} description={description} path={path} siteConfigOverride={resolvedSiteConfig} />
+    <JsonLd title={title} description={description} path={path} type={type} siteConfigOverride={resolvedSiteConfig} />
   </head>
-  <body>
-    <Header />
+  <body class:list={designSystem ? ["preview-theme", designSystem] : []}>
+    <Header basePath={basePath} siteConfig={resolvedSiteConfig} />
     <main id="main-content" tabindex="-1"><slot /></main>
-    <Footer />
+    <Footer siteConfig={resolvedSiteConfig} basePath={basePath} />
     <script is:inline>
       (function() {
         const firstInput = document.querySelector("main");

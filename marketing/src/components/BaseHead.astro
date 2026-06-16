@@ -1,15 +1,24 @@
 ---
 import { siteConfig } from "../data/site";
+import type { SiteConfig } from "../data/site";
 
 interface Props {
   title: string;
   description: string;
   path: string;
+  siteConfigOverride?: Partial<SiteConfig>;
   image?: string;
 }
 
-const { title, description, path, image } = Astro.props as Props;
-const siteHost = new URL(siteConfig.siteUrl);
+const {
+  title,
+  description,
+  path,
+  image,
+  siteConfigOverride
+} = Astro.props as Props;
+const resolvedSiteConfig: SiteConfig = { ...siteConfig, ...(siteConfigOverride ?? {}) };
+const siteHost = new URL(resolvedSiteConfig.siteUrl);
 const canonical = new URL(path, siteHost.href).href;
 const robots = "noindex, nofollow, noarchive";
 const imageUrl = new URL(image ?? "/og-image.svg", siteHost.href).href;
@@ -21,13 +30,13 @@ const imageUrl = new URL(image ?? "/og-image.svg", siteHost.href).href;
 <meta name="robots" content={robots} />
 <meta name="googlebot" content="noindex, nofollow, noarchive" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content={siteConfig.siteName} />
+<meta property="og:site_name" content={resolvedSiteConfig.siteName} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={imageUrl} />
-<meta property="og:image:alt" content={siteConfig.tagLine} />
+<meta property="og:image:alt" content={resolvedSiteConfig.tagLine} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

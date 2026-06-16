@@ -5,13 +5,32 @@ export type Service = {
   price: string;
 };
 
+export type SiteConfig = {
+  siteUrl: string;
+  businessName: string;
+  siteName: string;
+  legalName: string;
+  category: string;
+  city: string;
+  state: string;
+  country: string;
+  tagLine: string;
+  description: string;
+  ratingValue: string;
+  reviewCount: number;
+  googleBusinessProfileSearchUrl: string;
+  verified: {
+    facts: string[];
+  };
+};
+
 export type NavItem = {
   label: string;
   path: string;
 };
 
-export const siteConfig = {
-  siteUrl: "https://www.example.com",
+export const siteConfig: SiteConfig = {
+  siteUrl: "https://previews.websitesupportstudio.com",
   businessName: "MH Electrical and Solar",
   siteName: "MH Electrical & Solar",
   legalName: "MH Electrical and Solar",

@@ -1,11 +1,22 @@
 ---
 import { siteConfig } from "../data/site";
+import type { SiteConfig } from "../data/site";
+
+interface Props {
+  siteConfig?: SiteConfig;
+  basePath?: string;
+}
+
+const { siteConfig: siteConfigOverride, basePath = "/" } = Astro.props as Props;
+const resolvedSiteConfig = { ...siteConfig, ...(siteConfigOverride ?? {}) };
+const trimmedBase = basePath.endsWith("/") && basePath.length > 1 ? basePath.slice(0, -1) : basePath;
+const withBase = (path: string) => (trimmedBase === "/" ? path : `${trimmedBase}${path}`);
 ---
 <footer class="site-footer">
   <div class="site-shell footer-grid">
-    <p>© {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.</p>
-    <p>{siteConfig.city}, {siteConfig.state}</p>
-    <p>{siteConfig.category}</p>
-    <p><a href="/contact">Use the contact form for service details</a></p>
+    <p>© {new Date().getFullYear()} {resolvedSiteConfig.legalName}. All rights reserved.</p>
+    <p>{resolvedSiteConfig.city}, {resolvedSiteConfig.state}</p>
+    <p>{resolvedSiteConfig.category}</p>
+    <p><a href={withBase("/contact")}>Use the contact form for service details</a></p>
   </div>
 </footer>

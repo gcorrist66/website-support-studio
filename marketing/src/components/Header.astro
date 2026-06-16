@@ -1,15 +1,86 @@
 ---
-import { navItems } from "../data/site";
+import { navItems, type SiteConfig } from "../data/site";
+
+interface HeaderLink {
+  label: string;
+  path: string;
+  children?: { label: string; path: string }[];
+}
+
+interface Props {
+  basePath?: string;
+  siteConfig?: SiteConfig;
+}
+
+const { basePath = "/", siteConfig } = Astro.props as Props;
+const trimmedBase = basePath.endsWith("/") && basePath.length > 1 ? basePath.slice(0, -1) : basePath;
+const withBase = (path: string) => (trimmedBase === "/" ? path : `${trimmedBase}${path}`);
+const isPreview = trimmedBase.startsWith("/preview/");
+
+const defaultDesktopNavItems: HeaderLink[] = [
+  { label: "Home", path: withBase("/") },
+  {
+    label: "Services",
+    path: withBase("/services"),
+    children: [
+      { label: "Electrical Services", path: withBase("/services#electrical-services") },
+      { label: "Solar Services", path: withBase("/services#solar-services") },
+      { label: "Energy Solutions", path: withBase("/services#energy-solutions") },
+    ],
+  },
+  { label: "Gallery", path: withBase("/gallery") },
+  { label: "About", path: withBase("/about") },
+  { label: "Contact", path: withBase("/contact") },
+];
+
+const previewDesktopNavItems: HeaderLink[] = [
+  { label: "Home", path: withBase("/") },
+  {
+    label: "Services",
+    path: withBase("/services"),
+    children: [
+      { label: "Emergency Response", path: withBase("/services") },
+      { label: "Tune-Up Services", path: withBase("/services") },
+      { label: "Installations", path: withBase("/services") },
+    ],
+  },
+  { label: "Customer Stories", path: withBase("/about") },
+  { label: "Gallery", path: withBase("/gallery") },
+  { label: "Contact", path: withBase("/contact") },
+];
+
+const desktopNavItems: HeaderLink[] = isPreview ? previewDesktopNavItems : defaultDesktopNavItems;
+
+const mobileNavItems = isPreview
+  ? [
+    { label: "Home", path: withBase("/") },
+    { label: "Services", path: withBase("/services") },
+    { label: "Customer Stories", path: withBase("/about") },
+    { label: "Gallery", path: withBase("/gallery") },
+    { label: "Contact", path: withBase("/contact") },
+  ]
+  : navItems.map((item) => ({
+      ...item,
+      path: withBase(item.path),
+    }));
+const servicesMenuId = `services-submenu-${Math.random().toString(36).slice(2, 7)}`;
 ---
 <header class="site-header">
   <a class="skip-to-content sr-only-focusable" href="#main-content">Skip to content</a>
   <div class="site-shell">
-    <a class="brand" href="/">MH Electrical &amp; Solar</a>
+    <a
+      class="brand"
+      href={withBase("/")}
+      aria-label={isPreview ? "Home" : "Website Support Studio home"}
+    >
+      {!isPreview && <img src="/website-support-studio.svg" alt="website support studio logo" />}
+      <span class="brand-copy">{siteConfig?.siteName ?? "Website Support Studio"}</span>
+    </a>
     <details class="mobile-menu">
       <summary aria-label="Open navigation menu">Menu</summary>
       <nav aria-label="Mobile">
         <ul>
-          {navItems.map((item) => (
+          {mobileNavItems.map((item) => (
             <li><a href={item.path}>{item.label}</a></li>
           ))}
         </ul>
@@ -17,10 +88,145 @@ import { navItems } from "../data/site";
     </details>
     <nav class="desktop-nav" aria-label="Main">
       <ul>
-        {navItems.map((item) => (
-          <li><a href={item.path}>{item.label}</a></li>
+        {desktopNavItems.map((item) => (
+          <li class:list={"desktop-nav-item" + (item.children ? " has-submenu" : "") }>
+            {item.children ? (
+              <>
+                <a
+                  href={item.path}
+                  class="desktop-nav-link desktop-nav-parent"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-controls={servicesMenuId}
+                >
+                  {item.label}
+                </a>
+                <ul id={servicesMenuId} class="desktop-submenu" role="menu" aria-label="Services submenu">
+                  {item.children.map((child) => (
+                    <li role="none">
+                      <a role="menuitem" href={child.path}>{child.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <a href={item.path}>{item.label}</a>
+            )}
+          </li>
         ))}
       </ul>
     </nav>
   </div>
 </header>
+<script is:inline>
+  (function () {
+    const root = document.querySelector(".desktop-nav");
+    if (!root) return;
+
+    const item = root.querySelector(".desktop-nav-item.has-submenu");
+    if (!item) return;
+
+    const trigger = item.querySelector(".desktop-nav-parent");
+    const submenu = item.querySelector(".desktop-submenu");
+    if (!trigger || !submenu) return;
+
+    const items = Array.from(submenu.querySelectorAll('a[role="menuitem"]'));
+    let closeTimeout;
+    let hoverTimeout;
+
+    const openMenu = () => {
+      window.clearTimeout(closeTimeout);
+      item.classList.add("is-open");
+      trigger.setAttribute("aria-expanded", "true");
+    };
+
+    const closeMenu = () => {
+      item.classList.remove("is-open");
+      trigger.setAttribute("aria-expanded", "false");
+    };
+
+    const scheduleClose = () => {
+      closeTimeout = window.setTimeout(closeMenu, 180);
+    };
+
+    item.addEventListener("mouseenter", () => {
+      window.clearTimeout(closeTimeout);
+      hoverTimeout = window.setTimeout(openMenu, 80);
+    });
+    item.addEventListener("mouseleave", () => {
+      window.clearTimeout(hoverTimeout);
+      scheduleClose();
+    });
+
+    trigger.addEventListener("focus", openMenu);
+    trigger.addEventListener("blur", (event) => {
+      if (!item.contains(event.relatedTarget)) {
+        scheduleClose();
+      }
+    });
+
+    submenu.addEventListener("mouseenter", () => {
+      window.clearTimeout(closeTimeout);
+      openMenu();
+    });
+    submenu.addEventListener("mouseleave", () => {
+      scheduleClose();
+    });
+
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        openMenu();
+        items[0]?.focus();
+      }
+
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openMenu();
+        items[0]?.focus();
+      }
+
+      if (event.key === "Escape" || event.key === "Esc") {
+        closeMenu();
+        trigger.blur();
+      }
+    });
+
+    submenu.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" || event.key === "Esc") {
+        event.preventDefault();
+        closeMenu();
+        trigger.focus();
+      }
+
+      const target = event.target;
+      const active = (target instanceof Element ? target : null);
+      if (!active) return;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        const index = items.indexOf(active);
+        items[Math.min(index + 1, items.length - 1)]?.focus();
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        const index = items.indexOf(active);
+        if (index > 0) {
+          items[index - 1].focus();
+        } else {
+          trigger.focus();
+        }
+        return;
+      }
+
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if ((event.key === "Escape" || event.key === "Esc") && item.classList.contains("is-open")) {
+        closeMenu();
+        trigger.focus();
+      }
+    });
+  })();
+</script>
