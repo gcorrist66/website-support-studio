@@ -16,6 +16,7 @@ export type WssTemplateAlias =
   | "wss-customer-payment-received"
   | "wss-internal-founder-purchase"
   | "wss-internal-contact-submission"
+  | "wss-internal-free-preview-request"
   | "wss-internal-customer-signup"
   | "wss-internal-customer-request"
   | "wss-internal-customer-reply"
@@ -156,6 +157,32 @@ export const WSS_TEMPLATES: Record<WssTemplateAlias, TemplateDefinition> = {
     ctaUrl: "mailto:{{{CUSTOMER_EMAIL}}}",
     intro: "New Website Support Studio contact form submission.",
     body: ["Name: {{{CUSTOMER_NAME}}}", "Email: {{{CUSTOMER_EMAIL}}}", "Message: {{{MESSAGE}}}"],
+  },
+  "wss-internal-free-preview-request": {
+    alias: "wss-internal-free-preview-request",
+    name: "New free website preview request",
+    subject: "WSS: New free website preview request",
+    audience: "internal",
+    ctaLabel: "Open preview request",
+    ctaUrl: WSS_APP_URL,
+    intro: "New free website preview request.",
+    body: [
+      "Request ID: {{{REQUEST_ID}}}",
+      "Business: {{{BUSINESS_NAME}}}",
+      "Contact: {{{CUSTOMER_NAME}}} — {{{CUSTOMER_EMAIL}}} — {{{CUSTOMER_PHONE}}}",
+      "Current website: {{{CURRENT_WEBSITE_URL}}}",
+      "Normalized domain: {{{NORMALIZED_DOMAIN}}}",
+      "Primary goal: {{{PRIMARY_GOAL}}}",
+      "Industry: {{{INDUSTRY}}}",
+      "Pages needed: {{{PAGES_NEEDED}}}",
+      "Preferred style: {{{PREFERRED_STYLE}}}",
+      "Services/products: {{{SERVICES_TO_HIGHLIGHT}}}",
+      "Target customers: {{{TARGET_CUSTOMERS}}}",
+      "Inspiration websites: {{{INSPIRATION_WEBSITES}}}",
+      "Logo/brand colors available: {{{LOGO_BRAND_COLORS_AVAILABLE}}}",
+      "Business description: {{{BUSINESS_DESCRIPTION}}}",
+      "Additional notes: {{{ADDITIONAL_NOTES}}}",
+    ],
   },
   "wss-internal-customer-signup": {
     alias: "wss-internal-customer-signup",

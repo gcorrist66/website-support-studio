@@ -49,6 +49,10 @@ export const CONTACT_NOTIFY_URL =
   (import.meta as { env?: Record<string, string> }).env?.PUBLIC_WSS_CONTACT_NOTIFY_URL?.trim() ||
   "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/contact-notification";
 
+export const WEBSITE_PREVIEW_REQUEST_URL =
+  (import.meta as { env?: Record<string, string> }).env?.PUBLIC_WSS_WEBSITE_PREVIEW_REQUEST_URL?.trim() ||
+  "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/website-preview-request";
+
 // Manual founder pricing controls.
 // Replace founderSpotsLeft with a live source later when the counter is connected.
 export const FOUNDER_PRICING = {

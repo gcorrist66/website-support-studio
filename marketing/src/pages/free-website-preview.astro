@@ -1,0 +1,909 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { SITE_URL, WEBSITE_PREVIEW_REQUEST_URL } from "../consts";
+import { breadcrumbSchema, faqSchema, ID } from "../schema";
+
+const pagePath = "/free-website-preview";
+const schemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Free Website Preview",
+    serviceType: "Free website preview request",
+    description:
+      "Website Support Studio reviews a business owner's questionnaire and prepares a free website preview for their business. No paid commitment is required to request the preview.",
+    url: new URL(pagePath, SITE_URL).href,
+    provider: { "@id": ID.org },
+    areaServed: { "@type": "Country", name: "United States" },
+    audience: {
+      "@type": "Audience",
+      audienceType: "Small business owners and local service businesses",
+    },
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      description: "Free website preview request with no paid commitment required.",
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Free Website Preview", path: pagePath },
+  ]),
+  faqSchema([
+    {
+      q: "Is the Website Support Studio preview free?",
+      a: "Yes. Business owners can request a free website preview by answering a questionnaire. There is no paid commitment required to submit the request.",
+    },
+    {
+      q: "What happens after I submit the questionnaire?",
+      a: "Website Support Studio reviews your goals, style preferences, services, audience, and inspiration websites, then prepares a free preview for you to review.",
+    },
+    {
+      q: "Do AI agents automatically build my website?",
+      a: "No. Website Support Studio is an operator-led service. AI agents may help the team review structured submissions and prepare work, but the service is reviewed by people.",
+    },
+  ]),
+];
+
+const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
+---
+
+<BaseLayout
+  title="Free Website Preview"
+  description="Let us build your free website preview today. Answer a few questions and Website Support Studio will review your business goals, style, services, and audience to prepare a free preview."
+  path={pagePath}
+  schemas={schemas}
+>
+  <section class="preview-hero">
+    <div class="container preview-hero-grid">
+      <div class="preview-hero-copy">
+        <p class="kicker"><Label text="_free_website_preview" /></p>
+        <h1>Let us build your free website preview today!</h1>
+        <p class="lede">
+          Answer a few practical questions about your business, your goals, and the style you like.
+          Website Support Studio reviews your input and prepares a free website preview you can look over before deciding what to do next.
+        </p>
+        <div class="preview-actions">
+          <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_hero_cta">Get My Free Website Preview</a>
+          <a class="btn btn-ghost" href="#preview-examples" data-ga-event="click_free_preview_examples">See Preview Styles</a>
+        </div>
+        <div class="trust-strip" aria-label="Offer details">
+          <span>No paid commitment</span>
+          <span>Reviewed by the WSS team</span>
+          <span>Structured for agent-assisted follow-up</span>
+        </div>
+      </div>
+
+      <aside class="hero-browser" aria-label="Example preview mockup">
+        <div class="browser-bar"><span></span><span></span><span></span></div>
+        <div class="browser-hero">
+          <div>
+            <p>Local service business</p>
+            <strong>Clean homepage preview</strong>
+            <span>Clear services, trust signals, and a simple lead path.</span>
+          </div>
+          <div class="browser-photo" aria-hidden="true"></div>
+        </div>
+        <div class="browser-grid">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="browser-row"><strong></strong><span></span></div>
+        <div class="browser-row"><strong></strong><span></span></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section preview-answer">
+    <div class="container">
+      <div class="summary">
+        <strong>Simple offer:</strong> Fill out the questionnaire, we review the details, and we prepare a free website preview for your business. It is a preview request, not a paid order or an instant automated build.
+      </div>
+    </div>
+  </section>
+
+  <section class="section how-it-works">
+    <div class="container">
+      <div class="section-head">
+        <p class="kicker"><Label text="_how_it_works" /></p>
+        <h2>A clear path from questionnaire to preview.</h2>
+      </div>
+      <div class="steps-grid">
+        <article>
+          <span>01</span>
+          <h3>Tell us about your business.</h3>
+          <p>Share your contact details, business type, current website if you have one, and what your business does.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>We review your goals, style, services, and audience.</h3>
+          <p>Your answers are saved as a structured request so the team and approved AI agents can read the same clear brief.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>We build a free website preview.</h3>
+          <p>Website Support Studio prepares a preview around your services, customers, preferred pages, and visual direction.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h3>You review it and decide what to do next.</h3>
+          <p>You can look it over without a paid commitment and choose the next practical step when you are ready.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section preview-gallery" id="preview-examples">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <p class="kicker"><Label text="_website_inspiration" /></p>
+          <h2>Preview styles can look polished before they become final.</h2>
+        </div>
+        <p>
+          These are mock screenshot-style concepts inspired by clean professional service websites.
+          They use safe placeholder layouts, not copied customer assets or fake testimonials.
+        </p>
+      </div>
+
+      <div class="mock-preview-grid" aria-label="Example website preview styles">
+        <article class="mock-site mock-site-service">
+          <div class="mock-top"><span></span><strong>Service Pro</strong><em>Get an estimate</em></div>
+          <div class="mock-split">
+            <div>
+              <small>Home services</small>
+              <h3>Fast help for the jobs customers already need.</h3>
+              <p>Services, service areas, proof points, and a direct contact path.</p>
+            </div>
+            <div class="mock-image"></div>
+          </div>
+          <div class="mock-cards"><span></span><span></span><span></span></div>
+        </article>
+
+        <article class="mock-site mock-site-care">
+          <div class="mock-top"><span></span><strong>Harbor Care</strong><em>Book a visit</em></div>
+          <div class="mock-banner"></div>
+          <div class="mock-copy">
+            <small>Professional services</small>
+            <h3>Calm, trustworthy, and easy to scan.</h3>
+            <p>Great for practices, consultants, clinics, and local experts.</p>
+          </div>
+          <div class="mock-lines"><span></span><span></span><span></span></div>
+        </article>
+
+        <article class="mock-site mock-site-boutique">
+          <div class="mock-top"><span></span><strong>Luna Studio</strong><em>Visit us</em></div>
+          <div class="mock-editorial">
+            <div class="mock-photo-stack"><span></span><span></span></div>
+            <div>
+              <small>Retail, salon, cafe</small>
+              <h3>Warm visuals with a refined local feel.</h3>
+              <p>Useful for atmosphere-driven businesses that need calls, bookings, or visits.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="gallery-cta">
+        <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_gallery_cta">Start My Free Preview</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section form-section" id="preview-questionnaire">
+    <div class="container form-grid">
+      <div class="form-intro">
+        <p class="kicker"><Label text="_questionnaire" /></p>
+        <h2>Tell us what your website needs to do.</h2>
+        <p>
+          The more specific you are, the better the preview brief will be. Your submission is stored as a structured request with a timestamp, source, and status of <strong>new_preview_request</strong>.
+        </p>
+        <div class="agent-note">
+          <strong>Agent-readable storage</strong>
+          <span>Submissions are saved to <code>public.website_preview_requests</code> with labeled JSON fields for later review.</span>
+        </div>
+      </div>
+
+      <form class="preview-form" data-endpoint={previewEndpoint} novalidate>
+        <input type="text" name="company_website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="form-status" role="status" aria-live="polite" hidden></div>
+
+        <div class="field-pair">
+          <label>
+            <span>Name *</span>
+            <input name="name" autocomplete="name" required />
+          </label>
+          <label>
+            <span>Email *</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+        </div>
+
+        <div class="field-pair">
+          <label>
+            <span>Phone</span>
+            <input name="phone" autocomplete="tel" inputmode="tel" />
+          </label>
+          <label>
+            <span>Business name *</span>
+            <input name="business_name" autocomplete="organization" required />
+          </label>
+        </div>
+
+        <div class="field-pair">
+          <label>
+            <span>Current website URL, optional</span>
+            <input type="url" name="current_website_url" placeholder="https://example.com" />
+          </label>
+          <label>
+            <span>Business type / industry</span>
+            <input name="industry" placeholder="Roofing, law firm, salon, consulting..." />
+          </label>
+        </div>
+
+        <label>
+          <span>What does your business do? *</span>
+          <textarea name="business_description" rows="4" required placeholder="Tell us what you sell, who you help, and what customers usually ask for."></textarea>
+        </label>
+
+        <fieldset>
+          <legend>What pages do you need?</legend>
+          <div class="check-grid">
+            {["Home", "About", "Services", "Contact", "Pricing", "Gallery", "Blog"].map((page) => (
+              <label><input type="checkbox" name="pages_needed" value={page} /> <span>{page}</span></label>
+            ))}
+          </div>
+        </fieldset>
+
+        <label>
+          <span>What style do you like?</span>
+          <input name="preferred_style" placeholder="Modern, simple, bold, luxury, friendly, local, professional..." />
+        </label>
+
+        <label>
+          <span>Competitor or inspiration websites</span>
+          <textarea name="inspiration_websites" rows="3" placeholder="Paste links or describe sites you like."></textarea>
+        </label>
+
+        <label>
+          <span>Primary goal *</span>
+          <select name="primary_goal" required>
+            <option value="">Select a goal</option>
+            <option value="get_leads">Get leads</option>
+            <option value="book_appointments">Book appointments</option>
+            <option value="sell_products">Sell products</option>
+            <option value="look_more_professional">Look more professional</option>
+            <option value="replace_old_website">Replace old website</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Services/products to highlight</span>
+          <textarea name="services_to_highlight" rows="3"></textarea>
+        </label>
+
+        <label>
+          <span>Target customers</span>
+          <textarea name="target_customers" rows="3" placeholder="Who should the website speak to?"></textarea>
+        </label>
+
+        <fieldset>
+          <legend>Logo/brand colors available?</legend>
+          <div class="radio-row">
+            <label><input type="radio" name="logo_brand_colors_available" value="yes" /> <span>Yes</span></label>
+            <label><input type="radio" name="logo_brand_colors_available" value="no" /> <span>No</span></label>
+          </div>
+        </fieldset>
+
+        <label>
+          <span>Anything else we should know?</span>
+          <textarea name="additional_notes" rows="4"></textarea>
+        </label>
+
+        <button class="btn btn-green btn-cta" type="submit" data-ga-event="submit_free_preview_request">Get My Free Website Preview</button>
+        <p class="privacy-note">Submitting this form creates a structured preview request for Website Support Studio to review. No paid commitment is created by this form.</p>
+      </form>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var form = document.querySelector(".preview-form");
+      if (!form) return;
+      var status = form.querySelector(".form-status");
+      var button = form.querySelector("button[type='submit']");
+
+      function setStatus(message, kind) {
+        if (!status) return;
+        status.hidden = false;
+        status.textContent = message;
+        status.dataset.kind = kind;
+      }
+
+      function values(name) {
+        return Array.prototype.map.call(form.querySelectorAll("[name='" + name + "']:checked"), function (input) {
+          return input.value;
+        });
+      }
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          setStatus("Please complete the required fields, then submit again.", "error");
+          return;
+        }
+
+        var data = new FormData(form);
+        var payload = {
+          page_source: "free_website_preview_landing_page",
+          source_url: window.location.href,
+          referrer: document.referrer || "",
+          user_agent: navigator.userAgent || "",
+          company_website: String(data.get("company_website") || ""),
+          name: String(data.get("name") || ""),
+          email: String(data.get("email") || ""),
+          phone: String(data.get("phone") || ""),
+          business_name: String(data.get("business_name") || ""),
+          current_website_url: String(data.get("current_website_url") || ""),
+          industry: String(data.get("industry") || ""),
+          business_description: String(data.get("business_description") || ""),
+          pages_needed: values("pages_needed"),
+          preferred_style: String(data.get("preferred_style") || ""),
+          inspiration_websites: String(data.get("inspiration_websites") || ""),
+          primary_goal: String(data.get("primary_goal") || ""),
+          services_to_highlight: String(data.get("services_to_highlight") || ""),
+          target_customers: String(data.get("target_customers") || ""),
+          logo_brand_colors_available: String(data.get("logo_brand_colors_available") || ""),
+          additional_notes: String(data.get("additional_notes") || "")
+        };
+
+        var endpoint = form.dataset.endpoint;
+        if (!endpoint) {
+          setStatus("This form is not configured yet. Please email corristonconsulting@gmail.com.", "error");
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Sending...";
+        setStatus("Sending your preview request...", "pending");
+
+        try {
+          var response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          var result = await response.json().catch(function () { return {}; });
+          if (!response.ok || !result.ok) {
+            throw new Error(result.message || result.error || "submission_failed");
+          }
+          form.reset();
+          setStatus("Thanks — we received your website preview request. We’ll review your answers and prepare your free preview.", "success");
+        } catch (error) {
+          var fallback = "We could not submit the request from this page. Please email corristonconsulting@gmail.com with your details.";
+          setStatus(error && error.message && error.message !== "submission_failed" ? error.message : fallback, "error");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Get My Free Website Preview";
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    :global(body[data-page="/free-website-preview"]) {
+      background: #fbfcf8;
+    }
+
+    .preview-hero {
+      padding: clamp(2rem, 5vw, 4.25rem) 0 clamp(1.5rem, 4vw, 3rem);
+      background:
+        linear-gradient(180deg, #ffffff 0%, #f7fbf8 58%, #fbfcf8 100%);
+    }
+
+    .preview-hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .preview-hero-copy h1 {
+      max-width: 12ch;
+      margin: 0;
+      font-size: clamp(2.15rem, 10vw, 4.35rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .preview-hero-copy .lede {
+      margin-top: 1rem;
+      max-width: 64ch;
+      letter-spacing: 0;
+    }
+
+    .preview-actions,
+    .gallery-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .trust-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1.1rem;
+    }
+
+    .trust-strip span {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      padding: 0.5rem 0.7rem;
+      color: var(--text);
+      font-size: 0.84rem;
+      letter-spacing: 0;
+    }
+
+    .hero-browser,
+    .mock-site,
+    .preview-form,
+    .agent-note {
+      border: 1px solid var(--border);
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(11, 18, 32, 0.08);
+    }
+
+    .hero-browser {
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 0.9rem;
+    }
+
+    .browser-bar,
+    .mock-top {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .browser-bar span {
+      width: 0.68rem;
+      height: 0.68rem;
+      border-radius: 999px;
+      background: var(--border-strong);
+    }
+
+    .browser-hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .browser-hero p,
+    .browser-hero span,
+    .mock-site p,
+    .section-head p,
+    .form-intro p,
+    .privacy-note {
+      color: var(--text-muted);
+      letter-spacing: 0;
+    }
+
+    .browser-hero strong {
+      display: block;
+      max-width: 12ch;
+      color: var(--text-strong);
+      font-size: clamp(1.45rem, 6vw, 2.5rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .browser-photo,
+    .mock-image,
+    .mock-banner,
+    .mock-photo-stack span {
+      min-height: 160px;
+      border-radius: 6px;
+      background:
+        linear-gradient(135deg, rgba(53, 220, 234, 0.35), rgba(184, 239, 216, 0.9)),
+        linear-gradient(45deg, #f4b142, #0443fb);
+    }
+
+    .browser-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      margin: 0.25rem 0 0.85rem;
+    }
+
+    .browser-grid span,
+    .mock-cards span {
+      min-height: 74px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-muted);
+    }
+
+    .browser-row {
+      display: grid;
+      grid-template-columns: 0.35fr 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.65rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .browser-row strong,
+    .browser-row span,
+    .mock-lines span {
+      height: 0.65rem;
+      border-radius: 999px;
+      background: var(--border);
+    }
+
+    .preview-answer {
+      padding: 1rem 0 0;
+    }
+
+    .section-head {
+      max-width: 800px;
+      margin-bottom: 1.35rem;
+    }
+
+    .section-head h2,
+    .form-intro h2 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .section-head.split {
+      display: grid;
+      gap: 1rem;
+      max-width: none;
+      align-items: end;
+    }
+
+    .steps-grid,
+    .mock-preview-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .steps-grid article {
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .steps-grid span {
+      display: inline-flex;
+      margin-bottom: 0.8rem;
+      color: var(--brand-blue);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .steps-grid h3,
+    .mock-site h3 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .steps-grid p {
+      margin-bottom: 0;
+      color: var(--text-muted);
+      letter-spacing: 0;
+    }
+
+    .preview-gallery {
+      background: #f4f8f6;
+    }
+
+    .mock-site {
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 0.85rem;
+    }
+
+    .mock-top {
+      justify-content: space-between;
+      gap: 0.75rem;
+      color: var(--text-strong);
+    }
+
+    .mock-top span {
+      width: 1.2rem;
+      height: 1.2rem;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--brand-amber), var(--brand-blue));
+      flex: 0 0 auto;
+    }
+
+    .mock-top strong {
+      margin-right: auto;
+      font-size: 0.88rem;
+      letter-spacing: 0;
+    }
+
+    .mock-top em {
+      font-style: normal;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.72rem;
+      color: var(--text);
+      background: #fff;
+      letter-spacing: 0;
+    }
+
+    .mock-split,
+    .mock-editorial {
+      display: grid;
+      gap: 1rem;
+      padding-top: 1rem;
+      align-items: center;
+    }
+
+    .mock-site small {
+      display: inline-block;
+      margin-bottom: 0.45rem;
+      color: var(--brand-blue);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .mock-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-top: 0.9rem;
+    }
+
+    .mock-site-care .mock-banner {
+      margin-top: 1rem;
+      min-height: 190px;
+      background:
+        linear-gradient(140deg, rgba(4, 67, 251, 0.16), transparent 44%),
+        linear-gradient(45deg, #fef3da, #d6f8fc);
+    }
+
+    .mock-copy {
+      padding-top: 1rem;
+    }
+
+    .mock-lines {
+      display: grid;
+      gap: 0.45rem;
+      margin-top: 0.8rem;
+    }
+
+    .mock-lines span:nth-child(2) {
+      width: 78%;
+    }
+
+    .mock-lines span:nth-child(3) {
+      width: 55%;
+    }
+
+    .mock-photo-stack {
+      display: grid;
+      grid-template-columns: 0.75fr 1fr;
+      gap: 0.65rem;
+      align-items: end;
+    }
+
+    .mock-photo-stack span:first-child {
+      min-height: 130px;
+      background:
+        linear-gradient(135deg, rgba(168, 52, 137, 0.18), rgba(244, 177, 66, 0.4)),
+        #fff;
+    }
+
+    .mock-photo-stack span:last-child {
+      min-height: 210px;
+      background:
+        linear-gradient(135deg, rgba(184, 239, 216, 0.95), rgba(53, 220, 234, 0.32)),
+        #fff;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .form-intro {
+      max-width: 560px;
+    }
+
+    .agent-note {
+      display: grid;
+      gap: 0.35rem;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      box-shadow: none;
+    }
+
+    .agent-note span {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      letter-spacing: 0;
+    }
+
+    .preview-form {
+      display: grid;
+      gap: 1rem;
+      border-radius: 8px;
+      padding: clamp(1rem, 3vw, 1.45rem);
+    }
+
+    .field-pair {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .preview-form label,
+    .preview-form fieldset {
+      display: grid;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+
+    .preview-form span,
+    .preview-form legend {
+      color: var(--text-strong);
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .preview-form input,
+    .preview-form textarea,
+    .preview-form select {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 0.78rem 0.8rem;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    .preview-form textarea {
+      resize: vertical;
+    }
+
+    .preview-form fieldset {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem;
+      margin: 0;
+    }
+
+    .check-grid,
+    .radio-row {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .check-grid label,
+    .radio-row label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .check-grid input,
+    .radio-row input {
+      width: 1rem;
+      height: 1rem;
+      flex: 0 0 auto;
+    }
+
+    .form-status {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      color: var(--text);
+      background: var(--surface-muted);
+      letter-spacing: 0;
+    }
+
+    .form-status[data-kind="success"] {
+      border-color: #9ee6c8;
+      background: #e8f8f0;
+      color: #14543a;
+    }
+
+    .form-status[data-kind="error"] {
+      border-color: #f3b4b4;
+      background: #fff1f1;
+      color: #7f1d1d;
+    }
+
+    .hp-field {
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+
+    .preview-form button {
+      justify-content: center;
+    }
+
+    .privacy-note {
+      margin: 0;
+      font-size: 0.82rem;
+    }
+
+    @media (min-width: 700px) {
+      .field-pair,
+      .browser-hero,
+      .mock-split,
+      .mock-editorial {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .check-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .radio-row {
+        grid-template-columns: repeat(2, minmax(0, max-content));
+      }
+    }
+
+    @media (min-width: 900px) {
+      .preview-hero-grid,
+      .form-grid {
+        grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1fr);
+      }
+
+      .preview-hero-copy h1 {
+        font-size: clamp(3.25rem, 6vw, 5rem);
+      }
+
+      .steps-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .mock-preview-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .section-head.split {
+        grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.65fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .preview-actions .btn,
+      .gallery-cta .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .browser-grid,
+      .mock-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>
