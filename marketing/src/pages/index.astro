@@ -1,121 +1,619 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
-import { featuredServices, siteConfig, galleryHighlights } from "../data/site";
+
+const landingSiteConfig = {
+  siteName: "Website Support Studio",
+  businessName: "Website Support Studio",
+  legalName: "Website Support Studio",
+  category: "Custom website previews and ongoing website support",
+  city: "Nashville",
+  state: "TN",
+  tagLine: "Custom website previews for real businesses",
+  description: "Website Support Studio creates custom website previews and provides ongoing website support for local service businesses."
+};
+
+const previewFocusAreas = [
+  "More calls",
+  "Better quote requests",
+  "Stronger local trust",
+  "Clearer services",
+  "Mobile-first buying path",
+  "Ongoing support"
+];
+
+const previewConcepts = [
+  // Images use compressed Pexels CDN URLs. Pexels License permits free commercial use and does not require attribution.
+  // Source pages are kept in sourceUrl for internal review and are not rendered in the public UI.
+  {
+    title: "Storm-ready roofing homepage",
+    businessType: "Roofing",
+    tag: "Better quote requests",
+    outcome: "Help homeowners move from damage concern to inspection request.",
+    image: "https://images.pexels.com/photos/33404981/pexels-photo-33404981.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/roof-repair-and-construction-in-fort-worth-33404981/"
+  },
+  {
+    title: "Same-day HVAC service path",
+    businessType: "HVAC",
+    tag: "More calls",
+    outcome: "Make repair, tune-up, and replacement paths obvious from the first screen.",
+    image: "https://images.pexels.com/photos/32497161/pexels-photo-32497161.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/technician-inspecting-outdoor-hvac-unit-32497161/"
+  },
+  {
+    title: "Electrical trust and safety preview",
+    businessType: "Electrical",
+    tag: "Local trust",
+    outcome: "Turn technical work into clear, safe, confidence-building next steps.",
+    image: "https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/electrician-fixing-an-opened-switchboard-257736/"
+  },
+  {
+    title: "Plumbing repair request flow",
+    businessType: "Plumbing",
+    tag: "Emergency-ready",
+    outcome: "Help visitors describe the issue quickly and know who will follow up.",
+    image: "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/plumber-installs-pipe-fittings-6419128/"
+  },
+  {
+    title: "Lawn care quote preview",
+    businessType: "Landscaping",
+    tag: "Clearer services",
+    outcome: "Separate maintenance, cleanup, design, and seasonal work without confusion.",
+    image: "https://images.pexels.com/photos/9029162/pexels-photo-9029162.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-man-cutting-the-grass-using-a-lawn-mower-9029162/"
+  },
+  {
+    title: "Tree removal risk preview",
+    businessType: "Tree service",
+    tag: "Better quote requests",
+    outcome: "Make dangerous or urgent jobs feel organized, professional, and easy to request.",
+    image: "https://images.pexels.com/photos/6218318/pexels-photo-6218318.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-man-cutting-a-tree-6218318/"
+  },
+  {
+    title: "Pool project confidence page",
+    businessType: "Pool contractors",
+    tag: "Show proof faster",
+    outcome: "Show finished outcomes, service options, and quote paths without burying the dream.",
+    image: "https://images.pexels.com/photos/7174400/pexels-photo-7174400.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/interior-of-empty-pool-in-building-7174400/"
+  },
+  {
+    title: "Restaurant visit and booking preview",
+    businessType: "Restaurants",
+    tag: "Book more appointments",
+    outcome: "Make menu, atmosphere, hours, and reservations easier to act on.",
+    image: "https://images.pexels.com/photos/5056628/pexels-photo-5056628.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/men-working-in-restaurant-kitchen-5056628/"
+  },
+  {
+    title: "Salon booking preview",
+    businessType: "Salons",
+    tag: "Book more appointments",
+    outcome: "Turn services, stylists, gallery proof, and booking into one clear path.",
+    image: "https://images.pexels.com/photos/3992875/pexels-photo-3992875.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/woman-getting-a-haircut-3992875/"
+  },
+  {
+    title: "Med spa consultation preview",
+    businessType: "Med spas",
+    tag: "Local trust",
+    outcome: "Make treatments feel professional, credible, and easy to inquire about.",
+    image: "https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/woman-getting-a-facial-treatment-3985329/"
+  },
+  {
+    title: "Dental appointment preview",
+    businessType: "Dentists",
+    tag: "Book more appointments",
+    outcome: "Make cleaning, cosmetic, emergency, and new patient paths easy to choose.",
+    image: "https://images.pexels.com/photos/6812461/pexels-photo-6812461.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/empty-dentist-office-6812461/"
+  },
+  {
+    title: "Real estate lead preview",
+    businessType: "Real estate",
+    tag: "Local trust",
+    outcome: "Show neighborhoods, process, proof, and valuation requests in one confident flow.",
+    image: "https://images.pexels.com/photos/8293765/pexels-photo-8293765.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/real-estate-agent-showing-the-unit-to-her-client-8293765/"
+  },
+  {
+    title: "Law firm consultation preview",
+    businessType: "Law firms",
+    tag: "Local trust",
+    outcome: "Make practice areas, urgency, and consultation requests feel clear and credible.",
+    image: "https://images.pexels.com/photos/7876093/pexels-photo-7876093.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-lawyer-behind-his-desk-7876093/"
+  },
+  {
+    title: "Auto repair service preview",
+    businessType: "Auto repair",
+    tag: "More calls",
+    outcome: "Help drivers choose repair, diagnostics, maintenance, and scheduling faster.",
+    image: "https://images.pexels.com/photos/8986100/pexels-photo-8986100.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/man-in-blue-coverall-fixing-a-vehicle-8986100/"
+  },
+  {
+    title: "Cleaning quote preview",
+    businessType: "Cleaning companies",
+    tag: "Better quote requests",
+    outcome: "Separate residential, commercial, move-out, and recurring cleaning requests.",
+    image: "https://images.pexels.com/photos/6195111/pexels-photo-6195111.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-cleaner-working-6195111/"
+  },
+  {
+    title: "Remodeling project preview",
+    businessType: "Contractors / remodeling",
+    tag: "Show proof faster",
+    outcome: "Show project types, process, before-and-after proof, and estimate readiness.",
+    image: "https://images.pexels.com/photos/3990359/pexels-photo-3990359.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/house-renovation-3990359/"
+  },
+  {
+    title: "Gym membership preview",
+    businessType: "Fitness / gyms",
+    tag: "Book more appointments",
+    outcome: "Make classes, training, trials, and membership questions easy to act on.",
+    image: "https://images.pexels.com/photos/6740311/pexels-photo-6740311.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/woman-doing-stretching-exercise-6740311/"
+  },
+  {
+    title: "Pet care booking preview",
+    businessType: "Pet services",
+    tag: "Book more appointments",
+    outcome: "Turn grooming, boarding, daycare, and care details into simple booking steps.",
+    image: "https://images.pexels.com/photos/19145885/pexels-photo-19145885.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/groomer-working-with-dog-19145885/"
+  },
+  {
+    title: "Local retail discovery preview",
+    businessType: "Local retail",
+    tag: "Mobile-first",
+    outcome: "Help shoppers understand products, store personality, hours, and visit reasons.",
+    image: "https://images.pexels.com/photos/30848031/pexels-photo-30848031.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/small-shop-interior-with-local-shopkeeper-30848031/"
+  },
+  {
+    title: "Accounting firm advisory preview",
+    businessType: "Accounting",
+    tag: "Local trust",
+    outcome: "Clarify tax, bookkeeping, advisory, and consultation paths for business owners.",
+    image: "https://images.pexels.com/photos/4386370/pexels-photo-4386370.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/person-using-calculator-4386370/"
+  },
+  {
+    title: "Insurance quote confidence preview",
+    businessType: "Insurance",
+    tag: "Better quote requests",
+    outcome: "Help visitors compare coverage needs and request the right policy review.",
+    image: "https://images.pexels.com/photos/8296978/pexels-photo-8296978.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/person-signing-a-document-8296978/"
+  },
+  {
+    title: "Mortgage application preview",
+    businessType: "Mortgage",
+    tag: "Clearer services",
+    outcome: "Make purchase, refinance, pre-approval, and loan questions easier to start.",
+    image: "https://images.pexels.com/photos/8293778/pexels-photo-8293778.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/real-estate-agent-and-client-checking-documents-8293778/"
+  },
+  {
+    title: "Financial advisor trust preview",
+    businessType: "Financial advisors",
+    tag: "Local trust",
+    outcome: "Show planning services, fit, credentials, and consultation steps without clutter.",
+    image: "https://images.pexels.com/photos/7821485/pexels-photo-7821485.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/business-people-looking-at-a-laptop-7821485/"
+  },
+  {
+    title: "Chiropractic appointment preview",
+    businessType: "Chiropractic",
+    tag: "Book more appointments",
+    outcome: "Turn pain concerns, treatment options, and first-visit details into a simple request path.",
+    image: "https://images.pexels.com/photos/4506109/pexels-photo-4506109.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/man-giving-massage-to-a-person-4506109/"
+  },
+  {
+    title: "Physical therapy recovery preview",
+    businessType: "Physical therapy",
+    tag: "Book more appointments",
+    outcome: "Help patients understand conditions treated, therapist proof, and appointment options.",
+    image: "https://images.pexels.com/photos/6111589/pexels-photo-6111589.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/physical-therapist-helping-a-patient-6111589/"
+  },
+  {
+    title: "Veterinary care preview",
+    businessType: "Veterinary",
+    tag: "Local trust",
+    outcome: "Make wellness, urgent care, surgery, and new-client booking easier to navigate.",
+    image: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/veterinarian-checking-a-dog-6235233/"
+  },
+  {
+    title: "Senior care family preview",
+    businessType: "Senior care",
+    tag: "Local trust",
+    outcome: "Help families see care types, safety signals, availability, and next steps quickly.",
+    image: "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-nurse-assisting-an-elderly-patient-7551617/"
+  },
+  {
+    title: "Child care enrollment preview",
+    businessType: "Child care",
+    tag: "Book more appointments",
+    outcome: "Show programs, safety, schedule, and tour requests in a parent-friendly flow.",
+    image: "https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/children-playing-in-a-classroom-8613089/"
+  },
+  {
+    title: "Pressure washing estimate preview",
+    businessType: "Pressure washing",
+    tag: "Show proof faster",
+    outcome: "Use before-and-after proof to move visitors from dirty surfaces to estimate requests.",
+    image: "https://images.pexels.com/photos/4792528/pexels-photo-4792528.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/person-cleaning-a-patio-4792528/"
+  },
+  {
+    title: "Junk removal pickup preview",
+    businessType: "Junk removal",
+    tag: "More calls",
+    outcome: "Make pickup types, pricing cues, service areas, and scheduling easy to scan.",
+    image: "https://images.pexels.com/photos/4246120/pexels-photo-4246120.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/garbage-truck-on-street-4246120/"
+  },
+  {
+    title: "Solar consultation preview",
+    businessType: "Solar",
+    tag: "Better quote requests",
+    outcome: "Explain savings, installation steps, financing, and consultation requests without overload.",
+    image: "https://images.pexels.com/photos/9875414/pexels-photo-9875414.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/solar-panels-on-a-roof-9875414/"
+  },
+  {
+    title: "Security systems preview",
+    businessType: "Security systems",
+    tag: "Local trust",
+    outcome: "Separate residential, business, monitoring, and installation paths for faster inquiries.",
+    image: "https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/security-camera-on-wall-8566473/"
+  },
+  {
+    title: "Pest control treatment preview",
+    businessType: "Pest control",
+    tag: "More calls",
+    outcome: "Help urgent visitors identify the issue and request inspection or treatment.",
+    image: "https://images.pexels.com/photos/6197119/pexels-photo-6197119.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-person-using-a-spray-bottle-6197119/"
+  },
+  {
+    title: "Flooring showroom preview",
+    businessType: "Flooring",
+    tag: "Show proof faster",
+    outcome: "Show materials, project photos, financing, and estimate steps in one visual path.",
+    image: "https://images.pexels.com/photos/7494809/pexels-photo-7494809.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/wooden-floor-installation-7494809/"
+  },
+  {
+    title: "Painting estimate preview",
+    businessType: "Painting",
+    tag: "Show proof faster",
+    outcome: "Make interior, exterior, commercial, and color consultation requests easier to start.",
+    image: "https://images.pexels.com/photos/6444257/pexels-photo-6444257.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/a-person-painting-a-wall-6444257/"
+  },
+  {
+    title: "Commercial roofing preview",
+    businessType: "Roofing commercial",
+    tag: "Better quote requests",
+    outcome: "Organize repair, replacement, maintenance, and inspection proof for property teams.",
+    image: "https://images.pexels.com/photos/236705/pexels-photo-236705.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/architectural-design-architecture-building-business-236705/"
+  },
+  {
+    title: "Construction project preview",
+    businessType: "Construction",
+    tag: "Local trust",
+    outcome: "Show project fit, capability, process, and quote readiness for larger decisions.",
+    image: "https://images.pexels.com/photos/209251/pexels-photo-209251.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/architecture-building-construction-crane-209251/"
+  },
+  {
+    title: "Property management preview",
+    businessType: "Property management",
+    tag: "Clearer services",
+    outcome: "Route owners, tenants, maintenance, and vacancy questions without friction.",
+    image: "https://images.pexels.com/photos/7578913/pexels-photo-7578913.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/real-estate-agent-holding-keys-7578913/"
+  },
+  {
+    title: "Manufacturing capability preview",
+    businessType: "Manufacturing",
+    tag: "Local trust",
+    outcome: "Make capabilities, certifications, production fit, and quote requests easier to evaluate.",
+    image: "https://images.pexels.com/photos/2760243/pexels-photo-2760243.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/person-using-machine-2760243/"
+  },
+  {
+    title: "B2B services lead preview",
+    businessType: "B2B services",
+    tag: "Clearer services",
+    outcome: "Turn complex offers into a practical homepage that helps buyers decide whether to talk.",
+    image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+    sourceUrl: "https://www.pexels.com/photo/people-discussing-business-3184465/"
+  }
+];
+
+const transformations = [
+  {
+    businessType: "Home service company",
+    beforeTitle: "Outdated website",
+    before: ["Small headline", "Crowded navigation", "Phone number buried"],
+    afterTitle: "Modern preview",
+    after: ["Service-first hero", "Trust near CTA", "Quote path above the fold"],
+    outcome: "Clearer first impression"
+  },
+  {
+    businessType: "Local medical office",
+    beforeTitle: "Poor layout",
+    before: ["Long text blocks", "No first-visit path", "Forms hard to find"],
+    afterTitle: "Better structure",
+    after: ["Appointment choices", "Insurance cues", "Care proof beside the form"],
+    outcome: "More qualified requests"
+  },
+  {
+    businessType: "Professional service firm",
+    beforeTitle: "Weak trust",
+    before: ["Generic claims", "No proof grouping", "Unclear consultation step"],
+    afterTitle: "Strong CTA",
+    after: ["Experience signals", "Service fit cards", "Direct consultation request"],
+    outcome: "Stronger confidence"
+  }
+];
+
+const howItWorks = [
+  {
+    step: "01",
+    title: "Submit your website",
+    body: "Send your current URL, business type, email address, and the main challenge you want the preview to solve."
+  },
+  {
+    step: "02",
+    title: "We build a custom homepage preview",
+    body: "We create a tailored homepage concept based on your real business, service mix, audience, and trust gaps. Most preview requests are delivered within 2-3 business days."
+  },
+  {
+    step: "03",
+    title: "Review it with your team",
+    body: "Share the preview internally and decide whether the direction reflects where the business should go."
+  },
+  {
+    step: "04",
+    title: "Decide if you want us to build it",
+    body: "If the preview makes sense, Website Support Studio can build the site and support it after launch."
+  }
+];
+
+const proofPoints = [
+  "Custom to your business",
+  "Free before you commit to a full project",
+  "Most previews delivered in 2-3 business days",
+  "Focused on calls, quotes, and bookings",
+  "Backed by ongoing website support"
+];
+
+const trustPoints = [
+  "20+ years website experience",
+  "Website previews, redesigns, support, and ongoing improvements",
+  "Practical advice without agency fluff or corporate buzzwords"
+];
 ---
 <SiteLayout
-  title="Home"
-  description="MH Electrical and Solar is a Denver, CO electrician helping users request services and get project clarity."
+  title="Custom website previews"
+  description="Website Support Studio creates custom website previews and provides ongoing website support for local service businesses."
   path="/"
   type="home"
+  siteConfigOverride={landingSiteConfig}
 >
-  <section class="hero">
-    <div class="hero-split">
-      <div class="hero-copy">
-        <p class="eyebrow">Electrical Services</p>
-        <h1>Reliable electrical support from Denver, CO.</h1>
-        <p class="lead">
-          MH Electrical and Solar helps you get started with clear next steps, transparent request handling, and realistic service planning.
-          Google Business profile rating: {siteConfig.ratingValue} from {siteConfig.reviewCount} customer reviews.
-        </p>
-        <div class="cta-row">
-          <a class="button" href="/services">View Services</a>
-          <a class="button" href="/contact">Request Appointment</a>
-        </div>
+  <section class="wss-hero" id="custom-preview">
+    <div class="wss-hero__content">
+      <p class="eyebrow">Website Support Studio</p>
+      <h1>Get a free custom website preview for your business.</h1>
+      <p class="lead">
+        Send us your current website. We will create a custom homepage preview for your real business so you can see
+        what your next website could look like before you spend a dollar.
+      </p>
+      <div class="wss-actions">
+        <a class="button" href="#custom-preview-form">Request your free preview</a>
       </div>
-
-      <form class="hero-card" id="wss-reimagine-form" novalidate>
-        <p class="hero-card-kicker">custom sample request</p>
-        <h2>Don't like our samples? Let us build you a sample site.</h2>
-        <p>Tell us what is working, what is not, and what your current website should finally be able to do.</p>
-        <label>Your website URL<input name="website" type="url" required autocomplete="url" placeholder="https://example.com" /></label>
-        <label>What do you like about your current site?<textarea name="what-you-like" required></textarea></label>
-        <label>What don't you like about your current site?<textarea name="what-you-dislike" required></textarea></label>
-        <label>What do you wish your website had?<textarea name="website-wishlist" required></textarea></label>
-        <button class="button button--green" type="submit">Build My Sample Site</button>
-        <p id="wss-reimagine-status" role="status" aria-live="polite" class="hero-form-status"></p>
-      </form>
+      <div class="wss-proof-strip" aria-label="Preview strengths">
+        {proofPoints.map((point) => <span>{point}</span>)}
+      </div>
     </div>
+
+    <form class="hero-card wss-request-form wss-hero-form" id="custom-preview-form" novalidate>
+      <p class="hero-card-kicker">free custom website preview</p>
+      <h2>Request a preview for your business</h2>
+      <p>We will review your current site and create a homepage concept built around your actual services and buyers. No payment required to see the preview.</p>
+      <p class="hero-form-note">Most website preview requests are delivered within 2-3 business days.</p>
+      <label>Website URL<input name="website" type="url" required autocomplete="url" placeholder="https://example.com" /></label>
+      <label>Business Type<input name="business-type" type="text" required placeholder="Roofing, HVAC, plumbing, salon..." /></label>
+      <label>Email Address<input name="email" type="email" required autocomplete="email" placeholder="you@example.com" /></label>
+      <label>Optional challenge<textarea name="challenge" placeholder="What is not working well enough right now?"></textarea></label>
+      <button class="button button--green" type="submit">Get My Free Preview</button>
+      <p id="wss-reimagine-status" role="status" aria-live="polite" class="hero-form-status"></p>
+    </form>
   </section>
 
-  <section>
-    <h2>What you can request today</h2>
-    <div class="card-grid">
-      {featuredServices.map((service) => (
-        <article class="card">
-          <h2>{service.title}</h2>
-          <p class="service-meta">{service.duration} · {service.price}</p>
-          <p>{service.summary}</p>
+  <section class="wss-how" id="how-it-works">
+    <div class="wss-section-top">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2>A simple way to see the direction before you approve the build.</h2>
+      </div>
+      <p>
+        The preview gives you something concrete to judge with your team. If it feels right, we can turn it into a full website and support it after launch.
+      </p>
+    </div>
+    <div class="wss-step-grid">
+      {howItWorks.map((item) => (
+        <article class="wss-step-card">
+          <span>{item.step}</span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
         </article>
       ))}
     </div>
   </section>
 
-  <section>
-    <h2>Why this page is structured this way</h2>
-    <div class="card-grid">
-      <article class="card">
-        <h3>Designed to convert</h3>
-        <p>Clear sections and fast loading let you move from details to a request quickly.</p>
-      </article>
-      <article class="card">
-        <h3>Conversion-focused flow</h3>
-        <p>Primary actions lead visitors to service details and a request form with direct contact follow-up.</p>
-      </article>
-      <article class="card">
-        <h3>Mobile-first form</h3>
-        <p>Fast loading sections and accessible controls support users on any device.</p>
-      </article>
+  <section class="wss-transformations" id="transformations">
+    <div class="wss-section-top">
+      <div>
+        <p class="eyebrow">Before and after</p>
+        <h2>Side-by-side transformations make the improvement visible.</h2>
+      </div>
+      <p>
+        The preview is not decoration. It shows how an outdated page can become easier to understand, trust, and contact.
+      </p>
     </div>
-  </section>
-
-  <section>
-    <h2>Service planning examples</h2>
-    <div class="gallery">
-      {galleryHighlights.slice(0, 4).map((item) => (
-        <article class="gallery-item">
-          <p>{item}</p>
+    <div class="wss-transformation-grid">
+      {transformations.map((item) => (
+        <article class="wss-transformation-card">
+          <p class="wss-transformation-type">{item.businessType}</p>
+          <div class="wss-before-after-mockups">
+            <div class="wss-before-mockup">
+              <p class="wss-transformation-label">Before</p>
+              <h3>{item.beforeTitle}</h3>
+              <div class="wss-old-site-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <ul>
+                {item.before.map((point) => <li>{point}</li>)}
+              </ul>
+            </div>
+            <div class="wss-after-mockup">
+              <p class="wss-transformation-label wss-transformation-label--after">After</p>
+              <h3>{item.afterTitle}</h3>
+              <div class="wss-new-site-layout" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <ul>
+                {item.after.map((point) => <li>{point}</li>)}
+              </ul>
+            </div>
+          </div>
+          <strong>{item.outcome}</strong>
         </article>
       ))}
     </div>
   </section>
 
-  <section>
-    <h2>Next action</h2>
-    <p class="muted">Use the form to share your project details, timeline, and contact window.</p>
-    <div class="cta-row">
-      <a class="button" href="/contact">Open request form</a>
-      {siteConfig.googleBusinessProfileSearchUrl && <a class="button" href={siteConfig.googleBusinessProfileSearchUrl} rel="nofollow">Google Business Profile</a>}
+  <section class="wss-gallery-section" id="preview-inspiration">
+    <div class="wss-section-top">
+      <div>
+        <p class="eyebrow">Preview inspiration</p>
+        <h2>Industry gallery for breadth, relevance, and ideas.</h2>
+      </div>
+      <p>
+        The gallery stays broad on purpose. It shows the industries Website Support Studio can understand, while your preview is still shaped around your real business, service mix, and customer questions.
+      </p>
+    </div>
+
+    <div class="wss-filter-row" aria-label="Preview focus areas">
+      {previewFocusAreas.map((category) => <span>{category}</span>)}
+    </div>
+
+    <div class="wss-template-grid wss-industry-grid">
+      {previewConcepts.map((concept) => (
+        <article class="wss-template-card wss-industry-card">
+          <div class="wss-industry-image">
+            <img
+              src={concept.image}
+              srcset={`${concept.image.replace("w=900", "w=480")} 480w, ${concept.image} 900w, ${concept.image.replace("w=900", "w=1200")} 1200w`}
+              sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
+              alt={`${concept.businessType} website preview concept`}
+              loading="lazy"
+              decoding="async"
+              width="900"
+              height="600"
+            />
+            <div class="wss-industry-overlay">
+              <p>{concept.businessType}</p>
+              <strong>{concept.title}</strong>
+              <em>{concept.tag}</em>
+            </div>
+          </div>
+          <div class="wss-template-copy">
+            <div>
+              <p>{concept.businessType}</p>
+              <h3>{concept.title}</h3>
+            </div>
+            <span>{concept.tag}</span>
+          </div>
+          <p class="wss-template-outcome">{concept.outcome}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="wss-trust-section" id="website-support-trust">
+    <div>
+      <p class="eyebrow">Website support experience</p>
+      <h2>Practical website help from preview through improvement.</h2>
+    </div>
+    <div class="wss-trust-list">
+      {trustPoints.map((point) => <p>{point}</p>)}
+    </div>
+  </section>
+
+  <section class="wss-comparison">
+    <div>
+      <p class="eyebrow">After the preview</p>
+      <h2>If the direction is right, we can build it and support it.</h2>
+      <p class="lead">
+        Website Support Studio creates custom preview concepts, builds practical websites, and provides ongoing support
+        so the site keeps working after launch.
+      </p>
+    </div>
+    <div class="wss-score-grid">
+      <article>
+        <strong>1</strong>
+        <span>custom homepage preview</span>
+      </article>
+      <article>
+        <strong>4</strong>
+        <span>simple review steps</span>
+      </article>
+      <article>
+        <strong>0</strong>
+        <span>dollars spent before seeing direction</span>
+      </article>
     </div>
   </section>
 
   <script is:inline>
     (() => {
-      const form = document.getElementById("wss-reimagine-form");
+      const form = document.getElementById("custom-preview-form");
       const status = document.getElementById("wss-reimagine-status");
       if (!(form instanceof HTMLFormElement) || !(status instanceof HTMLElement)) return;
 
-      // TODO: connect this submit hook to an email + CRM route later
-      // Example endpoint: /api/wss-reimagine-lead
+      // TODO: connect this submit hook to an email + CRM route later.
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         status.textContent = "";
 
         if (!form.checkValidity()) {
-          status.textContent = "Please complete all required fields before submitting.";
+          status.textContent = "Please complete the website, business type, and email fields.";
           return;
         }
 
         const data = {
           website: (form.querySelector('input[name="website"]').value || "").trim(),
-          whatYouLike: (form.querySelector('textarea[name="what-you-like"]').value || "").trim(),
-          whatYouDislike: (form.querySelector('textarea[name="what-you-dislike"]').value || "").trim(),
-          websiteWishlist: (form.querySelector('textarea[name="website-wishlist"]').value || "").trim()
+          businessType: (form.querySelector('input[name="business-type"]').value || "").trim(),
+          email: (form.querySelector('input[name="email"]').value || "").trim(),
+          challenge: (form.querySelector('textarea[name="challenge"]').value || "").trim()
         };
 
-        // Simulated success response while backend is offline.
-        // Replace the block below with the actual submission call in the TODO hook above.
-        console.log("WSS reimagine form payload (TODO wire-up):", data);
-        status.textContent = "Thanks. Your sample-site brief is queued for review.";
+        console.log("WSS custom preview request payload (TODO wire-up):", data);
+        status.textContent = "Thanks. Your custom preview request is queued for review.";
         form.reset();
       });
     })();
