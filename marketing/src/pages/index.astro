@@ -1,306 +1,723 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import FounderTrustLayer from "../components/FounderTrustLayer.astro";
 import Label from "../components/Label.astro";
+import LogoLockup from "../components/LogoLockup.astro";
 import { serviceSchema } from "../schema";
-import { CONTACT, DESIGN_SYSTEMS, WEBSITE_PACKAGE } from "../consts";
+import { CONTACT } from "../consts";
 
 const schemas = [
   serviceSchema({
     name: "Website Support Studio",
     description:
-      "A $500 one-time Founder Website Package: a professional, mobile-optimized website with contact forms, basic SEO, launch, a simple customer Back Office, and optional managed website support at $199/month locked in while the account remains active. Operated by Corriston Consulting, LLC. Customers own their website, domain, content, analytics, and advertising accounts.",
+      "Website Support Studio creates free custom website previews, redesign plans, and ongoing website support for small businesses and local service companies.",
     path: "/",
   }),
 ];
 
-const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
+const previewFocusAreas = [
+  "More calls",
+  "Better quote requests",
+  "Stronger local trust",
+  "Clearer services",
+  "Mobile-first buying path",
+  "Ongoing support",
+];
+
+const proofPoints = [
+  "Free custom homepage preview",
+  "No payment required to see the direction",
+  "Most previews delivered in 2-3 business days",
+  "Focused on calls, quotes, and bookings",
+];
+
+const howItWorks = [
+  {
+    step: "01",
+    title: "Submit your website",
+    body: "Send your current URL, business type, email address, and the main challenge you want the preview to solve.",
+  },
+  {
+    step: "02",
+    title: "We build a custom homepage preview",
+    body: "Website Support Studio creates a preview direction around your real services, audience, trust gaps, and conversion path.",
+  },
+  {
+    step: "03",
+    title: "Review it with your team",
+    body: "You get something concrete to judge before deciding whether you want help building or improving the full site.",
+  },
+  {
+    step: "04",
+    title: "Decide what happens next",
+    body: "If the direction makes sense, WSS can build the site, improve the current site, or support ongoing updates after launch.",
+  },
+];
+
+const transformations = [
+  {
+    businessType: "Home service company",
+    beforeTitle: "Outdated website",
+    before: ["Small headline", "Crowded navigation", "Phone number buried"],
+    afterTitle: "Modern preview",
+    after: ["Service-first hero", "Trust near CTA", "Quote path above the fold"],
+    outcome: "Clearer first impression",
+  },
+  {
+    businessType: "Local medical office",
+    beforeTitle: "Poor layout",
+    before: ["Long text blocks", "No first-visit path", "Forms hard to find"],
+    afterTitle: "Better structure",
+    after: ["Appointment choices", "Insurance cues", "Care proof beside the form"],
+    outcome: "More qualified requests",
+  },
+  {
+    businessType: "Professional service firm",
+    beforeTitle: "Weak trust",
+    before: ["Generic claims", "No proof grouping", "Unclear consultation step"],
+    afterTitle: "Strong CTA",
+    after: ["Experience signals", "Service fit cards", "Direct consultation request"],
+    outcome: "Stronger confidence",
+  },
+];
+
+const industryConcepts = [
+  {
+    title: "Storm-ready roofing homepage",
+    businessType: "Roofing",
+    tag: "Better quote requests",
+    outcome: "Help homeowners move from damage concern to inspection request.",
+    image: "https://images.pexels.com/photos/33404981/pexels-photo-33404981.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Same-day HVAC service path",
+    businessType: "HVAC",
+    tag: "More calls",
+    outcome: "Make repair, tune-up, and replacement paths obvious from the first screen.",
+    image: "https://images.pexels.com/photos/32497161/pexels-photo-32497161.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Electrical trust and safety preview",
+    businessType: "Electrical",
+    tag: "Local trust",
+    outcome: "Turn technical work into clear, safe, confidence-building next steps.",
+    image: "https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Plumbing repair request flow",
+    businessType: "Plumbing",
+    tag: "Emergency-ready",
+    outcome: "Help visitors describe the issue quickly and know who will follow up.",
+    image: "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Lawn care quote preview",
+    businessType: "Landscaping",
+    tag: "Clearer services",
+    outcome: "Separate maintenance, cleanup, design, and seasonal work without confusion.",
+    image: "https://images.pexels.com/photos/9029162/pexels-photo-9029162.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Tree removal risk preview",
+    businessType: "Tree service",
+    tag: "Better quote requests",
+    outcome: "Make urgent or dangerous jobs feel organized, professional, and easy to request.",
+    image: "https://images.pexels.com/photos/6218318/pexels-photo-6218318.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pool project confidence page",
+    businessType: "Pool contractors",
+    tag: "Show proof faster",
+    outcome: "Show finished outcomes, service options, and quote paths without burying the dream.",
+    image: "https://images.pexels.com/photos/7174400/pexels-photo-7174400.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Restaurant visit and booking preview",
+    businessType: "Restaurants",
+    tag: "Book more visits",
+    outcome: "Make menu, atmosphere, hours, and reservations easier to act on.",
+    image: "https://images.pexels.com/photos/5056628/pexels-photo-5056628.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Salon booking preview",
+    businessType: "Salons",
+    tag: "Book more appointments",
+    outcome: "Turn services, stylists, gallery proof, and booking into one clear path.",
+    image: "https://images.pexels.com/photos/3992875/pexels-photo-3992875.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Med spa consultation preview",
+    businessType: "Med spas",
+    tag: "Local trust",
+    outcome: "Make treatments feel professional, credible, and easy to inquire about.",
+    image: "https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Patient appointment preview",
+    businessType: "Doctors and dentists",
+    tag: "Book more appointments",
+    outcome: "Help patients understand services, insurance, forms, and appointment options.",
+    image: "https://images.pexels.com/photos/6812461/pexels-photo-6812461.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Real estate lead preview",
+    businessType: "Real estate",
+    tag: "Local trust",
+    outcome: "Show neighborhoods, process, proof, and valuation requests in one confident flow.",
+    image: "https://images.pexels.com/photos/8293765/pexels-photo-8293765.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Law firm consultation preview",
+    businessType: "Law firms",
+    tag: "Local trust",
+    outcome: "Make practice areas, urgency, and consultation requests feel clear and credible.",
+    image: "https://images.pexels.com/photos/7876093/pexels-photo-7876093.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Auto repair service preview",
+    businessType: "Auto repair",
+    tag: "More calls",
+    outcome: "Help drivers choose repair, diagnostics, maintenance, and scheduling faster.",
+    image: "https://images.pexels.com/photos/8986100/pexels-photo-8986100.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Cleaning quote preview",
+    businessType: "Cleaning",
+    tag: "Better quote requests",
+    outcome: "Separate residential, commercial, move-out, and recurring cleaning requests.",
+    image: "https://images.pexels.com/photos/6195111/pexels-photo-6195111.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Remodeling project preview",
+    businessType: "Remodeling",
+    tag: "Show proof faster",
+    outcome: "Show project types, process, before-and-after proof, and estimate readiness.",
+    image: "https://images.pexels.com/photos/3990359/pexels-photo-3990359.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Fitness membership preview",
+    businessType: "Fitness",
+    tag: "Book more visits",
+    outcome: "Make classes, training, trials, and membership questions easy to act on.",
+    image: "https://images.pexels.com/photos/6740311/pexels-photo-6740311.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pet care booking preview",
+    businessType: "Pet services",
+    tag: "Book more appointments",
+    outcome: "Turn grooming, boarding, daycare, and care details into simple booking steps.",
+    image: "https://images.pexels.com/photos/19145885/pexels-photo-19145885.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Local retail discovery preview",
+    businessType: "Retail",
+    tag: "Mobile-first",
+    outcome: "Help shoppers understand products, store personality, hours, and visit reasons.",
+    image: "https://images.pexels.com/photos/30848031/pexels-photo-30848031.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Accounting firm advisory preview",
+    businessType: "Accounting",
+    tag: "Local trust",
+    outcome: "Clarify tax, bookkeeping, advisory, and consultation paths for business owners.",
+    image: "https://images.pexels.com/photos/4386370/pexels-photo-4386370.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Insurance quote confidence preview",
+    businessType: "Insurance",
+    tag: "Better quote requests",
+    outcome: "Help visitors compare coverage needs and request the right policy review.",
+    image: "https://images.pexels.com/photos/8296978/pexels-photo-8296978.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Mortgage application preview",
+    businessType: "Mortgage",
+    tag: "Clearer services",
+    outcome: "Make purchase, refinance, pre-approval, and loan questions easier to start.",
+    image: "https://images.pexels.com/photos/8293778/pexels-photo-8293778.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Financial advisor trust preview",
+    businessType: "Financial advisor",
+    tag: "Local trust",
+    outcome: "Show planning services, fit, credentials, and consultation steps without clutter.",
+    image: "https://images.pexels.com/photos/7821485/pexels-photo-7821485.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Chiropractic appointment preview",
+    businessType: "Chiropractic",
+    tag: "Book more appointments",
+    outcome: "Turn pain concerns, treatment options, and first-visit details into a simple request path.",
+    image: "https://images.pexels.com/photos/4506109/pexels-photo-4506109.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Physical therapy recovery preview",
+    businessType: "Physical therapy",
+    tag: "Book more appointments",
+    outcome: "Help patients understand conditions treated, therapist proof, and appointment options.",
+    image: "https://images.pexels.com/photos/6111589/pexels-photo-6111589.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Veterinary care preview",
+    businessType: "Veterinary",
+    tag: "Local trust",
+    outcome: "Make wellness, urgent care, surgery, and new-client booking easier to navigate.",
+    image: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Senior care family preview",
+    businessType: "Senior care",
+    tag: "Local trust",
+    outcome: "Help families see care types, safety signals, availability, and next steps quickly.",
+    image: "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Child care enrollment preview",
+    businessType: "Child care",
+    tag: "Book more tours",
+    outcome: "Show programs, safety, schedule, and tour requests in a parent-friendly flow.",
+    image: "https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pressure washing estimate preview",
+    businessType: "Pressure washing",
+    tag: "Show proof faster",
+    outcome: "Use before-and-after proof to move visitors from dirty surfaces to estimate requests.",
+    image: "https://images.pexels.com/photos/4792528/pexels-photo-4792528.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Junk removal pickup preview",
+    businessType: "Junk removal",
+    tag: "More calls",
+    outcome: "Make pickup types, pricing cues, service areas, and scheduling easy to scan.",
+    image: "https://images.pexels.com/photos/4246120/pexels-photo-4246120.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Solar consultation preview",
+    businessType: "Solar",
+    tag: "Better quote requests",
+    outcome: "Explain savings, installation steps, financing, and consultation requests without overload.",
+    image: "https://images.pexels.com/photos/9875414/pexels-photo-9875414.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Security systems preview",
+    businessType: "Security systems",
+    tag: "Local trust",
+    outcome: "Separate residential, business, monitoring, and installation paths for faster inquiries.",
+    image: "https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pest control treatment preview",
+    businessType: "Pest control",
+    tag: "More calls",
+    outcome: "Help urgent visitors identify the issue and request inspection or treatment.",
+    image: "https://images.pexels.com/photos/6197119/pexels-photo-6197119.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Flooring showroom preview",
+    businessType: "Flooring",
+    tag: "Show proof faster",
+    outcome: "Show materials, project photos, financing, and estimate steps in one visual path.",
+    image: "https://images.pexels.com/photos/7494809/pexels-photo-7494809.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Painting estimate preview",
+    businessType: "Painting",
+    tag: "Show proof faster",
+    outcome: "Make interior, exterior, commercial, and color consultation requests easier to start.",
+    image: "https://images.pexels.com/photos/6444257/pexels-photo-6444257.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Commercial roofing preview",
+    businessType: "Commercial roofing",
+    tag: "Better quote requests",
+    outcome: "Organize repair, replacement, maintenance, and inspection proof for property teams.",
+    image: "https://images.pexels.com/photos/236705/pexels-photo-236705.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Construction project preview",
+    businessType: "Construction",
+    tag: "Local trust",
+    outcome: "Show project fit, capability, process, and quote readiness for larger decisions.",
+    image: "https://images.pexels.com/photos/209251/pexels-photo-209251.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Property management preview",
+    businessType: "Property management",
+    tag: "Clearer services",
+    outcome: "Route owners, tenants, maintenance, and vacancy questions without friction.",
+    image: "https://images.pexels.com/photos/7578913/pexels-photo-7578913.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Manufacturing capability preview",
+    businessType: "Manufacturing",
+    tag: "Local trust",
+    outcome: "Make capabilities, certifications, production fit, and quote requests easier to evaluate.",
+    image: "https://images.pexels.com/photos/2760243/pexels-photo-2760243.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "B2B services lead preview",
+    businessType: "B2B services",
+    tag: "Clearer services",
+    outcome: "Turn complex offers into a practical homepage that helps buyers decide whether to talk.",
+    image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+];
+
+const trustPoints = [
+  "20+ years website experience",
+  "Website previews, redesigns, support, and ongoing improvements",
+  "Practical help without agency fluff or corporate buzzwords",
+];
 ---
 
 <BaseLayout
-  title="Website Support Studio — Get a Professional Website for $500"
-  description="Get a professional website for $500, then keep it running with Website Support Studio. Founder customers pay $199/month locked while active, own everything, and get a simple Back Office for leads, analytics, testimonials, requests, profile, plan, and support."
+  title="Website Support Studio - Free Custom Website Preview"
+  description="Request a free custom website preview for your business. Website Support Studio creates practical homepage previews, website improvements, and ongoing support for small businesses."
   path="/"
   schemas={schemas}
+  hideChrome
 >
-  <section class="home-hero home-hero--tight">
-    <div class="container home-hero-grid">
-      <div>
-        <p class="kicker"><Label text="_founder_website_package" /></p>
-        <h1>Get a professional website for $500.</h1>
+  <header class="wss-local-header">
+    <div class="container wss-local-header-inner">
+      <a href="/" aria-label="Website Support Studio home">
+        <LogoLockup size={28} />
+      </a>
+      <a class="btn btn-green btn-cta" href="#custom-preview-form" data-ga-event="click_home_header_free_preview">Free preview</a>
+    </div>
+  </header>
+
+  <section class="wss-home-hero" id="custom-preview">
+    <div class="container wss-home-hero-grid">
+      <div class="wss-home-hero-copy">
+        <p class="kicker"><Label text="_free_custom_website_preview" /></p>
+        <h1>Get a free custom website preview for your business.</h1>
         <p class="lede">
-          We build your website, run your website, and Damon keeps track so nothing falls through the cracks.
-          Your Founder plan includes a finished website, a simple Back Office, and ownership of your site,
-          domain, content, and accounts.
+          Send us your current website. We will create a custom homepage preview for your real business so you can see
+          what your next website could look like before you spend a dollar.
         </p>
-        <div class="home-price-strip" aria-label="Founder Website Package summary">
-          <span><strong>$500</strong> one-time build</span>
-          <span><strong>$199/month</strong> locked while active</span>
-          <span><strong>You own</strong> everything</span>
+        <div class="wss-home-actions">
+          <a class="btn btn-green btn-cta" href="#custom-preview-form" data-ga-event="click_home_free_preview">Request your free preview</a>
         </div>
-        <div class="hero-actions home-actions">
-          <a class="btn btn-green btn-cta" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_build_my_website" data-ga-secondary-event="stripe_payment_link_click"><Label text="_build_my_website" /></a>
-          <a class="btn btn-ghost" href="#examples" data-ga-event="click_home_view_samples">View Sample Sites</a>
-          <a class="btn btn-ghost" href="/templates/sample/back-office" data-ga-event="click_home_preview_back_office">Preview Back Office</a>
-          <a class="btn btn-ghost" href="/contact" data-ga-event="click_home_book_call">Book A Call</a>
+        <div class="wss-proof-strip" aria-label="Preview offer details">
+          {proofPoints.map((point) => <span>{point}</span>)}
         </div>
       </div>
-      <aside class="home-sample-request-card" aria-labelledby="sample-request-heading">
+
+      <aside class="wss-preview-card" aria-labelledby="custom-preview-form-heading">
         <div class="home-card-topbar"><span></span><span></span><span></span></div>
-        <p class="kicker">Custom Sample Site</p>
-        <h2 id="sample-request-heading">Don't like our samples? Let us build you a sample site.</h2>
+        <p class="kicker">Free preview request</p>
+        <h2 id="custom-preview-form-heading">Request a preview for your business</h2>
         <p>
-          Send your current site and a few notes. We will use your actual business as the starting point.
+          We will review your current site and create a homepage concept built around your actual services and buyers.
+          No payment required to see the preview.
         </p>
-        <form class="home-sample-form" action={`mailto:${CONTACT.email}`} method="post" enctype="text/plain">
+        <p class="wss-delivery-note">Most previews are delivered within 2-3 business days.</p>
+        <form class="wss-preview-form" id="custom-preview-form" action={`mailto:${CONTACT.email}`} method="post" enctype="text/plain">
           <label>
-            <span>Your website URL</span>
-            <input type="url" name="website_url" placeholder="https://yourwebsite.com" required />
+            <span>Website URL</span>
+            <input name="website_url" type="url" required autocomplete="url" placeholder="https://example.com" />
           </label>
           <label>
-            <span>What do you like about your site?</span>
-            <textarea name="what_you_like" rows="2" placeholder="What should we keep or build on?"></textarea>
+            <span>Business Type</span>
+            <input name="business_type" type="text" required placeholder="Roofing, HVAC, plumbing, salon..." />
           </label>
           <label>
-            <span>What don't you like about your site?</span>
-            <textarea name="what_you_dont_like" rows="2" placeholder="What feels outdated, unclear, or frustrating?"></textarea>
+            <span>Email Address</span>
+            <input name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
           </label>
           <label>
-            <span>What do you wish your website had?</span>
-            <textarea name="website_wishlist" rows="2" placeholder="Bookings, stronger pages, lead capture, better support..."></textarea>
+            <span>Optional challenge</span>
+            <textarea name="challenge" rows="3" placeholder="What is not working well enough right now?"></textarea>
           </label>
-          <button class="btn btn-green" type="submit" data-ga-event="click_home_request_sample_site">
-            Request My Sample Site
-          </button>
+          <button class="btn btn-green btn-cta" type="submit" data-ga-event="click_home_preview_form_submit">Get My Free Preview</button>
         </form>
       </aside>
     </div>
   </section>
 
-  <section class="section home-examples" id="examples">
+  <section class="section wss-how" id="how-it-works">
     <div class="container">
-      <div class="home-section-head">
+      <div class="wss-section-head">
         <div>
-          <p class="kicker"><Label text="_sample_websites" /></p>
-          <h2>See what your $500 website can look like.</h2>
+          <p class="kicker"><Label text="_how_it_works" /></p>
+          <h2>A simple way to see the direction before you approve the build.</h2>
         </div>
         <p>
-          Choose a website style you like. We customize the words, photos, colors, services,
-          calls to action, and local details for your business.
+          The preview gives you something concrete to judge with your team. If it feels right, we can turn it into a full website and support it after launch.
         </p>
       </div>
-      <div class="model-gallery home-model-gallery">
-        {
-          homepageDesignSystems.map((t) => (
-            <article class="card model-card">
-              <div class="model-preview">
-                <img src={t.preview.image} alt={t.preview.alt} width="1100" height="720" loading="lazy" />
-                <div class="model-preview-ui">
-                  <span>{t.preview.label}</span>
-                  <strong>{t.name}</strong>
-                </div>
-              </div>
-              <p class="template-industry">{t.industry}</p>
-              <h3>{t.preview.headline}</h3>
-              <ul class="model-signals" aria-label={`${t.name} visual signals`}>
-                {t.preview.signals.map((signal) => <li>{signal}</li>)}
-              </ul>
-              <p class="design-system-adapt">
-                Starts from {t.adaptableFrom}; can become {t.adaptableTo.slice(0, 3).join(", ")}.
-              </p>
-              <div class="design-system-actions">
-                <a
-                  class="btn btn-green btn-cta"
-                  href={WEBSITE_PACKAGE.ctaHref}
-                  data-ga-event="click_template_start"
-                  data-ga-secondary-event="stripe_payment_link_click"
-                  data-ga-label={t.key}
-                >
-                  Start With This Style
-                </a>
-                {t.sampleSites.slice(0, 2).map((site) => (
-                  <a class="btn btn-ghost" href={site.href} data-ga-event="click_home_sample_site" data-ga-label={`${t.key}_${site.label.toLowerCase().replaceAll(" ", "_")}`}>
-                    {site.label}
-                  </a>
-                ))}
-              </div>
-            </article>
-          ))
-        }
-      </div>
-      <div class="hero-actions home-actions" style="margin-top:1.5rem;">
-        <a class="btn btn-ghost" href="/templates" data-ga-event="click_model_gallery_all">View All Sample Sites</a>
-        <a class="btn btn-ghost" href="/templates/sample/back-office" data-ga-event="click_model_gallery_back_office">Preview Back Office</a>
+      <div class="wss-step-grid">
+        {howItWorks.map((item) => (
+          <article>
+            <span>{item.step}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section home-story">
+  <section class="section wss-transformations" id="transformations">
     <div class="container">
-      <p class="kicker">The Website Support Studio story</p>
-      <h2>We build your website. We run your website. Damon makes sure nothing falls through the cracks.</h2>
-      <div class="grid grid-3" style="margin-top:1.5rem;">
-        <article class="card">
-          <h3>We build your website</h3>
-          <p>A professional, mobile-ready site with clear pages, contact forms, basic SEO, and launch support for a one-time $500 build.</p>
-        </article>
-        <article class="card">
-          <h3>We run your website</h3>
-          <p>After launch, Website Support Studio helps with updates, fixes, page changes, forms, content, and support so your site keeps moving.</p>
-        </article>
-        <article class="card">
-          <h3>Damon keeps track</h3>
-          <p>Damon is the WSS system that keeps your website requests organized, visible, and followed up so details do not disappear in email.</p>
-        </article>
+      <div class="wss-section-head">
+        <div>
+          <p class="kicker"><Label text="_before_and_after" /></p>
+          <h2>Side-by-side transformations make the improvement visible.</h2>
+        </div>
+        <p>
+          The preview is not decoration. It shows how an outdated page can become easier to understand, trust, and contact.
+        </p>
+      </div>
+      <div class="wss-transformation-grid">
+        {transformations.map((item) => (
+          <article class="wss-transformation-card">
+            <p class="wss-transformation-type">{item.businessType}</p>
+            <div class="wss-before-after-mockups">
+              <div class="wss-before-mockup">
+                <p class="wss-transformation-label">Before</p>
+                <h3>{item.beforeTitle}</h3>
+                <div class="wss-old-site-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <ul>
+                  {item.before.map((point) => <li>{point}</li>)}
+                </ul>
+              </div>
+              <div class="wss-after-mockup">
+                <p class="wss-transformation-label wss-transformation-label-after">After</p>
+                <h3>{item.afterTitle}</h3>
+                <div class="wss-new-site-layout" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <ul>
+                  {item.after.map((point) => <li>{point}</li>)}
+                </ul>
+              </div>
+            </div>
+            <strong>{item.outcome}</strong>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section home-back-office" style="background:var(--surface-muted);">
-    <div class="container home-back-office-grid">
+  <section class="section wss-gallery-section" id="preview-inspiration">
+    <div class="container">
+      <div class="wss-section-head">
+        <div>
+          <p class="kicker"><Label text="_industry_gallery" /></p>
+          <h2>Industry gallery for breadth, relevance, and ideas.</h2>
+        </div>
+        <p>
+          The gallery stays broad on purpose. It shows the industries Website Support Studio can understand, while your preview is shaped around your business, service mix, and customer questions.
+        </p>
+      </div>
+
+      <div class="wss-filter-row" aria-label="Preview focus areas">
+        {previewFocusAreas.map((category) => <span>{category}</span>)}
+      </div>
+
+      <div class="wss-industry-grid">
+        {industryConcepts.map((concept) => (
+          <article class="wss-industry-card">
+            <div class="wss-industry-image">
+              <img
+                src={concept.image}
+                srcset={`${concept.image.replace("w=900", "w=480")} 480w, ${concept.image} 900w, ${concept.image.replace("w=900", "w=1200")} 1200w`}
+                sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
+                alt={`${concept.businessType} website preview concept`}
+                loading="lazy"
+                decoding="async"
+                width="900"
+                height="600"
+              />
+              <div class="wss-industry-overlay">
+                <p>{concept.businessType}</p>
+                <strong>{concept.title}</strong>
+                <em>{concept.tag}</em>
+              </div>
+            </div>
+            <div class="wss-industry-copy">
+              <div>
+                <p>{concept.businessType}</p>
+                <h3>{concept.title}</h3>
+              </div>
+              <span>{concept.tag}</span>
+            </div>
+            <p class="wss-industry-outcome">{concept.outcome}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section wss-trust-section" id="website-support-trust">
+    <div class="container wss-trust-grid">
       <div>
-        <p class="kicker">Your Back Office</p>
-        <h2>One simple place to check your website.</h2>
-        <p class="lede" style="margin-top:0.75rem;">
-          Your Back Office gives you leads, analytics, website requests, testimonials, business profile,
-          plan details, and support in one practical customer dashboard.
-        </p>
-        <p>
-          Future upgrades can connect reporting from Google Analytics, Search Console, social channels,
-          and other tools as your website grows.
-        </p>
-        <div class="hero-actions home-actions">
-          <a class="btn btn-green" href="/templates/sample/back-office" data-ga-event="click_home_back_office_preview">Preview Back Office</a>
-          <a class="btn btn-ghost" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_home_back_office_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-        </div>
+        <p class="kicker"><Label text="_website_support_experience" /></p>
+        <h2>Practical website help from preview through improvement.</h2>
       </div>
-      <div class="home-dashboard-mini" aria-label="Sample Back Office dashboard preview">
-        <div class="home-dashboard-nav">
-          <strong>Marigold & Mane Back Office</strong>
-          <span>Sample customer dashboard</span>
-        </div>
-        <div class="home-dashboard-stats">
-          <span><strong>1,248</strong> visits</span>
-          <span><strong>23</strong> leads</span>
-          <span><strong>4</strong> requests</span>
-          <span><strong>2</strong> reviews</span>
-        </div>
-        <div class="home-dashboard-table">
-          <p><strong>Maya R.</strong><span>Contact page</span><em>New</em></p>
-          <p><strong>Chris D.</strong><span>Services page</span><em>Replied</em></p>
-          <p><strong>Jordan P.</strong><span>Homepage CTA</span><em>Booked</em></p>
-        </div>
+      <div class="wss-trust-list">
+        {trustPoints.map((point) => <p>{point}</p>)}
       </div>
-    </div>
-  </section>
-
-  <FounderTrustLayer />
-
-  <section class="section home-ownership">
-    <div class="container">
-      <div class="summary home-summary">
-        <strong>Simple version:</strong> Website Support Studio builds and launches your site for a one-time $500.
-        If you want WSS to keep helping after launch, Founder customers keep $199/month pricing while the account
-        remains active. You own your website, domain, content, and connected accounts.
-      </div>
-    </div>
-  </section>
-
-  <section class="section" style="background:var(--surface-muted);">
-    <div class="container">
-      <p class="kicker">Why small businesses choose WSS</p>
-      <h2>A website should not become another thing you have to chase.</h2>
-      <div class="grid grid-3" style="margin-top:1.5rem;">
-        <article class="card">
-          <h3>Clear next steps</h3>
-          <p>You know what happens after payment: short intake, build, preview, adjustments, launch, and support.</p>
-        </article>
-        <article class="card">
-          <h3>Built to be yours</h3>
-          <p>Your site, domain, content, photos, analytics, and accounts belong to you. You can leave without losing your website.</p>
-        </article>
-        <article class="card">
-          <h3>Help after launch</h3>
-          <p>Need a change, new photo, fixed form, new page, or clearer wording? Submit a Website Request from your Back Office.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" style="background:var(--surface-muted); padding-top:1rem;">
-    <div class="container" style="max-width:820px;">
-      <p class="kicker"><Label text="_questions" /></p>
-      <h2>Questions, answered.</h2>
-      <p class="lede" style="margin-top:0.75rem;">
-        What happens after payment, what is included, what you own, how requests work, and how Founder pricing stays locked while active.
-      </p>
-      <p style="margin-top:1.25rem;">
-        <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
-      </p>
     </div>
   </section>
 
   <section class="section">
-    <div class="container cta-card cta-card--founder">
+    <div class="container cta-card wss-final-cta">
       <div>
-        <p class="kicker"><Label text="_ready_when_you_are" /></p>
-        <h2>Ready to turn one of these sample sites into your website?</h2>
+        <p class="kicker"><Label text="_after_the_preview" /></p>
+        <h2>If the direction is right, we can build it and support it.</h2>
         <p>
-          Secure your Founder Website Package, send us your business details, and we will shape the words,
-          photos, colors, pages, and Back Office around your company.
+          Website Support Studio creates custom preview concepts, builds practical websites, and provides ongoing support
+          so the site keeps working after launch.
         </p>
       </div>
-      <div class="hero-actions home-actions">
-        <a class="btn btn-primary" href={WEBSITE_PACKAGE.ctaHref} data-ga-event="click_home_final_build" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-        <a class="btn btn-ghost" href="/templates" data-ga-event="click_home_final_samples">View Sample Sites</a>
-        <a class="btn btn-ghost" href="/templates/sample/back-office" data-ga-event="click_home_final_back_office">Preview Back Office</a>
-        <a class="btn btn-ghost" href="/contact" data-ga-event="click_home_final_book_call">Book A Call</a>
+      <div class="wss-score-grid">
+        <article>
+          <strong>1</strong>
+          <span>custom homepage preview</span>
+        </article>
+        <article>
+          <strong>4</strong>
+          <span>simple review steps</span>
+        </article>
+        <article>
+          <strong>0</strong>
+          <span>dollars spent before seeing direction</span>
+        </article>
+      </div>
+      <div class="wss-home-actions">
+        <a class="btn btn-green btn-cta" href="#custom-preview-form" data-ga-event="click_home_final_free_preview">Request your free preview</a>
       </div>
     </div>
   </section>
 
   <style>
-    .home-hero--tight { padding:clamp(1.15rem,3vw,2.4rem) 0 clamp(.85rem,2vw,1.5rem); }
-    .home-hero-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,.72fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:center; }
-    .home-hero h1 { max-width:11ch; margin:.55rem 0 0; font-size:clamp(1.95rem,5.4vw,3.8rem); line-height:.95; letter-spacing:-.06em; }
-    .home-hero .lede { max-width:64ch; margin-top:1rem; }
-    .home-price-strip { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1rem; }
-    .home-price-strip span { display:inline-flex; align-items:center; gap:.35rem; border:1px solid var(--border); border-radius:999px; padding:.55rem .75rem; background:var(--surface); color:var(--text-muted); font-size:.92rem; }
-    .home-price-strip strong { color:var(--text); }
-    .home-actions { gap:.65rem; margin-top:1.1rem; }
-    .home-sample-request-card { border:1px solid var(--border); border-radius:1.5rem; padding:1rem; background:linear-gradient(180deg,#fff,var(--surface-muted)); box-shadow:0 22px 70px rgba(15,23,42,.08); }
-    .home-card-topbar { display:flex; gap:.35rem; margin-bottom:1rem; }
-    .home-card-topbar span { width:.7rem; height:.7rem; border-radius:999px; background:var(--border); }
-    .home-sample-request-card h2 { margin:.25rem 0 .65rem; font-size:1.35rem; }
-    .home-sample-request-card p { margin:.4rem 0 0; color:var(--text-muted); line-height:1.55; }
-    .home-sample-form { display:grid; gap:.7rem; margin-top:1rem; }
-    .home-sample-form label { display:grid; gap:.3rem; }
-    .home-sample-form span { color:var(--text); font-size:.8rem; font-weight:900; }
-    .home-sample-form input,
-    .home-sample-form textarea { width:100%; border:1px solid var(--border); border-radius:.8rem; padding:.65rem .7rem; background:#fff; color:var(--text); font:inherit; }
-    .home-sample-form textarea { resize:vertical; }
-    .home-sample-form input::placeholder,
-    .home-sample-form textarea::placeholder { color:var(--text-subtle); }
-    .home-sample-form .btn { justify-content:center; margin-top:.15rem; }
-    .home-examples { padding-top:clamp(0.6rem,1.8vw,1.2rem); }
-    .home-section-head { display:grid; grid-template-columns:minmax(0,.95fr) minmax(260px,.7fr); gap:1rem; align-items:end; margin-bottom:1.25rem; }
-    .home-section-head h2 { margin-top:0; }
-    .home-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
-    .home-model-gallery { margin-top:0; }
-    .home-story h2 { max-width:960px; }
-    .home-back-office-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(320px,1fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:center; }
-    .home-dashboard-mini { border:1px solid var(--border); border-radius:1.35rem; background:#fff; box-shadow:0 22px 70px rgba(15,23,42,.08); overflow:hidden; }
-    .home-dashboard-nav { display:flex; justify-content:space-between; gap:1rem; align-items:center; padding:1rem; border-bottom:1px solid var(--border); background:#f8faf6; }
-    .home-dashboard-nav span { color:var(--text-muted); font-family:var(--font-mono); font-size:.72rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
-    .home-dashboard-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.5rem; padding:1rem; }
-    .home-dashboard-stats span { display:grid; gap:.15rem; border:1px solid var(--border); border-radius:.8rem; padding:.75rem; color:var(--text-muted); background:var(--surface-muted); font-size:.82rem; }
-    .home-dashboard-stats strong { color:var(--text); font-size:1.35rem; }
-    .home-dashboard-table { display:grid; gap:.4rem; padding:0 1rem 1rem; }
-    .home-dashboard-table p { display:grid; grid-template-columns:1fr 1fr auto; gap:.75rem; align-items:center; margin:0; padding:.75rem; border:1px solid var(--border); border-radius:.75rem; color:var(--text-muted); }
-    .home-dashboard-table strong { color:var(--text); }
-    .home-dashboard-table em { font-style:normal; border-radius:999px; padding:.25rem .45rem; background:#e8f4ec; color:#17633f; font-family:var(--font-mono); font-size:.7rem; font-weight:900; }
-    .home-summary { max-width:880px; }
-    @media (max-width:900px) { .home-hero-grid,.home-section-head,.home-back-office-grid { grid-template-columns:1fr; } .home-hero h1 { max-width:100%; font-size:clamp(2.8rem,14vw,4.5rem); } .home-dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media (max-width:640px) { .home-hero--tight { padding-top:1.75rem; } .home-actions .btn { width:100%; justify-content:center; } .home-price-strip span { width:100%; } .home-dashboard-nav,.home-dashboard-table p { display:grid; } .home-dashboard-stats { grid-template-columns:1fr; } }
+    .wss-local-header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--border); background:rgba(250,250,247,.94); backdrop-filter:blur(14px); }
+    .wss-local-header-inner { min-height:4.3rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .wss-local-header .btn { white-space:nowrap; }
+    .wss-home-hero { padding:clamp(1.5rem,4vw,3.25rem) 0 clamp(1.2rem,3vw,2rem); background:linear-gradient(135deg,#f8fafc 0%,#f4f3ee 62%,#eaf4f7 100%); border-bottom:1px solid var(--border); }
+    .wss-home-hero-grid { display:grid; grid-template-columns:minmax(0,0.96fr) minmax(320px,0.78fr); gap:clamp(1.25rem,4vw,2.8rem); align-items:center; }
+    .wss-home-hero h1 { max-width:12ch; margin:.55rem 0 0; font-size:clamp(2.2rem,6vw,4.55rem); line-height:.95; letter-spacing:-.06em; }
+    .wss-home-hero .lede { max-width:63ch; margin-top:1rem; }
+    .wss-home-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.2rem; }
+    .wss-proof-strip,
+    .wss-filter-row { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1.25rem; }
+    .wss-proof-strip span,
+    .wss-filter-row span { border:1px solid var(--border-strong); border-radius:999px; background:#fff; color:var(--text); padding:.48rem .72rem; font-size:.82rem; font-weight:800; }
+    .wss-preview-card { border:1px solid var(--border); border-radius:1.2rem; padding:1rem; background:#fff; box-shadow:0 22px 70px rgba(15,23,42,.1); }
+    .wss-preview-card h2 { margin:.25rem 0 .55rem; font-size:1.35rem; }
+    .wss-preview-card p { margin:.4rem 0 0; color:var(--text-muted); line-height:1.55; }
+    .wss-delivery-note { border:1px solid var(--border); border-left:3px solid var(--brand-blue); border-radius:.75rem; padding:.65rem .75rem; background:var(--surface-muted); color:var(--text) !important; font-weight:700; }
+    .wss-preview-form { display:grid; gap:.7rem; margin-top:1rem; }
+    .wss-preview-form label { display:grid; gap:.3rem; }
+    .wss-preview-form span { color:var(--text); font-size:.8rem; font-weight:900; }
+    .wss-preview-form input,
+    .wss-preview-form textarea { width:100%; border:1px solid var(--border); border-radius:.8rem; padding:.65rem .7rem; background:#fff; color:var(--text); font:inherit; }
+    .wss-preview-form textarea { resize:vertical; }
+    .wss-preview-form .btn { justify-content:center; margin-top:.15rem; }
+    .wss-section-head { display:grid; grid-template-columns:minmax(0,.95fr) minmax(260px,.72fr); gap:1rem; align-items:end; margin-bottom:1.35rem; }
+    .wss-section-head h2 { margin-top:0; }
+    .wss-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
+    .wss-how { background:#fff; }
+    .wss-step-grid,
+    .wss-transformation-grid,
+    .wss-industry-grid,
+    .wss-score-grid { display:grid; gap:.9rem; }
+    .wss-step-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .wss-step-grid article,
+    .wss-transformation-card,
+    .wss-score-grid article { border:1px solid var(--border); border-radius:1rem; padding:1rem; background:#fff; }
+    .wss-step-grid article > span { display:inline-flex; align-items:center; justify-content:center; width:2.25rem; height:2.25rem; border-radius:999px; background:var(--tone-blue-bg); color:var(--tone-blue-text); font-weight:900; }
+    .wss-step-grid h3,
+    .wss-transformation-card h3 { margin-top:.85rem; }
+    .wss-step-grid p,
+    .wss-transformation-card p { color:var(--text-muted); }
+    .wss-transformations { background:var(--surface-muted); }
+    .wss-transformation-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .wss-transformation-card { background:linear-gradient(135deg,#fff,#f8fafc); }
+    .wss-transformation-type { margin:0 0 .8rem; color:var(--text-strong); font-weight:900; }
+    .wss-before-after-mockups { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; }
+    .wss-before-mockup,
+    .wss-after-mockup { min-width:0; border-radius:.85rem; padding:.85rem; }
+    .wss-before-mockup { border:1px solid #efd8d8; background:#fff7f7; }
+    .wss-after-mockup { border:1px solid #cfe8d8; background:#f3fbf6; }
+    .wss-before-mockup ul,
+    .wss-after-mockup ul { display:grid; gap:.34rem; margin:.72rem 0 0; padding-left:1.05rem; color:var(--text-muted); font-size:.86rem; }
+    .wss-transformation-label { width:fit-content; border-radius:999px; background:#f8dddd; color:#7a2222; padding:.28rem .55rem; font-size:.72rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .wss-transformation-label-after { background:#dff4e7; color:#17633f; }
+    .wss-old-site-lines,
+    .wss-new-site-layout { display:grid; gap:.34rem; }
+    .wss-old-site-lines span { height:.42rem; border-radius:999px; background:#e0d1d1; }
+    .wss-old-site-lines span:nth-child(1) { width:46%; }
+    .wss-old-site-lines span:nth-child(2) { width:88%; }
+    .wss-old-site-lines span:nth-child(3) { width:78%; }
+    .wss-old-site-lines span:nth-child(4) { width:62%; }
+    .wss-new-site-layout { grid-template-columns:1.2fr .8fr; }
+    .wss-new-site-layout span { min-height:1.8rem; border-radius:.45rem; background:#cfe8d8; }
+    .wss-new-site-layout span:nth-child(1) { grid-row:span 2; min-height:4rem; background:#dce4fe; }
+    .wss-transformation-card > strong { display:block; margin-top:.85rem; color:var(--text-strong); font-size:1.02rem; }
+    .wss-gallery-section { background:#0b1220; color:#f8fafc; }
+    .wss-gallery-section h2,
+    .wss-gallery-section .kicker,
+    .wss-gallery-section .wss-section-head p { color:#f8fafc; }
+    .wss-gallery-section .wss-filter-row span { border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.08); color:#e2e8f0; }
+    .wss-industry-grid { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:1rem; }
+    .wss-industry-card { min-width:0; }
+    .wss-industry-image { position:relative; overflow:hidden; aspect-ratio:16/10.5; border:1px solid rgba(255,255,255,.14); border-radius:1rem; background:#111827; box-shadow:0 1rem 2.2rem rgba(0,0,0,.22); }
+    .wss-industry-image img { width:100%; height:100%; object-fit:cover; filter:saturate(.95) contrast(1.02); transition:transform 180ms ease, filter 180ms ease; }
+    .wss-industry-card:hover .wss-industry-image img { transform:scale(1.035); filter:saturate(1.05) contrast(1.06); }
+    .wss-industry-overlay { position:absolute; inset:auto 0 0; display:grid; gap:.36rem; padding:3.2rem .9rem .9rem; background:linear-gradient(180deg,transparent,rgba(5,8,16,.9) 48%,rgba(5,8,16,.98)); }
+    .wss-industry-overlay p,
+    .wss-industry-overlay strong,
+    .wss-industry-overlay em { margin:0; }
+    .wss-industry-overlay p { color:#c8d7ff; font-size:.68rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .wss-industry-overlay strong { color:#fff; max-width:12ch; font-size:clamp(1.02rem,2.5vw,1.38rem); line-height:1.05; }
+    .wss-industry-overlay em { width:fit-content; border-radius:999px; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); color:#fff; padding:.32rem .55rem; font-size:.7rem; font-style:normal; font-weight:850; }
+    .wss-industry-copy { display:flex; justify-content:space-between; gap:1rem; margin-top:.7rem; }
+    .wss-industry-copy p,
+    .wss-industry-copy h3,
+    .wss-industry-copy span,
+    .wss-industry-outcome { margin:0; }
+    .wss-industry-copy p { color:#c8d7ff; font-size:.69rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .wss-industry-copy h3 { margin-top:.18rem; color:#fff; font-size:1rem; }
+    .wss-industry-copy span { color:#d7def5; font-size:.8rem; text-align:right; }
+    .wss-industry-outcome { color:#cbd5e1; margin-top:.45rem; font-size:.9rem; }
+    .wss-trust-section { background:#fff; }
+    .wss-trust-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(280px,1fr); gap:1rem; align-items:center; }
+    .wss-trust-list { display:grid; gap:.7rem; }
+    .wss-trust-list p { margin:0; border:1px solid var(--border); border-radius:.85rem; background:var(--surface-muted); color:var(--text); padding:.9rem; font-weight:800; }
+    .wss-final-cta { display:grid; gap:1rem; }
+    .wss-score-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .wss-score-grid strong,
+    .wss-score-grid span { display:block; }
+    .wss-score-grid strong { color:var(--text-strong); font-size:2.1rem; line-height:1; }
+    .wss-score-grid span { color:var(--text-muted); margin-top:.35rem; font-weight:800; }
+    @media (max-width:900px) {
+      .wss-home-hero-grid,
+      .wss-section-head,
+      .wss-trust-grid { grid-template-columns:1fr; }
+      .wss-home-hero h1 { max-width:100%; font-size:clamp(2.45rem,12vw,4.1rem); }
+      .wss-step-grid,
+      .wss-transformation-grid,
+      .wss-industry-grid,
+      .wss-score-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:640px) {
+      .wss-local-header-inner { min-height:3.7rem; }
+      .wss-local-header .btn { padding:.55rem .7rem; font-size:.72rem; }
+      .wss-home-hero { padding-top:.85rem; }
+      .wss-home-hero h1 { font-size:clamp(2.05rem,10.5vw,3.35rem); }
+      .wss-home-hero .lede { font-size:.98rem; }
+      .wss-home-hero-copy .wss-home-actions { display:none; }
+      .wss-home-actions .btn,
+      .wss-preview-form .btn { width:100%; justify-content:center; }
+      .wss-home-hero-copy .wss-proof-strip { display:none; }
+      .wss-proof-strip span,
+      .wss-filter-row span { width:100%; }
+      .wss-step-grid,
+      .wss-transformation-grid,
+      .wss-industry-grid,
+      .wss-score-grid,
+      .wss-before-after-mockups { grid-template-columns:1fr; }
+    }
   </style>
 </BaseLayout>
