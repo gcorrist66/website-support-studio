@@ -726,39 +726,50 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
   <style>
     :global(body[data-page="/free-website-preview"]) {
       background: #fbfcf8;
+      scroll-padding-top: 6rem;
     }
 
     .preview-hero {
-      padding: clamp(1.5rem, 4vw, 3.2rem) 0 clamp(1.25rem, 3.5vw, 2.4rem);
+      scroll-margin-top: 6rem;
+      padding: clamp(1.45rem, 3vw, 2.35rem) 0 clamp(1rem, 2.8vw, 1.8rem);
       background:
         linear-gradient(180deg, #ffffff 0%, #f7fbf8 58%, #fbfcf8 100%);
+    }
+
+    #preview-questionnaire,
+    #industry-preview-feed {
+      scroll-margin-top: 6rem;
+    }
+
+    .preview-hero .container {
+      max-width: 1180px;
     }
 
     .preview-hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: clamp(1.15rem, 3vw, 2rem);
+      gap: clamp(1rem, 2.5vw, 2rem);
       align-items: start;
     }
 
     .preview-hero-copy h1 {
       max-width: 13ch;
       margin: 0;
-      font-size: clamp(2.15rem, 10vw, 4.35rem);
-      line-height: 1;
+      font-size: clamp(2.05rem, 9vw, 3.55rem);
+      line-height: 1.02;
       letter-spacing: 0;
     }
 
     .preview-hero-copy .lede {
-      margin-top: 1rem;
+      margin-top: 0.8rem;
       max-width: 64ch;
       letter-spacing: 0;
     }
 
     .hero-proof-grid {
       display: grid;
-      gap: 0.75rem;
-      margin-top: clamp(1rem, 3vw, 1.35rem);
+      gap: 0.65rem;
+      margin-top: clamp(0.85rem, 2.2vw, 1.1rem);
     }
 
     .hero-proof-grid article {
@@ -766,7 +777,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.78);
-      padding: 0.9rem;
+      padding: 0.72rem;
       box-shadow: 0 12px 34px rgba(11, 18, 32, 0.05);
     }
 
@@ -778,15 +789,15 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 
     .hero-proof-grid strong {
       color: var(--text-strong);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       line-height: 1.2;
     }
 
     .hero-proof-grid span {
-      margin-top: 0.32rem;
+      margin-top: 0.25rem;
       color: var(--text-muted);
-      font-size: 0.86rem;
-      line-height: 1.45;
+      font-size: 0.82rem;
+      line-height: 1.35;
     }
 
     .preview-actions,
@@ -794,14 +805,14 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      margin-top: 1.25rem;
+      margin-top: 1rem;
     }
 
     .trust-strip {
       display: flex;
       flex-wrap: wrap;
       gap: 0.55rem;
-      margin-top: 1.1rem;
+      margin-top: 0.85rem;
     }
 
     .trust-strip span {
@@ -831,14 +842,14 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 
     .hero-form-card {
       display: grid;
-      gap: 1rem;
+      gap: 0.85rem;
       align-self: start;
+      width: 100%;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: #fff;
       box-shadow: 0 24px 70px rgba(11, 18, 32, 0.11);
-      max-height: min(800px, calc(100vh - 5.25rem));
-      overflow: auto;
+      overflow: visible;
       padding: clamp(0.9rem, 2vw, 1.15rem);
     }
 
@@ -847,7 +858,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     }
 
     .hero-form-card .form-intro h2 {
-      font-size: clamp(1.45rem, 3vw, 2rem);
+      font-size: clamp(1.3rem, 2.4vw, 1.7rem);
       line-height: 1.05;
     }
 
@@ -1226,8 +1237,8 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       display: grid;
       gap: 0.35rem;
       border-radius: 8px;
-      padding: 1rem;
-      margin-top: 1rem;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
       box-shadow: none;
     }
 
@@ -1239,7 +1250,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 
     .preview-form {
       display: grid;
-      gap: 1rem;
+      gap: 0.8rem;
       border-radius: 8px;
       padding: clamp(1rem, 3vw, 1.45rem);
     }
@@ -1371,11 +1382,19 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     @media (min-width: 900px) {
       .preview-hero-grid,
       .form-grid {
-        grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .preview-hero-copy h1 {
-        font-size: clamp(3.05rem, 5.3vw, 4.7rem);
+        max-width: 16ch;
+        font-size: clamp(2.75rem, 3.65vw, 3.45rem);
+      }
+
+      .hero-form-card {
+        max-height: min(660px, calc(100vh - 6rem));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: clamp(1.05rem, 1.8vw, 1.35rem);
       }
 
       .steps-grid {
@@ -1411,7 +1430,9 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       }
 
       .hero-form-card {
-        max-height: min(720px, calc(100vh - 3.75rem));
+        max-height: min(740px, calc(100vh - 1.5rem));
+        overflow-y: auto;
+        overscroll-behavior: contain;
       }
 
       .browser-grid,
