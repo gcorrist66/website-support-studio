@@ -41,11 +41,299 @@ const schemas = [
       q: "What happens after I submit the questionnaire?",
       a: "Website Support Studio reviews your goals, style preferences, services, audience, and inspiration websites, then prepares a free preview for you to review.",
     },
-    {
-      q: "Do AI agents automatically build my website?",
-      a: "No. Website Support Studio is an operator-led service. AI agents may help the team review structured submissions and prepare work, but the service is reviewed by people.",
-    },
   ]),
+];
+
+const previewFocusAreas = [
+  "More calls",
+  "Better quote requests",
+  "Stronger local trust",
+  "Clearer services",
+  "Mobile-first buying path",
+  "Ongoing support",
+];
+
+const industryConcepts = [
+  {
+    title: "Storm-ready roofing homepage",
+    businessType: "Roofing",
+    tag: "Better quote requests",
+    outcome: "Help homeowners move from damage concern to inspection request.",
+    image: "https://images.pexels.com/photos/33404981/pexels-photo-33404981.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Same-day HVAC service path",
+    businessType: "HVAC",
+    tag: "More calls",
+    outcome: "Make repair, tune-up, and replacement paths obvious from the first screen.",
+    image: "https://images.pexels.com/photos/32497161/pexels-photo-32497161.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Electrical trust and safety preview",
+    businessType: "Electrical",
+    tag: "Local trust",
+    outcome: "Turn technical work into clear, safe, confidence-building next steps.",
+    image: "https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Plumbing repair request flow",
+    businessType: "Plumbing",
+    tag: "Emergency-ready",
+    outcome: "Help visitors describe the issue quickly and know who will follow up.",
+    image: "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Lawn care quote preview",
+    businessType: "Landscaping",
+    tag: "Clearer services",
+    outcome: "Separate maintenance, cleanup, design, and seasonal work without confusion.",
+    image: "https://images.pexels.com/photos/9029162/pexels-photo-9029162.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Tree removal risk preview",
+    businessType: "Tree service",
+    tag: "Better quote requests",
+    outcome: "Make urgent or dangerous jobs feel organized, professional, and easy to request.",
+    image: "https://images.pexels.com/photos/6218318/pexels-photo-6218318.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pool project confidence page",
+    businessType: "Pool contractors",
+    tag: "Show proof faster",
+    outcome: "Show finished outcomes, service options, and quote paths without burying the dream.",
+    image: "https://images.pexels.com/photos/7174400/pexels-photo-7174400.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Restaurant visit and booking preview",
+    businessType: "Restaurants",
+    tag: "Book more visits",
+    outcome: "Make menu, atmosphere, hours, and reservations easier to act on.",
+    image: "https://images.pexels.com/photos/5056628/pexels-photo-5056628.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Salon booking preview",
+    businessType: "Salons",
+    tag: "Book more appointments",
+    outcome: "Turn services, stylists, gallery proof, and booking into one clear path.",
+    image: "https://images.pexels.com/photos/3992875/pexels-photo-3992875.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Med spa consultation preview",
+    businessType: "Med spas",
+    tag: "Local trust",
+    outcome: "Make treatments feel professional, credible, and easy to inquire about.",
+    image: "https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Patient appointment preview",
+    businessType: "Doctors and dentists",
+    tag: "Book more appointments",
+    outcome: "Help patients understand services, insurance, forms, and appointment options.",
+    image: "https://images.pexels.com/photos/6812461/pexels-photo-6812461.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Real estate lead preview",
+    businessType: "Real estate",
+    tag: "Local trust",
+    outcome: "Show neighborhoods, process, proof, and valuation requests in one confident flow.",
+    image: "https://images.pexels.com/photos/8293765/pexels-photo-8293765.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Law firm consultation preview",
+    businessType: "Law firms",
+    tag: "Local trust",
+    outcome: "Make practice areas, urgency, and consultation requests feel clear and credible.",
+    image: "https://images.pexels.com/photos/7876093/pexels-photo-7876093.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Auto repair service preview",
+    businessType: "Auto repair",
+    tag: "More calls",
+    outcome: "Help drivers choose repair, diagnostics, maintenance, and scheduling faster.",
+    image: "https://images.pexels.com/photos/8986100/pexels-photo-8986100.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Cleaning quote preview",
+    businessType: "Cleaning",
+    tag: "Better quote requests",
+    outcome: "Separate residential, commercial, move-out, and recurring cleaning requests.",
+    image: "https://images.pexels.com/photos/6195111/pexels-photo-6195111.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Remodeling project preview",
+    businessType: "Remodeling",
+    tag: "Show proof faster",
+    outcome: "Show project types, process, before-and-after proof, and estimate readiness.",
+    image: "https://images.pexels.com/photos/3990359/pexels-photo-3990359.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Fitness membership preview",
+    businessType: "Fitness",
+    tag: "Book more visits",
+    outcome: "Make classes, training, trials, and membership questions easy to act on.",
+    image: "https://images.pexels.com/photos/6740311/pexels-photo-6740311.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pet care booking preview",
+    businessType: "Pet services",
+    tag: "Book more appointments",
+    outcome: "Turn grooming, boarding, daycare, and care details into simple booking steps.",
+    image: "https://images.pexels.com/photos/19145885/pexels-photo-19145885.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Local retail discovery preview",
+    businessType: "Retail",
+    tag: "Mobile-first",
+    outcome: "Help shoppers understand products, store personality, hours, and visit reasons.",
+    image: "https://images.pexels.com/photos/30848031/pexels-photo-30848031.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Accounting firm advisory preview",
+    businessType: "Accounting",
+    tag: "Local trust",
+    outcome: "Clarify tax, bookkeeping, advisory, and consultation paths for business owners.",
+    image: "https://images.pexels.com/photos/4386370/pexels-photo-4386370.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Insurance quote confidence preview",
+    businessType: "Insurance",
+    tag: "Better quote requests",
+    outcome: "Help visitors compare coverage needs and request the right policy review.",
+    image: "https://images.pexels.com/photos/8296978/pexels-photo-8296978.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Mortgage application preview",
+    businessType: "Mortgage",
+    tag: "Clearer services",
+    outcome: "Make purchase, refinance, pre-approval, and loan questions easier to start.",
+    image: "https://images.pexels.com/photos/8293778/pexels-photo-8293778.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Financial advisor trust preview",
+    businessType: "Financial advisor",
+    tag: "Local trust",
+    outcome: "Show planning services, fit, credentials, and consultation steps without clutter.",
+    image: "https://images.pexels.com/photos/7821485/pexels-photo-7821485.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Chiropractic appointment preview",
+    businessType: "Chiropractic",
+    tag: "Book more appointments",
+    outcome: "Turn pain concerns, treatment options, and first-visit details into a simple request path.",
+    image: "https://images.pexels.com/photos/4506109/pexels-photo-4506109.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Physical therapy recovery preview",
+    businessType: "Physical therapy",
+    tag: "Book more appointments",
+    outcome: "Help patients understand conditions treated, therapist proof, and appointment options.",
+    image: "https://images.pexels.com/photos/6111589/pexels-photo-6111589.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Veterinary care preview",
+    businessType: "Veterinary",
+    tag: "Local trust",
+    outcome: "Make wellness, urgent care, surgery, and new-client booking easier to navigate.",
+    image: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Senior care family preview",
+    businessType: "Senior care",
+    tag: "Local trust",
+    outcome: "Help families see care types, safety signals, availability, and next steps quickly.",
+    image: "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Child care enrollment preview",
+    businessType: "Child care",
+    tag: "Book more tours",
+    outcome: "Show programs, safety, schedule, and tour requests in a parent-friendly flow.",
+    image: "https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pressure washing estimate preview",
+    businessType: "Pressure washing",
+    tag: "Show proof faster",
+    outcome: "Use before-and-after proof to move visitors from dirty surfaces to estimate requests.",
+    image: "https://images.pexels.com/photos/4792528/pexels-photo-4792528.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Junk removal pickup preview",
+    businessType: "Junk removal",
+    tag: "More calls",
+    outcome: "Make pickup types, pricing cues, service areas, and scheduling easy to scan.",
+    image: "https://images.pexels.com/photos/4246120/pexels-photo-4246120.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Solar consultation preview",
+    businessType: "Solar",
+    tag: "Better quote requests",
+    outcome: "Explain savings, installation steps, financing, and consultation requests without overload.",
+    image: "https://images.pexels.com/photos/9875414/pexels-photo-9875414.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Security systems preview",
+    businessType: "Security systems",
+    tag: "Local trust",
+    outcome: "Separate residential, business, monitoring, and installation paths for faster inquiries.",
+    image: "https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Pest control treatment preview",
+    businessType: "Pest control",
+    tag: "More calls",
+    outcome: "Help urgent visitors identify the issue and request inspection or treatment.",
+    image: "https://images.pexels.com/photos/6197119/pexels-photo-6197119.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Flooring showroom preview",
+    businessType: "Flooring",
+    tag: "Show proof faster",
+    outcome: "Show materials, project photos, financing, and estimate steps in one visual path.",
+    image: "https://images.pexels.com/photos/7494809/pexels-photo-7494809.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Painting estimate preview",
+    businessType: "Painting",
+    tag: "Show proof faster",
+    outcome: "Make interior, exterior, commercial, and color consultation requests easier to start.",
+    image: "https://images.pexels.com/photos/6444257/pexels-photo-6444257.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Commercial roofing preview",
+    businessType: "Commercial roofing",
+    tag: "Better quote requests",
+    outcome: "Organize repair, replacement, maintenance, and inspection proof for property teams.",
+    image: "https://images.pexels.com/photos/236705/pexels-photo-236705.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Construction project preview",
+    businessType: "Construction",
+    tag: "Local trust",
+    outcome: "Show project fit, capability, process, and quote readiness for larger decisions.",
+    image: "https://images.pexels.com/photos/209251/pexels-photo-209251.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Property management preview",
+    businessType: "Property management",
+    tag: "Clearer services",
+    outcome: "Route owners, tenants, maintenance, and vacancy questions without friction.",
+    image: "https://images.pexels.com/photos/7578913/pexels-photo-7578913.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "Manufacturing capability preview",
+    businessType: "Manufacturing",
+    tag: "Local trust",
+    outcome: "Make capabilities, certifications, production fit, and quote requests easier to evaluate.",
+    image: "https://images.pexels.com/photos/2760243/pexels-photo-2760243.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
+  {
+    title: "B2B services lead preview",
+    businessType: "B2B services",
+    tag: "Clearer services",
+    outcome: "Turn complex offers into a practical homepage that helps buyers decide whether to talk.",
+    image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop",
+  },
 ];
 
 const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
@@ -73,7 +361,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         <div class="trust-strip" aria-label="Offer details">
           <span>No paid commitment</span>
           <span>Reviewed by the WSS team</span>
-          <span>Structured for agent-assisted follow-up</span>
+          <span>Prepared by the WSS team</span>
         </div>
       </div>
 
@@ -93,6 +381,49 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         <div class="browser-row"><strong></strong><span></span></div>
         <div class="browser-row"><strong></strong><span></span></div>
       </aside>
+    </div>
+  </section>
+
+
+  <section class="section industry-feed" id="industry-preview-feed">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <p class="kicker"><Label text="_examples_by_industry" /></p>
+          <h2>Preview ideas for businesses like yours.</h2>
+        </div>
+        <p>
+          Browse example directions across common local and professional industries. Your preview is still custom to your business, but this gives you a quick sense of the range WSS can shape.
+        </p>
+      </div>
+
+      <div class="feed-filter-row" aria-label="Preview focus areas">
+        {previewFocusAreas.map((category) => <span>{category}</span>)}
+      </div>
+
+      <div class="industry-feed-grid">
+        {industryConcepts.map((concept) => (
+          <article class="industry-feed-card">
+            <div class="industry-feed-image">
+              <img
+                src={concept.image}
+                sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
+                alt={concept.businessType + " website preview concept"}
+                loading="lazy"
+                decoding="async"
+                width="900"
+                height="600"
+              />
+            </div>
+            <div class="industry-feed-copy">
+              <p>{concept.businessType}</p>
+              <h3>{concept.title}</h3>
+              <span>{concept.tag}</span>
+            </div>
+            <p class="industry-feed-outcome">{concept.outcome}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -119,7 +450,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         <article>
           <span>02</span>
           <h3>We review your goals, style, services, and audience.</h3>
-          <p>Your answers are saved as a structured request so the team and approved AI agents can read the same clear brief.</p>
+          <p>Your answers are saved as a structured request so the WSS team can review one clear brief.</p>
         </article>
         <article>
           <span>03</span>
@@ -200,9 +531,9 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         <p>
           The more specific you are, the better the preview brief will be. Your submission is stored as a structured request with a timestamp, source, and status of <strong>new_preview_request</strong>.
         </p>
-        <div class="agent-note">
-          <strong>Agent-readable storage</strong>
-          <span>Submissions are saved to <code>public.website_preview_requests</code> with labeled JSON fields for later review.</span>
+        <div class="request-note">
+          <strong>Clear request details</strong>
+          <span>Submissions are saved with labeled fields so Website Support Studio can review your business, goals, and preview direction.</span>
         </div>
       </div>
 
@@ -455,7 +786,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     .hero-browser,
     .mock-site,
     .preview-form,
-    .agent-note {
+    .request-note {
       border: 1px solid var(--border);
       background: #fff;
       box-shadow: 0 24px 70px rgba(11, 18, 32, 0.08);
@@ -550,6 +881,110 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       height: 0.65rem;
       border-radius: 999px;
       background: var(--border);
+    }
+
+
+    .industry-feed {
+      padding-top: clamp(1rem, 2vw, 1.5rem);
+      background: #f4f8f6;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feed-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 0 0 1rem;
+    }
+
+    .feed-filter-row span {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--text);
+      padding: 0.48rem 0.72rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .industry-feed-grid {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .industry-feed-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem;
+      background: #fff;
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+    }
+
+    .industry-feed-image {
+      overflow: hidden;
+      aspect-ratio: 16 / 10.5;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f8faf6;
+    }
+
+    .industry-feed-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.96) contrast(1.01);
+      transition: transform 180ms ease;
+    }
+
+    .industry-feed-card:hover .industry-feed-image img {
+      transform: scale(1.025);
+    }
+
+    .industry-feed-copy {
+      display: grid;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+    }
+
+    .industry-feed-copy p,
+    .industry-feed-copy h3,
+    .industry-feed-copy span,
+    .industry-feed-outcome {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .industry-feed-copy p {
+      color: var(--brand-blue);
+      font-size: 0.69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .industry-feed-copy h3 {
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .industry-feed-copy span {
+      width: fit-content;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      padding: 0.28rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 850;
+    }
+
+    .industry-feed-outcome {
+      color: var(--text-muted);
+      margin-top: 0.55rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
     .preview-answer {
@@ -728,7 +1163,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       max-width: 560px;
     }
 
-    .agent-note {
+    .request-note {
       display: grid;
       gap: 0.35rem;
       border-radius: 8px;
@@ -737,7 +1172,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       box-shadow: none;
     }
 
-    .agent-note span {
+    .request-note span {
       color: var(--text-muted);
       font-size: 0.9rem;
       letter-spacing: 0;
@@ -882,6 +1317,10 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 
       .steps-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .industry-feed-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .mock-preview-grid {
