@@ -734,10 +734,14 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         linear-gradient(180deg, #ffffff 0%, #f7fbf8 58%, #fbfcf8 100%);
     }
 
+    .preview-hero .container {
+      max-width: 1180px;
+    }
+
     .preview-hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: clamp(1.15rem, 3vw, 2rem);
+      gap: clamp(1.15rem, 3vw, 2.4rem);
       align-items: start;
     }
 
@@ -833,6 +837,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       display: grid;
       gap: 1rem;
       align-self: start;
+      width: 100%;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: #fff;
@@ -1371,11 +1376,16 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     @media (min-width: 900px) {
       .preview-hero-grid,
       .form-grid {
-        grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .preview-hero-copy h1 {
-        font-size: clamp(3.05rem, 5.3vw, 4.7rem);
+        max-width: 16ch;
+        font-size: clamp(3rem, 4.15vw, 3.95rem);
+      }
+
+      .hero-form-card {
+        padding: clamp(1.05rem, 1.8vw, 1.35rem);
       }
 
       .steps-grid {
