@@ -726,12 +726,19 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
   <style>
     :global(body[data-page="/free-website-preview"]) {
       background: #fbfcf8;
+      scroll-padding-top: 6rem;
     }
 
     .preview-hero {
-      padding: clamp(0.9rem, 2.6vw, 1.85rem) 0 clamp(1rem, 2.8vw, 1.8rem);
+      scroll-margin-top: 6rem;
+      padding: clamp(1.45rem, 3vw, 2.35rem) 0 clamp(1rem, 2.8vw, 1.8rem);
       background:
         linear-gradient(180deg, #ffffff 0%, #f7fbf8 58%, #fbfcf8 100%);
+    }
+
+    #preview-questionnaire,
+    #industry-preview-feed {
+      scroll-margin-top: 6rem;
     }
 
     .preview-hero .container {
