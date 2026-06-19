@@ -341,7 +341,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 
 <BaseLayout
   title="Free Website Preview"
-  description="Let us build your free website preview today. Answer a few questions and Website Support Studio will review your business goals, style, services, and audience to prepare a free preview."
+  description="We'll build a free website preview for your business. Answer a few questions and Website Support Studio will review your services, goals, and audience to prepare a custom preview."
   path={pagePath}
   schemas={schemas}
 >
@@ -349,32 +349,49 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     <div class="container preview-hero-grid">
       <div class="preview-hero-copy">
         <p class="kicker"><Label text="_free_website_preview" /></p>
-        <h1>Let us build your free website preview today!</h1>
+        <h1>We'll build a free website preview for your business.</h1>
         <p class="lede">
-          Answer a few practical questions about your business, your goals, and the style you like.
-          Website Support Studio reviews your input and prepares a free website preview you can look over before deciding what to do next.
+          Before you spend a dollar, see a clearer homepage direction built around your services, customers, and next best call to action.
         </p>
         <div class="preview-actions">
           <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_hero_cta">Start My Free Preview</a>
-          <a class="btn btn-ghost" href="#preview-examples" data-ga-event="click_free_preview_examples">See Preview Styles</a>
+          <a class="btn btn-ghost" href="#industry-preview-feed" data-ga-event="click_free_preview_examples">See Example Previews</a>
         </div>
         <div class="trust-strip" aria-label="Offer details">
-          <span>No paid commitment</span>
-          <span>Reviewed by the WSS team</span>
-          <span>Prepared by the WSS team</span>
+          <span>Free custom website preview</span>
+          <span>Delivered in 2-3 business days</span>
+          <span>No obligation</span>
+        </div>
+        <div class="hero-proof-grid" aria-label="What your free preview includes">
+          <article>
+            <strong>Built around your services</strong>
+            <span>We use your answers to shape the homepage around what customers need to understand first.</span>
+          </article>
+          <article>
+            <strong>Clearer lead path</strong>
+            <span>Calls, quote requests, bookings, or consultations are treated as the main outcome.</span>
+          </article>
+          <article>
+            <strong>Lightweight request</strong>
+            <span>No payment, no long sales call, and no commitment to use the preview.</span>
+          </article>
+          <article>
+            <strong>Relevant examples below</strong>
+            <span>Browse 40 industries after the form to see the range of preview directions.</span>
+          </article>
         </div>
       </div>
 
       <aside class="hero-form-card" id="preview-questionnaire" aria-label="Free website preview questionnaire">
         <div class="form-intro">
           <p class="kicker"><Label text="_questionnaire" /></p>
-          <h2>Tell us what your website needs to do.</h2>
+          <h2>Start with a few business details.</h2>
           <p>
-            The more specific you are, the better the preview brief will be. Your submission is stored as a structured request with a timestamp, source, and status of <strong>new_preview_request</strong>.
+            The more specific you are, the better the preview direction will be. Most previews are delivered within 2-3 business days.
           </p>
           <div class="request-note">
-            <strong>Clear request details</strong>
-            <span>Submissions are saved with labeled fields so Website Support Studio can review your business, goals, and preview direction.</span>
+            <strong>No payment required</strong>
+            <span>Website Support Studio reviews your answers and prepares a custom preview before you decide what to do next.</span>
           </div>
         </div>
 
@@ -712,7 +729,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     }
 
     .preview-hero {
-      padding: clamp(2rem, 5vw, 4.25rem) 0 clamp(1.5rem, 4vw, 3rem);
+      padding: clamp(1.5rem, 4vw, 3.2rem) 0 clamp(1.25rem, 3.5vw, 2.4rem);
       background:
         linear-gradient(180deg, #ffffff 0%, #f7fbf8 58%, #fbfcf8 100%);
     }
@@ -720,15 +737,15 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     .preview-hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: center;
+      gap: clamp(1.15rem, 3vw, 2rem);
+      align-items: start;
     }
 
     .preview-hero-copy h1 {
-      max-width: 12ch;
+      max-width: 13ch;
       margin: 0;
       font-size: clamp(2.15rem, 10vw, 4.35rem);
-      line-height: 0.98;
+      line-height: 1;
       letter-spacing: 0;
     }
 
@@ -736,6 +753,40 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       margin-top: 1rem;
       max-width: 64ch;
       letter-spacing: 0;
+    }
+
+    .hero-proof-grid {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: clamp(1rem, 3vw, 1.35rem);
+    }
+
+    .hero-proof-grid article {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      padding: 0.9rem;
+      box-shadow: 0 12px 34px rgba(11, 18, 32, 0.05);
+    }
+
+    .hero-proof-grid strong,
+    .hero-proof-grid span {
+      display: block;
+      letter-spacing: 0;
+    }
+
+    .hero-proof-grid strong {
+      color: var(--text-strong);
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .hero-proof-grid span {
+      margin-top: 0.32rem;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
     }
 
     .preview-actions,
@@ -782,13 +833,28 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       display: grid;
       gap: 1rem;
       align-self: start;
-      max-height: min(780px, calc(100vh - 6rem));
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(11, 18, 32, 0.11);
+      max-height: min(800px, calc(100vh - 5.25rem));
       overflow: auto;
-      padding-right: 0.15rem;
+      padding: clamp(0.9rem, 2vw, 1.15rem);
     }
 
     .hero-form-card .form-intro {
       max-width: none;
+    }
+
+    .hero-form-card .form-intro h2 {
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      line-height: 1.05;
+    }
+
+    .hero-form-card .preview-form {
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: none;
+      background: #fbfcf8;
     }
 
     .browser-bar,
@@ -1289,6 +1355,10 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .hero-proof-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .check-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1301,11 +1371,11 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     @media (min-width: 900px) {
       .preview-hero-grid,
       .form-grid {
-        grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1fr);
+        grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1fr);
       }
 
       .preview-hero-copy h1 {
-        font-size: clamp(3.25rem, 6vw, 5rem);
+        font-size: clamp(3.05rem, 5.3vw, 4.7rem);
       }
 
       .steps-grid {
@@ -1330,6 +1400,18 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       .gallery-cta .btn {
         width: 100%;
         justify-content: center;
+      }
+
+      .preview-hero-copy h1 {
+        max-width: 14ch;
+      }
+
+      .hero-proof-grid {
+        display: none;
+      }
+
+      .hero-form-card {
+        max-height: min(720px, calc(100vh - 3.75rem));
       }
 
       .browser-grid,
