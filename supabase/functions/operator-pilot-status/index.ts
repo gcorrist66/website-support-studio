@@ -5,6 +5,7 @@
 import Stripe from "https://esm.sh/stripe@17.7.0?target=denonext";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withTimeout } from "../_shared/timeout.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
   apiVersion: "2025-01-27.acacia",
@@ -186,11 +187,12 @@ Deno.serve(async (req) => {
   let stripeCreatedAt: string | null = null;
   if (stripeSubscriptionId) {
     try {
-      const sub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+      const sub = await withTimeout(stripe.subscriptions.retrieve(stripeSubscriptionId), 10000, "stripe_subscription_lookup_timeout");
       stripeStatus = sub.status;
       stripeCreatedAt = typeof sub.created === "number" ? new Date(sub.created * 1000).toISOString() : null;
     } catch (error) {
-      stripeLookupError = error instanceof Error ? error.message : "stripe_lookup_failed";
+      console.error(`WSS operator pilot Stripe lookup failed: ${error instanceof Error ? error.message : "unknown_error"}`);
+      stripeLookupError = "stripe_lookup_failed";
     }
   }
 

@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from "./timeout.ts";
+
 export const WSS_INTERNAL_TO = "corristonconsulting@gmail.com";
 export const WSS_REPLY_TO = "corristonconsulting@gmail.com";
 export const WSS_SITE_URL = "https://www.websitesupportstudio.com";
@@ -329,18 +331,29 @@ export async function sendWssEmail(payload: WssEmailPayload): Promise<{ ok: bool
     body.text = rendered.text;
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  let response: Response;
+  try {
+    response = await fetchWithTimeout(
+      "https://api.resend.com/emails",
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${apiKey}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+      12000,
+    );
+  } catch (error) {
+    const code = (error as Error).name === "AbortError" ? "resend_timeout" : "resend_unavailable";
+    console.error(`WSS email provider call failed for ${payload.alias}: ${code}`);
+    return { ok: false, error: code };
+  }
   if (!response.ok) {
-    const error = await response.text().catch(() => response.statusText);
-    console.error(`WSS email failed for ${payload.alias}: ${error}`);
-    return { ok: false, error };
+    const providerText = await response.text().catch(() => "");
+    console.error(`WSS email failed for ${payload.alias}: status=${response.status}; body=${providerText.slice(0, 500)}`);
+    return { ok: false, error: `resend_http_${response.status}` };
   }
   return { ok: true };
 }
