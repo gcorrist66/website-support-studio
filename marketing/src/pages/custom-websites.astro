@@ -1,0 +1,98 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import WebsiteOperationsDeskSection from "../components/WebsiteOperationsDeskSection.astro";
+import { breadcrumbSchema, serviceSchema } from "../schema";
+
+const schemas = [
+  serviceSchema({
+    name: "Custom Websites",
+    description:
+      "Custom website work for businesses that need a scoped design, content, or conversion build beyond the Founder Website Package.",
+    path: "/custom-websites",
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Custom Websites", path: "/custom-websites" },
+  ]),
+];
+
+const includedItems = [
+  "Website Operations Desk",
+  "SEO foundation",
+  "AEO optimization",
+  "GEO optimization",
+  "Ongoing support",
+  "Launch planning",
+  "Content guidance",
+];
+---
+
+<BaseLayout
+  title="Custom Websites"
+  description="Custom website work for businesses that need scoped design, content, or conversion work beyond the Founder Website Package."
+  path="/custom-websites"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="container">
+      <p class="kicker"><Label text="_custom_websites" /></p>
+      <h1>Custom website work for businesses that need more than a starter package.</h1>
+      <p class="lede" style="margin-top:1rem;">
+        If your site needs deeper content, custom page structure, migration planning, integrations, or a more specialized conversion flow, start with a conversation.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-green btn-cta" href="/contact" data-ga-event="click_custom_websites_contact">Talk About A Custom Website</a>
+        <a class="btn btn-ghost" href="/website-health">Get My Free Website Score</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section custom-included-section" aria-labelledby="custom-included-heading">
+    <div class="container custom-included-card">
+      <div>
+        <p class="kicker"><Label text="_build_support_optimize" /></p>
+        <h2 id="custom-included-heading">Every Website Includes</h2>
+        <p>
+          Every custom website includes Website Operations Desk, SEO foundations, AEO optimization, GEO readiness, and ongoing support after launch.
+        </p>
+      </div>
+      <ul class="custom-included-list">
+        {includedItems.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <WebsiteOperationsDeskSection />
+
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <div class="grid grid-3">
+        <article class="card">
+          <h2 style="margin-top:0;">Custom structure</h2>
+          <p>For businesses that need pages, sections, or conversion paths beyond the standard package.</p>
+        </article>
+        <article class="card">
+          <h2 style="margin-top:0;">Content and positioning</h2>
+          <p>For service detail, local trust proof, comparison content, or stronger buyer clarity.</p>
+        </article>
+        <article class="card">
+          <h2 style="margin-top:0;">Launch planning</h2>
+          <p>For migrations, redirects, analytics ownership, form routing, and safer go-live planning.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .custom-included-section { padding-top:clamp(1.25rem,3vw,2rem); padding-bottom:clamp(1.25rem,3vw,2rem); background:var(--surface); }
+    .custom-included-card { display:grid; gap:1.25rem; align-items:start; border:1px solid var(--border); border-radius:8px; background:#fff; padding:clamp(1.25rem,3vw,2rem); box-shadow:0 18px 50px rgba(11,18,32,.06); }
+    .custom-included-card h2 { margin:0; font-size:clamp(1.65rem,4vw,2.7rem); line-height:1; letter-spacing:0; }
+    .custom-included-card p { max-width:66ch; margin:.75rem 0 0; color:var(--text-muted); letter-spacing:0; }
+    .custom-included-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem .85rem; margin:0; padding:0; list-style:none; }
+    .custom-included-list li { display:flex; gap:.5rem; align-items:flex-start; color:#334155; font-weight:800; letter-spacing:0; }
+    .custom-included-list li::before { content:"✓"; color:var(--brand-blue); font-weight:900; }
+    @media (min-width:900px) { .custom-included-card { grid-template-columns:minmax(0,.82fr) minmax(340px,1fr); } }
+    @media (max-width:640px) { .custom-included-list { grid-template-columns:1fr; } }
+  </style>
+</BaseLayout>

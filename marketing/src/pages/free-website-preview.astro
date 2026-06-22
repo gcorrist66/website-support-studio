@@ -55,52 +55,144 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
   title="Free Website Preview"
   description="Let us build your free website preview today. Answer a few questions and Website Support Studio will review your business goals, style, services, and audience to prepare a free preview."
   path={pagePath}
+  image="/og/og-free-preview.png"
   schemas={schemas}
 >
   <section class="preview-hero">
     <div class="container preview-hero-grid">
       <div class="preview-hero-copy">
         <p class="kicker"><Label text="_free_website_preview" /></p>
-        <h1>Let us build your free website preview today!</h1>
+        <h1>Let us build your free website preview — today.</h1>
         <p class="lede">
-          Answer a few practical questions about your business, your goals, and the style you like.
-          Website Support Studio reviews your input and prepares a free website preview you can look over before deciding what to do next.
+          We'll create a custom homepage preview for your business before you spend a dollar. No payment. No obligation. One per business.
         </p>
         <div class="preview-actions">
           <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_hero_cta">Get My Free Website Preview</a>
-          <a class="btn btn-ghost" href="#preview-examples" data-ga-event="click_free_preview_examples">See Preview Styles</a>
+          <a class="btn btn-ghost" href="#preview-examples" data-ga-event="click_free_preview_examples">See Example Previews</a>
         </div>
-        <div class="trust-strip" aria-label="Offer details">
-          <span>No paid commitment</span>
-          <span>Reviewed by the WSS team</span>
-          <span>Structured for agent-assisted follow-up</span>
-        </div>
+        <p class="micro-trust">Reviewed by a real person · Most previews delivered within 3 business days · One per business</p>
       </div>
 
-      <aside class="hero-browser" aria-label="Example preview mockup">
-        <div class="browser-bar"><span></span><span></span><span></span></div>
-        <div class="browser-hero">
-          <div>
-            <p>Local service business</p>
-            <strong>Clean homepage preview</strong>
-            <span>Clear services, trust signals, and a simple lead path.</span>
+      <aside class="hero-form-card" id="preview-questionnaire" aria-label="Free website preview questionnaire">
+        <div class="form-card-head">
+          <p>Free preview request</p>
+          <h2>Tell us about your business.</h2>
+          <span>No payment or commitment. We use this to prepare a better homepage preview.</span>
+          <strong class="preview-ops-note">Every preview is evaluated with SEO, AEO, GEO, and Website Operations Desk best practices in mind.</strong>
+          <strong class="preview-wod-callout">Every approved website includes Website Operations Desk support after launch.</strong>
+        </div>
+
+        <form class="preview-form" data-endpoint={previewEndpoint} novalidate>
+          <input type="text" name="company_website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div class="form-status" role="status" aria-live="polite" hidden></div>
+
+          <div class="field-pair">
+            <label>
+              <span>Name *</span>
+              <input name="name" autocomplete="name" required />
+            </label>
+            <label>
+              <span>Email *</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
           </div>
-          <div class="browser-photo" aria-hidden="true"></div>
-        </div>
-        <div class="browser-grid">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="browser-row"><strong></strong><span></span></div>
-        <div class="browser-row"><strong></strong><span></span></div>
+
+          <div class="field-pair">
+            <label>
+              <span>Phone</span>
+              <input name="phone" autocomplete="tel" inputmode="tel" />
+            </label>
+            <label>
+              <span>Business name *</span>
+              <input name="business_name" autocomplete="organization" required />
+            </label>
+          </div>
+
+          <div class="field-pair">
+            <label>
+              <span>Current website URL, optional</span>
+              <input type="url" name="current_website_url" placeholder="https://example.com" />
+            </label>
+            <label>
+              <span>Business type / industry</span>
+              <input name="industry" placeholder="Roofing, law firm, salon, consulting..." />
+            </label>
+          </div>
+
+          <label>
+            <span>What does your business do? *</span>
+            <textarea name="business_description" rows="3" required placeholder="Tell us what you sell, who you help, and what customers usually ask for."></textarea>
+          </label>
+
+          <fieldset>
+            <legend>What pages do you need?</legend>
+            <div class="check-grid">
+              {["Home", "About", "Services", "Contact", "Pricing", "Gallery", "Blog"].map((page) => (
+                <label><input type="checkbox" name="pages_needed" value={page} /> <span>{page}</span></label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label>
+            <span>What style do you like?</span>
+            <input name="preferred_style" placeholder="Modern, simple, bold, luxury, friendly, local, professional..." />
+          </label>
+
+          <label>
+            <span>Competitor or inspiration websites</span>
+            <textarea name="inspiration_websites" rows="2" placeholder="Paste links or describe sites you like."></textarea>
+          </label>
+
+          <label>
+            <span>Primary goal *</span>
+            <select name="primary_goal" required>
+              <option value="">Select a goal</option>
+              <option value="get_leads">Get leads</option>
+              <option value="book_appointments">Book appointments</option>
+              <option value="sell_products">Sell products</option>
+              <option value="look_more_professional">Look more professional</option>
+              <option value="replace_old_website">Replace old website</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Services/products to highlight</span>
+            <textarea name="services_to_highlight" rows="2"></textarea>
+          </label>
+
+          <label>
+            <span>Target customers</span>
+            <textarea name="target_customers" rows="2" placeholder="Who should the website speak to?"></textarea>
+          </label>
+
+          <fieldset>
+            <legend>Logo/brand colors available?</legend>
+            <div class="radio-row">
+              <label><input type="radio" name="logo_brand_colors_available" value="yes" /> <span>Yes</span></label>
+              <label><input type="radio" name="logo_brand_colors_available" value="no" /> <span>No</span></label>
+            </div>
+          </fieldset>
+
+          <label>
+            <span>Anything else we should know?</span>
+            <textarea name="additional_notes" rows="3"></textarea>
+          </label>
+
+          <button class="btn btn-green btn-cta" type="submit" data-ga-event="submit_free_preview_request">Get My Free Website Preview</button>
+          <p class="privacy-note">Submitting this form creates a structured preview request for Website Support Studio to review. No paid commitment is created by this form.</p>
+        </form>
       </aside>
     </div>
   </section>
 
-  <section class="section preview-answer">
-    <div class="container">
-      <div class="summary">
-        <strong>Simple offer:</strong> Fill out the questionnaire, we review the details, and we prepare a free website preview for your business. It is a preview request, not a paid order or an instant automated build.
-      </div>
+  <section class="trust-strip-section" aria-label="Website preview trust points">
+    <div class="container trust-badges">
+      <span>Human reviewed</span>
+      <span>Built by Website Support Studio</span>
+      <span>One free preview per business</span>
+      <span>No obligation</span>
     </div>
   </section>
 
@@ -108,30 +200,51 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     <div class="container">
       <div class="section-head">
         <p class="kicker"><Label text="_how_it_works" /></p>
-        <h2>A clear path from questionnaire to preview.</h2>
+        <h2>A simple path from request to preview.</h2>
       </div>
       <div class="steps-grid">
         <article>
           <span>01</span>
-          <h3>Tell us about your business.</h3>
-          <p>Share your contact details, business type, current website if you have one, and what your business does.</p>
+          <h3>Answer a few questions</h3>
+          <p>Share your business, goals, style preferences, and the services you want customers to notice first.</p>
         </article>
         <article>
           <span>02</span>
-          <h3>We review your goals, style, services, and audience.</h3>
-          <p>Your answers are saved as a structured request so the team and approved AI agents can read the same clear brief.</p>
+          <h3>We build your preview</h3>
+          <p>Website Support Studio reviews the brief and prepares a custom homepage preview for your business.</p>
         </article>
         <article>
           <span>03</span>
-          <h3>We build a free website preview.</h3>
-          <p>Website Support Studio prepares a preview around your services, customers, preferred pages, and visual direction.</p>
+          <h3>We send it to you</h3>
+          <p>You receive the preview so you can see what a modern, clearer website direction could look like.</p>
         </article>
         <article>
           <span>04</span>
-          <h3>You review it and decide what to do next.</h3>
-          <p>You can look it over without a paid commitment and choose the next practical step when you are ready.</p>
+          <h3>You decide if you want it built</h3>
+          <p>No pressure and no payment required to review the preview. You choose the next step.</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <section class="section website-score-cta" aria-labelledby="website-score-heading">
+    <div class="container website-score-card">
+      <div>
+        <p class="kicker"><Label text="_website_score" /></p>
+        <h2 id="website-score-heading">Not ready for a full website preview?</h2>
+        <p>Get a free website score in minutes.</p>
+      </div>
+      <div class="score-checks">
+        <p>We analyze:</p>
+        <ul>
+          <li>Speed</li>
+          <li>Mobile experience</li>
+          <li>Local SEO</li>
+          <li>Trust signals</li>
+          <li>Conversion opportunities</li>
+        </ul>
+      </div>
+      <a class="btn btn-green btn-cta" href="/website-health" data-ga-event="click_free_preview_website_score_cta">Get My Free Website Score</a>
     </div>
   </section>
 
@@ -140,173 +253,97 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       <div class="section-head split">
         <div>
           <p class="kicker"><Label text="_website_inspiration" /></p>
-          <h2>Preview styles can look polished before they become final.</h2>
+          <h2>Example previews for real local businesses.</h2>
         </div>
         <p>
-          These are mock screenshot-style concepts inspired by clean professional service websites.
-          They use safe placeholder layouts, not copied customer assets or fake testimonials.
+          These are browser-framed mockups, not copied websites or fake client work. They show the kind of polished homepage direction we can prepare from your questionnaire.
         </p>
       </div>
 
       <div class="mock-preview-grid" aria-label="Example website preview styles">
-        <article class="mock-site mock-site-service">
-          <div class="mock-top"><span></span><strong>Service Pro</strong><em>Get an estimate</em></div>
-          <div class="mock-split">
-            <div>
-              <small>Home services</small>
-              <h3>Fast help for the jobs customers already need.</h3>
-              <p>Services, service areas, proof points, and a direct contact path.</p>
+        {[
+          {
+            className: "landscaping",
+            brand: "Green Ridge Landscapes",
+            cta: "Request an estimate",
+            eyebrow: "Landscaping",
+            title: "Outdoor spaces that feel finished, cared for, and easy to book.",
+            services: ["Lawn care", "Hardscapes", "Seasonal cleanup"],
+          },
+          {
+            className: "roofing",
+            brand: "Summitline Roofing",
+            cta: "Schedule roof inspection",
+            eyebrow: "Roofing",
+            title: "Clear roof repair and replacement pages built around trust.",
+            services: ["Storm damage", "Replacement", "Financing"],
+          },
+          {
+            className: "law",
+            brand: "Bennett & Cole Law",
+            cta: "Book a consultation",
+            eyebrow: "Law Firm",
+            title: "Professional, calm, and direct for clients who need guidance.",
+            services: ["Family law", "Estate planning", "Business counsel"],
+          },
+          {
+            className: "hvac",
+            brand: "Northstar Heating & Air",
+            cta: "Get service today",
+            eyebrow: "HVAC",
+            title: "Emergency repair, seasonal tuneups, and quote requests made obvious.",
+            services: ["AC repair", "Heating", "Maintenance"],
+          },
+          {
+            className: "medical",
+            brand: "Oak Meadow Family Care",
+            cta: "Request appointment",
+            eyebrow: "Medical Practice",
+            title: "A warm practice homepage that makes next steps easy.",
+            services: ["Primary care", "Wellness visits", "New patients"],
+          },
+          {
+            className: "lighting",
+            brand: "Nightfall Outdoor Lighting",
+            cta: "Plan my lighting",
+            eyebrow: "Outdoor Lighting",
+            title: "Premium outdoor lighting with project galleries and lead capture.",
+            services: ["Path lighting", "Patios", "Holiday lights"],
+          },
+        ].map((preview) => (
+          <article class={`mock-site ${preview.className}`}>
+            <div class="browser-dots"><span></span><span></span><span></span></div>
+            <div class="mock-nav"><strong>{preview.brand}</strong><em>{preview.cta}</em></div>
+            <div class="mock-hero-shot">
+              <small>{preview.eyebrow}</small>
+              <h3>{preview.title}</h3>
+              <p>Service area, trust cues, and a focused path from visitor to inquiry.</p>
             </div>
-            <div class="mock-image"></div>
-          </div>
-          <div class="mock-cards"><span></span><span></span><span></span></div>
-        </article>
-
-        <article class="mock-site mock-site-care">
-          <div class="mock-top"><span></span><strong>Harbor Care</strong><em>Book a visit</em></div>
-          <div class="mock-banner"></div>
-          <div class="mock-copy">
-            <small>Professional services</small>
-            <h3>Calm, trustworthy, and easy to scan.</h3>
-            <p>Great for practices, consultants, clinics, and local experts.</p>
-          </div>
-          <div class="mock-lines"><span></span><span></span><span></span></div>
-        </article>
-
-        <article class="mock-site mock-site-boutique">
-          <div class="mock-top"><span></span><strong>Luna Studio</strong><em>Visit us</em></div>
-          <div class="mock-editorial">
-            <div class="mock-photo-stack"><span></span><span></span></div>
-            <div>
-              <small>Retail, salon, cafe</small>
-              <h3>Warm visuals with a refined local feel.</h3>
-              <p>Useful for atmosphere-driven businesses that need calls, bookings, or visits.</p>
+            <div class="mock-service-row">
+              {preview.services.map((service) => <span>{service}</span>)}
             </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="gallery-cta">
-        <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_gallery_cta">Start My Free Preview</a>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section form-section" id="preview-questionnaire">
-    <div class="container form-grid">
-      <div class="form-intro">
-        <p class="kicker"><Label text="_questionnaire" /></p>
-        <h2>Tell us what your website needs to do.</h2>
-        <p>
-          The more specific you are, the better the preview brief will be. Your submission is stored as a structured request with a timestamp, source, and status of <strong>new_preview_request</strong>.
-        </p>
-        <div class="agent-note">
-          <strong>Agent-readable storage</strong>
-          <span>Submissions are saved to <code>public.website_preview_requests</code> with labeled JSON fields for later review.</span>
-        </div>
+  <section class="section urgency-block">
+    <div class="container urgency-card">
+      <div>
+        <p class="kicker"><Label text="_free_preview_offer" /></p>
+        <h2>Most previews delivered within 3 business days.</h2>
+        <p>Only one free preview per website — no payment, no obligation. We review your answers and prepare a focused homepage direction you can judge before spending a dollar.</p>
       </div>
+      <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_offer_cta">Start My Free Preview</a>
+    </div>
+  </section>
 
-      <form class="preview-form" data-endpoint={previewEndpoint} novalidate>
-        <input type="text" name="company_website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
-
-        <div class="form-status" role="status" aria-live="polite" hidden></div>
-
-        <div class="field-pair">
-          <label>
-            <span>Name *</span>
-            <input name="name" autocomplete="name" required />
-          </label>
-          <label>
-            <span>Email *</span>
-            <input type="email" name="email" autocomplete="email" required />
-          </label>
-        </div>
-
-        <div class="field-pair">
-          <label>
-            <span>Phone</span>
-            <input name="phone" autocomplete="tel" inputmode="tel" />
-          </label>
-          <label>
-            <span>Business name *</span>
-            <input name="business_name" autocomplete="organization" required />
-          </label>
-        </div>
-
-        <div class="field-pair">
-          <label>
-            <span>Current website URL, optional</span>
-            <input type="url" name="current_website_url" placeholder="https://example.com" />
-          </label>
-          <label>
-            <span>Business type / industry</span>
-            <input name="industry" placeholder="Roofing, law firm, salon, consulting..." />
-          </label>
-        </div>
-
-        <label>
-          <span>What does your business do? *</span>
-          <textarea name="business_description" rows="4" required placeholder="Tell us what you sell, who you help, and what customers usually ask for."></textarea>
-        </label>
-
-        <fieldset>
-          <legend>What pages do you need?</legend>
-          <div class="check-grid">
-            {["Home", "About", "Services", "Contact", "Pricing", "Gallery", "Blog"].map((page) => (
-              <label><input type="checkbox" name="pages_needed" value={page} /> <span>{page}</span></label>
-            ))}
-          </div>
-        </fieldset>
-
-        <label>
-          <span>What style do you like?</span>
-          <input name="preferred_style" placeholder="Modern, simple, bold, luxury, friendly, local, professional..." />
-        </label>
-
-        <label>
-          <span>Competitor or inspiration websites</span>
-          <textarea name="inspiration_websites" rows="3" placeholder="Paste links or describe sites you like."></textarea>
-        </label>
-
-        <label>
-          <span>Primary goal *</span>
-          <select name="primary_goal" required>
-            <option value="">Select a goal</option>
-            <option value="get_leads">Get leads</option>
-            <option value="book_appointments">Book appointments</option>
-            <option value="sell_products">Sell products</option>
-            <option value="look_more_professional">Look more professional</option>
-            <option value="replace_old_website">Replace old website</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-
-        <label>
-          <span>Services/products to highlight</span>
-          <textarea name="services_to_highlight" rows="3"></textarea>
-        </label>
-
-        <label>
-          <span>Target customers</span>
-          <textarea name="target_customers" rows="3" placeholder="Who should the website speak to?"></textarea>
-        </label>
-
-        <fieldset>
-          <legend>Logo/brand colors available?</legend>
-          <div class="radio-row">
-            <label><input type="radio" name="logo_brand_colors_available" value="yes" /> <span>Yes</span></label>
-            <label><input type="radio" name="logo_brand_colors_available" value="no" /> <span>No</span></label>
-          </div>
-        </fieldset>
-
-        <label>
-          <span>Anything else we should know?</span>
-          <textarea name="additional_notes" rows="4"></textarea>
-        </label>
-
-        <button class="btn btn-green btn-cta" type="submit" data-ga-event="submit_free_preview_request">Get My Free Website Preview</button>
-        <p class="privacy-note">Submitting this form creates a structured preview request for Website Support Studio to review. No paid commitment is created by this form.</p>
-      </form>
+  <section class="section final-cta">
+    <div class="container final-cta-inner">
+      <h2>See your business as a modern website</h2>
+      <p>Send the brief now and give Website Support Studio enough detail to prepare a useful first preview.</p>
+      <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_final_cta">Get My Free Website Preview</a>
     </div>
   </section>
 
@@ -397,179 +434,196 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 
   <style>
     :global(body[data-page="/free-website-preview"]) {
-      background: #fbfcf8;
+      background: #fff8ed;
     }
 
     .preview-hero {
-      padding: clamp(2rem, 5vw, 4.25rem) 0 clamp(1.5rem, 4vw, 3rem);
+      padding: clamp(1.25rem, 3vw, 2.6rem) 0 clamp(1.5rem, 3vw, 2.5rem);
       background:
-        linear-gradient(180deg, #ffffff 0%, #f7fbf8 58%, #fbfcf8 100%);
+        radial-gradient(circle at 15% 12%, rgba(244, 177, 66, 0.24), transparent 32%),
+        linear-gradient(135deg, #fffaf1 0%, #f3fbf7 58%, #eef7ff 100%);
     }
 
     .preview-hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: center;
+      gap: 1.1rem;
+      align-items: start;
     }
 
     .preview-hero-copy h1 {
-      max-width: 12ch;
+      max-width: 13ch;
       margin: 0;
-      font-size: clamp(2.15rem, 10vw, 4.35rem);
-      line-height: 0.98;
+      font-size: clamp(2.2rem, 9vw, 4.8rem);
+      line-height: 0.96;
       letter-spacing: 0;
     }
 
     .preview-hero-copy .lede {
-      margin-top: 1rem;
-      max-width: 64ch;
+      margin: 1rem 0 0;
+      max-width: 55ch;
+      color: #334155;
+      font-size: clamp(1.02rem, 2vw, 1.22rem);
+      line-height: 1.55;
       letter-spacing: 0;
     }
 
-    .preview-actions,
-    .gallery-cta {
+    .preview-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      margin-top: 1.25rem;
+      margin-top: 1.15rem;
     }
 
-    .trust-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-top: 1.1rem;
-    }
-
-    .trust-strip span {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: #fff;
-      padding: 0.5rem 0.7rem;
-      color: var(--text);
-      font-size: 0.84rem;
+    .micro-trust {
+      max-width: 48ch;
+      margin: 0.95rem 0 0;
+      color: #475569;
+      font-size: 0.92rem;
+      font-weight: 700;
       letter-spacing: 0;
     }
 
-    .hero-browser,
-    .mock-site,
-    .preview-form,
-    .agent-note {
-      border: 1px solid var(--border);
-      background: #fff;
-      box-shadow: 0 24px 70px rgba(11, 18, 32, 0.08);
+    .trust-strip-section {
+      padding: 0.9rem 0;
+      background: #0b1220;
     }
 
-    .hero-browser {
-      border-radius: 8px;
-      overflow: hidden;
-      padding: 0.9rem;
+    .trust-badges {
+      display: grid;
+      gap: 0.55rem;
     }
 
-    .browser-bar,
-    .mock-top {
+    .trust-badges span {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
-      padding-bottom: 0.8rem;
+      gap: 0.5rem;
+      min-height: 2.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.7rem 0.85rem;
+      color: #f8fafc;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .trust-badges span::before {
+      content: "";
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 999px;
+      background: #35dcea;
+      box-shadow: 0 0 0 4px rgba(53, 220, 234, 0.13);
+      flex: 0 0 auto;
+    }
+
+    .hero-form-card,
+    .mock-site,
+    .website-score-card,
+    .urgency-card,
+    .final-cta-inner {
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+    }
+
+    .hero-form-card {
+      overflow: hidden;
+    }
+
+    .form-card-head {
+      padding: 1rem 1rem 0.8rem;
+      background:
+        linear-gradient(90deg, rgba(244, 177, 66, 0.14), rgba(53, 220, 234, 0.14)),
+        #ffffff;
       border-bottom: 1px solid var(--border);
     }
 
-    .browser-bar span {
-      width: 0.68rem;
-      height: 0.68rem;
-      border-radius: 999px;
-      background: var(--border-strong);
-    }
-
-    .browser-hero {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      padding: 1rem 0;
-    }
-
-    .browser-hero p,
-    .browser-hero span,
-    .mock-site p,
-    .section-head p,
-    .form-intro p,
-    .privacy-note {
-      color: var(--text-muted);
+    .form-card-head p,
+    .form-card-head h2,
+    .form-card-head span {
+      margin: 0;
       letter-spacing: 0;
     }
 
-    .browser-hero strong {
-      display: block;
-      max-width: 12ch;
+    .form-card-head p {
+      color: var(--brand-blue);
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .form-card-head h2 {
+      margin-top: 0.25rem;
       color: var(--text-strong);
-      font-size: clamp(1.45rem, 6vw, 2.5rem);
-      line-height: 1;
+      font-size: clamp(1.25rem, 4vw, 1.7rem);
+      line-height: 1.1;
+    }
+
+    .form-card-head span {
+      display: block;
+      margin-top: 0.35rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .preview-ops-note {
+      display: block;
+      margin-top: 0.7rem;
+      border: 1px solid rgba(4, 67, 251, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 0.72rem;
+      color: var(--text-strong);
+      font-size: 0.84rem;
+      line-height: 1.45;
       letter-spacing: 0;
     }
 
-    .browser-photo,
-    .mock-image,
-    .mock-banner,
-    .mock-photo-stack span {
-      min-height: 160px;
-      border-radius: 6px;
-      background:
-        linear-gradient(135deg, rgba(53, 220, 234, 0.35), rgba(184, 239, 216, 0.9)),
-        linear-gradient(45deg, #f4b142, #0443fb);
+    .preview-wod-callout {
+      display: block;
+      margin-top: 0.55rem;
+      border: 1px solid rgba(23, 99, 63, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.76);
+      padding: 0.7rem;
+      color: #17633f;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      letter-spacing: 0;
     }
 
-    .browser-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.65rem;
-      margin: 0.25rem 0 0.85rem;
-    }
-
-    .browser-grid span,
-    .mock-cards span {
-      min-height: 74px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--surface-muted);
-    }
-
-    .browser-row {
-      display: grid;
-      grid-template-columns: 0.35fr 1fr;
-      gap: 0.75rem;
-      align-items: center;
-      padding: 0.65rem 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .browser-row strong,
-    .browser-row span,
-    .mock-lines span {
-      height: 0.65rem;
-      border-radius: 999px;
-      background: var(--border);
-    }
-
-    .preview-answer {
-      padding: 1rem 0 0;
+    .section {
+      padding: clamp(2.2rem, 5vw, 4.3rem) 0;
     }
 
     .section-head {
       max-width: 800px;
-      margin-bottom: 1.35rem;
+      margin-bottom: 1.25rem;
     }
 
     .section-head h2,
-    .form-intro h2 {
+    .urgency-card h2,
+    .final-cta h2 {
       margin: 0;
+      color: var(--text-strong);
+      letter-spacing: 0;
+    }
+
+    .section-head p,
+    .privacy-note,
+    .urgency-card p,
+    .final-cta p {
+      color: var(--text-muted);
       letter-spacing: 0;
     }
 
     .section-head.split {
       display: grid;
-      gap: 1rem;
+      gap: 0.85rem;
       max-width: none;
       align-items: end;
     }
@@ -577,195 +631,324 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     .steps-grid,
     .mock-preview-grid {
       display: grid;
-      gap: 1rem;
+      gap: 0.9rem;
     }
 
     .steps-grid article {
-      padding: 1.25rem;
-      border: 1px solid var(--border);
+      padding: 1.05rem;
+      border: 1px solid rgba(15, 23, 42, 0.1);
       border-radius: 8px;
-      background: #fff;
+      background: #fffefa;
+      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.05);
     }
 
     .steps-grid span {
       display: inline-flex;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.65rem;
       color: var(--brand-blue);
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 0;
     }
 
     .steps-grid h3,
     .mock-site h3 {
       margin: 0;
+      color: var(--text-strong);
       letter-spacing: 0;
     }
 
-    .steps-grid p {
+    .steps-grid p,
+    .mock-site p {
       margin-bottom: 0;
       color: var(--text-muted);
       letter-spacing: 0;
     }
 
-    .preview-gallery {
-      background: #f4f8f6;
+    .website-score-cta {
+      background: #fff8ed;
     }
 
-    .mock-site {
-      border-radius: 8px;
-      overflow: hidden;
-      padding: 0.85rem;
-    }
-
-    .mock-top {
-      justify-content: space-between;
-      gap: 0.75rem;
-      color: var(--text-strong);
-    }
-
-    .mock-top span {
-      width: 1.2rem;
-      height: 1.2rem;
-      border-radius: 4px;
-      background: linear-gradient(135deg, var(--brand-amber), var(--brand-blue));
-      flex: 0 0 auto;
-    }
-
-    .mock-top strong {
-      margin-right: auto;
-      font-size: 0.88rem;
-      letter-spacing: 0;
-    }
-
-    .mock-top em {
-      font-style: normal;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.35rem 0.5rem;
-      font-size: 0.72rem;
-      color: var(--text);
-      background: #fff;
-      letter-spacing: 0;
-    }
-
-    .mock-split,
-    .mock-editorial {
+    .website-score-card {
       display: grid;
       gap: 1rem;
-      padding-top: 1rem;
       align-items: center;
+      padding: clamp(1.25rem, 3vw, 2rem);
+      background:
+        linear-gradient(135deg, rgba(53, 220, 234, 0.13), rgba(244, 177, 66, 0.17)),
+        #ffffff;
     }
 
-    .mock-site small {
-      display: inline-block;
-      margin-bottom: 0.45rem;
-      color: var(--brand-blue);
+    .website-score-card h2 {
+      max-width: 15ch;
+      margin: 0;
+      color: var(--text-strong);
+      font-size: clamp(1.7rem, 4.5vw, 3rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .website-score-card p {
+      margin: 0.55rem 0 0;
+      color: var(--text-muted);
+      letter-spacing: 0;
+    }
+
+    .score-checks {
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.74);
+      padding: 1rem;
+    }
+
+    .score-checks p {
+      margin: 0 0 0.6rem;
+      color: var(--text-strong);
+      font-weight: 900;
+    }
+
+    .score-checks ul {
+      display: grid;
+      gap: 0.45rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .score-checks li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #334155;
       font-weight: 800;
       letter-spacing: 0;
     }
 
-    .mock-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.6rem;
-      margin-top: 0.9rem;
+    .score-checks li::before {
+      content: "";
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 999px;
+      background: var(--brand-blue);
+      flex: 0 0 auto;
     }
 
-    .mock-site-care .mock-banner {
-      margin-top: 1rem;
-      min-height: 190px;
+    .preview-gallery {
       background:
-        linear-gradient(140deg, rgba(4, 67, 251, 0.16), transparent 44%),
-        linear-gradient(45deg, #fef3da, #d6f8fc);
+        linear-gradient(180deg, #fff8ed 0%, #f4faf7 100%);
     }
 
-    .mock-copy {
-      padding-top: 1rem;
-    }
-
-    .mock-lines {
+    .mock-site {
       display: grid;
-      gap: 0.45rem;
-      margin-top: 0.8rem;
+      gap: 0.75rem;
+      overflow: hidden;
+      padding: 0.75rem;
+      min-height: 360px;
     }
 
-    .mock-lines span:nth-child(2) {
-      width: 78%;
+    .browser-dots {
+      display: flex;
+      gap: 0.32rem;
     }
 
-    .mock-lines span:nth-child(3) {
-      width: 55%;
+    .browser-dots span {
+      width: 0.58rem;
+      height: 0.58rem;
+      border-radius: 999px;
+      background: var(--border-strong);
     }
 
-    .mock-photo-stack {
-      display: grid;
-      grid-template-columns: 0.75fr 1fr;
-      gap: 0.65rem;
-      align-items: end;
+    .mock-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    .mock-photo-stack span:first-child {
-      min-height: 130px;
-      background:
-        linear-gradient(135deg, rgba(168, 52, 137, 0.18), rgba(244, 177, 66, 0.4)),
-        #fff;
-    }
-
-    .mock-photo-stack span:last-child {
-      min-height: 210px;
-      background:
-        linear-gradient(135deg, rgba(184, 239, 216, 0.95), rgba(53, 220, 234, 0.32)),
-        #fff;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    .form-intro {
-      max-width: 560px;
-    }
-
-    .agent-note {
-      display: grid;
-      gap: 0.35rem;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 1rem;
-      box-shadow: none;
-    }
-
-    .agent-note span {
-      color: var(--text-muted);
-      font-size: 0.9rem;
+    .mock-nav strong {
+      font-size: 0.88rem;
       letter-spacing: 0;
+    }
+
+    .mock-nav em {
+      font-style: normal;
+      border-radius: 6px;
+      padding: 0.38rem 0.55rem;
+      font-size: 0.72rem;
+      color: #fff;
+      background: #fff;
+      letter-spacing: 0;
+    }
+
+    .mock-hero-shot {
+      display: grid;
+      align-content: end;
+      gap: 1rem;
+      min-height: 205px;
+      border-radius: 6px;
+      padding: 1rem;
+      color: #fff;
+      background: #0f172a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mock-hero-shot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.88) 100%),
+        var(--preview-art);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .mock-hero-shot > * {
+      position: relative;
+    }
+
+    .mock-site small {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 0.32rem 0.55rem;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .mock-site h3 {
+      color: #fff;
+      font-size: 1.2rem;
+      line-height: 1.15;
+    }
+
+    .mock-site p {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .mock-service-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.45rem;
+    }
+
+    .mock-service-row span {
+      min-height: 3.25rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f8fafc;
+      padding: 0.55rem;
+      color: #334155;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .landscaping {
+      --preview-art: linear-gradient(135deg, #17412a, #7fba63 50%, #e5f6db);
+    }
+
+    .roofing {
+      --preview-art: linear-gradient(135deg, #3a1f16, #b64d2c 52%, #f4b142);
+    }
+
+    .law {
+      --preview-art: linear-gradient(135deg, #111827, #475569 55%, #d7c39a);
+    }
+
+    .hvac {
+      --preview-art: linear-gradient(135deg, #05345e, #2aa9e0 54%, #f2f7fb);
+    }
+
+    .medical {
+      --preview-art: linear-gradient(135deg, #0e5b55, #8ee3d5 55%, #fff7ee);
+    }
+
+    .lighting {
+      --preview-art: radial-gradient(circle at 68% 28%, #ffd978 0 9%, transparent 10% 100%), linear-gradient(135deg, #10111f, #363457 55%, #a83489);
+    }
+
+    .landscaping .mock-nav em { background: #1f7a4d; }
+    .roofing .mock-nav em { background: #b64d2c; }
+    .law .mock-nav em { background: #334155; }
+    .hvac .mock-nav em { background: #0376b8; }
+    .medical .mock-nav em { background: #118579; }
+    .lighting .mock-nav em { background: #a83489; }
+
+    .urgency-block {
+      background: #fff8ed;
+    }
+
+    .urgency-card {
+      display: grid;
+      gap: 1rem;
+      align-items: center;
+      padding: clamp(1.25rem, 3vw, 2rem);
+    }
+
+    .urgency-card h2 {
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      line-height: 1;
+    }
+
+    .urgency-card p {
+      max-width: 67ch;
+      margin: 0.7rem 0 0;
+    }
+
+    .final-cta {
+      padding-top: 0;
+      background: #fff8ed;
+    }
+
+    .final-cta-inner {
+      display: grid;
+      justify-items: start;
+      gap: 0.85rem;
+      padding: clamp(1.25rem, 4vw, 2.2rem);
+      background:
+        linear-gradient(135deg, rgba(4, 67, 251, 0.08), rgba(244, 177, 66, 0.18)),
+        #ffffff;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(1.75rem, 5vw, 3.2rem);
+      line-height: 1;
+    }
+
+    .final-cta p {
+      max-width: 58ch;
+      margin: 0;
     }
 
     .preview-form {
       display: grid;
-      gap: 1rem;
-      border-radius: 8px;
-      padding: clamp(1rem, 3vw, 1.45rem);
+      gap: 0.85rem;
+      padding: clamp(0.95rem, 2.2vw, 1.25rem);
     }
 
     .field-pair {
       display: grid;
-      gap: 1rem;
+      gap: 0.8rem;
     }
 
     .preview-form label,
     .preview-form fieldset {
       display: grid;
-      gap: 0.4rem;
+      gap: 0.35rem;
       min-width: 0;
     }
 
     .preview-form span,
     .preview-form legend {
       color: var(--text-strong);
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       font-weight: 800;
       letter-spacing: 0;
     }
@@ -777,10 +960,11 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       min-width: 0;
       border: 1px solid var(--border-strong);
       border-radius: 8px;
-      padding: 0.78rem 0.8rem;
+      padding: 0.72rem 0.76rem;
       background: #fff;
       color: var(--text);
       font: inherit;
+      font-size: 0.94rem;
       letter-spacing: 0;
     }
 
@@ -791,7 +975,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     .preview-form fieldset {
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 0.9rem;
+      padding: 0.75rem;
       margin: 0;
     }
 
@@ -818,7 +1002,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     .form-status {
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 0.85rem;
+      padding: 0.75rem;
       color: var(--text);
       background: var(--surface-muted);
       letter-spacing: 0;
@@ -854,10 +1038,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     }
 
     @media (min-width: 700px) {
-      .field-pair,
-      .browser-hero,
-      .mock-split,
-      .mock-editorial {
+      .field-pair {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -868,12 +1049,26 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       .radio-row {
         grid-template-columns: repeat(2, minmax(0, max-content));
       }
+
+      .trust-badges,
+      .website-score-card,
+      .mock-preview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .website-score-card .btn {
+        justify-self: start;
+      }
     }
 
     @media (min-width: 900px) {
-      .preview-hero-grid,
-      .form-grid {
-        grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1fr);
+      .preview-hero {
+        min-height: 740px;
+      }
+
+      .preview-hero-grid {
+        grid-template-columns: minmax(0, 0.86fr) minmax(420px, 1fr);
+        gap: clamp(1.25rem, 3vw, 2.4rem);
       }
 
       .preview-hero-copy h1 {
@@ -888,20 +1083,40 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
+      .website-score-card {
+        grid-template-columns: minmax(0, 0.9fr) minmax(260px, 0.62fr) auto;
+      }
+
+      .trust-badges {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .hero-form-card {
+        max-height: calc(100vh - 4rem);
+        overflow: auto;
+        position: sticky;
+        top: 1rem;
+      }
+
       .section-head.split {
         grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.65fr);
+      }
+
+      .urgency-card {
+        grid-template-columns: minmax(0, 1fr) auto;
       }
     }
 
     @media (max-width: 620px) {
       .preview-actions .btn,
-      .gallery-cta .btn {
+      .website-score-card .btn,
+      .urgency-card .btn,
+      .final-cta .btn {
         width: 100%;
         justify-content: center;
       }
 
-      .browser-grid,
-      .mock-cards {
+      .mock-service-row {
         grid-template-columns: 1fr;
       }
     }

@@ -1,7 +1,7 @@
 ---
 import LogoLockup from "./LogoLockup.astro";
 import Label from "./Label.astro";
-import { NAV, APP_URL, JOIN_PATH } from "../consts";
+import { NAV, PRODUCT_NAV, APP_URL, JOIN_PATH } from "../consts";
 
 const current = Astro.url.pathname.replace(/\/$/, "") || "/";
 const navEventByHref: Record<string, string | undefined> = {
@@ -18,11 +18,26 @@ const navEventByHref: Record<string, string | undefined> = {
     <!-- Desktop nav (unchanged on desktop; hidden under the hamburger breakpoint) -->
     <nav class="site-nav" aria-label="Primary">
       {
-        NAV.map((item) => (
-          <a href={item.href} aria-current={current === item.href ? "page" : undefined} data-ga-event={navEventByHref[item.href]}>
-            <Label text={`_${item.label}`} />
-          </a>
-        ))
+        NAV.map((item) =>
+          item.label === "products" ? (
+            <details class="product-menu">
+              <summary aria-current={current === item.href || PRODUCT_NAV.some((product) => current === product.href) ? "page" : undefined}>
+                <Label text={`_${item.label}`} />
+              </summary>
+              <div class="product-menu-panel">
+                {PRODUCT_NAV.map((product) => (
+                  <a href={product.href} aria-current={current === product.href ? "page" : undefined}>
+                    {product.label}
+                  </a>
+                ))}
+              </div>
+            </details>
+          ) : (
+            <a href={item.href} aria-current={current === item.href ? "page" : undefined} data-ga-event={navEventByHref[item.href]}>
+              <Label text={`_${item.label}`} />
+            </a>
+          )
+        )
       }
       <a class="btn btn-ghost" href={APP_URL} data-ga-event="click_login"><Label text="_login" /></a>
       <a class="btn btn-green btn-cta" href={JOIN_PATH} data-ga-event="click_pricing"><Label text="_join_now" /></a>
@@ -44,11 +59,24 @@ const navEventByHref: Record<string, string | undefined> = {
   <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile" hidden>
     <div class="container mobile-menu-inner">
       {
-        NAV.map((item) => (
-          <a href={item.href} aria-current={current === item.href ? "page" : undefined} data-ga-event={navEventByHref[item.href]}>
-            <Label text={`_${item.label}`} />
-          </a>
-        ))
+        NAV.map((item) =>
+          item.label === "products" ? (
+            <div class="mobile-product-links" aria-label="Products">
+              <a href={item.href} aria-current={current === item.href ? "page" : undefined}>
+                <Label text={`_${item.label}`} />
+              </a>
+              {PRODUCT_NAV.map((product) => (
+                <a class="mobile-product-link" href={product.href} aria-current={current === product.href ? "page" : undefined}>
+                  {product.label}
+                </a>
+              ))}
+            </div>
+          ) : (
+            <a href={item.href} aria-current={current === item.href ? "page" : undefined} data-ga-event={navEventByHref[item.href]}>
+              <Label text={`_${item.label}`} />
+            </a>
+          )
+        )
       }
       <a class="btn btn-ghost" href={APP_URL} data-ga-event="click_login"><Label text="_login" /></a>
       <a class="btn btn-green btn-cta" href={JOIN_PATH} data-ga-event="click_pricing"><Label text="_join_now" /></a>

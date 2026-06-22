@@ -1,0 +1,106 @@
+---
+import Label from "./Label.astro";
+
+const deskItems = [
+  "Website support",
+  "Content updates",
+  "Technical guidance",
+  "Launch assistance",
+  "SEO recommendations",
+  "AEO recommendations",
+  "GEO recommendations",
+];
+---
+
+<section class="section wod-section" aria-labelledby="wod-heading">
+  <div class="container wod-card">
+    <div>
+      <p class="kicker"><Label text="_website_operations_desk" /></p>
+      <h2 id="wod-heading">Website Operations Desk Included</h2>
+      <p class="wod-lede">Every website includes access to Website Operations Desk.</p>
+      <p>
+        Instead of launching a website and leaving you on your own, WSS helps with ongoing support,
+        content updates, website questions, launch guidance, troubleshooting, and optimization recommendations.
+      </p>
+    </div>
+    <ul class="wod-list">
+      {deskItems.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .wod-section {
+    padding-top: clamp(1.25rem, 3vw, 2rem);
+    padding-bottom: clamp(1.25rem, 3vw, 2rem);
+    background: var(--surface);
+  }
+
+  .wod-card {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
+    border: 1px solid rgba(4, 67, 251, 0.16);
+    border-radius: 8px;
+    background:
+      linear-gradient(135deg, rgba(53, 220, 234, 0.1), rgba(244, 177, 66, 0.14)),
+      #fff;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    box-shadow: 0 18px 50px rgba(11, 18, 32, 0.07);
+  }
+
+  .wod-card h2 {
+    margin: 0;
+    font-size: clamp(1.65rem, 4vw, 2.7rem);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .wod-card p {
+    max-width: 68ch;
+    margin: 0.75rem 0 0;
+    color: var(--text-muted);
+    letter-spacing: 0;
+  }
+
+  .wod-card .wod-lede {
+    color: var(--text-strong);
+    font-weight: 800;
+  }
+
+  .wod-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wod-list li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    color: #334155;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .wod-list li::before {
+    content: "✓";
+    color: var(--brand-blue);
+    font-weight: 900;
+  }
+
+  @media (min-width: 900px) {
+    .wod-card {
+      grid-template-columns: minmax(0, 0.9fr) minmax(340px, 0.9fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .wod-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
