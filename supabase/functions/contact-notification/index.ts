@@ -1,4 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { requestId } from "../_shared/timeout.ts";
 import { internalNotificationTo, sendWssEmail } from "../_shared/wss-email.ts";
 
 const FALLBACK_EMAIL = "corristonconsulting@gmail.com";
@@ -11,6 +13,7 @@ function json(body: Record<string, unknown>, status: number, headers: Record<str
 }
 
 Deno.serve(async (req) => {
+  const id = requestId();
   const origin = req.headers.get("Origin");
   const cors = corsHeaders(origin);
 
@@ -20,6 +23,12 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const rateLimit = checkRateLimit(req, "contact-notification", { limit: 5, windowMs: 10 * 60 * 1000 });
+    if (!rateLimit.ok) {
+      console.warn(`WSS contact notification rate limited: request_id=${id}`);
+      return json({ ok: false, error: "rate_limited", fallbackEmail: FALLBACK_EMAIL }, 429, { ...cors, ...rateLimit.headers });
+    }
+
     const body = await req.json().catch(() => ({}));
     if (typeof body.company_website === "string" && body.company_website.trim().length > 0) {
       return json({ ok: false, error: "invalid_submission" }, 400, cors);
@@ -47,13 +56,13 @@ Deno.serve(async (req) => {
     });
 
     if (!delivery.ok) {
-      console.error(`WSS contact notification failed: ${delivery.error ?? "unknown_error"}`);
+      console.error(`WSS contact notification failed: request_id=${id}; error=${delivery.error ?? "unknown_error"}`);
       return json({ ok: false, error: "notification_failed", fallbackEmail: FALLBACK_EMAIL }, 502, cors);
     }
 
     return json({ ok: true }, 200, cors);
   } catch (error) {
-    console.error(`WSS contact notification error: ${(error as Error).message}`);
+    console.error(`WSS contact notification error: request_id=${id}; message=${(error as Error).message}`);
     return json({ ok: false, error: "notification_failed", fallbackEmail: FALLBACK_EMAIL }, 502, cors);
   }
 });

@@ -18,6 +18,8 @@
 //   SITE_URL (e.g. https://websitesupportstudio.com)
 import Stripe from "https://esm.sh/stripe@17.7.0?target=denonext";
 import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { requestId, withTimeout } from "../_shared/timeout.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
   apiVersion: "2025-01-27.acacia",
@@ -37,6 +39,7 @@ const ADDON_PRICE: Record<string, string | undefined> = {
 };
 
 Deno.serve(async (req) => {
+  const id = requestId();
   const origin = req.headers.get("Origin");
   const cors = corsHeaders(origin);
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -45,6 +48,12 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const rateLimit = checkRateLimit(req, "create-checkout-session", { limit: 8, windowMs: 10 * 60 * 1000 });
+    if (!rateLimit.ok) {
+      console.warn(`WSS checkout rate limited: request_id=${id}`);
+      return new Response(JSON.stringify({ error: "rate_limited" }), { status: 429, headers: { ...cors, ...rateLimit.headers, "content-type": "application/json" } });
+    }
+
     const body = await req.json().catch(() => ({}));
     const appUrl = Deno.env.get("APP_URL") ?? "https://app.websitesupportstudio.com";
     const siteUrl = Deno.env.get("SITE_URL") ?? "https://websitesupportstudio.com";
@@ -58,7 +67,7 @@ Deno.serve(async (req) => {
     if (body.plan === "operations_founder" && PLAN_PRICE.operations_founder) {
       mode = "subscription";
       price = PLAN_PRICE.operations_founder;
-      const founderCoupon = await stripe.coupons.create({
+      const founderCoupon = await withTimeout(stripe.coupons.create({
         percent_off: 50,
         duration: "repeating",
         duration_in_months: 6,
@@ -68,7 +77,7 @@ Deno.serve(async (req) => {
           pricing_tier: "founder",
           discount_duration_months: "6",
         },
-      });
+      }), 10000, "stripe_coupon_timeout");
       discounts = [{ coupon: founderCoupon.id }];
       allowPromotionCodes = false;
       metadata = { plan: "operations", pricing_tier: "founder", discount_duration_months: "6", kind: "plan" };
@@ -87,7 +96,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "price_not_configured" }), { status: 500, headers: { ...cors, "content-type": "application/json" } });
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await withTimeout(stripe.checkout.sessions.create({
       mode,
       line_items: [{ price, quantity: 1 }],
       customer_email: typeof body.email === "string" && body.email ? body.email : undefined,
@@ -98,10 +107,11 @@ Deno.serve(async (req) => {
       ...(mode === "subscription" ? { subscription_data: { metadata } } : {}),
       success_url: `${appUrl}/login?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/pricing?checkout=cancelled`,
-    });
+    }), 15000, "stripe_checkout_timeout");
 
     return new Response(JSON.stringify({ url: session.url }), { headers: { ...cors, "content-type": "application/json" } });
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...cors, "content-type": "application/json" } });
+    console.error(`WSS checkout failed: request_id=${id}; message=${(e as Error).message}`);
+    return new Response(JSON.stringify({ error: "checkout_unavailable" }), { status: 500, headers: { ...cors, "content-type": "application/json" } });
   }
 });

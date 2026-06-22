@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { requestId, withTimeout } from "../_shared/timeout.ts";
 import { internalNotificationTo, sendWssEmail } from "../_shared/wss-email.ts";
 
 const STATUS = "new_preview_request";
@@ -54,6 +56,7 @@ function requireFields(fields: Record<string, string>) {
 }
 
 Deno.serve(async (req) => {
+  const id = requestId();
   const origin = req.headers.get("Origin");
   const cors = corsHeaders(origin);
 
@@ -61,6 +64,12 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ ok: false, error: "method_not_allowed" }, 405, cors);
 
   try {
+    const rateLimit = checkRateLimit(req, "website-preview-request", { limit: 4, windowMs: 10 * 60 * 1000 });
+    if (!rateLimit.ok) {
+      console.warn(`WSS preview request rate limited: request_id=${id}`);
+      return json({ ok: false, error: "rate_limited" }, 429, { ...cors, ...rateLimit.headers });
+    }
+
     const body = (await req.json().catch(() => ({}))) as Payload;
     if (asString(body.company_website).length > 0) {
       return json({ ok: false, error: "invalid_submission" }, 400, cors);
@@ -112,7 +121,7 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error("WSS preview request storage missing Supabase service configuration");
+      console.error(`WSS preview request storage missing Supabase service configuration: request_id=${id}`);
       return json({ ok: false, error: "storage_not_configured" }, 502, cors);
     }
 
@@ -143,17 +152,17 @@ Deno.serve(async (req) => {
     };
 
     if (normalizedDomain) {
-      const { data: existing, error: existingError } = await supabase
+      const { data: existing, error: existingError } = await withTimeout(supabase
         .from("website_preview_requests")
         .select("id,status,submitted_at,business_name")
         .eq("normalized_domain", normalizedDomain)
         .neq("status", "closed")
         .order("submitted_at", { ascending: false })
         .limit(1)
-        .maybeSingle();
+        .maybeSingle(), 10000, "duplicate_lookup_timeout");
 
       if (existingError) {
-        console.error(`WSS preview request duplicate lookup failed: ${existingError.message}`);
+        console.error(`WSS preview request duplicate lookup failed: request_id=${id}; message=${existingError.message}`);
         return json({ ok: false, error: "duplicate_lookup_failed" }, 502, cors);
       }
 
@@ -173,7 +182,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await withTimeout(supabase
       .from("website_preview_requests")
       .insert({
         ...normalized,
@@ -189,7 +198,7 @@ Deno.serve(async (req) => {
         submission,
       })
       .select("id")
-      .single();
+      .single(), 10000, "preview_insert_timeout");
 
     if (error || !data?.id) {
       if (error?.code === "23505" && normalizedDomain) {
@@ -204,7 +213,7 @@ Deno.serve(async (req) => {
           cors,
         );
       }
-      console.error(`WSS preview request storage failed: ${error?.message ?? "missing_id"}`);
+      console.error(`WSS preview request storage failed: request_id=${id}; message=${error?.message ?? "missing_id"}`);
       return json({ ok: false, error: "storage_failed" }, 502, cors);
     }
 
@@ -239,17 +248,17 @@ Deno.serve(async (req) => {
       },
     });
 
-    await supabase
+    await withTimeout(supabase
       .from("website_preview_requests")
       .update({
         notification_status: delivery.ok ? "sent" : "failed",
         notification_error: delivery.ok ? null : delivery.error ?? "unknown_error",
       })
-      .eq("id", requestId);
+      .eq("id", requestId), 10000, "notification_status_timeout");
 
     return json({ ok: true, id: requestId, status: STATUS, notificationStatus: delivery.ok ? "sent" : "failed" }, 200, cors);
   } catch (error) {
-    console.error(`WSS preview request error: ${(error as Error).message}`);
+    console.error(`WSS preview request error: request_id=${id}; message=${(error as Error).message}`);
     return json({ ok: false, error: "preview_request_failed" }, 502, cors);
   }
 });

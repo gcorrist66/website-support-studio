@@ -14,6 +14,7 @@
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY  (server-side only; never in browser)
 import Stripe from "https://esm.sh/stripe@17.7.0?target=denonext";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requestId, withTimeout } from "../_shared/timeout.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
   apiVersion: "2025-01-27.acacia",
@@ -31,12 +32,13 @@ const iso = (unixSeconds: number | null | undefined): string | null =>
   typeof unixSeconds === "number" ? new Date(unixSeconds * 1000).toISOString() : null;
 
 async function rpc(fn: string, args: Record<string, unknown>) {
-  const { data, error } = await supabase.rpc(fn, args);
+  const { data, error } = await withTimeout(supabase.rpc(fn, args), 10000, `${fn}_timeout`);
   if (error) throw new Error(`${fn}: ${error.message}`);
   return data;
 }
 
 Deno.serve(async (req) => {
+  const id = requestId();
   const sig = req.headers.get("stripe-signature");
   if (!sig) return new Response("missing signature", { status: 400 });
 
@@ -45,7 +47,8 @@ Deno.serve(async (req) => {
     const raw = await req.text();
     event = await stripe.webhooks.constructEventAsync(raw, sig, webhookSecret);
   } catch (e) {
-    return new Response(`signature verification failed: ${(e as Error).message}`, { status: 400 });
+    console.warn(`WSS stripe webhook signature verification failed: request_id=${id}; message=${(e as Error).message}`);
+    return new Response("signature verification failed", { status: 400 });
   }
 
   try {
@@ -53,7 +56,7 @@ Deno.serve(async (req) => {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
         if (s.mode === "subscription" && s.subscription) {
-          const sub = await stripe.subscriptions.retrieve(s.subscription as string);
+          const sub = await withTimeout(stripe.subscriptions.retrieve(s.subscription as string), 10000, "stripe_subscription_retrieve_timeout");
           const plan = (s.metadata?.plan ?? sub.metadata?.plan ?? "operations") as string;
           await rpc("provision_paid_customer", {
             p_stripe_subscription_id: sub.id,
@@ -76,7 +79,7 @@ Deno.serve(async (req) => {
         // Ensure provisioned (idempotent); buyer email resolved from the customer.
         let email: string | null = null;
         try {
-          const cust = await stripe.customers.retrieve(sub.customer as string);
+          const cust = await withTimeout(stripe.customers.retrieve(sub.customer as string), 10000, "stripe_customer_retrieve_timeout");
           if (cust && !(cust as Stripe.DeletedCustomer).deleted) email = (cust as Stripe.Customer).email ?? null;
         } catch (_) { /* ignore */ }
         await rpc("provision_paid_customer", {
@@ -132,7 +135,8 @@ Deno.serve(async (req) => {
     }
   } catch (e) {
     // Return 500 so Stripe retries transient failures.
-    return new Response(`handler error: ${(e as Error).message}`, { status: 500 });
+    console.error(`WSS stripe webhook handler error: request_id=${id}; message=${(e as Error).message}`);
+    return new Response("handler error", { status: 500 });
   }
 
   return new Response(JSON.stringify({ received: true }), { headers: { "content-type": "application/json" } });
