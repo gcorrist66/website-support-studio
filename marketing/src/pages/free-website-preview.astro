@@ -393,6 +393,10 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
             <strong>No payment required</strong>
             <span>Website Support Studio reviews your answers and prepares a custom preview before you decide what to do next.</span>
           </div>
+          <div class="preview-support-note">
+            <strong>Every preview is evaluated with SEO, AEO, GEO, and Website Operations Desk best practices in mind.</strong>
+            <span>Every approved website includes Website Operations Desk support after launch.</span>
+          </div>
         </div>
 
         <form class="preview-form" data-endpoint={previewEndpoint} novalidate>
@@ -577,6 +581,27 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
           <h3>You review it and decide what to do next.</h3>
           <p>You can look it over without a paid commitment and choose the next practical step when you are ready.</p>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section website-score-cta" aria-labelledby="website-score-heading">
+    <div class="container website-score-card">
+      <div>
+        <p class="kicker"><Label text="_website_score" /></p>
+        <h2 id="website-score-heading">Not ready for a full website preview?</h2>
+        <p>Get a free website score in minutes.</p>
+      </div>
+      <div class="score-cta-panel">
+        <strong>We analyze:</strong>
+        <ul class="score-checks" aria-label="Website score review areas">
+          <li>Speed</li>
+          <li>Mobile experience</li>
+          <li>Local SEO</li>
+          <li>Trust signals</li>
+          <li>Conversion opportunities</li>
+        </ul>
+        <a class="btn btn-green btn-cta" href="/website-health" data-ga-event="click_free_preview_website_score_cta">Get My Free Website Score</a>
       </div>
     </div>
   </section>
@@ -1248,6 +1273,27 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       letter-spacing: 0;
     }
 
+    .preview-support-note {
+      display: grid;
+      gap: 0.35rem;
+      border: 1px solid #cfe8d8;
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-top: 0.75rem;
+      background: #f2fbf5;
+    }
+
+    .preview-support-note strong {
+      color: #14543a;
+      line-height: 1.35;
+    }
+
+    .preview-support-note span {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      letter-spacing: 0;
+    }
+
     .preview-form {
       display: grid;
       gap: 0.8rem;
@@ -1353,6 +1399,67 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       justify-content: center;
     }
 
+    .website-score-cta {
+      padding-top: 0;
+    }
+
+    .website-score-card {
+      display: grid;
+      gap: clamp(1rem, 2.4vw, 1.5rem);
+      align-items: center;
+      border: 1px solid #cfe8d8;
+      border-radius: 8px;
+      padding: clamp(1.1rem, 3vw, 1.75rem);
+      background: linear-gradient(135deg, #f5fbf1 0%, #ffffff 100%);
+      box-shadow: 0 18px 44px rgba(23, 57, 34, 0.08);
+    }
+
+    .website-score-card h2 {
+      max-width: 13ch;
+      margin: 0;
+      font-size: clamp(1.75rem, 4vw, 2.6rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .website-score-card p {
+      max-width: 38rem;
+      margin: 0.7rem 0 0;
+      color: var(--text-muted);
+      font-size: 1.02rem;
+      letter-spacing: 0;
+    }
+
+    .score-cta-panel {
+      display: grid;
+      gap: 0.85rem;
+      justify-items: start;
+    }
+
+    .score-checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .score-checks li {
+      position: relative;
+      padding-left: 1.35rem;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .score-checks li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--green);
+    }
+
     .privacy-note {
       margin: 0;
       font-size: 0.82rem;
@@ -1412,13 +1519,22 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       .section-head.split {
         grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.65fr);
       }
+
+      .website-score-card {
+        grid-template-columns: minmax(0, 0.85fr) minmax(320px, 0.65fr);
+      }
     }
 
     @media (max-width: 620px) {
       .preview-actions .btn,
-      .gallery-cta .btn {
+      .gallery-cta .btn,
+      .website-score-card .btn {
         width: 100%;
         justify-content: center;
+      }
+
+      .score-checks {
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .preview-hero-copy h1 {

@@ -191,7 +191,10 @@ export const DESIGN_SYSTEMS = [
     sampleSites: [
       { label: "Roofing Sample", href: "/templates/sample/ridgeline-roofing" },
       { label: "Landscaping Sample", href: "/templates/sample/greenline-landscaping" },
-      { label: "HVAC Sample", href: "/templates/sample/northstar-air" },
+      { label: "HVAC Sample", href: "/templates/sample/northwind-hvac" },
+      { label: "Electrical Sample", href: "/templates/sample/brightwire-electric" },
+      { label: "Pools Sample", href: "/templates/sample/bluewave-pools" },
+      { label: "Irrigation Sample", href: "/templates/sample/greenline-irrigation" },
     ],
     fits: ["Roofing", "Landscaping", "Tree service", "Exterior painting", "Outdoor services"],
     exampleBusinesses: ["Roofing company", "Landscaping crew", "Tree service", "Window installer", "Exterior painter"],
@@ -205,8 +208,8 @@ export const DESIGN_SYSTEMS = [
       "Click-to-call header and footer",
     ],
     images: {
-      desktop: "/templates/ridgeline-roofing-desktop.svg",
-      mobile: "/templates/ridgeline-roofing-mobile.svg",
+      desktop: "/templates/ridgeline-roofing-desktop.png",
+      mobile: "/templates/ridgeline-roofing-mobile.png",
     },
     preview: {
       image: "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?auto=format&fit=crop&w=1100&q=82",
@@ -447,11 +450,18 @@ export const BRAND = {
 
 // ---- Primary navigation (snake_case voice is the brand tell) ----------------
 export const NAV = [
-  { href: "/services", label: "services" },
+  { href: "/products", label: "products" },
   { href: "/pricing", label: "pricing" },
+  { href: "/#how-it-works", label: "how_it_works" },
   { href: "/articles", label: "articles" },
   { href: "/about", label: "about" },
-  { href: "/contact", label: "contact" },
+] as const;
+
+export const PRODUCT_NAV = [
+  { href: "/founder-website-package", label: "$500 Websites" },
+  { href: "/custom-websites", label: "Custom Websites" },
+  { href: "/website-health", label: "Website Score" },
+  { href: "/free-website-preview", label: "Free Website Preview" },
 ] as const;
 
 export const FOOTER_LEGAL = [

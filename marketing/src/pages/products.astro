@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { breadcrumbSchema, serviceSchema } from "../schema";
+import { WEBSITE_PACKAGE } from "../consts";
+
+const products = [
+  {
+    label: "_founder_website_package",
+    title: "$500 Websites",
+    body: "A professional website, customized and launched for your business.",
+    href: "/founder-website-package",
+    cta: "View $500 Websites",
+  },
+  {
+    label: "_custom_websites",
+    title: "Custom Websites",
+    body: "Scoped custom website work for deeper content, conversion, migration, or launch needs.",
+    href: "/custom-websites",
+    cta: "View Custom Websites",
+  },
+  {
+    label: "_website_operations_desk",
+    title: "Website Operations Desk",
+    body: "Ongoing website support, guidance, optimization, and operational assistance after launch.",
+    href: "/founder-website-package",
+    cta: "Learn More",
+  },
+  {
+    label: "_website_health",
+    title: "Website Health Score",
+    body: "A free website score across speed, mobile experience, local SEO, trust, and conversion opportunities.",
+    href: "/website-health",
+    cta: "Get My Free Website Score",
+  },
+  {
+    label: "_free_website_preview",
+    title: "Free Website Preview",
+    body: "A custom homepage preview request for business owners who want to see a clearer website direction first.",
+    href: "/free-website-preview",
+    cta: "Request a Free Preview",
+  },
+];
+
+const comparisonRows = [
+  { feature: "Website Build", founder: "Yes", custom: "Yes" },
+  { feature: "Website Operations Desk", founder: "Yes", custom: "Yes" },
+  { feature: "SEO Foundation", founder: "Yes", custom: "Yes" },
+  { feature: "AEO Optimization", founder: "Yes", custom: "Yes" },
+  { feature: "GEO Optimization", founder: "Yes", custom: "Yes" },
+  { feature: "Launch Support", founder: "Yes", custom: "Yes" },
+  { feature: "Content Guidance", founder: "Yes", custom: "Yes" },
+  { feature: "Ongoing Support", founder: "Yes", custom: "Yes" },
+  { feature: "Custom Integrations", founder: "No", custom: "Yes" },
+  { feature: "Advanced Architecture", founder: "No", custom: "Yes" },
+];
+
+const schemas = [
+  serviceSchema({
+    name: "Website Support Studio Products",
+    description:
+      "Website Support Studio products include $500 websites, custom websites, the free Website Health Score, and Free Website Preview.",
+    path: "/products",
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Products", path: "/products" },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Products"
+  description="Explore Website Support Studio products: $500 websites, custom websites, the free Website Health Score, and Free Website Preview."
+  path="/products"
+  schemas={schemas}
+>
+  <section class="section">
+    <div class="container">
+      <p class="kicker"><Label text="_products" /></p>
+      <h1>Website products built around getting your business online clearly.</h1>
+      <p class="lede" style="margin-top:1rem;">
+        Start with a score, request a preview, choose a $500 website, or talk through custom website work.
+      </p>
+      <div class="hero-actions" style="margin-top:1.5rem;">
+        <a
+          class="btn btn-green btn-cta"
+          href={WEBSITE_PACKAGE.ctaHref}
+          data-ga-event="click_build_my_website"
+          data-ga-secondary-event="stripe_payment_link_click"
+        >
+          <Label text={WEBSITE_PACKAGE.ctaLabel} />
+        </a>
+        <a class="btn btn-ghost" href="/free-website-preview">Free Website Preview</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container">
+      <div class="grid grid-4">
+        {
+          products.map((product) => (
+            <article class="card">
+              <p class="kicker"><Label text={product.label} /></p>
+              <h2 style="margin-top:0;">{product.title}</h2>
+              <p style="color:var(--text-muted);">{product.body}</p>
+              <a class="btn btn-ghost" href={product.href}>{product.cta}</a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section products-comparison-section">
+    <div class="container">
+      <p class="kicker"><Label text="_build_support_optimize" /></p>
+      <h2>Build + Support + SEO + AEO + GEO is the baseline.</h2>
+      <p class="lede" style="margin-top:0.75rem;">
+        Website Support Studio products include the operating layer after launch, not just the initial website build.
+      </p>
+      <div class="comparison-table-wrap" role="region" aria-label="Website product comparison" tabindex="0">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>$500 Website</th>
+              <th>Custom Website</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              comparisonRows.map((row) => (
+                <tr>
+                  <th scope="row">{row.feature}</th>
+                  <td data-value={row.founder}>{row.founder}</td>
+                  <td data-value={row.custom}>{row.custom}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .products-comparison-section { background:var(--surface); }
+    .comparison-table-wrap { margin-top:1.5rem; overflow-x:auto; border:1px solid var(--border); border-radius:8px; background:#fff; box-shadow:0 18px 50px rgba(11,18,32,.06); }
+    .comparison-table { width:100%; min-width:680px; border-collapse:collapse; }
+    .comparison-table th,
+    .comparison-table td { padding:.9rem 1rem; border-bottom:1px solid var(--border); text-align:left; vertical-align:middle; }
+    .comparison-table thead th { background:var(--surface-muted); color:var(--text-strong); font-size:.86rem; }
+    .comparison-table tbody th { color:var(--text-strong); font-weight:800; }
+    .comparison-table td { color:var(--text); font-weight:800; }
+    .comparison-table td[data-value="Yes"] { color:#17633f; }
+    .comparison-table td[data-value="No"] { color:var(--text-muted); }
+    .comparison-table tbody tr:last-child th,
+    .comparison-table tbody tr:last-child td { border-bottom:0; }
+  </style>
+</BaseLayout>

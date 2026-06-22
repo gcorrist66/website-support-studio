@@ -286,10 +286,16 @@ main {
   .grid-3 {
     grid-template-columns: repeat(2, 1fr);
   }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media (min-width: 960px) {
   .grid-3 {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 .card {
@@ -687,8 +693,61 @@ main {
   color: var(--text);
   font-size: 0.9rem;
 }
-.site-nav a[aria-current="page"] {
+.site-nav a[aria-current="page"],
+.product-menu summary[aria-current="page"] {
   color: var(--brand-blue);
+}
+.product-menu {
+  position: relative;
+}
+.product-menu summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  list-style: none;
+}
+.product-menu summary::-webkit-details-marker {
+  display: none;
+}
+.product-menu summary::after {
+  content: "";
+  width: 0.42rem;
+  height: 0.42rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-0.12rem) rotate(45deg);
+}
+.product-menu[open] summary::after {
+  transform: translateY(0.08rem) rotate(225deg);
+}
+.product-menu-panel {
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  left: 0;
+  z-index: 70;
+  display: grid;
+  min-width: 240px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-elevated);
+  box-shadow: 0 18px 50px rgba(11, 18, 32, 0.14);
+  padding: 0.45rem;
+}
+.product-menu-panel a {
+  display: block;
+  border-radius: 6px;
+  padding: 0.72rem 0.75rem;
+  color: var(--text);
+  font-size: 0.86rem;
+}
+.product-menu-panel a:hover,
+.product-menu-panel a[aria-current="page"] {
+  background: var(--surface-muted);
+  color: var(--brand-blue);
+  text-decoration: none;
 }
 
 /* ---- Mobile hamburger + menu ---------------------------------------------- */
@@ -756,6 +815,21 @@ main {
   font-size: 1.05rem;
   color: var(--text);
   border-bottom: 1px solid var(--border);
+}
+.mobile-product-links {
+  display: grid;
+}
+.mobile-product-links > a:first-child {
+  padding: 0.85rem 0;
+  font-size: 1.05rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.mobile-menu .mobile-product-link {
+  margin-left: 1rem;
+  padding: 0.72rem 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
 }
 .mobile-menu a[aria-current="page"] {
   color: var(--brand-blue);

@@ -1,0 +1,861 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = "Website Health Score Tool";
+const description =
+  "Grade your website in seconds. Get a free 0-100 Website Health Score with plain-language fixes for speed, mobile, SEO, trust, and security.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path="/website-score"
+  image="/og/og-website-score.png"
+  schemas={[
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Website Support Studio Website Health Score",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description,
+    },
+  ]}
+>
+  <section class="score-hero">
+    <div class="container score-hero-grid">
+      <div class="score-copy">
+        <p class="eyebrow">Website Health Score</p>
+        <h1>How healthy is your website? Get your free score in seconds.</h1>
+        <p class="lede">
+          Enter your URL and get an instant 0-100 report across speed, mobile, search visibility, trust, conversion, and security.
+        </p>
+        <form class="score-form" id="score-form" aria-label="Website health score form">
+          <label for="website-url">Website URL</label>
+          <div class="url-row">
+            <input id="website-url" name="url" type="text" inputmode="url" placeholder="example.com" autocomplete="url" required />
+            <button type="submit">Grade my site</button>
+          </div>
+          <p class="form-note">No payment. No jargon. Built for local business owners.</p>
+        </form>
+      </div>
+
+      <aside class="hero-card" aria-label="What the score checks">
+        <div class="mini-score">0-100</div>
+        <h2>Instant website audit</h2>
+        <ul>
+          <li>Google PageSpeed / Lighthouse scores</li>
+          <li>Mobile and responsive basics</li>
+          <li>SEO, sitemap, and page count signals</li>
+          <li>Quote path, reviews, and trust proof</li>
+          <li>HTTPS and stale-site checks</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="score-trust-section" aria-labelledby="score-trust-heading">
+    <div class="container score-trust-card">
+      <div>
+        <p class="eyebrow">Website Operations Desk</p>
+        <h2 id="score-trust-heading">What We Look For</h2>
+      </div>
+      <ul>
+        <li>SEO opportunities</li>
+        <li>AEO readiness</li>
+        <li>GEO readiness</li>
+        <li>Conversion issues</li>
+        <li>Mobile experience</li>
+        <li>Trust signals</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="result-shell" id="result-shell" hidden>
+    <div class="container">
+      <div class="status-box" id="audit-status" role="status" aria-live="polite"></div>
+
+      <article class="report" id="report" hidden>
+        <div class="report-top">
+          <div>
+            <p class="eyebrow">Your Website Health Score</p>
+            <h2 id="report-title">Website report</h2>
+            <p id="report-subtitle"></p>
+          </div>
+          <div class="score-pair" aria-label="Website scores">
+            <div class="score-dial" aria-label="Website Health Score">
+              <span id="score-number">0</span>
+              <small>Health</small>
+            </div>
+            <div class="score-dial score-dial-secondary" aria-label="Findability Score">
+              <span id="findability-number">0</span>
+              <small>Findability</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="tier-row">
+          <span id="tier-pill" class="tier-pill">At Risk</span>
+          <span id="route-pill" class="tier-pill route-pill">rebuild</span>
+          <span id="page-count"></span>
+        </div>
+
+        <div class="fixes fixes-grid">
+          <div>
+          <h3>Top 3 fixes</h3>
+          <ol id="top-fixes"></ol>
+          </div>
+          <div>
+            <h3>Findability fixes</h3>
+            <ol id="findability-fixes"></ol>
+          </div>
+        </div>
+
+        <div class="gate-grid">
+          <section class="capture-card" aria-labelledby="capture-title">
+            <p class="eyebrow">Full report</p>
+            <h3 id="capture-title">Send me the full Website Health Report</h3>
+            <p>
+              Get the category breakdown and a plain-English next-step summary you can review before requesting a free preview.
+            </p>
+            <form id="lead-form" class="lead-form">
+              <label>
+                First name
+                <input name="first_name" type="text" inputmode="text" autocomplete="given-name" required />
+              </label>
+              <label>
+                Business
+                <input name="business" autocomplete="organization" required />
+              </label>
+              <label>
+                Email
+                <input name="email" type="email" autocomplete="email" required />
+              </label>
+              <button type="submit">Send my report</button>
+              <p id="lead-status" class="lead-status" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <section class="category-card" aria-labelledby="category-title">
+            <p class="eyebrow">Preview</p>
+            <h3 id="category-title">Category breakdown</h3>
+            <div id="category-list" class="category-list" aria-live="polite"></div>
+            <div class="report-cta" id="report-cta" hidden>
+              <p>Want to see what a stronger site could look like?</p>
+              <a href="/free-website-preview">Get your free preview</a>
+            </div>
+          </section>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="explainer">
+    <div class="container explainer-grid">
+      <div>
+        <p class="eyebrow">Built for action</p>
+        <h2>A grader that turns website problems into plain next steps.</h2>
+      </div>
+      <div class="explainer-card">
+        <h3>Speed</h3>
+        <p>Uses Google Lighthouse signals to flag pages that may feel slow on phones.</p>
+      </div>
+      <div class="explainer-card">
+        <h3>Found Online / SEO</h3>
+        <p>Checks titles, descriptions, headings, sitemap visibility, and page count basics.</p>
+      </div>
+      <div class="explainer-card">
+        <h3>Trust & Conversion</h3>
+        <p>Looks for visible quote paths, calls, forms, reviews, licensing, and stale-site clues.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom-cta">
+    <div class="container bottom-cta-inner">
+      <p class="eyebrow">Website Support Studio</p>
+      <h2>Low score? We can build the free preview next.</h2>
+      <p>See a modern, estimate-first version of your website before you commit to anything.</p>
+      <a href="/free-website-preview">Request a free website preview</a>
+    </div>
+  </section>
+
+  <script>
+    // @ts-nocheck
+    (() => {
+      const scoreForm = document.getElementById("score-form");
+      const resultShell = document.getElementById("result-shell");
+      const status = document.getElementById("audit-status");
+      const report = document.getElementById("report");
+      const leadForm = document.getElementById("lead-form");
+      const leadStatus = document.getElementById("lead-status");
+      const reportCta = document.getElementById("report-cta");
+      let currentAudit = null;
+
+      function setStatus(message, type) {
+        status.textContent = message;
+        status.dataset.type = type || "pending";
+        status.hidden = !message;
+      }
+
+      function scoreCopy(score, tier) {
+        if (score === 0) return "The site could not be reached, which is the biggest opportunity to fix first.";
+        if (tier === "At Risk") return "Your site is likely costing calls because key trust, speed, or conversion basics need attention.";
+        if (tier === "Needs Work") return "Your site has a foundation, but a few fixes could help more visitors become leads.";
+        return "Your site is in solid shape. The next opportunity is squeezing more leads from the traffic you already have.";
+      }
+
+      function renderAudit(audit) {
+        currentAudit = audit;
+        report.hidden = false;
+        document.getElementById("score-number").textContent = String(audit.score || 0);
+        document.getElementById("findability-number").textContent = audit.findability_score === null || audit.findability_score === undefined ? "—" : String(audit.findability_score);
+        document.getElementById("tier-pill").textContent = audit.tier || "At Risk";
+        document.getElementById("route-pill").textContent = audit.routing_tag || "rebuild";
+        document.getElementById("report-title").textContent = audit.finalUrl || audit.requestedUrl || "Website report";
+        document.getElementById("report-subtitle").textContent = scoreCopy(audit.score || 0, audit.tier || "At Risk");
+        document.getElementById("page-count").textContent = audit.checks && audit.checks.pageCount
+          ? `${audit.checks.pageCount} sitemap page${audit.checks.pageCount === 1 ? "" : "s"} found`
+          : "No sitemap page count found";
+
+        const fixes = document.getElementById("top-fixes");
+        fixes.innerHTML = "";
+        (audit.topIssues || []).slice(0, 3).forEach((issue) => {
+          const li = document.createElement("li");
+          const strong = document.createElement("strong");
+          const p = document.createElement("p");
+          strong.textContent = issue.phrase || "Improve this area";
+          p.textContent = issue.detail || "";
+          li.append(strong, p);
+          fixes.appendChild(li);
+        });
+
+        const findabilityFixes = document.getElementById("findability-fixes");
+        findabilityFixes.innerHTML = "";
+        (audit.findability && audit.findability.topIssues ? audit.findability.topIssues : []).slice(0, 3).forEach((issue) => {
+          const li = document.createElement("li");
+          const strong = document.createElement("strong");
+          const p = document.createElement("p");
+          strong.textContent = issue.phrase || "Improve Maps visibility";
+          p.textContent = issue.detail || "";
+          li.append(strong, p);
+          findabilityFixes.appendChild(li);
+        });
+
+        const categories = document.getElementById("category-list");
+        categories.innerHTML = "";
+        (audit.categories || []).forEach((category) => {
+          const item = document.createElement("div");
+          item.className = "category-item";
+          item.innerHTML = `
+            <div class="category-heading">
+              <span></span>
+              <strong></strong>
+            </div>
+            <div class="meter"><span></span></div>
+            <p></p>
+          `;
+          item.querySelector("span").textContent = category.name;
+          var measured = category.score !== null && category.score !== undefined;
+          item.classList.toggle("not-measured", !measured);
+          item.querySelector("strong").textContent = measured ? `${category.score}/100` : "Not measured";
+          item.querySelector(".meter span").style.width = measured ? `${Math.max(0, Math.min(100, category.score || 0))}%` : "0%";
+          item.querySelector("p").textContent = category.summary || "";
+          categories.appendChild(item);
+        });
+      }
+
+      scoreForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = scoreForm.querySelector("button");
+        const data = new FormData(scoreForm);
+        resultShell.hidden = false;
+        report.hidden = true;
+        reportCta.hidden = true;
+        leadStatus.textContent = "";
+        button.disabled = true;
+        button.textContent = "Grading...";
+        setStatus("Running the website audit. This can take up to 45 seconds because it uses Google PageSpeed data.", "pending");
+
+        try {
+          const response = await fetch("/api/website-health-audit", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+              body: JSON.stringify({ url: data.get("url") }),
+          });
+          const audit = await response.json();
+          if (!response.ok || audit.ok === false) throw new Error(audit.message || "The audit failed.");
+          setStatus("", "success");
+          renderAudit(audit);
+          report.scrollIntoView({ behavior: "smooth", block: "start" });
+        } catch (error) {
+          setStatus(error && error.message ? error.message : "We could not run the audit. Please try again.", "error");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Grade my site";
+        }
+      });
+
+      leadForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!currentAudit) return;
+        const button = leadForm.querySelector("button");
+        const data = new FormData(leadForm);
+        button.disabled = true;
+        button.textContent = "Sending...";
+        leadStatus.textContent = "Sending your report request...";
+        leadStatus.dataset.type = "pending";
+
+        try {
+          const response = await fetch("/api/website-health-lead", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              first_name: data.get("first_name"),
+              business: data.get("business"),
+              email: data.get("email"),
+              website_url: currentAudit.finalUrl || currentAudit.requestedUrl,
+              audit: currentAudit,
+              source_url: window.location.href,
+              referrer: document.referrer || "",
+              user_agent: navigator.userAgent || "",
+            }),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || result.ok === false) throw new Error(result.message || "The report request could not be sent.");
+          leadStatus.textContent = "Sent. Your score and report details were received.";
+          leadStatus.dataset.type = "success";
+          reportCta.hidden = false;
+        } catch (error) {
+          leadStatus.textContent = error && error.message ? error.message : "We could not send the report request.";
+          leadStatus.dataset.type = "error";
+        } finally {
+          button.disabled = false;
+          button.textContent = "Send my report";
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    :global(body[data-page="/website-score"]) {
+      background: #fffaf5;
+      color: #111827;
+    }
+
+    .score-hero {
+      padding: clamp(2.2rem, 6vw, 4.4rem) 0;
+      background:
+        linear-gradient(135deg, rgba(255, 247, 237, 0.96), rgba(255, 255, 255, 0.95)),
+        url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1800&q=78") center/cover;
+    }
+
+    .score-hero-grid,
+    .gate-grid,
+    .explainer-grid {
+      display: grid;
+      gap: clamp(1rem, 3vw, 2rem);
+    }
+
+    .score-hero-grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.78fr);
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.7rem;
+      color: #c2410c;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 680px;
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(2.25rem, 4.4vw, 4.25rem);
+      line-height: 1.02;
+    }
+
+    .lede {
+      max-width: 620px;
+      margin: 1rem 0 0;
+      color: #475569;
+      font-size: clamp(1.06rem, 2vw, 1.35rem);
+      line-height: 1.55;
+    }
+
+    .score-form,
+    .hero-card,
+    .report,
+    .capture-card,
+    .category-card,
+    .explainer-card,
+    .bottom-cta-inner {
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+    }
+
+    .score-form {
+      max-width: 760px;
+      margin-top: 1.4rem;
+      padding: clamp(1rem, 2vw, 1.35rem);
+      border-radius: 20px;
+    }
+
+    label {
+      display: grid;
+      gap: 0.45rem;
+      color: #334155;
+      font-weight: 800;
+    }
+
+    .url-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.7rem;
+      margin-top: 0.5rem;
+    }
+
+    input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      min-height: 3.35rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 0 1rem;
+      color: #0f172a;
+      font: inherit;
+      background: #fff;
+    }
+
+    button,
+    .bottom-cta a,
+    .report-cta a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.35rem;
+      border: 0;
+      border-radius: 14px;
+      padding: 0 1.25rem;
+      background: #f97316;
+      color: #111827;
+      font: inherit;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 16px 34px rgba(249, 115, 22, 0.28);
+    }
+
+    button:disabled {
+      opacity: 0.72;
+      cursor: wait;
+    }
+
+    .form-note {
+      margin: 0.8rem 0 0;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    .hero-card {
+      border-radius: 24px;
+      padding: clamp(1.2rem, 2.6vw, 1.7rem);
+    }
+
+    .mini-score {
+      width: 6rem;
+      height: 6rem;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #111827;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .hero-card h2,
+    .explainer h2,
+    .bottom-cta h2 {
+      margin: 1rem 0;
+      color: #111827;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+      line-height: 1.05;
+    }
+
+    .hero-card ul {
+      display: grid;
+      gap: 0.8rem;
+      margin: 0;
+      padding-left: 1.2rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .result-shell {
+      padding: clamp(2rem, 6vw, 4rem) 0;
+      background: #fff;
+    }
+
+    .status-box {
+      margin-bottom: 1rem;
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      background: #fff7ed;
+      color: #9a3412;
+      font-weight: 800;
+    }
+
+    .status-box[data-type="error"] {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .report {
+      border-radius: 28px;
+      padding: clamp(1.2rem, 3vw, 2rem);
+    }
+
+    .report-top {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 1.4rem;
+    }
+
+    .report-top h2 {
+      margin: 0;
+      color: #111827;
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      overflow-wrap: anywhere;
+    }
+
+    .report-top p {
+      max-width: 660px;
+      color: #475569;
+    }
+
+    .score-dial {
+      width: clamp(7rem, 18vw, 10rem);
+      aspect-ratio: 1;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 10px solid #f97316;
+      border-radius: 50%;
+      background: #fff7ed;
+      color: #111827;
+    }
+
+    .score-pair {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      justify-content: flex-end;
+    }
+
+    .score-dial-secondary {
+      border-color: #14b8a6;
+      background: #f0fdfa;
+    }
+
+    .score-dial span {
+      font-size: clamp(2.4rem, 7vw, 4.4rem);
+      font-weight: 950;
+      line-height: 0.85;
+    }
+
+    .score-dial small {
+      margin-top: -1.2rem;
+      color: #64748b;
+      font-weight: 800;
+    }
+
+    .tier-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      align-items: center;
+      margin-top: 1rem;
+      color: #64748b;
+      font-weight: 800;
+    }
+
+    .tier-pill {
+      border-radius: 999px;
+      padding: 0.42rem 0.78rem;
+      background: #111827;
+      color: #fff;
+    }
+
+    .route-pill {
+      background: #f97316;
+      color: #111827;
+    }
+
+    .fixes {
+      margin-top: 1.5rem;
+    }
+
+    .fixes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .fixes h3,
+    .capture-card h3,
+    .category-card h3,
+    .explainer-card h3 {
+      margin: 0 0 0.8rem;
+      color: #111827;
+      font-size: 1.25rem;
+    }
+
+    .fixes ol {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style-position: inside;
+    }
+
+    .fixes li {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 1rem;
+      background: #f8fafc;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .fixes strong {
+      display: block;
+      margin-bottom: 0.4rem;
+      color: #111827;
+      font-size: 1rem;
+    }
+
+    .fixes p,
+    .capture-card p,
+    .category-card p,
+    .explainer-card p,
+    .bottom-cta p {
+      margin: 0;
+      color: #475569;
+      line-height: 1.55;
+    }
+
+    .gate-grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      margin-top: 1.3rem;
+    }
+
+    .capture-card,
+    .category-card,
+    .explainer-card {
+      border-radius: 20px;
+      padding: 1.2rem;
+      box-shadow: none;
+    }
+
+    .lead-form,
+    .category-list {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .lead-status {
+      min-height: 1.4rem;
+      font-weight: 800;
+    }
+
+    .lead-status[data-type="success"] {
+      color: #166534;
+    }
+
+    .lead-status[data-type="error"] {
+      color: #991b1b;
+    }
+
+    .category-item {
+      display: grid;
+      gap: 0.45rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.85rem;
+    }
+
+    .category-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .meter {
+      height: 0.62rem;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e2e8f0;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #f97316;
+    }
+
+    .score-trust-section {
+      padding: clamp(1.5rem, 4vw, 2.5rem) 0;
+      background: #fffaf5;
+    }
+
+    .score-trust-card {
+      display: grid;
+      gap: 1rem;
+      align-items: center;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 18px;
+      background: #fff;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+    }
+
+    .score-trust-card h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(1.55rem, 4vw, 2.5rem);
+      line-height: 1;
+    }
+
+    .score-trust-card ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem 0.85rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .score-trust-card li {
+      display: flex;
+      gap: 0.5rem;
+      color: #334155;
+      font-weight: 800;
+    }
+
+    .score-trust-card li::before {
+      content: "✓";
+      color: #0443fb;
+      font-weight: 900;
+    }
+
+    .report-cta {
+      margin-top: 1rem;
+      border-radius: 16px;
+      padding: 1rem;
+      background: #fff7ed;
+    }
+
+    .report-cta a {
+      margin-top: 0.8rem;
+    }
+
+    .explainer {
+      padding: clamp(2.5rem, 7vw, 5rem) 0;
+      background: #f8fafc;
+    }
+
+    .explainer-grid {
+      grid-template-columns: 1.2fr repeat(3, 1fr);
+      align-items: stretch;
+    }
+
+    .bottom-cta {
+      padding: clamp(2rem, 6vw, 4rem) 0;
+      background: #111827;
+    }
+
+    .bottom-cta-inner {
+      border-radius: 24px;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      background: #fff;
+      text-align: center;
+    }
+
+    .bottom-cta p {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .bottom-cta a {
+      margin-top: 1.2rem;
+    }
+
+    @media (max-width: 920px) {
+      .score-hero-grid,
+      .gate-grid,
+      .explainer-grid,
+      .fixes ol {
+        grid-template-columns: 1fr;
+      }
+
+      .report-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .score-pair,
+      .fixes-grid {
+        grid-template-columns: 1fr;
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .score-hero {
+        padding-top: 2.2rem;
+      }
+
+      .url-row {
+        grid-template-columns: 1fr;
+      }
+
+      .score-trust-card ul {
+        grid-template-columns: 1fr;
+      }
+
+      button,
+      .bottom-cta a,
+      .report-cta a {
+        width: 100%;
+      }
+
+      .score-form,
+      .hero-card,
+      .report {
+        border-radius: 18px;
+      }
+    }
+  </style>
+</BaseLayout>
