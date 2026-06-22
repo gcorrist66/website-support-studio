@@ -10,6 +10,7 @@ export default [
       "dist/**",
       "build/**",
       "node_modules/**",
+      ".artifacts/**",
       "vite.config.ts",
     ],
   },

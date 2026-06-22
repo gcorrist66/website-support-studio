@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../auth/AuthProvider";
@@ -935,13 +935,18 @@ function FeedbackModal({
   }
 
   return (
-    <div className="wss-modal-backdrop" onClick={onClose} role="presentation">
-      <div
+    <div className="wss-modal-backdrop">
+      <button
+        type="button"
+        className="modal-backdrop-dismiss"
+        onClick={onClose}
+        aria-label="close feedback modal"
+      />
+      <dialog
         className="wss-modal"
-        role="dialog"
+        open
         aria-modal="true"
         aria-labelledby="feedback-modal-title"
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="wss-modal-header">
           <div>
@@ -1025,7 +1030,7 @@ function FeedbackModal({
             </button>
           </form>
         )}
-      </div>
+      </dialog>
     </div>
   );
 }
@@ -1076,6 +1081,34 @@ export function AppShell() {
   const [requestActionMessage, setRequestActionMessage] = useState<string | null>(null);
   const [requestActionError, setRequestActionError] = useState<string | null>(null);
   const optimisticRequestsRef = useRef<MockTicketQueueItem[]>([]);
+
+  const closeRequestModal = useCallback(() => {
+    if (requestSubmitting) {
+      return;
+    }
+    if (!requestSuccess) {
+      for (const attachment of requestAttachments) {
+        if (attachment.previewUrl) {
+          URL.revokeObjectURL(attachment.previewUrl);
+        }
+        if (attachment.status === "ready" && attachment.storagePath.startsWith("drafts/")) {
+          void removeRequestAttachment(attachment.storagePath);
+        }
+      }
+    }
+    setRequestModalOpen(false);
+    setRequestType("website_update");
+    setRequestUrgency("normal");
+    setRequestTitle("");
+    setRequestDescription("");
+    setRequestSiteId("");
+    setRequestAttachments([]);
+    setRequestDraftId(getRandomId("draft"));
+    setRequestDragActive(false);
+    setRequestSubmitting(false);
+    setRequestError(null);
+    setRequestSuccess(null);
+  }, [requestAttachments, requestSubmitting, requestSuccess]);
 
   useEffect(() => {
     if (!isSectionPath(location.pathname)) {
@@ -1190,7 +1223,7 @@ export function AppShell() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [requestModalOpen, requestSubmitting]);
+  }, [closeRequestModal, requestModalOpen, requestSubmitting]);
 
   useEffect(() => {
     if (!requestModalOpen) {
@@ -1558,34 +1591,6 @@ export function AppShell() {
 
   function openRequestSurface() {
     setRequestModalOpen(true);
-  }
-
-  function closeRequestModal() {
-    if (requestSubmitting) {
-      return;
-    }
-    if (!requestSuccess) {
-      for (const attachment of requestAttachments) {
-        if (attachment.previewUrl) {
-          URL.revokeObjectURL(attachment.previewUrl);
-        }
-        if (attachment.status === "ready" && attachment.storagePath.startsWith("drafts/")) {
-          void removeRequestAttachment(attachment.storagePath);
-        }
-      }
-    }
-    setRequestModalOpen(false);
-    setRequestType("website_update");
-    setRequestUrgency("normal");
-    setRequestTitle("");
-    setRequestDescription("");
-    setRequestSiteId("");
-    setRequestAttachments([]);
-    setRequestDraftId(getRandomId("draft"));
-    setRequestDragActive(false);
-    setRequestSubmitting(false);
-    setRequestError(null);
-    setRequestSuccess(null);
   }
 
   async function addRequestFiles(fileList: FileList | File[]) {
@@ -3661,13 +3666,18 @@ export function AppShell() {
       </div>
 
       {requestModalOpen ? (
-        <div className="wss-modal-backdrop" onClick={closeRequestModal} role="presentation">
-          <div
+        <div className="wss-modal-backdrop">
+          <button
+            type="button"
+            className="modal-backdrop-dismiss"
+            onClick={closeRequestModal}
+            aria-label="close new request modal"
+          />
+          <dialog
             className="wss-modal wss-request-modal"
-            role="dialog"
+            open
             aria-modal="true"
             aria-labelledby="wss-request-modal-title"
-            onClick={(event) => event.stopPropagation()}
           >
             <div className="wss-modal-header">
               <div>
@@ -3882,7 +3892,7 @@ export function AppShell() {
                 </div>
               </form>
             )}
-          </div>
+          </dialog>
         </div>
       ) : null}
 

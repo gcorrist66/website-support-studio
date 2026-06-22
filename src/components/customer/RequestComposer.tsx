@@ -270,13 +270,18 @@ export function RequestComposer({
       </button>
 
       {open ? (
-        <div className="customer-request-modal-backdrop" role="presentation" onClick={() => setOpen(false)}>
-          <div
+        <div className="customer-request-modal-backdrop">
+          <button
+            type="button"
+            className="modal-backdrop-dismiss"
+            onClick={() => setOpen(false)}
+            aria-label="close new request modal"
+          />
+          <dialog
             className="customer-request-modal"
-            role="dialog"
+            open
             aria-modal="true"
             aria-labelledby="customer-request-title"
-            onClick={(event) => event.stopPropagation()}
           >
             <div className="customer-request-modal-head">
               <div>
@@ -414,7 +419,7 @@ export function RequestComposer({
                 </button>
               </div>
             </form>
-          </div>
+          </dialog>
         </div>
       ) : null}
     </>
