@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
-import LogoLockup from "../components/LogoLockup.astro";
 import { serviceSchema } from "../schema";
 import { CONTACT } from "../consts";
 
@@ -375,25 +374,15 @@ const trustPoints = [
   description="Request a free custom website preview for your business. Website Support Studio creates practical homepage previews, website improvements, and ongoing support for small businesses."
   path="/"
   schemas={schemas}
-  hideChrome
 >
-  <header class="wss-local-header">
-    <div class="container wss-local-header-inner">
-      <a href="/" aria-label="Website Support Studio home">
-        <LogoLockup size={28} />
-      </a>
-      <a class="btn btn-green btn-cta" href="#custom-preview-form" data-ga-event="click_home_header_free_preview">Free preview</a>
-    </div>
-  </header>
-
-  <section class="wss-home-hero" id="custom-preview">
-    <div class="container wss-home-hero-grid">
+  <section class="home-hero home-hero--tight" id="custom-preview">
+    <div class="container home-hero-grid">
       <div class="wss-home-hero-copy">
         <p class="kicker"><Label text="_free_custom_website_preview" /></p>
-        <h1>Get a free custom website preview for your business.</h1>
+        <h1>Let us build your free website preview today.</h1>
         <p class="lede">
-          Send us your current website. We will create a custom homepage preview for your real business so you can see
-          what your next website could look like before you spend a dollar.
+          Send us your current website and business type. We will create a custom homepage preview around your real
+          services, customers, and next steps so you can see the direction before you spend a dollar.
         </p>
         <div class="wss-home-actions">
           <a class="btn btn-green btn-cta" href="#custom-preview-form" data-ga-event="click_home_free_preview">Request your free preview</a>
@@ -403,7 +392,7 @@ const trustPoints = [
         </div>
       </div>
 
-      <aside class="wss-preview-card" aria-labelledby="custom-preview-form-heading">
+      <aside class="home-sample-request-card wss-preview-card" aria-labelledby="custom-preview-form-heading">
         <div class="home-card-topbar"><span></span><span></span><span></span></div>
         <p class="kicker">Free preview request</p>
         <h2 id="custom-preview-form-heading">Request a preview for your business</h2>
@@ -412,7 +401,7 @@ const trustPoints = [
           No payment required to see the preview.
         </p>
         <p class="wss-delivery-note">Most previews are delivered within 2-3 business days.</p>
-        <form class="wss-preview-form" id="custom-preview-form" action={`mailto:${CONTACT.email}`} method="post" enctype="text/plain">
+        <form class="home-sample-form wss-preview-form" id="custom-preview-form" action={`mailto:${CONTACT.email}`} method="post" enctype="text/plain">
           <label>
             <span>Website URL</span>
             <input name="website_url" type="url" required autocomplete="url" placeholder="https://example.com" />
@@ -432,6 +421,50 @@ const trustPoints = [
           <button class="btn btn-green btn-cta" type="submit" data-ga-event="click_home_preview_form_submit">Get My Free Preview</button>
         </form>
       </aside>
+    </div>
+  </section>
+
+  <section class="section wss-gallery-section" id="preview-inspiration">
+    <div class="container">
+      <div class="wss-section-head">
+        <div>
+          <p class="kicker"><Label text="_examples_by_industry" /></p>
+          <h2>Preview ideas for the kinds of businesses people search for every day.</h2>
+        </div>
+        <p>
+          Browse example directions across common local and professional industries. Your preview is still custom to
+          your business, but this gives you a quick sense of what WSS can shape.
+        </p>
+      </div>
+
+      <div class="wss-filter-row" aria-label="Preview focus areas">
+        {previewFocusAreas.map((category) => <span>{category}</span>)}
+      </div>
+
+      <div class="wss-industry-grid">
+        {industryConcepts.map((concept) => (
+          <article class="wss-industry-card">
+            <div class="wss-industry-image">
+              <img
+                src={concept.image}
+                srcset={`${concept.image.replace("w=900", "w=480")} 480w, ${concept.image} 900w, ${concept.image.replace("w=900", "w=1200")} 1200w`}
+                sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
+                alt={`${concept.businessType} website preview concept`}
+                loading="lazy"
+                decoding="async"
+                width="900"
+                height="600"
+              />
+            </div>
+            <div class="wss-industry-copy">
+              <p>{concept.businessType}</p>
+              <h3>{concept.title}</h3>
+              <span>{concept.tag}</span>
+            </div>
+            <p class="wss-industry-outcome">{concept.outcome}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -498,56 +531,6 @@ const trustPoints = [
     </div>
   </section>
 
-  <section class="section wss-gallery-section" id="preview-inspiration">
-    <div class="container">
-      <div class="wss-section-head">
-        <div>
-          <p class="kicker"><Label text="_industry_gallery" /></p>
-          <h2>Industry gallery for breadth, relevance, and ideas.</h2>
-        </div>
-        <p>
-          The gallery stays broad on purpose. It shows the industries Website Support Studio can understand, while your preview is shaped around your business, service mix, and customer questions.
-        </p>
-      </div>
-
-      <div class="wss-filter-row" aria-label="Preview focus areas">
-        {previewFocusAreas.map((category) => <span>{category}</span>)}
-      </div>
-
-      <div class="wss-industry-grid">
-        {industryConcepts.map((concept) => (
-          <article class="wss-industry-card">
-            <div class="wss-industry-image">
-              <img
-                src={concept.image}
-                srcset={`${concept.image.replace("w=900", "w=480")} 480w, ${concept.image} 900w, ${concept.image.replace("w=900", "w=1200")} 1200w`}
-                sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
-                alt={`${concept.businessType} website preview concept`}
-                loading="lazy"
-                decoding="async"
-                width="900"
-                height="600"
-              />
-              <div class="wss-industry-overlay">
-                <p>{concept.businessType}</p>
-                <strong>{concept.title}</strong>
-                <em>{concept.tag}</em>
-              </div>
-            </div>
-            <div class="wss-industry-copy">
-              <div>
-                <p>{concept.businessType}</p>
-                <h3>{concept.title}</h3>
-              </div>
-              <span>{concept.tag}</span>
-            </div>
-            <p class="wss-industry-outcome">{concept.outcome}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <section class="section wss-trust-section" id="website-support-trust">
     <div class="container wss-trust-grid">
       <div>
@@ -591,28 +574,30 @@ const trustPoints = [
   </section>
 
   <style>
-    .wss-local-header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--border); background:rgba(250,250,247,.94); backdrop-filter:blur(14px); }
-    .wss-local-header-inner { min-height:4.3rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-    .wss-local-header .btn { white-space:nowrap; }
-    .wss-home-hero { padding:clamp(1.5rem,4vw,3.25rem) 0 clamp(1.2rem,3vw,2rem); background:linear-gradient(135deg,#f8fafc 0%,#f4f3ee 62%,#eaf4f7 100%); border-bottom:1px solid var(--border); }
-    .wss-home-hero-grid { display:grid; grid-template-columns:minmax(0,0.96fr) minmax(320px,0.78fr); gap:clamp(1.25rem,4vw,2.8rem); align-items:center; }
-    .wss-home-hero h1 { max-width:12ch; margin:.55rem 0 0; font-size:clamp(2.2rem,6vw,4.55rem); line-height:.95; letter-spacing:-.06em; }
-    .wss-home-hero .lede { max-width:63ch; margin-top:1rem; }
+    .home-hero--tight { padding:clamp(1.15rem,3vw,2.4rem) 0 clamp(.85rem,2vw,1.5rem); }
+    .home-hero-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,.72fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:center; }
+    .home-hero h1 { max-width:11ch; margin:.55rem 0 0; font-size:clamp(1.95rem,5.4vw,3.8rem); line-height:.95; letter-spacing:-.06em; }
+    .home-hero .lede { max-width:64ch; margin-top:1rem; }
     .wss-home-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.2rem; }
     .wss-proof-strip,
     .wss-filter-row { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1.25rem; }
     .wss-proof-strip span,
     .wss-filter-row span { border:1px solid var(--border-strong); border-radius:999px; background:#fff; color:var(--text); padding:.48rem .72rem; font-size:.82rem; font-weight:800; }
-    .wss-preview-card { border:1px solid var(--border); border-radius:1.2rem; padding:1rem; background:#fff; box-shadow:0 22px 70px rgba(15,23,42,.1); }
+    .home-sample-request-card { border:1px solid var(--border); border-radius:1.5rem; padding:1rem; background:linear-gradient(180deg,#fff,var(--surface-muted)); box-shadow:0 22px 70px rgba(15,23,42,.08); }
+    .home-card-topbar { display:flex; gap:.35rem; margin-bottom:1rem; }
+    .home-card-topbar span { width:.7rem; height:.7rem; border-radius:999px; background:var(--border); }
+    .wss-preview-card { border-radius:1.5rem; }
     .wss-preview-card h2 { margin:.25rem 0 .55rem; font-size:1.35rem; }
     .wss-preview-card p { margin:.4rem 0 0; color:var(--text-muted); line-height:1.55; }
     .wss-delivery-note { border:1px solid var(--border); border-left:3px solid var(--brand-blue); border-radius:.75rem; padding:.65rem .75rem; background:var(--surface-muted); color:var(--text) !important; font-weight:700; }
-    .wss-preview-form { display:grid; gap:.7rem; margin-top:1rem; }
-    .wss-preview-form label { display:grid; gap:.3rem; }
-    .wss-preview-form span { color:var(--text); font-size:.8rem; font-weight:900; }
-    .wss-preview-form input,
-    .wss-preview-form textarea { width:100%; border:1px solid var(--border); border-radius:.8rem; padding:.65rem .7rem; background:#fff; color:var(--text); font:inherit; }
-    .wss-preview-form textarea { resize:vertical; }
+    .home-sample-form { display:grid; gap:.7rem; margin-top:1rem; }
+    .home-sample-form label { display:grid; gap:.3rem; }
+    .home-sample-form span { color:var(--text); font-size:.8rem; font-weight:900; }
+    .home-sample-form input,
+    .home-sample-form textarea { width:100%; border:1px solid var(--border); border-radius:.8rem; padding:.65rem .7rem; background:#fff; color:var(--text); font:inherit; }
+    .home-sample-form textarea { resize:vertical; }
+    .home-sample-form input::placeholder,
+    .home-sample-form textarea::placeholder { color:var(--text-subtle); }
     .wss-preview-form .btn { justify-content:center; margin-top:.15rem; }
     .wss-section-head { display:grid; grid-template-columns:minmax(0,.95fr) minmax(260px,.72fr); gap:1rem; align-items:end; margin-bottom:1.35rem; }
     .wss-section-head h2 { margin-top:0; }
@@ -655,32 +640,21 @@ const trustPoints = [
     .wss-new-site-layout span { min-height:1.8rem; border-radius:.45rem; background:#cfe8d8; }
     .wss-new-site-layout span:nth-child(1) { grid-row:span 2; min-height:4rem; background:#dce4fe; }
     .wss-transformation-card > strong { display:block; margin-top:.85rem; color:var(--text-strong); font-size:1.02rem; }
-    .wss-gallery-section { background:#0b1220; color:#f8fafc; }
-    .wss-gallery-section h2,
-    .wss-gallery-section .kicker,
-    .wss-gallery-section .wss-section-head p { color:#f8fafc; }
-    .wss-gallery-section .wss-filter-row span { border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.08); color:#e2e8f0; }
+    .wss-gallery-section { padding-top:clamp(1rem,2vw,1.5rem); background:var(--surface-muted); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
     .wss-industry-grid { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:1rem; }
-    .wss-industry-card { min-width:0; }
-    .wss-industry-image { position:relative; overflow:hidden; aspect-ratio:16/10.5; border:1px solid rgba(255,255,255,.14); border-radius:1rem; background:#111827; box-shadow:0 1rem 2.2rem rgba(0,0,0,.22); }
-    .wss-industry-image img { width:100%; height:100%; object-fit:cover; filter:saturate(.95) contrast(1.02); transition:transform 180ms ease, filter 180ms ease; }
-    .wss-industry-card:hover .wss-industry-image img { transform:scale(1.035); filter:saturate(1.05) contrast(1.06); }
-    .wss-industry-overlay { position:absolute; inset:auto 0 0; display:grid; gap:.36rem; padding:3.2rem .9rem .9rem; background:linear-gradient(180deg,transparent,rgba(5,8,16,.9) 48%,rgba(5,8,16,.98)); }
-    .wss-industry-overlay p,
-    .wss-industry-overlay strong,
-    .wss-industry-overlay em { margin:0; }
-    .wss-industry-overlay p { color:#c8d7ff; font-size:.68rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
-    .wss-industry-overlay strong { color:#fff; max-width:12ch; font-size:clamp(1.02rem,2.5vw,1.38rem); line-height:1.05; }
-    .wss-industry-overlay em { width:fit-content; border-radius:999px; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); color:#fff; padding:.32rem .55rem; font-size:.7rem; font-style:normal; font-weight:850; }
-    .wss-industry-copy { display:flex; justify-content:space-between; gap:1rem; margin-top:.7rem; }
+    .wss-industry-card { min-width:0; border:1px solid var(--border); border-radius:1rem; padding:.7rem; background:#fff; box-shadow:0 12px 34px rgba(15,23,42,.06); }
+    .wss-industry-image { overflow:hidden; aspect-ratio:16/10.5; border:1px solid var(--border); border-radius:.8rem; background:#f8faf6; }
+    .wss-industry-image img { width:100%; height:100%; object-fit:cover; filter:saturate(.96) contrast(1.01); transition:transform 180ms ease; }
+    .wss-industry-card:hover .wss-industry-image img { transform:scale(1.025); }
+    .wss-industry-copy { display:grid; gap:.35rem; margin-top:.75rem; }
     .wss-industry-copy p,
     .wss-industry-copy h3,
     .wss-industry-copy span,
     .wss-industry-outcome { margin:0; }
-    .wss-industry-copy p { color:#c8d7ff; font-size:.69rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
-    .wss-industry-copy h3 { margin-top:.18rem; color:#fff; font-size:1rem; }
-    .wss-industry-copy span { color:#d7def5; font-size:.8rem; text-align:right; }
-    .wss-industry-outcome { color:#cbd5e1; margin-top:.45rem; font-size:.9rem; }
+    .wss-industry-copy p { color:var(--tone-blue-text); font-size:.69rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .wss-industry-copy h3 { color:var(--text); font-size:1rem; }
+    .wss-industry-copy span { width:fit-content; border:1px solid var(--border); border-radius:999px; background:var(--surface-muted); color:var(--text-muted); padding:.28rem .5rem; font-size:.72rem; font-weight:850; }
+    .wss-industry-outcome { color:var(--text-muted); margin-top:.55rem; font-size:.9rem; line-height:1.5; }
     .wss-trust-section { background:#fff; }
     .wss-trust-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(280px,1fr); gap:1rem; align-items:center; }
     .wss-trust-list { display:grid; gap:.7rem; }
@@ -692,21 +666,24 @@ const trustPoints = [
     .wss-score-grid strong { color:var(--text-strong); font-size:2.1rem; line-height:1; }
     .wss-score-grid span { color:var(--text-muted); margin-top:.35rem; font-weight:800; }
     @media (max-width:900px) {
-      .wss-home-hero-grid,
+      .home-hero-grid,
       .wss-section-head,
       .wss-trust-grid { grid-template-columns:1fr; }
-      .wss-home-hero h1 { max-width:100%; font-size:clamp(2.45rem,12vw,4.1rem); }
+      .home-hero h1 { max-width:100%; font-size:clamp(2.8rem,14vw,4.5rem); }
       .wss-step-grid,
       .wss-transformation-grid,
       .wss-industry-grid,
       .wss-score-grid { grid-template-columns:1fr 1fr; }
     }
     @media (max-width:640px) {
-      .wss-local-header-inner { min-height:3.7rem; }
-      .wss-local-header .btn { padding:.55rem .7rem; font-size:.72rem; }
-      .wss-home-hero { padding-top:.85rem; }
-      .wss-home-hero h1 { font-size:clamp(2.05rem,10.5vw,3.35rem); }
-      .wss-home-hero .lede { font-size:.98rem; }
+      .home-hero--tight { padding-top:1rem; }
+      .home-hero h1 { font-size:clamp(2rem,10vw,3rem); }
+      .home-hero .lede { font-size:.93rem; line-height:1.45; }
+      .home-sample-request-card { padding:.8rem; }
+      .home-card-topbar { margin-bottom:.65rem; }
+      .wss-preview-card h2 { font-size:1.18rem; }
+      .wss-preview-card p { font-size:.9rem; line-height:1.45; }
+      .wss-delivery-note { padding:.52rem .65rem; }
       .wss-home-hero-copy .wss-home-actions { display:none; }
       .wss-home-actions .btn,
       .wss-preview-form .btn { width:100%; justify-content:center; }
