@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
-import LogoLockup from "../components/LogoLockup.astro";
 import { serviceSchema } from "../schema";
 import { CONTACT } from "../consts";
 
@@ -375,17 +374,7 @@ const trustPoints = [
   description="Request a free custom website preview for your business. Website Support Studio creates practical homepage previews, website improvements, and ongoing support for small businesses."
   path="/"
   schemas={schemas}
-  hideChrome
 >
-  <header class="wss-local-header">
-    <div class="container wss-local-header-inner">
-      <a href="/" aria-label="Website Support Studio home">
-        <LogoLockup size={28} />
-      </a>
-      <a class="btn btn-green btn-cta" href="#custom-preview-form" data-ga-event="click_home_header_free_preview">Free preview</a>
-    </div>
-  </header>
-
   <section class="wss-home-hero" id="custom-preview">
     <div class="container wss-home-hero-grid">
       <div class="wss-home-hero-copy">
@@ -413,6 +402,11 @@ const trustPoints = [
         </p>
         <p class="wss-delivery-note">Most previews are delivered within 2-3 business days.</p>
         <form class="wss-preview-form" id="custom-preview-form" action={`mailto:${CONTACT.email}`} method="post" enctype="text/plain">
+          <input type="hidden" name="selected_template" id="selected-template-input" />
+          <div class="wss-selected-template" id="selected-template-note" hidden>
+            <span>Selected template</span>
+            <strong></strong>
+          </div>
           <label>
             <span>Website URL</span>
             <input name="website_url" type="url" required autocomplete="url" placeholder="https://example.com" />
@@ -516,7 +510,16 @@ const trustPoints = [
 
       <div class="wss-industry-grid">
         {industryConcepts.map((concept) => (
-          <article class="wss-industry-card">
+          <a
+            class="wss-industry-card"
+            href="#custom-preview-form"
+            data-template-title={concept.title}
+            data-template-business={concept.businessType}
+            data-template-tag={concept.tag}
+            data-template-outcome={concept.outcome}
+            data-ga-event="click_home_template_select"
+            aria-label={`Select ${concept.title} template for your free preview`}
+          >
             <div class="wss-industry-image">
               <img
                 src={concept.image}
@@ -542,7 +545,7 @@ const trustPoints = [
               <span>{concept.tag}</span>
             </div>
             <p class="wss-industry-outcome">{concept.outcome}</p>
-          </article>
+          </a>
         ))}
       </div>
     </div>
@@ -590,10 +593,40 @@ const trustPoints = [
     </div>
   </section>
 
+  <script is:inline>
+    (function () {
+      var form = document.getElementById("custom-preview-form");
+      if (!form) return;
+
+      var selectedTemplateInput = document.getElementById("selected-template-input");
+      var selectedTemplateNote = document.getElementById("selected-template-note");
+      var selectedTemplateTitle = selectedTemplateNote ? selectedTemplateNote.querySelector("strong") : null;
+      var businessTypeInput = form.querySelector("[name='business_type']");
+      var challengeInput = form.querySelector("[name='challenge']");
+      var websiteInput = form.querySelector("[name='website_url']");
+
+      Array.prototype.forEach.call(document.querySelectorAll(".wss-industry-card[data-template-title]"), function (card) {
+        card.addEventListener("click", function () {
+          var title = card.dataset.templateTitle || "";
+          var business = card.dataset.templateBusiness || "";
+          var tag = card.dataset.templateTag || "";
+          var outcome = card.dataset.templateOutcome || "";
+          var selectedLabel = title + (business ? " (" + business + ")" : "");
+
+          if (selectedTemplateInput) selectedTemplateInput.value = selectedLabel;
+          if (selectedTemplateTitle) selectedTemplateTitle.textContent = selectedLabel;
+          if (selectedTemplateNote) selectedTemplateNote.hidden = false;
+          if (businessTypeInput && !businessTypeInput.value) businessTypeInput.value = business;
+          if (challengeInput && !challengeInput.value) {
+            challengeInput.value = "I like the " + title + " direction" + (tag ? " for " + tag.toLowerCase() : "") + ". " + outcome;
+          }
+          if (websiteInput) websiteInput.focus({ preventScroll: true });
+        });
+      });
+    })();
+  </script>
+
   <style>
-    .wss-local-header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--border); background:rgba(250,250,247,.94); backdrop-filter:blur(14px); }
-    .wss-local-header-inner { min-height:4.3rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-    .wss-local-header .btn { white-space:nowrap; }
     .wss-home-hero { padding:clamp(1.5rem,4vw,3.25rem) 0 clamp(1.2rem,3vw,2rem); background:linear-gradient(135deg,#f8fafc 0%,#f4f3ee 62%,#eaf4f7 100%); border-bottom:1px solid var(--border); }
     .wss-home-hero-grid { display:grid; grid-template-columns:minmax(0,0.96fr) minmax(320px,0.78fr); gap:clamp(1.25rem,4vw,2.8rem); align-items:center; }
     .wss-home-hero h1 { max-width:12ch; margin:.55rem 0 0; font-size:clamp(2.2rem,6vw,4.55rem); line-height:.95; letter-spacing:-.06em; }
@@ -614,6 +647,10 @@ const trustPoints = [
     .wss-preview-form textarea { width:100%; border:1px solid var(--border); border-radius:.8rem; padding:.65rem .7rem; background:#fff; color:var(--text); font:inherit; }
     .wss-preview-form textarea { resize:vertical; }
     .wss-preview-form .btn { justify-content:center; margin-top:.15rem; }
+    .wss-selected-template { display:grid; gap:.2rem; border:1px solid rgba(4,67,251,.18); border-radius:.85rem; background:#f4f7ff; padding:.75rem; }
+    .wss-selected-template[hidden] { display:none; }
+    .wss-selected-template span { color:var(--tone-blue-text); }
+    .wss-selected-template strong { color:var(--text-strong); font-size:.95rem; line-height:1.35; }
     .wss-section-head { display:grid; grid-template-columns:minmax(0,.95fr) minmax(260px,.72fr); gap:1rem; align-items:end; margin-bottom:1.35rem; }
     .wss-section-head h2 { margin-top:0; }
     .wss-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
@@ -661,7 +698,9 @@ const trustPoints = [
     .wss-gallery-section .wss-section-head p { color:#f8fafc; }
     .wss-gallery-section .wss-filter-row span { border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.08); color:#e2e8f0; }
     .wss-industry-grid { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:1rem; }
-    .wss-industry-card { min-width:0; }
+    .wss-industry-card { display:block; min-width:0; color:inherit; text-decoration:none; cursor:pointer; border-radius:1rem; }
+    .wss-industry-card:focus-visible { outline:3px solid var(--brand-cyan); outline-offset:4px; }
+    .wss-industry-card:hover { text-decoration:none; }
     .wss-industry-image { position:relative; overflow:hidden; aspect-ratio:16/10.5; border:1px solid rgba(255,255,255,.14); border-radius:1rem; background:#111827; box-shadow:0 1rem 2.2rem rgba(0,0,0,.22); }
     .wss-industry-image img { width:100%; height:100%; object-fit:cover; filter:saturate(.95) contrast(1.02); transition:transform 180ms ease, filter 180ms ease; }
     .wss-industry-card:hover .wss-industry-image img { transform:scale(1.035); filter:saturate(1.05) contrast(1.06); }
@@ -702,8 +741,6 @@ const trustPoints = [
       .wss-score-grid { grid-template-columns:1fr 1fr; }
     }
     @media (max-width:640px) {
-      .wss-local-header-inner { min-height:3.7rem; }
-      .wss-local-header .btn { padding:.55rem .7rem; font-size:.72rem; }
       .wss-home-hero { padding-top:.85rem; }
       .wss-home-hero h1 { font-size:clamp(2.05rem,10.5vw,3.35rem); }
       .wss-home-hero .lede { font-size:.98rem; }
