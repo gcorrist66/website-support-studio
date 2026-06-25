@@ -4,7 +4,17 @@ import Label from "../components/Label.astro";
 import { SITE_URL, WEBSITE_PREVIEW_REQUEST_URL } from "../consts";
 import { breadcrumbSchema, faqSchema, ID } from "../schema";
 
-const pagePath = "/free-website-preview";
+interface Props {
+  pagePath?: string;
+  pageTitle?: string;
+  pageDescription?: string;
+}
+
+const {
+  pagePath = "/free-website-preview",
+  pageTitle = "Free Website Preview",
+  pageDescription = "We'll build a free website preview for your business. Answer a few questions and Website Support Studio will review your services, goals, and audience to prepare a custom preview.",
+} = Astro.props;
 const schemas = [
   {
     "@context": "https://schema.org",
@@ -340,8 +350,8 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
 ---
 
 <BaseLayout
-  title="Free Website Preview"
-  description="We'll build a free website preview for your business. Answer a few questions and Website Support Studio will review your services, goals, and audience to prepare a custom preview."
+  title={pageTitle}
+  description={pageDescription}
   path={pagePath}
   schemas={schemas}
 >
@@ -1526,6 +1536,34 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     }
 
     @media (max-width: 620px) {
+      .preview-hero-copy {
+        display: contents;
+      }
+
+      .preview-hero-copy .kicker {
+        order: 1;
+      }
+
+      .preview-hero-copy h1 {
+        order: 2;
+      }
+
+      .preview-hero-copy .lede {
+        order: 3;
+      }
+
+      .preview-actions {
+        order: 4;
+      }
+
+      .hero-form-card {
+        order: 5;
+      }
+
+      .trust-strip {
+        order: 6;
+      }
+
       .preview-actions .btn,
       .gallery-cta .btn,
       .website-score-card .btn {
