@@ -1,0 +1,1054 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { SampleBusiness, SamplePage } from "../../sampleBusinesses";
+import { samplePath } from "../../sampleBusinesses";
+import { breadcrumbSchema } from "../../schema";
+
+const { business, page } = Astro.props as { business: SampleBusiness; page: SamplePage };
+
+const tradeConfigBySlug = {
+  "ridgeline-roofing": {
+    trade: "roofing",
+    audience: "roofing company",
+    categoryLabel: "Residential roofing",
+    title: "Roofing Website Example & Template | Ridgeline",
+    description: "See a premium roofing website example with estimate CTAs, storm damage copy, project proof, mobile layout, and owner portal demo.",
+    h1: "Roofing website example built for estimates.",
+    articlePath: "/articles/roofing-website-templates-seo-aio-geo",
+    articleLabel: "Roofing website templates",
+    articleTitle: "How to make yours SEO, AIO, and GEO-friendly",
+    articleCta: "Read the SEO article ->",
+    proofAria: "Roofing trust signals",
+    eyebrow: `${business.location} roof repair, replacement, storm damage, and inspections`,
+    primaryCta: "Request a Roof Estimate",
+    secondaryCta: `Call ${business.phoneLabel}`,
+    estimateCardTitle: "Tell us what happened.",
+    estimateSteps: ["Choose repair, replacement, storm, or inspection.", "Upload photos in the real build.", "Get a clear next step before booking."],
+    serviceCount: 5,
+    servicesTitle: "Every service points homeowners toward the right estimate path.",
+    midBandAria: "Website Support Studio free roofing preview",
+    estimateBandEyebrow: "Request an estimate",
+    estimateBandTitle: "Fast path for leaks, hail damage, replacement questions, and roof age concerns.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Project-style proof, not invented customer quotes.",
+    galleryTitle: "Before and after gallery structure for real project photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your roofing company.",
+    bottomBody: "Share your company name and service area. Website Support Studio will show what your own site could look like.",
+    resourceBody: "A roofing site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so the site can be found by homeowners and AI search tools.",
+    projectImages: [
+      {
+        src: "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?auto=format&fit=crop&w=1200&q=82",
+        alt: "Roofing website example gallery image of a roofer inspecting residential shingles",
+        label: "Storm inspection",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=82",
+        alt: "Roofing template gallery placeholder showing residential exterior construction and roofline",
+        label: "Replacement planning",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=82",
+        alt: "Roofing website example project photo placeholder showing a finished home roofline",
+        label: "Finished curb appeal",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=82",
+        alt: "Roofing company website template placeholder showing a modern home exterior",
+        label: "Exterior refresh",
+      },
+    ],
+    trustBadges: ["Licensed and insured", "Insurance-claim documentation", "Financing conversations", "Local service-area clarity"],
+  },
+  "northwind-hvac": {
+    trade: "HVAC",
+    audience: "HVAC company",
+    categoryLabel: "Heating and air",
+    title: "HVAC Website Example & Template | Northwind",
+    description: "See a premium HVAC website example with service CTAs, tune-up copy, maintenance-plan proof, mobile layout, and owner portal demo.",
+    h1: "HVAC website example built for service calls.",
+    articlePath: "/articles/hvac-website-design-seo-aio-geo",
+    articleLabel: "HVAC website design",
+    articleTitle: "How to get found when the AC dies in July",
+    articleCta: "Read the HVAC SEO article ->",
+    proofAria: "HVAC trust signals",
+    eyebrow: `${business.location} AC repair, installs, heating, maintenance, and indoor air quality`,
+    primaryCta: "Request Service",
+    secondaryCta: "Book a Tune-Up",
+    estimateCardTitle: "Tell us what stopped working.",
+    estimateSteps: ["Choose AC, heat, tune-up, air quality, or emergency.", "Share symptoms and system age in the real build.", "Get the right service path before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every HVAC service points homeowners toward the right next step.",
+    midBandAria: "Website Support Studio free HVAC preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Fast path for no-cool calls, heating issues, tune-ups, and replacement questions.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, maintenance clarity, and ownership signals.",
+    galleryTitle: "Project and service gallery structure for real HVAC photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your HVAC company.",
+    bottomBody: "Share your company name, service area, and comfort services. Website Support Studio will show what your own HVAC site could look like.",
+    resourceBody: "An HVAC site needs more than a sharp design. Website Support Studio also writes search-ready AC repair, heating, tune-up, and air-quality content so homeowners and AI search tools can find it.",
+    projectImages: [
+      {
+        src: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1200&q=82",
+        alt: "HVAC website example gallery image of a technician servicing an outdoor condenser",
+        label: "AC diagnostics",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=82",
+        alt: "HVAC template gallery placeholder showing technician tools and equipment",
+        label: "Tune-up visit",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=82",
+        alt: "HVAC website example photo placeholder showing a comfortable home interior",
+        label: "Comfort outcome",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=82",
+        alt: "HVAC company website template placeholder showing residential exterior",
+        label: "Replacement planning",
+      },
+    ],
+    trustBadges: ["Licensed and insured", "Maintenance plans", "Financing conversations", "Seasonal service-area clarity"],
+  },
+  "mainline-plumbing": {
+    trade: "plumbing",
+    audience: "plumbing company",
+    categoryLabel: "Plumbing service",
+    title: "Plumbing Website Example & Template | Mainline",
+    description: "See a premium plumbing website example with emergency CTAs, water heater copy, trust proof, mobile layout, and owner portal demo.",
+    h1: "Plumbing website example built for urgent calls.",
+    articlePath: "/articles/plumber-website-design-seo-aio-geo",
+    articleLabel: "Plumber website design",
+    articleTitle: "How to win the emergency call",
+    articleCta: "Read the plumbing SEO article ->",
+    proofAria: "Plumbing trust signals",
+    eyebrow: `${business.location} emergency plumbing, leaks, drains, water heaters, and repairs`,
+    primaryCta: "Request Plumbing Help",
+    secondaryCta: "Emergency Request",
+    estimateCardTitle: "Tell us where the water problem is.",
+    estimateSteps: ["Choose leak, drain, water heater, fixture, or emergency.", "Share what changed and whether water is active.", "Get a clear next step before dispatch."],
+    serviceCount: 6,
+    servicesTitle: "Every plumbing service points homeowners toward the right urgency path.",
+    midBandAria: "Website Support Studio free plumbing preview",
+    estimateBandEyebrow: "Request help",
+    estimateBandTitle: "Fast path for leaks, drains, water heaters, fixture issues, and emergency plumbing.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service scenarios, trust cues, and process proof.",
+    galleryTitle: "Before, after, and service gallery structure for real plumbing photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your plumbing company.",
+    bottomBody: "Share your company name, service area, and plumbing services. Website Support Studio will show what your own site could look like.",
+    resourceBody: "A plumbing site needs more than a clean design. Website Support Studio also writes search-ready emergency, water heater, drain, and service-area content so homeowners and AI search tools can find it.",
+    projectImages: [
+      {
+        src: "https://images.unsplash.com/photo-1620653713380-7a34b773fef8?auto=format&fit=crop&w=1200&q=82",
+        alt: "Plumbing website example gallery image of pipes and water heater equipment",
+        label: "Water heater work",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=1200&q=82",
+        alt: "Plumbing template gallery placeholder showing repair tools",
+        label: "Leak repair",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1200&q=82",
+        alt: "Plumbing website example project photo placeholder showing a home bathroom",
+        label: "Fixture update",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=82",
+        alt: "Plumbing company website template placeholder showing residential exterior",
+        label: "Service visit",
+      },
+    ],
+    trustBadges: ["Licensed and insured", "Emergency path clarity", "Water heater planning", "Local service-area clarity"],
+  },
+  "brightwire-electric": {
+    trade: "electrical",
+    audience: "electrical company",
+    categoryLabel: "Electrical service",
+    title: "Electrician Website Example & Template | Brightwire",
+    description: "See a premium electrician website example with safety-first trust signals, EV charger copy, panel upgrade paths, mobile layout, and owner portal demo.",
+    h1: "Electrician website example built for trust.",
+    articlePath: "/articles/electrician-website-design-seo-aio-geo",
+    articleLabel: "Electrician website design",
+    articleTitle: "How to win on trust, safety, EV chargers, panels, and generators",
+    articleCta: "Read the electrician SEO article ->",
+    proofAria: "Electrical trust and safety signals",
+    eyebrow: `${business.location} panel upgrades, EV chargers, generators, rewiring, lighting, and repairs`,
+    primaryCta: "Request Service",
+    secondaryCta: "Get an Estimate",
+    estimateCardTitle: "Tell us what needs power.",
+    estimateSteps: ["Choose panel, EV charger, generator, repair, lighting, or emergency.", "Share safety symptoms and project details in the real build.", "Get the right service path before booking."],
+    serviceCount: 7,
+    servicesTitle: "Every electrical service points homeowners toward a safe next step.",
+    midBandAria: "Website Support Studio electrical preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Fast path for safety issues, panel upgrades, EV chargers, generators, rewiring, and repairs.",
+    trustEyebrow: "Trust and safety first",
+    trustTitle: "License, insurance, certifications, and safety proof stay loud.",
+    galleryTitle: "Project gallery structure for real electrical photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request electrical service.`,
+    bottomTitle: "Turn this demo into a preview for your electrical company.",
+    bottomBody: "Share your company name, service area, and electrical services. Website Support Studio will show what your own electrician site could look like.",
+    resourceBody: "An electrician site needs more than a sharp design. Website Support Studio also writes search-ready EV charger, panel upgrade, generator, emergency repair, and service-area content so homeowners and AI search tools can find it.",
+    projectImages: [
+      {
+        src: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=82",
+        alt: "Electrician website example gallery image of a licensed electrician working in an electrical panel",
+        label: "Panel safety work",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1200&q=82",
+        alt: "Electrician website example photo showing an electric vehicle charging connection",
+        label: "EV charger planning",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=82",
+        alt: "Electrical contractor gallery placeholder showing warm home lighting",
+        label: "Lighting upgrade",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=82",
+        alt: "Electrical company website template placeholder showing residential exterior",
+        label: "Service visit",
+      },
+    ],
+    trustBadges: ["Licensed and insured", "Certified electrical work", "EV and panel upgrade planning", "Emergency safety path"],
+  },
+  "bluewave-pools": {
+    trade: "pool company",
+    audience: "pool company",
+    categoryLabel: "Pool service",
+    title: "Pool Company Website Example & Template | Bluewave",
+    description: "See a premium pool company website example with weekly service CTAs, maintenance plan copy, before-and-after gallery proof, mobile layout, and owner portal demo.",
+    h1: "Pool company website example built for weekly service.",
+    articlePath: "/articles/pool-company-website-design-seo-aio-geo",
+    articleLabel: "Pool company website design",
+    articleTitle: "How to win recurring service and show off the work",
+    articleCta: "Read the pool SEO article ->",
+    proofAria: "Pool service trust and gallery signals",
+    eyebrow: `${business.location} weekly maintenance, cleaning, repair, openings, resurfacing, and builds`,
+    primaryCta: "Get a Weekly Service Quote",
+    secondaryCta: "Start Your Maintenance Plan",
+    estimateCardTitle: "Tell us what your pool needs.",
+    estimateSteps: ["Choose weekly service, cleaning, repair, opening, resurfacing, or build.", "Share pool size, condition, and photos in the real build.", "Get a clear quote path before the first visit."],
+    serviceCount: 6,
+    servicesTitle: "Every pool service points homeowners toward the right plan or project quote.",
+    midBandAria: "Website Support Studio pool company preview",
+    estimateBandEyebrow: "Get a quote",
+    estimateBandTitle: "Fast path for weekly service, green-pool cleanup, repairs, openings, resurfacing, and new builds.",
+    trustEyebrow: "Recurring trust and visual proof",
+    trustTitle: "Reliable visits, review modules, and before-and-after proof.",
+    galleryTitle: "Before and after gallery structure for cleanups, resurfacing, and builds.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request pool service.`,
+    bottomTitle: "Turn this demo into a preview for your pool company.",
+    bottomBody: "Share your company name, route area, and pool services. Website Support Studio will show what your own pool company site could look like.",
+    resourceBody: "A pool company site needs more than blue water photos. Website Support Studio also writes search-ready weekly maintenance, cleaning, repair, seasonal, resurfacing, build, and service-area content so homeowners and AI search tools can find it.",
+    projectImages: [
+      {
+        src: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1200&q=82",
+        alt: "Pool company website example gallery image showing clean blue pool water after weekly service",
+        label: "Weekly service result",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1200&q=82",
+        alt: "Pool company before and after gallery placeholder showing a backyard pool and patio",
+        label: "Backyard transformation",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1604014237800-1c9102c219da?auto=format&fit=crop&w=1200&q=82",
+        alt: "Pool resurfacing and build gallery placeholder showing a luxury outdoor pool area",
+        label: "Resurfacing proof",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1200&q=82",
+        alt: "Pool company website gallery placeholder showing resort-style swimming pool water",
+        label: "New-build inspiration",
+      },
+    ],
+    trustBadges: ["Licensed and insured", "Same tech every visit", "Review module ready", "Before-and-after gallery proof"],
+  },
+  "greenline-irrigation": {
+    trade: "irrigation",
+    audience: "irrigation company",
+    categoryLabel: "Lawn irrigation",
+    title: "Irrigation Website Example & Template | Greenline",
+    description: "See a premium irrigation website example with season-aware CTAs, sprinkler repair copy, smart-controller water-savings content, mobile layout, and owner portal demo.",
+    h1: "Irrigation website example built for seasonal bookings.",
+    articlePath: "/articles/irrigation-sprinkler-website-design-seo-aio-geo",
+    articleLabel: "Irrigation website design",
+    articleTitle: "How to win the season, the repair, and the water-savings sale",
+    articleCta: "Read the irrigation SEO article ->",
+    proofAria: "Irrigation trust and seasonal service signals",
+    eyebrow: `${business.location} spring start-ups, sprinkler repair, winterization, smart controllers, and drip systems`,
+    primaryCta: "Book Your Spring Start-Up",
+    secondaryCta: "Schedule Winterization",
+    estimateCardTitle: "Tell us what season your system is in.",
+    estimateSteps: ["Choose start-up, repair, winterization, install, smart controller, or drip.", "Share system symptoms, zones, and timing in the real build.", "Get the right seasonal service path before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every irrigation service points homeowners toward the right seasonal next step.",
+    midBandAria: "Website Support Studio irrigation preview",
+    estimateBandEyebrow: "Book sprinkler service",
+    estimateBandTitle: "Fast path for spring start-ups, summer repairs, fall blow-outs, and water-saving upgrades.",
+    trustEyebrow: "Seasonal trust and water savings",
+    trustTitle: "Licensed service, review modules, and efficient watering proof.",
+    galleryTitle: "Project and results gallery structure for healthy lawns and efficient watering.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they book sprinkler service.`,
+    bottomTitle: "Turn this demo into a preview for your irrigation company.",
+    bottomBody: "Share your company name, route area, and irrigation services. Website Support Studio will show what your own sprinkler company site could look like.",
+    resourceBody: "An irrigation site needs more than green lawn photos. Website Support Studio also writes search-ready spring start-up, sprinkler repair, winterization, smart-controller, drip-system, and service-area content so homeowners and AI search tools can find it.",
+    projectImages: [
+      {
+        src: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1200&q=82",
+        alt: "Irrigation website example gallery image showing sprinkler water on healthy green grass",
+        label: "Seasonal start-up",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=1200&q=82",
+        alt: "Sprinkler repair and lawn irrigation project result placeholder showing healthy grass",
+        label: "Repair result",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1598902108854-10e335adac99?auto=format&fit=crop&w=1200&q=82",
+        alt: "Smart irrigation controller and water-saving upgrade placeholder for a sprinkler website",
+        label: "Smart controller upgrade",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?auto=format&fit=crop&w=1200&q=82",
+        alt: "Drip irrigation and landscape watering result placeholder for an irrigation company website",
+        label: "Drip system planning",
+      },
+    ],
+    trustBadges: ["Licensed and insured", "Seasonal route clarity", "Review module ready", "Water-saving upgrade story"],
+  },
+  "overpro-garage-doors": {
+    trade: "garage door",
+    audience: "garage door company",
+    categoryLabel: "Garage Doors service",
+    title: "Garage Doors Website Example & Template | OverPro",
+    description: "See a premium garage door website example with trade-specific CTAs, service cards, local proof, mobile layout, and owner portal demo.",
+    h1: "Garage door website example built for stuck-door calls.",
+    articlePath: "/articles/garage-door-website-design-seo-aio-geo",
+    articleLabel: "Garage Doors website design",
+    articleTitle: "Garage Door Website Design",
+    articleCta: "Read the garage doors SEO article ->",
+    proofAria: "Garage Doors trust signals",
+    eyebrow: `${business.location} garage door repair, broken spring replacement, opener repair, door replacement`,
+    primaryCta: "Book Garage Door Repair",
+    secondaryCta: "Repair or Replace?",
+    estimateCardTitle: "Tell us what the door is doing.",
+    estimateSteps: ["Choose the service you need.","Share location, timing, and photos in the real build.","Get a clear next step before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every garage door service points visitors toward the right request path.",
+    midBandAria: "Website Support Studio free garage door preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Garage door website design for urgent repair calls.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, local clarity, and ownership signals.",
+    galleryTitle: "Project gallery structure for real garage door photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your garage door company.",
+    bottomBody: "Share your company name, service area, and core offers. Website Support Studio will show what your own garage door site could look like.",
+    resourceBody: "A garage door site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so local buyers and AI search tools can find it.",
+    projectImages: [
+      { src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=82", alt: "Garage door website gallery showing a residential home exterior with garage", label: "Repair call" },
+      { src: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1200&q=82", alt: "Garage door replacement gallery placeholder showing modern home exterior", label: "Replacement planning" },
+      { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=82", alt: "Garage door curb appeal placeholder showing finished home exterior", label: "Curb appeal" },
+      { src: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=82", alt: "Garage door maintenance placeholder showing tools and repair planning", label: "Tune-up checklist" },
+    ],
+    trustBadges: ["Licensed and insured","Repair-vs-replace guidance","Safety-first spring language","Local emergency path"],
+  },
+  "shieldline-pest-control": {
+    trade: "pest control",
+    audience: "pest control company",
+    categoryLabel: "Pest Control service",
+    title: "Pest Control Website Example & Template | Shieldline",
+    description: "See a premium pest control website example with trade-specific CTAs, service cards, local proof, mobile layout, and owner portal demo.",
+    h1: "Pest control website example built for recurring protection.",
+    articlePath: "/articles/pest-control-website-design-seo-aio-geo",
+    articleLabel: "Pest Control website design",
+    articleTitle: "Pest Control Website Design",
+    articleCta: "Read the pest control SEO article ->",
+    proofAria: "Pest Control trust signals",
+    eyebrow: `${business.location} general pest control, recurring protection plans, termite inspections, rodent control`,
+    primaryCta: "Book Pest Control",
+    secondaryCta: "Start a Protection Plan",
+    estimateCardTitle: "Tell us what pest you are seeing.",
+    estimateSteps: ["Choose the service you need.","Share location, timing, and photos in the real build.","Get a clear next step before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every pest control service points visitors toward the right request path.",
+    midBandAria: "Website Support Studio free pest control preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Pest control website design for emergency calls and recurring plans.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, local clarity, and ownership signals.",
+    galleryTitle: "Project gallery structure for real pest control photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your pest control company.",
+    bottomBody: "Share your company name, service area, and core offers. Website Support Studio will show what your own pest control site could look like.",
+    resourceBody: "A pest control site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so local buyers and AI search tools can find it.",
+    projectImages: [
+      { src: "/templates/pest-control-treatment.svg", alt: "Pest control treatment equipment and insect inspection visual", label: "First treatment" },
+      { src: "/templates/pest-control-treatment.svg", alt: "Pest control recurring plan visual with treatment equipment", label: "Recurring plan" },
+      { src: "/templates/pest-control-treatment.svg", alt: "Rodent exclusion and exterior pest barrier visual", label: "Exterior barrier" },
+      { src: "/templates/pest-control-treatment.svg", alt: "Insect and mosquito treatment visual for pest control service", label: "Mosquito service" },
+    ],
+    trustBadges: ["Licensed and insured","Recurring plan clarity","Family and pet-aware language","Emergency pest request path"],
+  },
+  "evergreen-lawn-landscape": {
+    trade: "landscaping",
+    audience: "landscaping company",
+    categoryLabel: "Landscaping service",
+    title: "Landscaping Website Example & Template | Evergreen",
+    description: "See a premium landscaping website example with trade-specific CTAs, service cards, local proof, mobile layout, and owner portal demo.",
+    h1: "Landscaping website example built for weekly maintenance.",
+    articlePath: "/articles/landscaping-website-design-seo-aio-geo",
+    articleLabel: "Landscaping website design",
+    articleTitle: "Landscaping Website Design",
+    articleCta: "Read the landscaping SEO article ->",
+    proofAria: "Landscaping trust signals",
+    eyebrow: `${business.location} weekly lawn care, seasonal cleanups, mulch and bed refresh, planting plans`,
+    primaryCta: "Request Lawn Care",
+    secondaryCta: "Seasonal Cleanup Quote",
+    estimateCardTitle: "Tell us what your property needs.",
+    estimateSteps: ["Choose the service you need.","Share location, timing, and photos in the real build.","Get a clear next step before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every landscaping service points visitors toward the right request path.",
+    midBandAria: "Website Support Studio free landscaping preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Landscaping website design for recurring lawn care and seasonal work.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, local clarity, and ownership signals.",
+    galleryTitle: "Project gallery structure for real landscaping photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your landscaping company.",
+    bottomBody: "Share your company name, service area, and core offers. Website Support Studio will show what your own landscaping site could look like.",
+    resourceBody: "A landscaping site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so local buyers and AI search tools can find it.",
+    projectImages: [
+      { src: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?auto=format&fit=crop&w=1200&q=82", alt: "Landscaping website gallery showing a fresh lawn and planting beds", label: "Maintenance route" },
+      { src: "https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=1200&q=82", alt: "Landscaping cleanup placeholder showing a maintained garden path", label: "Spring cleanup" },
+      { src: "https://images.unsplash.com/photo-1598902108854-10e335adac99?auto=format&fit=crop&w=1200&q=82", alt: "Landscape planting placeholder showing green garden detail", label: "Planting plan" },
+      { src: "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?auto=format&fit=crop&w=1200&q=82", alt: "Landscape bed detail placeholder showing outdoor planting and watering", label: "Bed refresh" },
+    ],
+    trustBadges: ["Licensed and insured","Recurring maintenance plans","Seasonal cleanup calendar","Before-and-after project proof"],
+  },
+  "canopy-tree-care": {
+    trade: "tree service",
+    audience: "tree service company",
+    categoryLabel: "Tree Service service",
+    title: "Tree Service Website Example & Template | Canopy",
+    description: "See a premium tree service website example with trade-specific CTAs, service cards, local proof, mobile layout, and owner portal demo.",
+    h1: "Tree service website example built for safety-first estimates.",
+    articlePath: "/articles/tree-service-website-design-seo-aio-geo",
+    articleLabel: "Tree Service website design",
+    articleTitle: "Tree Service Website Design",
+    articleCta: "Read the tree service SEO article ->",
+    proofAria: "Tree Service trust signals",
+    eyebrow: `${business.location} tree removal, tree trimming, storm damage, emergency tree work`,
+    primaryCta: "Request Tree Estimate",
+    secondaryCta: "Storm Damage Help",
+    estimateCardTitle: "Tell us what tree concern needs a look.",
+    estimateSteps: ["Choose the service you need.","Share location, timing, and photos in the real build.","Get a clear next step before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every tree service service points visitors toward the right request path.",
+    midBandAria: "Website Support Studio free tree service preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Tree service website design for safety, storm calls, and high-ticket work.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, local clarity, and ownership signals.",
+    galleryTitle: "Project gallery structure for real tree service photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your tree service company.",
+    bottomBody: "Share your company name, service area, and core offers. Website Support Studio will show what your own tree service site could look like.",
+    resourceBody: "A tree service site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so local buyers and AI search tools can find it.",
+    projectImages: [
+      { src: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=82", alt: "Tree service website gallery showing mature tree canopy", label: "Canopy assessment" },
+      { src: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=82", alt: "Tree care gallery placeholder showing tall trees and safe work context", label: "Removal planning" },
+      { src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=82", alt: "Tree service storm cleanup placeholder showing wooded residential property", label: "Storm cleanup" },
+      { src: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=82", alt: "Tree trimming result placeholder showing trees and green landscape", label: "Clearance pruning" },
+    ],
+    trustBadges: ["Licensed and insured","Safety-first estimate flow","Storm response path","High-ticket project proof"],
+  },
+  "cornerstone-concrete": {
+    trade: "concrete",
+    audience: "concrete contractor",
+    categoryLabel: "Concrete service",
+    title: "Concrete Website Example & Template | Cornerstone",
+    description: "See a premium concrete website example with trade-specific CTAs, service cards, local proof, mobile layout, and owner portal demo.",
+    h1: "Concrete website example built for before-and-after proof.",
+    articlePath: "/articles/concrete-contractor-website-design-seo-aio-geo",
+    articleLabel: "Concrete website design",
+    articleTitle: "Concrete Contractor Website Design",
+    articleCta: "Read the concrete SEO article ->",
+    proofAria: "Concrete trust signals",
+    eyebrow: `${business.location} concrete driveways, patios and walkways, slabs and pads, concrete repair`,
+    primaryCta: "Request Concrete Estimate",
+    secondaryCta: "See Before & After",
+    estimateCardTitle: "Tell us what you want poured or repaired.",
+    estimateSteps: ["Choose the service you need.","Share location, timing, and photos in the real build.","Get a clear next step before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every concrete service points visitors toward the right request path.",
+    midBandAria: "Website Support Studio free concrete preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Concrete contractor website design for visual proof and estimate requests.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, local clarity, and ownership signals.",
+    galleryTitle: "Before-and-after gallery structure for real concrete photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your concrete contractor.",
+    bottomBody: "Share your company name, service area, and core offers. Website Support Studio will show what your own concrete site could look like.",
+    resourceBody: "A concrete site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so local buyers and AI search tools can find it.",
+    projectImages: [
+      { src: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=82", alt: "Concrete contractor gallery showing construction worksite and concrete planning", label: "Driveway replacement" },
+      { src: "https://images.unsplash.com/photo-1598902108854-10e335adac99?auto=format&fit=crop&w=1200&q=82", alt: "Concrete patio gallery placeholder showing finished outdoor area", label: "Patio finish" },
+      { src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=82", alt: "Concrete driveway gallery placeholder showing residential exterior", label: "Curb appeal" },
+      { src: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1200&q=82", alt: "Concrete walkway gallery placeholder showing home exterior project", label: "Walkway project" },
+    ],
+    trustBadges: ["Licensed and insured","Before-and-after gallery proof","Repair-vs-replace guidance","Project scope clarity"],
+  },
+  "brightwash-exterior-cleaning": {
+    trade: "pressure washing",
+    audience: "pressure washing company",
+    categoryLabel: "Pressure Washing service",
+    title: "Pressure Washing Website Example & Template | BrightWash",
+    description: "See a premium pressure washing website example with trade-specific CTAs, service cards, local proof, mobile layout, and owner portal demo.",
+    h1: "Pressure washing website example built for fast quotes.",
+    articlePath: "/articles/pressure-washing-website-design-seo-aio-geo",
+    articleLabel: "Pressure Washing website design",
+    articleTitle: "Pressure Washing Website Design",
+    articleCta: "Read the pressure washing SEO article ->",
+    proofAria: "Pressure Washing trust signals",
+    eyebrow: `${business.location} house washing, driveway cleaning, roof soft washing, patios and pool decks`,
+    primaryCta: "Book Exterior Cleaning",
+    secondaryCta: "Get a Fast Quote",
+    estimateCardTitle: "Tell us what needs cleaning.",
+    estimateSteps: ["Choose the service you need.","Share location, timing, and photos in the real build.","Get a clear next step before booking."],
+    serviceCount: 6,
+    servicesTitle: "Every pressure washing service points visitors toward the right request path.",
+    midBandAria: "Website Support Studio free pressure washing preview",
+    estimateBandEyebrow: "Request service",
+    estimateBandTitle: "Pressure washing website design for fast booking and instant proof.",
+    trustEyebrow: "Trust without fake testimonials",
+    trustTitle: "Service proof, local clarity, and ownership signals.",
+    galleryTitle: "Before-and-after gallery structure for real pressure washing photos.",
+    serviceAreaTitle: `${business.serviceArea?.dma ?? business.location} homeowners know before they request service.`,
+    bottomTitle: "Turn this demo into a preview for your pressure washing company.",
+    bottomBody: "Share your company name, service area, and core offers. Website Support Studio will show what your own pressure washing site could look like.",
+    resourceBody: "A pressure washing site needs more than a sharp design. Website Support Studio also writes search-ready service pages and articles so local buyers and AI search tools can find it.",
+    projectImages: [
+      { src: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=82", alt: "Pressure washing website gallery showing exterior cleaning service professional", label: "Fast quote" },
+      { src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=82", alt: "Pressure washing driveway cleaning placeholder showing residential exterior", label: "Driveway result" },
+      { src: "https://images.unsplash.com/photo-1604014237800-1c9102c219da?auto=format&fit=crop&w=1200&q=82", alt: "Pressure washing patio and pool deck placeholder showing clean outdoor space", label: "Pool deck cleanup" },
+      { src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=82", alt: "Pressure washing house wash placeholder showing clean home exterior", label: "House wash" },
+    ],
+    trustBadges: ["Licensed and insured","Before-and-after proof","Soft washing safety language","Fast quote path"],
+  },
+} as const;
+
+const tradeConfig = tradeConfigBySlug[business.slug as keyof typeof tradeConfigBySlug] ?? tradeConfigBySlug["ridgeline-roofing"];
+
+const title =
+  page === "home"
+    ? tradeConfig.title
+    : `${business.nav.find((item) => item.page === page)?.label ?? "Page"} - ${business.name}`;
+const description =
+  page === "home"
+    ? tradeConfig.description
+    : `${business.name} is a fictitious ${tradeConfig.categoryLabel.toLowerCase()} website demo for ${business.location}.`;
+const currentPath = samplePath(business, page);
+const freePreviewPath = "/free-website-preview";
+const industryPathBySlug: Record<string, string> = {
+  "ridgeline-roofing": "/for/roofing",
+  "northwind-hvac": "/for/hvac",
+  "mainline-plumbing": "/for/plumbing",
+  "brightwire-electric": "/for/electrical",
+  "bluewave-pools": "/for/pools",
+  "greenline-irrigation": "/for/irrigation",
+  "overpro-garage-doors": "/for/garage-doors",
+  "shieldline-pest-control": "/for/pest-control",
+  "evergreen-lawn-landscape": "/for/landscaping",
+  "canopy-tree-care": "/for/tree-service",
+  "cornerstone-concrete": "/for/concrete",
+  "brightwash-exterior-cleaning": "/for/pressure-washing",
+};
+const conversionPath = industryPathBySlug[business.slug] ?? freePreviewPath;
+const deadLinkPath = "#";
+const demoHomePath = samplePath(business, "home");
+const portalPath = `${demoHomePath}/portal`;
+const previewImagePath = `/templates/${business.slug}-desktop.png`;
+const serviceArea = business.serviceArea;
+const serviceCities = serviceArea?.cityGroups.map((entry) => entry.city) ?? [];
+const services = business.services.slice(0, tradeConfig.serviceCount);
+const projectImages = tradeConfig.projectImages;
+const trustBadges = tradeConfig.trustBadges;
+const brandMark = business.name
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((word) => word[0])
+  .join("")
+  .toUpperCase();
+const schemas =
+  page === "home"
+    ? [
+        breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: `${tradeConfig.trade} website design`, path: industryPathBySlug[business.slug] ?? "/for/roofing" },
+          { name: `${business.name} example`, path: currentPath },
+        ]),
+      ]
+    : [];
+---
+
+<BaseLayout title={title} description={description} path={currentPath} image={previewImagePath} schemas={schemas} titleTemplate={page !== "home"} hideChrome>
+  <div class="rr-site">
+    <aside class="wss-demo-cta" aria-label="Website Support Studio free preview offer">
+      <p><strong>Website Support Studio demo.</strong> Want a site and portal like this for your {tradeConfig.audience}?</p>
+      <a class="wss-demo-cta-primary" href={conversionPath}>Get my free preview -></a>
+    </aside>
+    <header class="rr-header">
+      <a class="rr-brand" href={deadLinkPath} aria-label={`${business.name} demo home`}>
+        <span class="rr-mark">{brandMark}</span>
+        <span><strong>{business.name}</strong><small>{tradeConfig.categoryLabel}</small></span>
+      </a>
+      <nav class="rr-nav" aria-label={`${business.name} navigation`}>
+        {business.nav.map((item) => <a href={deadLinkPath} aria-current={item.page === page ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <div class="rr-header-actions">
+        <a class="rr-article-link" href={tradeConfig.articlePath}>Articles</a>
+        <a class="rr-owner-link" href={portalPath}>Owner Portal</a>
+        <a class="rr-phone" href={deadLinkPath}>{business.phoneLabel}</a>
+        <a class="rr-btn rr-btn-primary" href={conversionPath}>{tradeConfig.primaryCta}</a>
+      </div>
+    </header>
+
+    <main>
+      {page === "home" && (
+        <>
+          <section class="rr-hero">
+            <img class="rr-hero-image" src={business.heroImage} alt={business.heroAlt} width="1800" height="1180" loading="eager" />
+            <div class="rr-hero-overlay"></div>
+            <div class="rr-hero-content">
+              <p class="rr-demo">DEMO SAMPLE | FICTITIOUS {tradeConfig.categoryLabel}</p>
+              <p class="rr-eyebrow">{tradeConfig.eyebrow}</p>
+              <h1>{page === "home" ? tradeConfig.h1 : business.headline}</h1>
+              <p class="rr-lede">{business.description}</p>
+              <div class="rr-hero-actions">
+                <a class="rr-btn rr-btn-primary" href={conversionPath}>{tradeConfig.primaryCta}</a>
+                <a class="rr-btn rr-btn-light" href={deadLinkPath}>{tradeConfig.secondaryCta}</a>
+              </div>
+              <div class="rr-proof-row" aria-label={tradeConfig.proofAria}>
+                <span>4.9 rating module placeholder</span>
+                <span>{business.slug === "brightwire-electric" ? "Licensed, insured, certified" : business.slug === "bluewave-pools" ? "Licensed, insured, same tech" : business.slug === "greenline-irrigation" ? "Licensed, insured, reviewed" : "Licensed and insured"}</span>
+                <span>{serviceCities.length} metro service areas</span>
+              </div>
+            </div>
+            <aside class="rr-estimate-card" aria-label="Estimate request preview">
+              <p class="rr-eyebrow">Estimate-first</p>
+              <h2>{tradeConfig.estimateCardTitle}</h2>
+              <ol>
+                {tradeConfig.estimateSteps.map((step) => <li>{step}</li>)}
+              </ol>
+              <a class="rr-btn rr-btn-primary" href={conversionPath}>{tradeConfig.primaryCta}</a>
+            </aside>
+          </section>
+
+          <section class="rr-section rr-services" id="services">
+            <div class="rr-section-head">
+              <p class="rr-eyebrow">{business.servicesLabel}</p>
+              <h2>{tradeConfig.servicesTitle}</h2>
+              <p>{business.servicesIntro}</p>
+            </div>
+            <div class="rr-service-grid">
+              {services.map((service, index) => (
+                <article class="rr-service-card">
+                  <span class="rr-service-icon" aria-hidden="true">
+                    {index === 0 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M14.5 5.5 18 2l4 4-3.5 3.5" />
+                        <path d="m14 6 4 4" />
+                        <path d="M3 21h5l10.5-10.5-5-5L3 16v5Z" />
+                      </svg>
+                    )}
+                    {index === 1 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M3 11.5 12 4l9 7.5" />
+                        <path d="M6 10v9h12v-9" />
+                        <path d="M9 19v-5h6v5" />
+                      </svg>
+                    )}
+                    {index === 2 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M7.5 18h10a4 4 0 0 0 .4-8A6.2 6.2 0 0 0 6 8.2 4.8 4.8 0 0 0 7.5 18Z" />
+                        <path d="m12 12-2 4h3l-1 4 4-6h-3l1-2Z" />
+                      </svg>
+                    )}
+                    {index === 3 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M9 4h6l1 2h3v15H5V6h3l1-2Z" />
+                        <path d="M9 11h4" />
+                        <path d="M9 15h2" />
+                        <path d="m15 16 3 3" />
+                        <circle cx="14" cy="15" r="2.5" />
+                      </svg>
+                    )}
+                    {index === 4 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M6.5 4.5h4l1.2 4-2.3 1.4a12 12 0 0 0 4.7 4.7l1.4-2.3 4 1.2v4A2.5 2.5 0 0 1 17 20 13 13 0 0 1 4 7a2.5 2.5 0 0 1 2.5-2.5Z" />
+                        <path d="M16 5h4v4" />
+                        <path d="m20 5-5 5" />
+                      </svg>
+                    )}
+                    {index === 5 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M4 8h16" />
+                        <path d="M6 12h12" />
+                        <path d="M8 16h8" />
+                        <path d="M12 4v16" />
+                      </svg>
+                    )}
+                    {index === 6 && (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M13 2 4 14h7l-1 8 10-13h-7l1-7Z" />
+                      </svg>
+                    )}
+                  </span>
+                  <h3>{service.name}</h3>
+                  <p>{service.body}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="rr-section rr-wss-conversion" aria-label={tradeConfig.midBandAria}>
+            <div>
+              <p class="rr-wss-kicker">Website Support Studio</p>
+              <h2>Want a site and portal like this for your {tradeConfig.audience}?</h2>
+              <p>Get your free preview - no cost, no commitment. We build the site, write the content, host it, and keep it maintained.</p>
+            </div>
+            <a class="rr-wss-button" href={conversionPath}>Get my free preview -></a>
+          </section>
+
+          <section class="rr-section rr-estimate-band" id="estimate-path">
+            <div>
+              <p class="rr-eyebrow">{tradeConfig.estimateBandEyebrow}</p>
+              <h2>{tradeConfig.estimateBandTitle}</h2>
+              <p>{business.contactPrompt}</p>
+            </div>
+            <div class="rr-estimate-steps">
+              {tradeConfig.estimateSteps.map((step, index) => <span>{index + 1}. {step}</span>)}
+            </div>
+            <a class="rr-btn rr-btn-dark" href={conversionPath}>{tradeConfig.primaryCta}</a>
+          </section>
+
+          <section class="rr-section rr-trust">
+            <div class="rr-trust-copy">
+              <p class="rr-eyebrow">{tradeConfig.trustEyebrow}</p>
+              <h2>{business.aboutHeadline}</h2>
+              <p>{business.aboutBody}</p>
+              <div class="rr-badge-grid">
+                {trustBadges.map((badge) => <span>{badge}</span>)}
+              </div>
+            </div>
+            <div class="rr-review-panel">
+              <p class="rr-eyebrow">Review module placeholder</p>
+              <div class="rr-stars" aria-label="Five star rating placeholder">*****</div>
+              <h3>{tradeConfig.trustTitle}</h3>
+              <ul>
+                {business.proofItems.slice(0, 5).map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          </section>
+
+          <section class="rr-section rr-portal-promo" id="owner-portal">
+            <div>
+              <p class="rr-eyebrow">Owner portal included</p>
+              <h2>Every site comes with your own portal.</h2>
+              <p>
+                Website Support Studio builds, hosts, and maintains the site. The owner
+                gets a simple dashboard for new estimate requests, site status, traffic,
+                billing, and change requests.
+              </p>
+              <a class="rr-btn rr-btn-primary" href={portalPath}>See the owner portal -></a>
+            </div>
+            <div class="rr-portal-card" aria-label="Owner portal preview">
+              <div class="rr-portal-card-head">
+                <span>RR</span>
+                <strong>Owner dashboard</strong>
+              </div>
+              <ul>
+                <li><strong>4</strong><span>new estimate requests</span></li>
+                <li><strong>Live</strong><span>hosted and SSL secure</span></li>
+                <li><strong>67</strong><span>sample estimate clicks</span></li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="rr-section rr-resource-promo" id="resources">
+            <div>
+              <p class="rr-eyebrow">From our blog / Resources</p>
+              <h2>We write the content too.</h2>
+              <p>
+                {tradeConfig.resourceBody}
+              </p>
+            </div>
+            <a class="rr-resource-card" href={tradeConfig.articlePath}>
+              <span>{tradeConfig.articleLabel}</span>
+              <strong>{tradeConfig.articleTitle}</strong>
+              <em>{tradeConfig.articleCta}</em>
+            </a>
+          </section>
+
+          <section class="rr-section rr-gallery" id="projects">
+            <div class="rr-section-head">
+              <p class="rr-eyebrow">{business.proofLabel}</p>
+              <h2>{tradeConfig.galleryTitle}</h2>
+              <p>{business.proofIntro}</p>
+            </div>
+            <div class="rr-gallery-grid">
+              {projectImages.map((image) => (
+                <figure>
+                  <img src={image.src} alt={image.alt} width="900" height="640" loading="lazy" />
+                  <figcaption>{image.label}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+
+          <section class="rr-section rr-service-area">
+            <div>
+              <p class="rr-eyebrow">Service areas</p>
+              <h2>{tradeConfig.serviceAreaTitle}</h2>
+              <p>{serviceArea?.coverageCopy ?? business.localCoverageIntro}</p>
+            </div>
+            <div class="rr-city-grid">
+              {serviceCities.map((city) => <span>{city}</span>)}
+            </div>
+          </section>
+
+          <section class="rr-section rr-wss-conversion rr-wss-conversion-bottom" aria-label={`Request a free ${tradeConfig.trade} website preview`}>
+            <div>
+              <p class="rr-wss-kicker">No cost. No commitment.</p>
+              <h2>{tradeConfig.bottomTitle}</h2>
+              <p>{tradeConfig.bottomBody}</p>
+            </div>
+            <a class="rr-wss-button" href={conversionPath}>Get my free preview -></a>
+          </section>
+        </>
+      )}
+
+      {page === "services" && (
+        <>
+          <section class="rr-subhero">
+            <p class="rr-demo">DEMO SAMPLE | FICTITIOUS {tradeConfig.categoryLabel}</p>
+            <p class="rr-eyebrow">{business.servicesLabel}</p>
+            <h1>{tradeConfig.trade} services with clear homeowner next steps.</h1>
+            <p>{business.servicesIntro}</p>
+          </section>
+          <section class="rr-section rr-service-grid rr-service-grid-full">
+            {business.services.map((service, index) => (
+              <article class="rr-service-card">
+                <span class="rr-service-icon" aria-hidden="true">
+                  {index % 5 === 0 && (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M14.5 5.5 18 2l4 4-3.5 3.5" />
+                      <path d="m14 6 4 4" />
+                      <path d="M3 21h5l10.5-10.5-5-5L3 16v5Z" />
+                    </svg>
+                  )}
+                  {index % 5 === 1 && (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M3 11.5 12 4l9 7.5" />
+                      <path d="M6 10v9h12v-9" />
+                      <path d="M9 19v-5h6v5" />
+                    </svg>
+                  )}
+                  {index % 5 === 2 && (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M7.5 18h10a4 4 0 0 0 .4-8A6.2 6.2 0 0 0 6 8.2 4.8 4.8 0 0 0 7.5 18Z" />
+                      <path d="m12 12-2 4h3l-1 4 4-6h-3l1-2Z" />
+                    </svg>
+                  )}
+                  {index % 5 === 3 && (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M9 4h6l1 2h3v15H5V6h3l1-2Z" />
+                      <path d="M9 11h4" />
+                      <path d="M9 15h2" />
+                      <path d="m15 16 3 3" />
+                      <circle cx="14" cy="15" r="2.5" />
+                    </svg>
+                  )}
+                  {index % 5 === 4 && (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M6.5 4.5h4l1.2 4-2.3 1.4a12 12 0 0 0 4.7 4.7l1.4-2.3 4 1.2v4A2.5 2.5 0 0 1 17 20 13 13 0 0 1 4 7a2.5 2.5 0 0 1 2.5-2.5Z" />
+                      <path d="M16 5h4v4" />
+                      <path d="m20 5-5 5" />
+                    </svg>
+                  )}
+                </span>
+                <h2>{service.name}</h2>
+                <p class="rr-meta">{service.meta}</p>
+                <p>{service.body}</p>
+              </article>
+            ))}
+          </section>
+        </>
+      )}
+
+      {page === "proof" && (
+        <>
+          <section class="rr-subhero">
+            <p class="rr-demo">DEMO SAMPLE | FICTITIOUS {tradeConfig.categoryLabel}</p>
+            <p class="rr-eyebrow">{business.proofLabel}</p>
+            <h1>Project proof areas ready for real photos and notes.</h1>
+            <p>{business.proofIntro}</p>
+          </section>
+          <section class="rr-section rr-gallery">
+            <div class="rr-gallery-grid">
+              {projectImages.map((image) => (
+                <figure>
+                  <img src={image.src} alt={image.alt} width="900" height="640" loading="lazy" />
+                  <figcaption>{image.label}</figcaption>
+                </figure>
+              ))}
+            </div>
+            <div class="rr-proof-list">
+              {business.proofItems.map((item) => <span>{item}</span>)}
+            </div>
+          </section>
+        </>
+      )}
+
+      {page === "service-area" && (
+        <>
+          <section class="rr-subhero">
+            <p class="rr-demo">DEMO SAMPLE | FICTITIOUS {tradeConfig.categoryLabel}</p>
+            <p class="rr-eyebrow">Service areas</p>
+            <h1>{serviceArea?.dma ?? business.location} coverage for estimate requests.</h1>
+            <p>{serviceArea?.coverageCopy}</p>
+          </section>
+          <section class="rr-section rr-area-detail">
+            {serviceArea?.cityGroups.map((entry) => (
+              <article>
+                <h2>{entry.city}</h2>
+                <ul>{entry.neighborhoods.map((neighborhood) => <li>{neighborhood}</li>)}</ul>
+              </article>
+            ))}
+          </section>
+        </>
+      )}
+
+      {page === "about" && (
+        <>
+          <section class="rr-subhero">
+            <p class="rr-demo">DEMO SAMPLE | FICTITIOUS {tradeConfig.categoryLabel}</p>
+            <p class="rr-eyebrow">About</p>
+            <h1>{business.aboutHeadline}</h1>
+            <p>{business.aboutBody}</p>
+          </section>
+          <section class="rr-section rr-trust">
+            <div>
+              <p class="rr-eyebrow">How the demo builds trust</p>
+              <h2>Homeowners get scope, service area, estimate path, and ownership signals quickly.</h2>
+              <p>This is a fictional business sample. Real builds swap in the owner's service photos, proof points, city list, phone, and warranty details.</p>
+            </div>
+            <div class="rr-badge-grid">
+              {business.trust.map((item) => <span>{item}</span>)}
+            </div>
+          </section>
+        </>
+      )}
+
+      {page === "contact" && (
+        <>
+          <section class="rr-subhero">
+            <p class="rr-demo">DEMO SAMPLE | FICTITIOUS {tradeConfig.categoryLabel}</p>
+            <p class="rr-eyebrow">Estimate request</p>
+            <h1>{business.contactTitle ?? "Request a roof estimate."}</h1>
+            <p>{business.contactPrompt}</p>
+          </section>
+          <section class="rr-section rr-contact" id="estimate">
+            <form class="rr-form">
+              <h2>{business.formTitle ?? tradeConfig.primaryCta}</h2>
+              <label>Name<input name="name" autocomplete="name" required /></label>
+              <label>Phone<input name="phone" autocomplete="tel" required /></label>
+              <label>Email<input name="email" type="email" autocomplete="email" /></label>
+              <label>Roof concern<select name="topic" required><option value="">Choose one</option>{business.services.slice(0, 5).map((service) => <option>{service.name}</option>)}</select></label>
+              <label>What should {business.name} know?<textarea name="notes"></textarea></label>
+              <a class="rr-btn rr-btn-primary" href={conversionPath}>{business.formButtonLabel ?? tradeConfig.primaryCta}</a>
+              <p>Sample form only. No message is sent from this demo.</p>
+            </form>
+            <aside class="rr-contact-card">
+              <h2>Call or confirm coverage</h2>
+              <p><a href={deadLinkPath}>{business.phoneLabel}</a></p>
+              <p>{business.address}</p>
+              <ul>{business.hours.map((hour) => <li>{hour}</li>)}</ul>
+            </aside>
+          </section>
+        </>
+      )}
+    </main>
+
+    <footer class="rr-footer">
+      <div>
+        <strong>{business.name}</strong>
+        <p>{business.location} | DEMO SAMPLE | Fictitious {tradeConfig.categoryLabel} company.</p>
+      </div>
+      <div>
+        <p><a href={deadLinkPath}>{business.phoneLabel}</a></p>
+        <p>{serviceCities.join(", ")}</p>
+      </div>
+      <div>
+        <p>{business.hours.join(" | ")}</p>
+        <p>You own your domain, site, and content. Monthly plan optional, cancel anytime.</p>
+      </div>
+    </footer>
+
+    <a class="rr-mobile-sticky" href={conversionPath}>Get my free preview</a>
+  </div>
+
+  <style is:inline>
+    body[data-page^="/templates/sample/"] .site-header,body[data-page^="/templates/sample/"] .site-footer,body[data-page^="/templates/sample/"] .skip-link{display:none}
+    body[data-page^="/templates/sample/"]{background:#f8fafc}
+    .rr-site{--rr-accent:#f97316;--rr-ink:#101827;--rr-muted:#5b6472;--rr-line:#e2e8f0;--rr-soft:#f7f9fc;min-height:100vh;overflow-x:hidden;background:#fff;color:var(--rr-ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .rr-site *{box-sizing:border-box}
+    .rr-site h1,.rr-site h2,.rr-site h3,.rr-site p{margin-top:0}
+    .rr-site h1,.rr-site h2,.rr-site h3{letter-spacing:0;color:var(--rr-ink);line-height:1.02}
+    .rr-site h1{max-width:12ch;font-size:clamp(3.1rem,8vw,6.75rem);font-weight:900}
+    .rr-site h2{font-size:clamp(2rem,4vw,3.8rem);font-weight:900}
+    .rr-site h3{font-size:1.28rem;font-weight:850}
+    .rr-site p,.rr-site li{color:var(--rr-muted);line-height:1.65}
+    .wss-demo-cta{position:sticky;top:0;z-index:95;display:flex;align-items:center;justify-content:center;gap:1rem;padding:.82rem clamp(1rem,4vw,3.5rem);background:#fff;border-bottom:2px solid rgba(249,115,22,.38);box-shadow:0 14px 36px rgba(16,24,39,.12)}.wss-demo-cta p{margin:0;color:#7c2d12;font-size:1rem;font-weight:850;line-height:1.35}.wss-demo-cta strong{color:#101827}.wss-demo-cta-primary{display:inline-flex;align-items:center;justify-content:center;min-height:3rem;white-space:nowrap;border-radius:.75rem;padding:.85rem 1.15rem;background:var(--rr-accent);color:#fff;text-decoration:none;font-size:1rem;font-weight:950;box-shadow:0 18px 40px rgba(249,115,22,.36)}
+    .rr-header{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem clamp(1rem,4vw,3.5rem);background:rgba(255,255,255,.94);border-bottom:1px solid rgba(226,232,240,.9);backdrop-filter:blur(16px)}
+    .rr-brand{display:flex;align-items:center;gap:.75rem;color:var(--rr-ink);text-decoration:none}.rr-brand strong{display:block;font-size:1.05rem}.rr-brand small{display:block;color:var(--rr-muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}.rr-mark{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:.65rem;background:var(--rr-ink);color:#fff;font-weight:950;box-shadow:0 12px 30px rgba(16,24,39,.18)}
+    .rr-nav{display:flex;align-items:center;gap:1rem}.rr-nav a{color:var(--rr-muted);font-size:.92rem;font-weight:750;text-decoration:none}.rr-nav a[aria-current="page"]{color:var(--rr-ink);text-decoration:underline;text-decoration-color:var(--rr-accent);text-underline-offset:.35rem;text-decoration-thickness:.16rem}
+    .rr-header-actions{display:flex;align-items:center;gap:.7rem}.rr-phone,.rr-owner-link,.rr-article-link{color:var(--rr-ink);font-weight:900;text-decoration:none;white-space:nowrap}.rr-owner-link,.rr-article-link{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.65rem .85rem;border:1px solid var(--rr-line);border-radius:.7rem;background:#fff}.rr-article-link{border-color:rgba(249,115,22,.35);background:#fff7ed;color:#9a3412}
+    .rr-btn{display:inline-flex;align-items:center;justify-content:center;min-height:3rem;border-radius:.7rem;padding:.9rem 1.1rem;border:1px solid transparent;font-weight:900;text-decoration:none;text-align:center;box-shadow:0 14px 30px rgba(16,24,39,.08)}
+    .rr-btn-primary{background:var(--rr-accent);color:#fff}.rr-btn-light{background:#fff;color:var(--rr-ink);border-color:rgba(255,255,255,.5)}.rr-btn-dark{background:var(--rr-ink);color:#fff}
+    .rr-demo,.rr-eyebrow{display:inline-flex;width:fit-content;max-width:100%;align-items:center;border-radius:999px;font-size:.76rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.rr-demo{padding:.36rem .62rem;border:1px dashed rgba(249,115,22,.55);background:rgba(255,247,237,.92);color:#9a3412}.rr-eyebrow{color:var(--rr-accent)}
+    .rr-hero{position:relative;min-height:calc(100vh - 70px);display:grid;align-items:end;padding:clamp(7rem,14vw,10rem) clamp(1rem,4vw,3.5rem) clamp(3rem,8vw,5rem);overflow:hidden;background:#101827}.rr-hero-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.rr-hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,13,24,.91) 0%,rgba(8,13,24,.7) 43%,rgba(8,13,24,.16) 100%),linear-gradient(0deg,rgba(8,13,24,.72),transparent 46%)}
+    .rr-hero-content{position:relative;z-index:2;width:100%;max-width:980px;min-width:0}.rr-hero .rr-eyebrow,.rr-hero .rr-lede{color:#f8fafc}.rr-hero h1{margin:.8rem 0 1rem;color:#fff}.rr-lede{max-width:58ch;font-size:1.18rem}.rr-hero-actions,.rr-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
+    .rr-proof-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}.rr-proof-row span{padding:.6rem .8rem;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:.84rem;font-weight:850;backdrop-filter:blur(8px)}
+    .rr-estimate-card{position:absolute;right:clamp(1rem,4vw,3.5rem);bottom:clamp(2rem,6vw,4rem);z-index:3;width:min(360px,31vw);padding:1.25rem;border-radius:1rem;background:rgba(255,255,255,.94);box-shadow:0 30px 80px rgba(0,0,0,.35);backdrop-filter:blur(14px)}.rr-estimate-card .rr-eyebrow{color:var(--rr-ink)}.rr-estimate-card h2{font-size:1.7rem}.rr-estimate-card ol{padding-left:1.2rem;margin:.6rem 0 1rem}
+    .rr-section{padding:clamp(4rem,8vw,7rem) clamp(1rem,4vw,3.5rem)}.rr-section-head{max-width:780px;margin:0 auto 2rem;text-align:center}.rr-section-head p:last-child{max-width:60ch;margin-left:auto;margin-right:auto}
+    .rr-service-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem;max-width:1220px;margin:0 auto}.rr-service-grid-full{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}.rr-service-card{min-height:270px;padding:1.25rem;border:1px solid var(--rr-line);border-radius:.85rem;background:#fff;box-shadow:0 20px 60px rgba(16,24,39,.08)}.rr-service-icon{display:grid;place-items:center;width:3.25rem;height:3.25rem;margin-bottom:1.4rem;border-radius:.9rem;background:#fff7ed;color:#c2410c;border:1px solid rgba(249,115,22,.18)}.rr-service-icon svg{width:1.8rem;height:1.8rem;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.rr-meta{font-weight:850;color:var(--rr-ink)!important}
+    .rr-estimate-band{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.75fr) auto;align-items:center;gap:1.4rem;background:var(--rr-accent);color:#fff}.rr-estimate-band h2,.rr-estimate-band p,.rr-estimate-band .rr-eyebrow{color:#fff}.rr-estimate-steps{display:grid;gap:.55rem}.rr-estimate-steps span{padding:.85rem 1rem;border-radius:.8rem;background:rgba(255,255,255,.16);color:#fff;font-weight:900}
+    .rr-wss-conversion{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1.5rem;align-items:center;background:#fff;border-top:1px solid rgba(249,115,22,.24);border-bottom:1px solid rgba(249,115,22,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}.rr-wss-conversion h2{max-width:13ch;margin:.25rem 0 .75rem;font-size:clamp(2.2rem,5vw,4.25rem)}.rr-wss-conversion p{max-width:66ch;margin-bottom:0;color:#344054}.rr-wss-kicker{display:inline-flex;width:fit-content;max-width:100%;align-items:center;border-radius:999px;padding:.42rem .65rem;background:#fff7ed;color:#9a3412!important;font-size:.76rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.rr-wss-button{display:inline-flex;align-items:center;justify-content:center;min-height:3.75rem;border-radius:.85rem;padding:1rem 1.35rem;background:var(--rr-accent);color:#fff;text-decoration:none;font-size:1.05rem;font-weight:950;text-align:center;box-shadow:0 24px 55px rgba(249,115,22,.34)}.rr-wss-conversion-bottom{background:#101827}.rr-wss-conversion-bottom h2,.rr-wss-conversion-bottom p{color:#fff}.rr-wss-conversion-bottom .rr-wss-kicker{background:rgba(255,247,237,.12);color:#fed7aa!important}
+    .rr-trust{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.75fr);gap:2rem;align-items:start;background:var(--rr-soft)}.rr-trust-copy{max-width:720px}.rr-badge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin-top:1.4rem}.rr-badge-grid span,.rr-proof-list span,.rr-city-grid span{padding:.85rem 1rem;border-radius:.75rem;background:#fff;border:1px solid var(--rr-line);color:var(--rr-ink);font-weight:850;box-shadow:0 12px 30px rgba(16,24,39,.06)}
+    .rr-review-panel{padding:1.5rem;border-radius:1rem;background:#fff;border:1px solid var(--rr-line);box-shadow:0 24px 70px rgba(16,24,39,.1)}.rr-stars{color:var(--rr-accent);font-size:1.45rem;letter-spacing:.12rem}.rr-review-panel ul{padding-left:1.1rem}
+    .rr-portal-promo{display:grid;grid-template-columns:minmax(0,.9fr) minmax(320px,.65fr);gap:2rem;align-items:center;background:#101827;color:#fff}.rr-portal-promo h2,.rr-portal-promo p{color:#fff}.rr-portal-promo .rr-eyebrow{color:#fed7aa}.rr-portal-card{padding:1.25rem;border:1px solid rgba(255,255,255,.18);border-radius:1rem;background:rgba(255,255,255,.09);box-shadow:0 24px 70px rgba(0,0,0,.24);backdrop-filter:blur(12px)}.rr-portal-card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;color:#fff}.rr-portal-card-head span{display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:.7rem;background:var(--rr-accent);color:#fff;font-weight:950}.rr-portal-card ul{display:grid;gap:.75rem;padding:0;margin:0;list-style:none}.rr-portal-card li{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem;border-radius:.75rem;background:rgba(255,255,255,.12)}.rr-portal-card strong,.rr-portal-card span{color:#fff}.rr-portal-card li strong{font-size:1.35rem}
+    .rr-resource-promo{display:grid;grid-template-columns:minmax(0,.9fr) minmax(320px,.55fr);gap:2rem;align-items:center;background:#fff7ed}.rr-resource-promo h2{max-width:10ch}.rr-resource-card{display:grid;gap:.8rem;padding:1.35rem;border-radius:1rem;background:#fff;color:var(--rr-ink);text-decoration:none;border:1px solid rgba(249,115,22,.28);box-shadow:0 24px 70px rgba(124,45,18,.13)}.rr-resource-card span{width:fit-content;max-width:100%;padding:.35rem .55rem;border-radius:999px;background:rgba(249,115,22,.12);color:#9a3412;font-size:.76rem;font-weight:950;text-transform:uppercase;letter-spacing:.08em}.rr-resource-card strong{font-size:clamp(1.5rem,3vw,2.35rem);line-height:1.08;letter-spacing:0}.rr-resource-card em{color:#c2410c;font-style:normal;font-weight:950}
+    .rr-gallery-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;max-width:1220px;margin:0 auto}.rr-gallery-grid figure{position:relative;min-height:310px;margin:0;overflow:hidden;border-radius:1rem;background:#111827;box-shadow:0 24px 70px rgba(16,24,39,.16)}.rr-gallery-grid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}.rr-gallery-grid figure:hover img{transform:scale(1.04)}.rr-gallery-grid figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;padding:.65rem .8rem;border-radius:.7rem;background:rgba(16,24,39,.82);color:#fff;font-weight:900}
+    .rr-service-area{display:grid;grid-template-columns:minmax(0,.8fr) minmax(320px,1fr);gap:2rem;align-items:start}.rr-city-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem}.rr-proof-list{display:flex;flex-wrap:wrap;gap:.75rem;max-width:1120px;margin:2rem auto 0}
+    .rr-subhero{padding:clamp(5rem,9vw,8rem) clamp(1rem,4vw,3.5rem) clamp(3rem,6vw,5rem);background:linear-gradient(135deg,#101827,#1f2937);color:#fff}.rr-subhero h1{max-width:13ch;color:#fff}.rr-subhero p{max-width:62ch;color:#e5e7eb}.rr-subhero .rr-eyebrow{color:#fed7aa}
+    .rr-area-detail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;background:var(--rr-soft)}.rr-area-detail article{padding:1.25rem;border-radius:.9rem;background:#fff;border:1px solid var(--rr-line)}.rr-area-detail ul{padding-left:1.1rem}
+    .rr-contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.55fr);gap:1.2rem;background:var(--rr-soft)}.rr-form,.rr-contact-card{padding:1.4rem;border-radius:1rem;background:#fff;border:1px solid var(--rr-line);box-shadow:0 18px 55px rgba(16,24,39,.08)}.rr-form{display:grid;gap:.9rem}.rr-form label{display:grid;gap:.4rem;color:var(--rr-ink);font-size:.86rem;font-weight:850}.rr-form input,.rr-form select,.rr-form textarea{width:100%;border:1px solid var(--rr-line);border-radius:.65rem;padding:.85rem;font:inherit}.rr-form textarea{min-height:130px;resize:vertical}.rr-contact-card a{color:var(--rr-ink);font-size:1.4rem;font-weight:950}
+    .rr-footer{display:grid;grid-template-columns:.8fr .8fr 1fr;gap:1.2rem;padding:2.4rem clamp(1rem,4vw,3.5rem) 6rem;background:#101827}.rr-footer strong,.rr-footer p,.rr-footer a{color:#fff}.rr-footer p{margin:.4rem 0;color:#cbd5e1}.rr-mobile-sticky{display:none}
+    @media(max-width:1100px){.rr-nav{display:none}.rr-estimate-card{position:relative;right:auto;bottom:auto;width:auto;margin-top:2rem}.rr-hero{align-items:center}.rr-service-grid,.rr-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rr-estimate-band,.rr-wss-conversion,.rr-trust,.rr-portal-promo,.rr-resource-promo,.rr-service-area,.rr-contact,.rr-footer{grid-template-columns:1fr}.rr-area-detail{grid-template-columns:repeat(2,minmax(0,1fr))}.rr-wss-button{width:100%}}
+    @media(max-width:700px){.wss-demo-cta{display:grid;grid-template-columns:1fr;gap:.65rem;padding:.75rem 1rem}.wss-demo-cta p{font-size:.88rem}.wss-demo-cta-primary{width:100%;min-height:3.1rem}.rr-header{padding:.75rem 1rem}.rr-header-actions{gap:.45rem}.rr-header-actions .rr-btn,.rr-owner-link,.rr-phone{display:none}.rr-article-link{min-height:2.4rem;padding:0 .7rem;font-size:.82rem}.rr-brand{min-width:0}.rr-brand span:last-child{min-width:0}.rr-brand strong{font-size:1rem;white-space:nowrap}.rr-brand small{font-size:.68rem}.rr-hero-content{max-width:calc(100vw - 2.8rem)}.rr-site h1{max-width:9.2ch;font-size:clamp(1.9rem,10.1vw,2.65rem);line-height:1.05;overflow-wrap:break-word}.rr-demo{display:flex;width:100%;border-radius:.8rem;font-size:.68rem;line-height:1.35;white-space:normal}.rr-eyebrow{display:flex;width:100%;border-radius:.7rem;font-size:.69rem;line-height:1.45;white-space:normal;overflow-wrap:anywhere}.rr-hero{min-height:92vh;padding:6.5rem 1rem 2rem}.rr-hero-overlay{background:linear-gradient(180deg,rgba(8,13,24,.86),rgba(8,13,24,.58) 52%,rgba(8,13,24,.9))}.rr-hero-actions{display:grid;grid-template-columns:1fr;gap:.7rem}.rr-hero-actions .rr-btn{width:100%}.rr-lede{max-width:32ch;font-size:1rem}.rr-proof-row span{width:100%}.rr-section{padding:3.5rem 1rem}.rr-service-grid,.rr-gallery-grid,.rr-city-grid,.rr-badge-grid,.rr-area-detail{grid-template-columns:1fr}.rr-service-card{min-height:210px}.rr-gallery-grid figure{min-height:265px}.rr-estimate-band{padding-bottom:5rem}.rr-wss-conversion h2{max-width:11ch;font-size:clamp(2rem,10vw,2.85rem)}.rr-footer{padding-bottom:6rem}.rr-mobile-sticky{position:fixed;left:.85rem;right:.85rem;bottom:.85rem;z-index:90;display:flex;align-items:center;justify-content:center;min-height:3.35rem;border-radius:.75rem;background:var(--rr-accent);color:#fff;font-weight:950;text-decoration:none;box-shadow:0 18px 45px rgba(16,24,39,.32)}}
+  </style>
+</BaseLayout>
