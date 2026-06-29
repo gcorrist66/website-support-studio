@@ -242,12 +242,12 @@ export const DESIGN_SYSTEMS = [
       "Commercial credibility blocks",
     ],
     images: {
-      desktop: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=700&q=82",
+      desktop: "/templates/design-system-foundry.svg",
+      mobile: "/templates/design-system-foundry.svg",
     },
     preview: {
-      image: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1100&q=82",
-      alt: "Industrial workshop with tools and machinery",
+      image: "/templates/design-system-foundry.svg",
+      alt: "Industrial website preview with tools, process cards, and service call to action",
       label: "Starting point",
       headline: "A precise, industrial website style for technical businesses and trades.",
       signals: ["Process", "Repairs", "Maintenance", "Commercial"],
@@ -276,12 +276,12 @@ export const DESIGN_SYSTEMS = [
       "Neighborhood story section",
     ],
     images: {
-      desktop: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=700&q=82",
+      desktop: "/templates/design-system-ember.svg",
+      mobile: "/templates/design-system-ember.svg",
     },
     preview: {
-      image: "https://images.unsplash.com/photo-1551529563-fce9529e67ac?auto=format&fit=crop&w=1100&q=82",
-      alt: "Coffee shop counter with menu boards and barista station",
+      image: "/templates/design-system-ember.svg",
+      alt: "Warm food and hospitality website preview with reservation call to action",
       label: "Design system",
       headline: "A warm, local website style for menus, hours, events, and visits.",
       signals: ["Menu", "Hours", "Ordering", "Events"],
@@ -311,12 +311,12 @@ export const DESIGN_SYSTEMS = [
       "Consultation-focused CTA path",
     ],
     images: {
-      desktop: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=82",
-      mobile: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=700&q=82",
+      desktop: "/templates/design-system-atlas.svg",
+      mobile: "/templates/design-system-atlas.svg",
     },
     preview: {
-      image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=82",
-      alt: "Modern team strategy session in a bright office",
+      image: "/templates/design-system-atlas.svg",
+      alt: "Professional services website preview with strategy blocks and consultation call to action",
       label: "Website style",
       headline: "A strategic, authority-led website style for experts and professional firms.",
       signals: ["Authority", "Services", "Process", "Consultations"],
@@ -451,6 +451,7 @@ export const BRAND = {
 // ---- Primary navigation (snake_case voice is the brand tell) ----------------
 export const NAV = [
   { href: "/products", label: "products" },
+  { href: "/website-gallery", label: "gallery" },
   { href: "/pricing", label: "pricing" },
   { href: "/#how-it-works", label: "how_it_works" },
   { href: "/articles", label: "articles" },
@@ -460,6 +461,7 @@ export const NAV = [
 export const PRODUCT_NAV = [
   { href: "/founder-website-package", label: "$500 Websites" },
   { href: "/custom-websites", label: "Custom Websites" },
+  { href: "/website-gallery", label: "Website Gallery" },
   { href: "/website-health", label: "Website Score" },
   { href: "/free-website-preview", label: "Free Website Preview" },
 ] as const;
