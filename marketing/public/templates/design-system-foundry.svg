@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Industrial website preview</title>
+  <desc id="desc">A local industrial service website preview with tools, process cards, and a strong service call to action.</desc>
+  <rect width="1200" height="760" fill="#111827"/>
+  <rect x="70" y="62" width="1060" height="636" rx="28" fill="#f8fafc"/>
+  <rect x="70" y="62" width="1060" height="76" rx="28" fill="#1f2937"/>
+  <circle cx="112" cy="100" r="10" fill="#ef4444"/>
+  <circle cx="144" cy="100" r="10" fill="#f59e0b"/>
+  <circle cx="176" cy="100" r="10" fill="#22c55e"/>
+  <text x="230" y="111" font-family="Arial, sans-serif" font-size="28" font-weight="800" fill="#fff">Foundry Service Co.</text>
+  <g transform="translate(120 190)">
+    <text x="0" y="44" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#111827">Precise service.</text>
+    <text x="0" y="108" font-family="Arial, sans-serif" font-size="54" font-weight="900" fill="#111827">Clear process.</text>
+    <rect x="0" y="148" width="210" height="58" rx="29" fill="#f97316"/>
+    <text x="34" y="185" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">Request Service</text>
+    <rect x="0" y="255" width="230" height="130" rx="18" fill="#e5e7eb"/>
+    <rect x="260" y="255" width="230" height="130" rx="18" fill="#e5e7eb"/>
+    <rect x="520" y="255" width="230" height="130" rx="18" fill="#e5e7eb"/>
+  </g>
+  <g transform="translate(720 220)" fill="none" stroke="#111827" stroke-width="28" stroke-linecap="round">
+    <path d="M50 270h330"/>
+    <path d="M115 230l80-150"/>
+    <path d="M245 80l92 150"/>
+    <path d="M90 270l-40 70"/>
+    <path d="M340 270l44 70"/>
+  </g>
+</svg>

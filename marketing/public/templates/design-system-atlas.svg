@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Professional services website preview</title>
+  <desc id="desc">A premium professional services website preview with strategy blocks, proof cards, and consultation call to action.</desc>
+  <rect width="1200" height="760" fill="#0b1220"/>
+  <rect x="78" y="70" width="1044" height="620" rx="30" fill="#ffffff"/>
+  <path d="M78 492h1044v198H78z" fill="#eef2ff"/>
+  <text x="130" y="146" font-family="Arial, sans-serif" font-size="30" font-weight="900" fill="#0b1220">Atlas Advisory</text>
+  <text x="760" y="146" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="#334155">Services  Proof  Contact</text>
+  <text x="130" y="270" font-family="Arial, sans-serif" font-size="62" font-weight="900" fill="#0b1220">Strategy made</text>
+  <text x="130" y="342" font-family="Arial, sans-serif" font-size="62" font-weight="900" fill="#0b1220">visible fast.</text>
+  <rect x="130" y="385" width="230" height="60" rx="30" fill="#35dcea"/>
+  <text x="166" y="424" font-family="Arial, sans-serif" font-size="20" font-weight="900" fill="#0b1220">Book Consultation</text>
+  <g transform="translate(690 220)">
+    <rect x="0" y="0" width="310" height="210" rx="24" fill="#f8fafc" stroke="#cbd5e1" stroke-width="4"/>
+    <rect x="42" y="45" width="220" height="22" rx="11" fill="#0443fb"/>
+    <rect x="42" y="98" width="150" height="22" rx="11" fill="#35dcea"/>
+    <rect x="42" y="150" width="250" height="22" rx="11" fill="#a83489"/>
+  </g>
+  <rect x="130" y="550" width="250" height="76" rx="16" fill="#fff"/>
+  <rect x="425" y="550" width="250" height="76" rx="16" fill="#fff"/>
+  <rect x="720" y="550" width="250" height="76" rx="16" fill="#fff"/>
+</svg>

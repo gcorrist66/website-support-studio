@@ -1,0 +1,412 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import { DEFAULT_OG_IMAGE, SITE_URL } from "../consts";
+import { breadcrumbSchema, ID } from "../schema";
+
+type GalleryPreview = {
+  slug: string;
+  category: "Home Services" | "Medical" | "Professional" | "Food" | "Retail" | "Automotive" | "Construction" | "Community";
+  industry: string;
+  business: string;
+  style: string;
+  headline: string;
+  description: string;
+  nav: string[];
+  cta: string;
+  services: string[];
+  proof: string;
+  layout: string;
+  palette: string;
+  demoHref?: string;
+};
+
+const filters = ["All", "Home Services", "Medical", "Professional", "Food", "Retail", "Automotive", "Construction", "Community"] as const;
+
+const galleryPreviews: GalleryPreview[] = [
+  { slug: "greenline-landscaping", category: "Home Services", industry: "Landscaping", business: "Greenline Outdoor Co.", style: "Editorial outdoor service", headline: "Outdoor spaces that feel finished before the first estimate.", description: "A rich landscaping homepage direction with large project visuals, seasonal service paths, and estimate-first messaging. It is built to help homeowners quickly understand the quality of the work and request a consultation.", nav: ["Services", "Projects", "Care Plans"], cta: "Plan My Yard", services: ["Design", "Maintenance", "Lighting"], proof: "124 local yards redesigned", layout: "split", palette: "verdant", demoHref: "/templates/sample/greenline-landscaping" },
+  { slug: "ridgeline-roofing", category: "Home Services", industry: "Roofing", business: "Ridgeline Roofing", style: "Bold contractor", headline: "Roofing crews built for urgent repairs and clean replacements.", description: "A conversion-heavy roofing layout with emergency callouts, warranty proof, and clear service-area signals. The design feels strong and dependable without burying the homeowner in contractor jargon.", nav: ["Repairs", "Replacement", "Financing"], cta: "Book Roof Inspection", services: ["Storm Damage", "Shingles", "Flat Roofs"], proof: "4.9 rating from local homeowners", layout: "impact", palette: "steel", demoHref: "/templates/sample/ridgeline-roofing" },
+  { slug: "northwind-hvac", category: "Home Services", industry: "HVAC", business: "Northwind Comfort", style: "High-conversion service", headline: "Same-day heating and cooling help without the runaround.", description: "A practical HVAC homepage that makes appointments, rebates, and service types obvious above the fold. The mockup balances trust, speed, and homeowner reassurance.", nav: ["Cooling", "Heating", "Maintenance"], cta: "Schedule Service", services: ["AC Repair", "Heat Pumps", "Tune-Ups"], proof: "Same-day appointments available", layout: "dashboard", palette: "frost", demoHref: "/templates/sample/northwind-hvac" },
+  { slug: "brightwire-electric", category: "Home Services", industry: "Electrical", business: "Brightwire Electric", style: "Clean technical", headline: "Licensed electrical work for safer homes and sharper businesses.", description: "A crisp electrical contractor concept with service cards, safety language, and commercial/residential paths. It is designed for people who need competence to feel visible fast.", nav: ["Residential", "Commercial", "Panels"], cta: "Request Electrician", services: ["Panels", "EV Chargers", "Lighting"], proof: "Licensed and insured crews", layout: "grid", palette: "voltage", demoHref: "/templates/sample/brightwire-electric" },
+  { slug: "mainline-plumbing", category: "Home Services", industry: "Plumbing", business: "Mainline Plumbing", style: "Emergency local service", headline: "Leaks, drains, and water heaters fixed with clear next steps.", description: "A direct plumbing homepage with urgent CTAs, service triage, and trust badges for homeowners in a hurry. It keeps the page useful and calm when the customer has a problem now.", nav: ["Emergency", "Drains", "Water Heaters"], cta: "Get Plumbing Help", services: ["Leak Repair", "Drain Clearing", "Installations"], proof: "Upfront options before work starts", layout: "service", palette: "water", demoHref: "/templates/sample/mainline-plumbing" },
+  { slug: "brushmark-painting", category: "Home Services", industry: "Painting", business: "Brushmark Studio", style: "Premium residential", headline: "A cleaner, calmer painting experience from prep to final walk-through.", description: "A polished painting-company direction with color consultation, project sequencing, and before-after framing. It helps a homeowner picture the outcome before they request an estimate.", nav: ["Interiors", "Exteriors", "Cabinets"], cta: "Start Color Plan", services: ["Whole Home", "Cabinets", "Exteriors"], proof: "Dust-controlled prep process", layout: "editorial", palette: "clay" },
+  { slug: "canopy-tree-care", category: "Home Services", industry: "Tree Service", business: "Canopy Tree Care", style: "Rugged specialist", headline: "Tree removal, trimming, and storm cleanup with certified care.", description: "A tree-service mockup with strong safety cues, seasonal urgency, and clear residential paths. The visual system feels outdoorsy and capable instead of generic.", nav: ["Removal", "Trimming", "Storm Cleanup"], cta: "Check My Trees", services: ["Pruning", "Removal", "Risk Checks"], proof: "Certified arborist oversight", layout: "collage", palette: "forest", demoHref: "/templates/sample/canopy-tree-care" },
+  { slug: "pearl-dental", category: "Medical", industry: "Dentist", business: "Pearl Street Dental", style: "Warm clinical", headline: "Modern family dentistry that feels calm from the first click.", description: "A dental homepage sample with appointment-first structure, insurance cues, and patient comfort messaging. It makes the practice feel professional without becoming cold.", nav: ["Services", "Insurance", "New Patients"], cta: "Book New Patient Visit", services: ["Cleanings", "Cosmetic", "Emergency"], proof: "New patient openings this month", layout: "split", palette: "pearl" },
+  { slug: "align-orthodontics", category: "Medical", industry: "Orthodontist", business: "Align Avenue Orthodontics", style: "Bright modern care", headline: "Confident smiles with clear aligners and flexible visits.", description: "An orthodontic concept with plan comparison, teen/adult paths, and a friendly consultation flow. The page gives families enough clarity to take the next step.", nav: ["Invisalign", "Braces", "Results"], cta: "Book Smile Consult", services: ["Kids", "Teens", "Adults"], proof: "Flexible monthly plans", layout: "product", palette: "mint" },
+  { slug: "harbor-legal", category: "Professional", industry: "Law Firm", business: "Harbor Legal Group", style: "Established professional", headline: "Clear legal guidance for the decisions that cannot wait.", description: "A law-firm homepage direction with practice-area hierarchy, attorney trust, and a serious tone. It presents credibility quickly while keeping the consultation path obvious.", nav: ["Practice Areas", "Attorneys", "Results"], cta: "Request Consultation", services: ["Business", "Real Estate", "Estate Planning"], proof: "Responsive counsel for local clients", layout: "minimal", palette: "navy", demoHref: "/templates/sample/harbor-legal-group" },
+  { slug: "ledger-cpa", category: "Professional", industry: "CPA", business: "Ledger & Lane CPA", style: "Quiet corporate", headline: "Tax, books, and planning for businesses that need cleaner numbers.", description: "A CPA homepage with clean information architecture, service tiers, and credibility for owners who want less financial ambiguity. The design feels precise, calm, and senior.", nav: ["Tax", "Bookkeeping", "Advisory"], cta: "Plan My Taxes", services: ["Monthly Books", "Tax Prep", "Planning"], proof: "Year-round business support", layout: "dashboard", palette: "sage" },
+  { slug: "evercover-insurance", category: "Professional", industry: "Insurance", business: "EverCover Agency", style: "Trust-first local", headline: "Coverage reviews that make policy decisions easier.", description: "An insurance agency mockup with quote paths, policy categories, and a low-pressure consult flow. It keeps the focus on protection, clarity, and local guidance.", nav: ["Home", "Auto", "Business"], cta: "Compare Coverage", services: ["Personal", "Commercial", "Life"], proof: "Independent carrier options", layout: "grid", palette: "sky" },
+  { slug: "solace-medical", category: "Medical", industry: "Medical", business: "Solace Primary Care", style: "Healthcare editorial", headline: "Primary care designed around easier access and better follow-up.", description: "A medical-practice concept with patient paths, care categories, and a calm scheduling experience. It helps the clinic feel modern while keeping clinical credibility intact.", nav: ["Care", "Providers", "Patients"], cta: "Schedule Appointment", services: ["Primary Care", "Labs", "Telehealth"], proof: "Same-week visit options", layout: "editorial", palette: "clinic" },
+  { slug: "kindpaw-vet", category: "Medical", industry: "Veterinarian", business: "Kindpaw Veterinary", style: "Friendly neighborhood care", headline: "Veterinary visits with clear plans for every stage of life.", description: "A veterinary homepage with wellness plans, urgent care signals, and soft visual cues for pet owners. The design supports trust without feeling sterile.", nav: ["Wellness", "Urgent", "Surgery"], cta: "Book Vet Visit", services: ["Puppy Care", "Dental", "Diagnostics"], proof: "Fear-aware appointment flow", layout: "collage", palette: "sunrise" },
+  { slug: "table-and-hearth", category: "Food", industry: "Restaurant", business: "Table & Hearth", style: "Atmospheric dining", headline: "Seasonal plates, warm service, and a reservation path that feels effortless.", description: "A restaurant mockup with menu highlights, reservation prompts, and event-ready sections. It sells the experience visually before the visitor reads the menu.", nav: ["Menu", "Reservations", "Events"], cta: "Reserve a Table", services: ["Dinner", "Private Events", "Wine"], proof: "Chef-led seasonal menu", layout: "luxury", palette: "ember", demoHref: "/templates/sample/table-and-hearth" },
+  { slug: "brightbean-coffee", category: "Food", industry: "Coffee Shop", business: "Brightbean Coffee", style: "Creative neighborhood", headline: "A local coffee stop built for morning regulars and weekend hangs.", description: "A coffee-shop concept with hours, order-ahead prompts, featured drinks, and community energy. The homepage feels lively without becoming cluttered.", nav: ["Menu", "Order", "Events"], cta: "Order Ahead", services: ["Espresso", "Pastries", "Catering"], proof: "Roasted weekly in small batches", layout: "product", palette: "coffee", demoHref: "/templates/luna/coffee-shop" },
+  { slug: "flour-house", category: "Food", industry: "Bakery", business: "Flour House Bakery", style: "Warm artisan", headline: "Small-batch bread, cakes, and pastries with a story worth tasting.", description: "A bakery homepage with product collections, ordering cues, and a soft editorial look. It works for walk-in traffic and custom cake inquiries at the same time.", nav: ["Breads", "Cakes", "Order"], cta: "Start Custom Order", services: ["Sourdough", "Cakes", "Dessert Tables"], proof: "Fresh menu every morning", layout: "editorial", palette: "butter" },
+  { slug: "ironform-fitness", category: "Community", industry: "Fitness", business: "Ironform Training", style: "Performance conversion", headline: "Training plans that turn intention into booked sessions.", description: "A fitness studio concept with program paths, transformation proof, and a strong first-session offer. It is designed to make joining feel specific and achievable.", nav: ["Programs", "Coaches", "Results"], cta: "Book Intro Session", services: ["Strength", "Small Group", "Nutrition"], proof: "4-week starter plan", layout: "impact", palette: "graphite" },
+  { slug: "stillroom-yoga", category: "Community", industry: "Yoga", business: "Stillroom Yoga", style: "Minimal wellness", headline: "A quieter place to build strength, mobility, and rhythm.", description: "A yoga studio homepage with class categories, instructor warmth, and a restrained visual system. The page feels calm while still guiding visitors toward a first class.", nav: ["Classes", "Teachers", "Schedule"], cta: "Try First Class", services: ["Flow", "Restore", "Workshops"], proof: "Beginner-friendly schedule", layout: "minimal", palette: "linen" },
+  { slug: "luna-salon", category: "Retail", industry: "Salon", business: "Luna Hair Studio", style: "Luxury boutique", headline: "Color, cuts, and styling with a polished appointment experience.", description: "A salon homepage with service menus, stylist proof, and a premium booking feel. It is image-led, refined, and built for high-intent appointment requests.", nav: ["Services", "Stylists", "Gallery"], cta: "Book My Chair", services: ["Color", "Cuts", "Extensions"], proof: "Specialists in lived-in color", layout: "luxury", palette: "rose", demoHref: "/templates/luna/salon" },
+  { slug: "atlas-spa", category: "Medical", industry: "Spa", business: "Atlas Skin Spa", style: "Premium med-spa", headline: "Skin treatments presented with calm confidence and clear booking.", description: "A spa homepage with treatment pathways, membership cues, and a refined high-end tone. It makes the offer feel clinical enough to trust and beautiful enough to desire.", nav: ["Treatments", "Memberships", "Results"], cta: "Book Skin Consult", services: ["Facials", "Injectables", "Laser"], proof: "Personal treatment plans", layout: "split", palette: "plum" },
+  { slug: "precision-auto", category: "Automotive", industry: "Auto Repair", business: "Precision Auto Works", style: "Technical garage", headline: "Repairs, diagnostics, and maintenance explained before the lift goes up.", description: "An auto-repair mockup with diagnostic paths, trust proof, and repeat-maintenance cues. It turns a category people distrust into a page that feels transparent.", nav: ["Repair", "Diagnostics", "Maintenance"], cta: "Schedule Repair", services: ["Brakes", "Diagnostics", "Oil Service"], proof: "Digital inspection reports", layout: "industrial", palette: "asphalt" },
+  { slug: "mirrorfinish-detail", category: "Automotive", industry: "Auto Detail", business: "MirrorFinish Detail", style: "Luxury automotive", headline: "Paint correction and ceramic coating shown like a premium finish.", description: "An auto-detail homepage with package cards, dramatic surface treatment, and high-end proof. It helps the visitor understand why the work is worth more than a quick wash.", nav: ["Packages", "Ceramic", "Portfolio"], cta: "Choose Detail Package", services: ["Correction", "Coating", "Interior"], proof: "Studio-grade finish process", layout: "luxury", palette: "carbon" },
+  { slug: "nestfield-realty", category: "Professional", industry: "Real Estate", business: "Nestfield Realty", style: "Editorial property", headline: "Local real estate guidance with listings, strategy, and neighborhood signal.", description: "A real-estate homepage with buyer/seller paths, market proof, and a polished listing feel. It positions the agent as both local and premium.", nav: ["Buy", "Sell", "Listings"], cta: "Start My Move", services: ["Buyers", "Sellers", "Valuation"], proof: "Neighborhood-first market advice", layout: "collage", palette: "terracotta" },
+  { slug: "doorstead-property", category: "Professional", industry: "Property Management", business: "Doorstead Property Co.", style: "Operational corporate", headline: "Property management that makes owners feel informed every month.", description: "A property-management concept with owner/renter paths, reporting proof, and maintenance clarity. It is built for trust, process, and recurring-service conversion.", nav: ["Owners", "Tenants", "Maintenance"], cta: "Get Rental Review", services: ["Leasing", "Repairs", "Reporting"], proof: "Owner dashboard workflow", layout: "dashboard", palette: "indigo" },
+  { slug: "cornerstone-build", category: "Construction", industry: "Construction", business: "Cornerstone Builders", style: "Industrial premium", headline: "Commercial builds managed with visible process and accountable teams.", description: "A construction-company homepage with project proof, capabilities, and leadership signals. The design feels substantial and organized for larger contracts.", nav: ["Projects", "Capabilities", "Safety"], cta: "Discuss Project", services: ["Buildouts", "Renovation", "Site Work"], proof: "Phased project management", layout: "industrial", palette: "concrete", demoHref: "/templates/sample/cornerstone-concrete" },
+  { slug: "forgeworks-manufacturing", category: "Construction", industry: "Manufacturing", business: "ForgeWorks Manufacturing", style: "B2B industrial", headline: "Precision fabrication capacity presented for serious buyers.", description: "A manufacturing homepage with capability blocks, specification cues, and procurement-friendly proof. It makes a technical company easier to evaluate quickly.", nav: ["Capabilities", "Quality", "RFQ"], cta: "Request Quote", services: ["CNC", "Welding", "Assembly"], proof: "ISO-ready documentation flow", layout: "grid", palette: "cobalt" },
+  { slug: "clarity-consulting", category: "Professional", industry: "Consulting", business: "Clarity Ops Consulting", style: "Modern advisory", headline: "Sharper systems for teams outgrowing duct-tape operations.", description: "A consulting homepage with clear problem framing, service lanes, and case-study proof. It feels polished enough for executives while staying practical.", nav: ["Services", "Approach", "Results"], cta: "Map My Ops", services: ["Process", "Automation", "Dashboards"], proof: "Operator-led implementation", layout: "minimal", palette: "ink" },
+  { slug: "signalhouse-agency", category: "Professional", industry: "Marketing Agency", business: "Signalhouse Studio", style: "Creative agency", headline: "Campaigns, sites, and content systems that make demand easier to see.", description: "A marketing-agency direction with punchy proof, modular service lanes, and a confident creative tone. It avoids vague agency copy and moves toward conversion.", nav: ["Work", "Services", "Strategy"], cta: "Plan Campaign", services: ["Web", "Content", "Ads"], proof: "Conversion-focused creative", layout: "product", palette: "magenta" },
+  { slug: "commonthread-nonprofit", category: "Community", industry: "Nonprofit", business: "CommonThread Fund", style: "Human-centered impact", headline: "Impact stories and donation paths that make support feel immediate.", description: "A nonprofit homepage with clear mission, proof rows, and donation-oriented storytelling. It keeps the emotional work honest and action-focused.", nav: ["Mission", "Programs", "Donate"], cta: "Support The Work", services: ["Programs", "Volunteer", "Donate"], proof: "Local families served weekly", layout: "editorial", palette: "teal" },
+  { slug: "gracepoint-church", category: "Community", industry: "Church", business: "Gracepoint Church", style: "Welcoming community", headline: "A warm first visit path for families looking for a church home.", description: "A church homepage with service times, newcomer expectations, and ministry paths. It makes the next Sunday feel less uncertain.", nav: ["Visit", "Messages", "Groups"], cta: "Plan A Visit", services: ["Sunday", "Kids", "Groups"], proof: "Clear first-visit guidance", layout: "split", palette: "gold" },
+  { slug: "little-harbor-daycare", category: "Community", industry: "Daycare", business: "Little Harbor Learning", style: "Friendly parent trust", headline: "Early learning presented with safety, warmth, and simple enrollment.", description: "A daycare homepage with age-group paths, parent proof, and enrollment clarity. It is playful enough for children and structured enough for parents.", nav: ["Programs", "Tuition", "Visit"], cta: "Schedule A Tour", services: ["Infants", "Toddlers", "Pre-K"], proof: "Secure check-in process", layout: "collage", palette: "crayon" },
+  { slug: "freshcoat-grooming", category: "Retail", industry: "Pet Grooming", business: "FreshCoat Grooming", style: "Playful local service", headline: "Pet grooming that looks polished and books fast.", description: "A pet-grooming mockup with package cards, appointment flow, and cheerful trust signals. It is distinct, local, and built for repeat bookings.", nav: ["Services", "Packages", "Book"], cta: "Book Grooming", services: ["Bath", "Haircut", "Nail Trim"], proof: "Text reminders for every visit", layout: "service", palette: "coral" },
+  { slug: "stem-and-stone", category: "Retail", industry: "Florist", business: "Stem & Stone Floral", style: "Boutique editorial", headline: "Florals for everyday moments, weddings, and rooms that need life.", description: "A florist homepage with arrangement categories, event paths, and a gallery-forward visual language. It feels artisanal without sacrificing ordering clarity.", nav: ["Shop", "Weddings", "Events"], cta: "Order Flowers", services: ["Bouquets", "Weddings", "Corporate"], proof: "Local delivery windows", layout: "luxury", palette: "garden" },
+  { slug: "heritage-flooring", category: "Home Services", industry: "Flooring", business: "Heritage Flooring Co.", style: "Showroom install", headline: "Flooring installs, refinishing, and showroom visits with polished project flow.", description: "A flooring homepage concept with product paths, installation planning, and showroom-quality visual treatment. It uses a CSS-built flooring mockup, so there is no broken stock image dependency.", nav: ["Hardwood", "Tile", "Showroom"], cta: "Plan My Floors", services: ["Hardwood", "Luxury Vinyl", "Tile"], proof: "Samples and install planning", layout: "product", palette: "walnut" },
+  { slug: "district-market", category: "Retail", industry: "Retail", business: "District Market", style: "Urban shop", headline: "A local retail homepage that turns discovery into store visits.", description: "A retail concept with featured collections, hours, and product-forward sections. It supports both browsing and urgent local information.", nav: ["New", "Collections", "Visit"], cta: "See New Arrivals", services: ["Apparel", "Gifts", "Local Pickup"], proof: "Weekly collection drops", layout: "grid", palette: "lime" },
+  { slug: "brilliant-jewelers", category: "Retail", industry: "Jewelry", business: "Brilliant House Jewelers", style: "Luxury trust", headline: "Fine jewelry, repairs, and custom pieces with appointment-level polish.", description: "A jewelry homepage with luxury visuals, service proof, and consult-first conversion. The layout helps an expensive purchase feel careful and credible.", nav: ["Collections", "Custom", "Repair"], cta: "Book Private Consult", services: ["Rings", "Custom", "Appraisals"], proof: "Private appointment experience", layout: "luxury", palette: "champagne" },
+  { slug: "haven-home-builder", category: "Construction", industry: "Home Builder", business: "Haven Home Builders", style: "Premium residential", headline: "Custom homes presented with process, taste, and quiet confidence.", description: "A home-builder homepage with portfolio storytelling, process steps, and premium consultation framing. It makes the builder feel established before the first call.", nav: ["Homes", "Process", "Portfolio"], cta: "Start Home Plan", services: ["Custom Homes", "Renovations", "Design Build"], proof: "Design-build project path", layout: "editorial", palette: "stone" },
+  { slug: "bluewave-pools", category: "Home Services", industry: "Pool Company", business: "Bluewave Pools", style: "Resort service", headline: "Pool care, repairs, and outdoor upgrades with a resort-level feel.", description: "A pool-company mockup with service plans, repair paths, and shimmering visual treatment. It sells reliability and the lifestyle outcome together.", nav: ["Care Plans", "Repairs", "Renovations"], cta: "Get Pool Plan", services: ["Cleaning", "Equipment", "Renovation"], proof: "Weekly service routes", layout: "split", palette: "aqua", demoHref: "/templates/sample/bluewave-pools" },
+  { slug: "shieldline-pest", category: "Home Services", industry: "Pest Control", business: "Shieldline Pest Control", style: "Direct protection", headline: "Pest control plans that protect the home without confusion.", description: "A pest-control homepage with seasonal issue paths, treatment proof, and clear plan options. It makes a reactive service feel organized.", nav: ["Treatments", "Plans", "Areas"], cta: "Get Pest Plan", services: ["Ants", "Termites", "Rodents"], proof: "Family-conscious treatment options", layout: "service", palette: "olive", demoHref: "/templates/sample/shieldline-pest-control" },
+  { slug: "helios-solar", category: "Construction", industry: "Solar", business: "Helios Solar Co.", style: "Clean energy corporate", headline: "Solar savings explained with numbers, not pressure.", description: "A solar homepage with calculator-style proof, financing pathways, and clean technical confidence. It guides homeowners from curiosity to consultation.", nav: ["Savings", "Install", "Financing"], cta: "Estimate Solar Savings", services: ["Residential", "Battery", "Commercial"], proof: "Utility-bill review included", layout: "dashboard", palette: "solar" },
+  { slug: "brightwash-exteriors", category: "Home Services", industry: "Pressure Washing", business: "Brightwash Exteriors", style: "Before-after service", headline: "Clean exteriors that make driveways, siding, and storefronts look new.", description: "A pressure-washing homepage with visual comparison panels, service bundles, and local estimate prompts. The page makes the result easy to understand instantly.", nav: ["House Wash", "Concrete", "Commercial"], cta: "Price My Wash", services: ["Siding", "Driveways", "Roofs"], proof: "Soft-wash safe methods", layout: "collage", palette: "fresh", demoHref: "/templates/sample/brightwash-exterior-cleaning" },
+  { slug: "clearview-windows", category: "Home Services", industry: "Window Cleaning", business: "Clearview Window Co.", style: "Bright local service", headline: "Window cleaning that makes homes and storefronts feel lighter.", description: "A window-cleaning homepage with package paths, recurring service prompts, and airy visuals. It helps a simple service feel worth scheduling.", nav: ["Residential", "Commercial", "Recurring"], cta: "Book Window Cleaning", services: ["Interior", "Exterior", "Screens"], proof: "Recurring route discounts", layout: "minimal", palette: "glass" },
+  { slug: "movewell-logistics", category: "Home Services", industry: "Moving Company", business: "MoveWell Logistics", style: "Organized local move", headline: "A moving company homepage that lowers stress before move day.", description: "A moving-company concept with quote steps, service types, and trust cues for families planning a transition. It makes the process feel scheduled and controlled.", nav: ["Local", "Packing", "Storage"], cta: "Get Moving Quote", services: ["Homes", "Apartments", "Packing"], proof: "Room-by-room move planning", layout: "dashboard", palette: "route" },
+];
+
+const featured = galleryPreviews[0];
+const previewCount = galleryPreviews.length;
+
+const schemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Website Gallery",
+    description:
+      "A gallery of browser-framed sample homepage ideas for local service, professional, medical, food, retail, automotive, construction, and community businesses.",
+    url: new URL("/website-gallery", SITE_URL).href,
+    isPartOf: { "@id": ID.website },
+    publisher: { "@id": ID.org },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: previewCount,
+      itemListElement: galleryPreviews.map((preview, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: `${preview.business} ${preview.industry} sample homepage`,
+        url: new URL(`/website-gallery#preview-${preview.slug}`, SITE_URL).href,
+      })),
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Website Gallery", path: "/website-gallery" },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Website Gallery"
+  description="Browse premium browser-framed sample homepage directions for local businesses, professional services, medical offices, restaurants, retail, construction, and more."
+  path="/website-gallery"
+  image={DEFAULT_OG_IMAGE}
+  schemas={schemas}
+>
+  <section class="gallery-hero" aria-labelledby="gallery-heading">
+    <div class="container gallery-hero-grid">
+      <div class="gallery-hero-copy">
+        <p class="kicker"><Label text="_website_gallery" /></p>
+        <h1 id="gallery-heading">See what your business could look like.</h1>
+        <p class="lede">
+          Browse browser-framed sample homepage ideas built to show how Website Support Studio can turn a local business into a polished, conversion-ready web presence.
+        </p>
+        <div class="gallery-hero-actions">
+          <a class="btn btn-green btn-cta" href="/free-website-preview" data-ga-event="click_gallery_hero_preview">Get My Free Website Preview</a>
+          <a class="btn btn-ghost" href="#gallery-grid" data-ga-event="click_gallery_browse">Browse Website Ideas</a>
+        </div>
+      </div>
+      <article class="featured-preview" aria-labelledby="featured-preview-heading">
+        <div class="featured-meta">
+          <span>Featured Preview</span>
+          <strong>{featured.industry}</strong>
+        </div>
+        <div class={`site-frame site-frame--large mock-${featured.layout} palette-${featured.palette}`}>
+          <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{featured.business.toLowerCase().replaceAll(" ", "")}.com</em></div>
+          <div class="mock-site">
+            <div class="mock-top">
+              <strong>{featured.business}</strong>
+              <nav aria-label={`${featured.business} sample navigation`}>
+                {featured.nav.map((item) => <span>{item}</span>)}
+              </nav>
+            </div>
+            <div class="mock-hero">
+              <div>
+                <p>{featured.style}</p>
+                <h2 id="featured-preview-heading">{featured.headline}</h2>
+                <span>{featured.cta}</span>
+              </div>
+              <div class="mock-art" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+            <div class="mock-proof">
+              <strong>{featured.proof}</strong>
+              {featured.services.map((service) => <span>{service}</span>)}
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="gallery-section" aria-labelledby="gallery-grid-heading">
+    <div class="container">
+      <div class="gallery-section-head">
+        <div>
+          <p class="kicker"><Label text="_sample_homepage_ideas" /></p>
+          <h2 id="gallery-grid-heading">Premium sample concepts across local industries.</h2>
+        </div>
+        <p>
+          These are sample previews and mockups, not claims of finished client sites. They show the kind of polished homepage direction we can prepare from your business details.
+        </p>
+      </div>
+
+      <div class="gallery-filters" aria-label="Filter website gallery">
+        {filters.map((filter, index) => (
+          <button type="button" class="gallery-filter" data-filter={filter} aria-pressed={index === 0 ? "true" : "false"}>{filter}</button>
+        ))}
+      </div>
+
+      <div class="website-gallery-grid" id="gallery-grid">
+        {galleryPreviews.map((preview) => (
+          <article
+            class="gallery-card"
+            id={`preview-${preview.slug}`}
+            data-category={preview.category}
+            style={`--card-index:${galleryPreviews.indexOf(preview) % 7};`}
+          >
+            <div class={`site-frame mock-${preview.layout} palette-${preview.palette}`}>
+              <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{preview.business.toLowerCase().replaceAll(" ", "")}.com</em></div>
+              <div class="mock-site">
+                <div class="mock-top">
+                  <strong>{preview.business}</strong>
+                  <nav aria-label={`${preview.business} sample navigation`}>
+                    {preview.nav.map((item) => <span>{item}</span>)}
+                  </nav>
+                </div>
+                <div class="mock-hero">
+                  <div>
+                    <p>{preview.style}</p>
+                    <h3>{preview.headline}</h3>
+                    <span>{preview.cta}</span>
+                  </div>
+                  <div class="mock-art" aria-hidden="true"><i></i><i></i><i></i></div>
+                </div>
+                <div class="mock-proof">
+                  <strong>{preview.proof}</strong>
+                  {preview.services.map((service) => <span>{service}</span>)}
+                </div>
+              </div>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-meta">
+                <span>{preview.industry}</span>
+                <small>{preview.category}</small>
+              </div>
+              <h3>{preview.business}</h3>
+              <p>{preview.description}</p>
+              <div class="gallery-card-actions">
+                <a class="btn btn-ghost" href={preview.demoHref ?? `#preview-${preview.slug}`} data-ga-event="click_gallery_view_preview" data-ga-label={preview.slug}>View Preview</a>
+                <a class="btn btn-green btn-cta" href={`/free-website-preview?industry=${encodeURIComponent(preview.industry)}&style=${encodeURIComponent(preview.business)}`} data-ga-event="click_gallery_request_like_this" data-ga-label={preview.slug}>Request One Like This</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-cta" aria-labelledby="gallery-cta-heading">
+    <div class="container gallery-cta-inner">
+      <p class="kicker"><Label text="_ready_to_see_yours" /></p>
+      <h2 id="gallery-cta-heading">Ready to see YOUR business?</h2>
+      <p>
+        Send your business details and we will prepare a custom preview direction built around your services, customers, and next best call to action.
+      </p>
+      <a class="btn btn-green btn-cta" href="/free-website-preview" data-ga-event="click_gallery_bottom_preview">Get My Free Website Preview</a>
+    </div>
+  </section>
+
+  <script>
+    const filterButtons = Array.from(document.querySelectorAll(".gallery-filter"));
+    const galleryCards = Array.from(document.querySelectorAll(".gallery-card"));
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const filter = button.getAttribute("data-filter");
+        filterButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        galleryCards.forEach((card) => {
+          const shouldShow = filter === "All" || card.getAttribute("data-category") === filter;
+          card.toggleAttribute("hidden", !shouldShow);
+        });
+      });
+    });
+  </script>
+
+  <style>
+    .gallery-hero { padding:clamp(2.4rem,7vw,6.5rem) 0 clamp(2rem,5vw,4rem); background:linear-gradient(180deg,#fff 0%,#f7f8f5 100%); overflow:hidden; }
+    .gallery-hero-grid { display:grid; grid-template-columns:minmax(0,.86fr) minmax(360px,1.14fr); gap:clamp(1.5rem,5vw,4rem); align-items:center; }
+    .gallery-hero-copy h1 { max-width:820px; margin:.55rem 0 0; font-size:clamp(2.45rem,6vw,5.35rem); line-height:.95; letter-spacing:0; overflow-wrap:normal; word-break:normal; hyphens:none; }
+    .gallery-hero-copy .lede { max-width:62ch; margin-top:1rem; }
+    .gallery-hero-actions,
+    .gallery-card-actions { display:flex; flex-wrap:wrap; gap:.65rem; align-items:center; }
+    .gallery-hero-actions { margin-top:1.35rem; }
+    .featured-preview { min-width:0; }
+    .featured-meta { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:.75rem; color:var(--text-muted); font-size:.85rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
+    .featured-meta strong { color:var(--text); letter-spacing:0; text-transform:none; font-size:.95rem; }
+    .gallery-section { padding:clamp(2.5rem,6vw,5rem) 0; background:var(--surface); }
+    .gallery-section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.72fr); gap:1.5rem; align-items:end; margin-bottom:1.25rem; }
+    .gallery-section-head h2 { margin:.35rem 0 0; max-width:13ch; font-size:clamp(2rem,5vw,4.2rem); line-height:.96; letter-spacing:0; }
+    .gallery-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
+    .gallery-filters { position:sticky; top:0; z-index:2; display:flex; gap:.5rem; overflow:auto; padding:.75rem 0 1rem; margin-bottom:.5rem; background:linear-gradient(180deg,var(--surface) 72%,rgba(250,250,247,0)); scrollbar-width:none; }
+    .gallery-filters::-webkit-scrollbar { display:none; }
+    .gallery-filter { flex:0 0 auto; border:1px solid var(--border); border-radius:999px; padding:.58rem .8rem; background:#fff; color:var(--text); font:inherit; font-size:.88rem; font-weight:900; cursor:pointer; transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease; }
+    .gallery-filter[aria-pressed="true"] { background:var(--ink); border-color:var(--ink); color:#fff; }
+    .gallery-filter:hover { transform:translateY(-1px); }
+    .website-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(1rem,2vw,1.35rem); align-items:start; }
+    .gallery-card { min-width:0; border:1px solid rgba(11,18,32,.1); border-radius:8px; background:#fff; box-shadow:0 18px 54px rgba(11,18,32,.06); overflow:hidden; transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+    .gallery-card:hover { transform:translateY(-5px) scale(1.01); border-color:rgba(11,18,32,.18); box-shadow:0 26px 70px rgba(11,18,32,.13); }
+    .gallery-card[hidden] { display:none; }
+    .gallery-card-body { display:grid; gap:.75rem; padding:1rem; }
+    .gallery-card-meta { display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+    .gallery-card-meta span { display:inline-flex; align-items:center; border:1px solid color-mix(in srgb,var(--accent) 34%,#fff); border-radius:999px; padding:.28rem .55rem; background:color-mix(in srgb,var(--accent) 12%,#fff); color:color-mix(in srgb,var(--accent) 72%,#111); font-size:.75rem; font-weight:950; }
+    .gallery-card-meta small { color:var(--text-muted); font-size:.75rem; font-weight:850; }
+    .gallery-card-body h3 { margin:0; font-size:1.2rem; line-height:1.15; letter-spacing:0; }
+    .gallery-card-body p { margin:0; color:var(--text-muted); line-height:1.58; font-size:.95rem; }
+    .gallery-card-actions .btn { flex:1 1 150px; justify-content:center; min-height:2.55rem; padding-inline:.85rem; white-space:normal; text-align:center; }
+    .site-frame { --accent:#35dcea; --deep:#0b1220; --soft:#eff6f2; --paper:#fff; border:1px solid rgba(11,18,32,.13); border-radius:8px; background:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.72); overflow:hidden; }
+    .site-frame--large { box-shadow:0 32px 100px rgba(11,18,32,.16); }
+    .browser-bar { display:flex; align-items:center; gap:.36rem; height:2rem; padding:0 .75rem; border-bottom:1px solid rgba(11,18,32,.09); background:#f8faf7; }
+    .browser-bar span { width:.55rem; height:.55rem; border-radius:999px; background:#d7ded8; }
+    .browser-bar span:first-child { background:#f06b5f; }
+    .browser-bar span:nth-child(2) { background:#f7c34f; }
+    .browser-bar span:nth-child(3) { background:#57c779; }
+    .browser-bar em { min-width:0; margin-left:.35rem; color:rgba(11,18,32,.55); font-size:.69rem; font-style:normal; font-weight:850; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mock-site { min-height:300px; padding:.85rem; background:
+      radial-gradient(circle at 82% 18%, color-mix(in srgb,var(--accent) 34%,transparent), transparent 28%),
+      linear-gradient(135deg,var(--paper),var(--soft)); color:var(--deep); }
+    .site-frame--large .mock-site { min-height:470px; padding:1.2rem; }
+    .mock-top { display:flex; align-items:center; justify-content:space-between; gap:.8rem; }
+    .mock-top strong { font-size:.88rem; letter-spacing:0; }
+    .mock-top nav { display:flex; gap:.45rem; color:color-mix(in srgb,var(--deep) 68%,#fff); font-size:.58rem; font-weight:900; }
+    .mock-hero { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(86px,.78fr); gap:.8rem; align-items:center; min-height:155px; margin-top:.85rem; }
+    .site-frame--large .mock-hero { min-height:265px; }
+    .mock-hero p { margin:0 0 .38rem; color:color-mix(in srgb,var(--accent) 70%,var(--deep)); font-size:.58rem; font-weight:950; text-transform:uppercase; letter-spacing:.08em; }
+    .mock-hero h2,
+    .mock-hero h3 { margin:0; max-width:100%; font-size:clamp(1.15rem,1.65vw,1.65rem); line-height:1.04; letter-spacing:0; overflow-wrap:normal; word-break:normal; hyphens:none; }
+    .site-frame--large .mock-hero h2 { font-size:clamp(1.75rem,3.1vw,3.2rem); line-height:1; }
+    .mock-hero span { display:inline-flex; width:max-content; max-width:100%; margin-top:.65rem; border-radius:999px; padding:.48rem .65rem; background:var(--accent); color:#071017; font-size:.68rem; font-weight:950; }
+    .mock-art { position:relative; min-height:130px; border-radius:8px; background:
+      linear-gradient(135deg,color-mix(in srgb,var(--accent) 78%,#fff),color-mix(in srgb,var(--deep) 88%,#fff));
+      overflow:hidden; }
+    .site-frame--large .mock-art { min-height:230px; }
+    .mock-art i { position:absolute; display:block; border-radius:999px; background:rgba(255,255,255,.68); }
+    .mock-art i:first-child { width:58%; height:58%; right:-16%; top:-10%; }
+    .mock-art i:nth-child(2) { width:36%; height:70%; left:10%; bottom:-22%; border-radius:8px; }
+    .mock-art i:nth-child(3) { width:46%; height:12%; right:14%; bottom:18%; border-radius:999px; }
+    .mock-proof { display:grid; grid-template-columns:1.35fr repeat(3,1fr); gap:.5rem; margin-top:.8rem; }
+    .mock-proof strong,
+    .mock-proof span { min-width:0; border:1px solid rgba(11,18,32,.08); border-radius:8px; padding:.55rem; background:rgba(255,255,255,.72); font-size:.62rem; font-weight:900; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mock-proof strong { color:var(--deep); }
+    .mock-proof span { color:color-mix(in srgb,var(--deep) 72%,#fff); }
+    .mock-impact .mock-hero,
+    .mock-luxury .mock-hero,
+    .mock-industrial .mock-hero { grid-template-columns:1fr; }
+    .mock-impact .mock-art,
+    .mock-luxury .mock-art,
+    .mock-industrial .mock-art { min-height:90px; }
+    .mock-dashboard .mock-hero { grid-template-columns:1fr .9fr; align-items:start; }
+    .mock-dashboard .mock-art { display:grid; grid-template-columns:repeat(2,1fr); gap:.4rem; padding:.5rem; background:rgba(255,255,255,.54); }
+    .mock-dashboard .mock-art i { position:static; width:auto; height:auto; min-height:45px; border-radius:8px; background:linear-gradient(135deg,var(--accent),rgba(255,255,255,.72)); }
+    .mock-grid .mock-proof { grid-template-columns:repeat(2,1fr); }
+    .mock-editorial .mock-hero { grid-template-columns:.78fr 1fr; }
+    .mock-minimal .mock-site { background:#fff; }
+    .mock-minimal .mock-art { background:linear-gradient(180deg,var(--soft),#fff); border:1px solid rgba(11,18,32,.08); }
+    .mock-product .mock-art { border-radius:999px 999px 8px 8px; }
+    .mock-collage .mock-art { clip-path:polygon(8% 0,100% 10%,92% 100%,0 88%); }
+    .mock-service .mock-proof { grid-template-columns:1fr; }
+    .mock-service .mock-proof span,
+    .mock-service .mock-proof strong { white-space:normal; }
+    .palette-verdant { --accent:#6dbf4b; --deep:#19351f; --soft:#eef6e8; --paper:#fffdf4; }
+    .palette-steel { --accent:#f4b142; --deep:#17202c; --soft:#e9edf2; --paper:#fff; }
+    .palette-frost { --accent:#35dcea; --deep:#10293d; --soft:#eaf8fb; --paper:#fff; }
+    .palette-voltage { --accent:#ffd33d; --deep:#151515; --soft:#f7f2de; --paper:#fff; }
+    .palette-water { --accent:#3bb4e5; --deep:#12334c; --soft:#e8f6fb; --paper:#fbffff; }
+    .palette-clay { --accent:#d37b52; --deep:#33231d; --soft:#fbefe8; --paper:#fff9f4; }
+    .palette-forest { --accent:#7aa66a; --deep:#1c2e22; --soft:#eef4ec; --paper:#fffdf5; }
+    .palette-pearl { --accent:#79d7d5; --deep:#24333d; --soft:#edf9f8; --paper:#fff; }
+    .palette-mint { --accent:#8be6bd; --deep:#143c3a; --soft:#effbf5; --paper:#fff; }
+    .palette-navy { --accent:#c8a45d; --deep:#0e1d34; --soft:#eef2f8; --paper:#fff; }
+    .palette-sage { --accent:#8aa38f; --deep:#17241f; --soft:#f1f5ef; --paper:#fff; }
+    .palette-sky { --accent:#7bb7f0; --deep:#193354; --soft:#edf6ff; --paper:#fff; }
+    .palette-clinic { --accent:#8fd4c7; --deep:#1e3a44; --soft:#f0faf7; --paper:#fff; }
+    .palette-sunrise { --accent:#ffb36c; --deep:#31243b; --soft:#fff2e7; --paper:#fffaf3; }
+    .palette-ember { --accent:#e05f3f; --deep:#271817; --soft:#fbebe5; --paper:#fff8f1; }
+    .palette-coffee { --accent:#c58a50; --deep:#27190f; --soft:#f7efe7; --paper:#fffaf3; }
+    .palette-butter { --accent:#f2c766; --deep:#332717; --soft:#fff7df; --paper:#fffdf6; }
+    .palette-graphite { --accent:#9cff57; --deep:#111317; --soft:#ecf1ed; --paper:#fff; }
+    .palette-linen { --accent:#b79d82; --deep:#2e2924; --soft:#f7f2ea; --paper:#fffaf3; }
+    .palette-rose { --accent:#e49ab1; --deep:#382027; --soft:#fbedf1; --paper:#fff; }
+    .palette-plum { --accent:#c084fc; --deep:#2c173d; --soft:#f6edff; --paper:#fff; }
+    .palette-asphalt { --accent:#f97316; --deep:#171a1d; --soft:#eef0f2; --paper:#fff; }
+    .palette-carbon { --accent:#75d7ff; --deep:#111827; --soft:#e9edf2; --paper:#fff; }
+    .palette-terracotta { --accent:#d97757; --deep:#2d2724; --soft:#f7eee8; --paper:#fff; }
+    .palette-indigo { --accent:#7c8cff; --deep:#1a2143; --soft:#eef0ff; --paper:#fff; }
+    .palette-concrete { --accent:#e0aa3e; --deep:#232323; --soft:#f0efeb; --paper:#fff; }
+    .palette-cobalt { --accent:#4f8cff; --deep:#10233f; --soft:#edf3ff; --paper:#fff; }
+    .palette-ink { --accent:#35dcea; --deep:#0b1220; --soft:#edf4f3; --paper:#fff; }
+    .palette-magenta { --accent:#ff4fc3; --deep:#25142d; --soft:#fbeafd; --paper:#fff; }
+    .palette-teal { --accent:#2dd4bf; --deep:#133d3a; --soft:#ebfaf8; --paper:#fff; }
+    .palette-gold { --accent:#f4b142; --deep:#2d2517; --soft:#fff5df; --paper:#fff; }
+    .palette-crayon { --accent:#ff8f5c; --deep:#2b3551; --soft:#fff1e9; --paper:#fff; }
+    .palette-coral { --accent:#ff7a70; --deep:#32212a; --soft:#fff0ee; --paper:#fff; }
+    .palette-garden { --accent:#d66aa0; --deep:#283620; --soft:#f9edf2; --paper:#fff; }
+    .palette-walnut { --accent:#b98d62; --deep:#2b2118; --soft:#f5eee7; --paper:#fff; }
+    .palette-lime { --accent:#b7e64b; --deep:#17211a; --soft:#f5fbe9; --paper:#fff; }
+    .palette-champagne { --accent:#e9c46a; --deep:#2b2418; --soft:#fbf2df; --paper:#fff; }
+    .palette-stone { --accent:#a8a29e; --deep:#2b2926; --soft:#f3f1ee; --paper:#fff; }
+    .palette-aqua { --accent:#38bdf8; --deep:#0c3344; --soft:#e8f8ff; --paper:#fff; }
+    .palette-olive { --accent:#9bbf4b; --deep:#243018; --soft:#f2f7e8; --paper:#fff; }
+    .palette-solar { --accent:#ffca3a; --deep:#1c2d3a; --soft:#fff8e4; --paper:#fff; }
+    .palette-fresh { --accent:#5eead4; --deep:#113a34; --soft:#e9fbf8; --paper:#fff; }
+    .palette-glass { --accent:#93c5fd; --deep:#1d334c; --soft:#eff7ff; --paper:#fff; }
+    .palette-route { --accent:#f59e0b; --deep:#1f2937; --soft:#fff3df; --paper:#fff; }
+    .gallery-cta { padding:clamp(2.75rem,7vw,6rem) 0; background:linear-gradient(135deg,#0b1220,#1e293b); color:#fff; text-align:center; }
+    .gallery-cta-inner { max-width:760px; }
+    .gallery-cta .kicker,
+    .gallery-cta p { color:rgba(255,255,255,.72); }
+    .gallery-cta h2 { margin:.35rem 0 0; font-size:clamp(2.1rem,6vw,4.6rem); line-height:.96; letter-spacing:0; }
+    .gallery-cta p { margin:1rem auto 1.35rem; max-width:58ch; line-height:1.65; }
+    @media (max-width: 1080px) {
+      .website-gallery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .gallery-hero-grid { grid-template-columns:1fr; }
+      .gallery-hero-copy h1 { max-width:780px; }
+    }
+    @media (max-width: 760px) {
+      .gallery-hero { padding-top:2rem; }
+      .gallery-hero-copy h1 { max-width:100%; font-size:clamp(2.35rem,13vw,3.45rem); }
+      .gallery-section-head { grid-template-columns:1fr; align-items:start; }
+      .gallery-section-head h2 { max-width:14ch; }
+      .website-gallery-grid { grid-template-columns:1fr; }
+      .gallery-card { box-shadow:0 14px 42px rgba(11,18,32,.07); }
+      .site-frame--large .mock-site,
+      .mock-site { min-height:270px; padding:.75rem; }
+      .site-frame--large .mock-hero,
+      .mock-hero { grid-template-columns:1fr; min-height:auto; }
+      .site-frame--large .mock-hero h2,
+      .mock-hero h3 { font-size:clamp(1.35rem,7vw,2rem); }
+      .site-frame--large .mock-art,
+      .mock-art { min-height:96px; }
+      .mock-proof { grid-template-columns:1fr 1fr; }
+      .mock-proof strong { grid-column:1 / -1; }
+      .mock-top { align-items:flex-start; }
+      .mock-top nav { flex-wrap:wrap; justify-content:flex-end; }
+      .gallery-hero-actions .btn,
+      .gallery-card-actions .btn { flex:1 1 100%; }
+    }
+  </style>
+</BaseLayout>
