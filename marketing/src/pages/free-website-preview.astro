@@ -621,54 +621,127 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       <div class="section-head split">
         <div>
           <p class="kicker"><Label text="_website_inspiration" /></p>
-          <h2>Preview styles can look polished before they become final.</h2>
+          <h2>See what your business could look like</h2>
         </div>
         <p>
-          These are mock screenshot-style concepts inspired by clean professional service websites.
-          They use safe placeholder layouts, not copied customer assets or fake testimonials.
+          These are browser-framed sample previews designed to show the kind of polished homepage direction we can prepare from your business details.
         </p>
       </div>
 
-      <div class="mock-preview-grid" aria-label="Example website preview styles">
-        <article class="mock-site mock-site-service">
-          <div class="mock-top"><span></span><strong>Service Pro</strong><em>Get an estimate</em></div>
-          <div class="mock-split">
-            <div>
-              <small>Home services</small>
-              <h3>Fast help for the jobs customers already need.</h3>
-              <p>Services, service areas, proof points, and a direct contact path.</p>
+      <div class="mock-preview-grid" aria-label="Sample website preview mockups">
+        {[
+          {
+            className: "landscaping",
+            browser: "greenridge.example",
+            brand: "Green Ridge Landscapes",
+            nav: ["Services", "Portfolio", "Maintenance"],
+            cta: "Request an Estimate",
+            eyebrow: "Landscaping",
+            title: "Outdoor living, lawn care, and clean curb appeal without the runaround.",
+            body: "A gallery-led homepage with a quick estimate path and seasonal service cues.",
+            services: ["Landscape Design", "Weekly Lawn Care", "Patio + Stonework"],
+            proof: ["4.9 local rating", "18 years serving homeowners", "Booked in 2 minutes"],
+          },
+          {
+            className: "roofing",
+            browser: "summitline.example",
+            brand: "Summitline Roofing",
+            nav: ["Repairs", "Replacements", "Storm Help"],
+            cta: "Schedule Inspection",
+            eyebrow: "Roofing",
+            title: "Roof repair and replacement made clear from the first click.",
+            body: "A trust-forward layout built around emergency help, inspection requests, and proof.",
+            services: ["Storm Damage", "Full Replacement", "Insurance Guidance"],
+            proof: ["Licensed + insured", "Financing available", "Photo-backed inspections"],
+          },
+          {
+            className: "law",
+            brand: "Bennett & Cole Law",
+            browser: "bennettcole.example",
+            nav: ["Practice Areas", "Attorneys", "Results"],
+            cta: "Book Consultation",
+            eyebrow: "Law Firm",
+            title: "Calm, credible legal guidance when the next step matters.",
+            body: "A polished professional site that makes practice areas, confidence, and consultation easy to find.",
+            services: ["Family Law", "Estate Planning", "Business Counsel"],
+            proof: ["Confidential intake", "Local court experience", "Plain-English process"],
+          },
+          {
+            className: "hvac",
+            brand: "Northstar Heating & Air",
+            browser: "northstarair.example",
+            nav: ["Repair", "Install", "Maintenance"],
+            cta: "Get Service Today",
+            eyebrow: "HVAC",
+            title: "Fast heating and AC service with the phone call impossible to miss.",
+            body: "A utility-first homepage for emergency repair, tuneups, and replacement quotes.",
+            services: ["AC Repair", "Heating Service", "Maintenance Plans"],
+            proof: ["Same-day appointments", "Upfront diagnostics", "Seasonal tuneups"],
+          },
+          {
+            className: "restaurant",
+            brand: "Juniper Table",
+            browser: "junipertable.example",
+            nav: ["Menu", "Reservations", "Private Dining"],
+            cta: "Reserve a Table",
+            eyebrow: "Restaurant",
+            title: "A neighborhood dining room with the menu, mood, and reservation path up front.",
+            body: "A warm editorial layout with featured dishes, hours, and high-intent booking links.",
+            services: ["Dinner Menu", "Weekend Brunch", "Private Events"],
+            proof: ["Open tonight", "Seasonal menu", "Private room seats 24"],
+          },
+          {
+            className: "dental",
+            brand: "Cedar Grove Dental",
+            browser: "cedargrovedental.example",
+            nav: ["Services", "New Patients", "Insurance"],
+            cta: "Book Appointment",
+            eyebrow: "Dental",
+            title: "A friendlier dental homepage that helps new patients feel ready to book.",
+            body: "A clean, reassuring layout for care options, insurance details, and appointment flow.",
+            services: ["Cleanings", "Cosmetic Dentistry", "Emergency Visits"],
+            proof: ["New patients welcome", "Insurance guidance", "Family-friendly care"],
+          },
+        ].map((preview) => (
+          <article class={`mock-site ${preview.className}`}>
+            <div class="browser-chrome" aria-hidden="true">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <span>{preview.browser}</span>
             </div>
-            <div class="mock-image"></div>
-          </div>
-          <div class="mock-cards"><span></span><span></span><span></span></div>
-        </article>
-
-        <article class="mock-site mock-site-care">
-          <div class="mock-top"><span></span><strong>Harbor Care</strong><em>Book a visit</em></div>
-          <div class="mock-banner"></div>
-          <div class="mock-copy">
-            <small>Professional services</small>
-            <h3>Calm, trustworthy, and easy to scan.</h3>
-            <p>Great for practices, consultants, clinics, and local experts.</p>
-          </div>
-          <div class="mock-lines"><span></span><span></span><span></span></div>
-        </article>
-
-        <article class="mock-site mock-site-boutique">
-          <div class="mock-top"><span></span><strong>Luna Studio</strong><em>Visit us</em></div>
-          <div class="mock-editorial">
-            <div class="mock-photo-stack"><span></span><span></span></div>
-            <div>
-              <small>Retail, salon, cafe</small>
-              <h3>Warm visuals with a refined local feel.</h3>
-              <p>Useful for atmosphere-driven businesses that need calls, bookings, or visits.</p>
+            <div class="mock-page">
+              <div class="mock-nav">
+                <strong>{preview.brand}</strong>
+                <div>
+                  {preview.nav.map((item) => <span>{item}</span>)}
+                </div>
+                <em>{preview.cta}</em>
+              </div>
+              <div class="mock-hero-shot">
+                <div class="mock-hero-copy">
+                  <small>{preview.eyebrow}</small>
+                  <h3>{preview.title}</h3>
+                  <p>{preview.body}</p>
+                  <b>{preview.cta}</b>
+                </div>
+                <div class="mock-art" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+              <div class="mock-service-row">
+                {preview.services.map((service) => <span>{service}</span>)}
+              </div>
+              <div class="mock-proof-row">
+                {preview.proof.map((proof) => <span>{proof}</span>)}
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
+        ))}
       </div>
 
       <div class="gallery-cta">
-        <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_gallery_cta">Start My Free Preview</a>
+        <p>Sample previews only. Your preview is prepared around your real business details, services, service area, and next best call to action.</p>
+        <a class="btn btn-green btn-cta" href="/free-website-preview" data-ga-event="click_preview_gallery_cta">Get My Free Website Preview</a>
       </div>
     </div>
   </section>
@@ -1152,110 +1225,362 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
     }
 
     .mock-site {
-      border-radius: 8px;
-      overflow: hidden;
-      padding: 0.85rem;
-    }
-
-    .mock-top {
-      justify-content: space-between;
-      gap: 0.75rem;
-      color: var(--text-strong);
-    }
-
-    .mock-top span {
-      width: 1.2rem;
-      height: 1.2rem;
-      border-radius: 4px;
-      background: linear-gradient(135deg, var(--brand-amber), var(--brand-blue));
-      flex: 0 0 auto;
-    }
-
-    .mock-top strong {
-      margin-right: auto;
-      font-size: 0.88rem;
-      letter-spacing: 0;
-    }
-
-    .mock-top em {
-      font-style: normal;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.35rem 0.5rem;
-      font-size: 0.72rem;
-      color: var(--text);
-      background: #fff;
-      letter-spacing: 0;
-    }
-
-    .mock-split,
-    .mock-editorial {
+      --mock-accent: #1f7a4d;
+      --mock-ink: #102019;
+      --mock-soft: #eef8ef;
+      --mock-hero:
+        radial-gradient(circle at 72% 28%, rgba(255, 255, 255, 0.52) 0 7%, transparent 8% 100%),
+        linear-gradient(135deg, #17412a 0%, #6fa75a 58%, #e5f6db 100%);
       display: grid;
-      gap: 1rem;
-      padding-top: 1rem;
-      align-items: center;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      border-radius: 8px;
+      background: #f8fafc;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+      color: inherit;
+      overflow: hidden;
     }
 
-    .mock-site small {
-      display: inline-block;
-      margin-bottom: 0.45rem;
-      color: var(--brand-blue);
+    .browser-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      min-width: 0;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+      background: #eef2f5;
+      padding: 0.62rem 0.75rem;
+      color: #64748b;
+      font-size: 0.76rem;
       font-weight: 800;
       letter-spacing: 0;
     }
 
-    .mock-cards {
+    .browser-chrome > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 0.32rem;
+      flex: 0 0 auto;
+    }
+
+    .browser-dots span {
+      width: 0.58rem;
+      height: 0.58rem;
+      border-radius: 999px;
+      background: #cbd5e1;
+    }
+
+    .browser-dots span:nth-child(1) { background: #ef6a5e; }
+    .browser-dots span:nth-child(2) { background: #f5bd4f; }
+    .browser-dots span:nth-child(3) { background: #61c554; }
+
+    .mock-page {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.6rem;
-      margin-top: 0.9rem;
+      gap: 0.85rem;
+      padding: clamp(0.82rem, 2vw, 1rem);
+      background: #fff;
     }
 
-    .mock-site-care .mock-banner {
-      margin-top: 1rem;
-      min-height: 190px;
-      background:
-        linear-gradient(140deg, rgba(4, 67, 251, 0.16), transparent 44%),
-        linear-gradient(45deg, #fef3da, #d6f8fc);
+    .mock-nav {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.65rem;
+      align-items: center;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.1);
     }
 
-    .mock-copy {
-      padding-top: 1rem;
+    .mock-nav strong {
+      min-width: 0;
+      color: var(--mock-ink);
+      font-size: 0.92rem;
+      letter-spacing: 0;
     }
 
-    .mock-lines {
+    .mock-nav div {
+      display: flex;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.7rem;
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .mock-nav em {
+      justify-self: end;
+      border-radius: 6px;
+      background: var(--mock-accent);
+      color: #fff;
+      font-size: 0.68rem;
+      font-style: normal;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1;
+      padding: 0.5rem 0.58rem;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .mock-hero-shot {
+      position: relative;
+      display: grid;
+      gap: clamp(0.9rem, 2vw, 1.25rem);
+      min-height: 300px;
+      overflow: hidden;
+      border-radius: 7px;
+      background: var(--mock-hero);
+      color: #fff;
+      padding: clamp(1rem, 2.4vw, 1.35rem);
+    }
+
+    .mock-hero-shot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(8, 18, 32, 0.9) 0%, rgba(8, 18, 32, 0.58) 48%, rgba(8, 18, 32, 0.12) 100%);
+    }
+
+    .mock-hero-copy,
+    .mock-art {
+      position: relative;
+    }
+
+    .mock-hero-copy {
+      display: grid;
+      align-content: center;
+      gap: 0.65rem;
+      max-width: 24rem;
+      min-width: 0;
+    }
+
+    .mock-site small {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 0.34rem 0.58rem;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .mock-site h3 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(1.25rem, 2vw, 1.72rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .mock-site p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 0.9rem;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    .mock-hero-copy b {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--mock-ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      padding: 0.62rem 0.74rem;
+    }
+
+    .mock-art {
+      display: none;
+    }
+
+    .mock-art span {
+      position: absolute;
+      display: block;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.18);
+    }
+
+    .mock-art span:nth-child(1) {
+      width: 190px;
+      height: 150px;
+      right: 0;
+      top: 12px;
+      border-radius: 8px;
+    }
+
+    .mock-art span:nth-child(2) {
+      width: 130px;
+      height: 90px;
+      right: 92px;
+      bottom: 8px;
+      border-radius: 8px;
+    }
+
+    .mock-service-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .mock-service-row span,
+    .mock-proof-row span {
+      min-width: 0;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 6px;
+      background: var(--mock-soft);
+      color: var(--mock-ink);
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .mock-service-row span {
+      min-height: 4.15rem;
+      padding: 0.72rem;
+      font-size: 0.8rem;
+      line-height: 1.25;
+    }
+
+    .mock-proof-row {
       display: grid;
       gap: 0.45rem;
-      margin-top: 0.8rem;
     }
 
-    .mock-lines span:nth-child(2) {
-      width: 78%;
+    .mock-proof-row span {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.58rem 0.65rem;
+      background: #fff;
+      color: #475569;
+      font-size: 0.76rem;
     }
 
-    .mock-lines span:nth-child(3) {
-      width: 55%;
+    .mock-proof-row span::before {
+      content: "";
+      width: 0.45rem;
+      height: 0.45rem;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--mock-accent);
     }
 
-    .mock-photo-stack {
+    .gallery-cta {
       display: grid;
-      grid-template-columns: 0.75fr 1fr;
-      gap: 0.65rem;
-      align-items: end;
+      gap: 1rem;
+      align-items: center;
+      margin-top: clamp(1.25rem, 3vw, 2rem);
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 8px;
+      background: #fff;
+      padding: clamp(1rem, 3vw, 1.4rem);
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
     }
 
-    .mock-photo-stack span:first-child {
-      min-height: 130px;
-      background:
-        linear-gradient(135deg, rgba(168, 52, 137, 0.18), rgba(244, 177, 66, 0.4)),
-        #fff;
+    .gallery-cta p {
+      margin: 0;
+      color: var(--text-muted);
+      letter-spacing: 0;
     }
 
-    .mock-photo-stack span:last-child {
-      min-height: 210px;
-      background:
-        linear-gradient(135deg, rgba(184, 239, 216, 0.95), rgba(53, 220, 234, 0.32)),
-        #fff;
+    .landscaping {
+      --mock-accent: #1f7a4d;
+      --mock-ink: #123524;
+      --mock-soft: #edf8ec;
+      --mock-hero:
+        radial-gradient(circle at 74% 22%, rgba(235, 255, 214, 0.76) 0 8%, transparent 9% 100%),
+        linear-gradient(135deg, #17412a 0%, #6fa75a 58%, #e5f6db 100%);
+    }
+
+    .roofing {
+      --mock-accent: #b64d2c;
+      --mock-ink: #351b13;
+      --mock-soft: #fff3e8;
+      --mock-hero:
+        linear-gradient(150deg, transparent 0 38%, rgba(255, 255, 255, 0.2) 39% 44%, transparent 45% 100%),
+        linear-gradient(135deg, #3a1f16 0%, #b64d2c 54%, #f4b142 100%);
+    }
+
+    .law {
+      --mock-accent: #2f3f55;
+      --mock-ink: #111827;
+      --mock-soft: #f1f5f9;
+      --mock-hero:
+        linear-gradient(90deg, rgba(215, 195, 154, 0.22) 0 1px, transparent 1px 100%),
+        linear-gradient(135deg, #111827 0%, #475569 58%, #d7c39a 100%);
+      --mock-hero-size: 24px 100%;
+    }
+
+    .hvac {
+      --mock-accent: #0376b8;
+      --mock-ink: #05345e;
+      --mock-soft: #edf7fd;
+      --mock-hero:
+        radial-gradient(circle at 75% 27%, rgba(242, 247, 251, 0.8) 0 9%, transparent 10% 100%),
+        linear-gradient(135deg, #05345e 0%, #2aa9e0 56%, #f2f7fb 100%);
+    }
+
+    .restaurant {
+      --mock-accent: #8c3a21;
+      --mock-ink: #3a2018;
+      --mock-soft: #fff4e9;
+      --mock-hero:
+        radial-gradient(circle at 74% 32%, rgba(255, 217, 132, 0.82) 0 12%, transparent 13% 100%),
+        linear-gradient(135deg, #2f1c18 0%, #a3482a 58%, #f1b65d 100%);
+    }
+
+    .dental {
+      --mock-accent: #16897f;
+      --mock-ink: #0e4b49;
+      --mock-soft: #ecfbf8;
+      --mock-hero:
+        radial-gradient(circle at 76% 28%, rgba(255, 255, 255, 0.72) 0 10%, transparent 11% 100%),
+        linear-gradient(135deg, #0e5b55 0%, #8ee3d5 56%, #fff7ee 100%);
+    }
+
+    .roofing .mock-art span {
+      clip-path: polygon(50% 0, 100% 42%, 100% 100%, 0 100%, 0 42%);
+    }
+
+    .law .mock-hero-shot::before {
+      background: linear-gradient(180deg, rgba(8, 18, 32, 0.88) 0%, rgba(8, 18, 32, 0.54) 58%, rgba(8, 18, 32, 0.18) 100%);
+    }
+
+    .law .mock-hero-copy {
+      align-content: end;
+    }
+
+    .hvac .mock-art span {
+      border-radius: 999px;
+    }
+
+    .restaurant .mock-service-row {
+      grid-template-columns: 1.15fr 1fr 1fr;
+    }
+
+    .restaurant .mock-art span:nth-child(1) {
+      border-radius: 999px;
+    }
+
+    .dental .mock-hero-shot {
+      border-radius: 18px 7px 18px 7px;
+    }
+
+    .dental .mock-art span {
+      border-radius: 999px 999px 8px 8px;
     }
 
     .form-grid {
@@ -1523,7 +1848,16 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       }
 
       .mock-preview-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mock-nav {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+      }
+
+      .mock-nav div {
+        grid-column: auto;
+        grid-row: auto;
       }
 
       .section-head.split {
