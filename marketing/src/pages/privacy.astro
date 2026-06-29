@@ -1,159 +1,72 @@
----
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Label from "../components/Label.astro";
-import { breadcrumbSchema } from "../schema";
-import { ORG, CONTACT, SUBPROCESSORS, LEGAL_EFFECTIVE_DATE } from "../consts";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy | Website Support Studio</title>
+<meta name="description" content="Privacy Policy for Website Support Studio, a service of Corriston Consulting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{max-width:760px;margin:0 auto;padding:48px 24px 96px;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:#0F172A;line-height:1.65;background:#FAFAF7}
+  .brand{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:14px;color:#0B1220;margin-bottom:28px;display:inline-block;text-decoration:none}
+  .brand .u{color:#0443FB}
+  h1{font-size:32px;letter-spacing:-0.02em;margin:0 0 6px;font-weight:800}
+  .meta{color:#64748B;font-size:13px;font-family:'JetBrains Mono',monospace;margin:0 0 32px;border-bottom:1px solid #E5E7EB;padding-bottom:20px}
+  h2{font-size:20px;margin:34px 0 10px;font-weight:700}
+  p,li{font-size:16px;color:#1E293B}
+  strong{color:#0B1220}
+  a{color:#0443FB}
+  footer{margin-top:48px;border-top:1px solid #E5E7EB;padding-top:20px;font-size:13px;color:#64748B}
+  footer a{margin-right:16px;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+  <a class="brand" href="/">website<span class="u">_</span>support<span class="u">_</span>studio</a>
+  <h1>Privacy Policy</h1>
+  <p class="meta">Last updated: June 29, 2026</p>
 
-const schemas = [
-  breadcrumbSchema([
-    { name: "Home", path: "/" },
-    { name: "Privacy Policy", path: "/privacy" },
-  ]),
-];
----
+  <p>This Privacy Policy explains how Corriston Consulting ("we," "us," or "our"), operating the brand Website Support Studio ("WSS"), collects, uses, and shares information when you visit our websites or use our services.</p>
 
-<BaseLayout
-  title="Privacy Policy"
-  description="How Website Support Studio, operated by Corriston Consulting, LLC, collects, uses, shares, and protects personal information. GDPR- and CCPA-aware, with analytics and cookie disclosures."
-  path="/privacy"
-  schemas={schemas}
->
-  <section class="section">
-    <div class="prose">
-      <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">home</a><span class="sep">/</span><span><Label text="privacy_policy" /></span>
-      </nav>
-      <p class="kicker"><Label text="_legal" /></p>
-      <h1><Label text="privacy_policy" /></h1>
-      <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
+  <h2>1. Information We Collect</h2>
+  <p><strong>Information you provide:</strong> when you contact us, request a quote, or purchase, we collect information such as your name, email address, phone number, business name, and the content and materials you share with us.</p>
+  <p><strong>Payment information:</strong> payments are processed by Stripe. We do not collect or store your full card number; Stripe handles payment details under its own privacy and security practices. We receive limited transaction information such as confirmation, amount, and the last four digits of the card.</p>
+  <p><strong>Information collected automatically:</strong> when you visit our sites, we and our providers may collect device and usage data such as IP address, browser type, pages viewed, and referring URLs, including through cookies and similar technologies.</p>
 
-      <div class="summary" style="margin:1.5rem 0;">
-        <strong>Summary.</strong> Website Support Studio is operated by {ORG.legalName}. We process the
-        information you submit when you contact us or use the platform, and the operational records needed
-        to deliver our managed service. When analytics is configured, we also collect limited, aggregate
-        analytics about how this site is used; analytics is only active when enabled, and is not running by
-        default. We do not sell personal information. This policy explains what we collect, why, who processes it on our behalf, and the
-        rights you have under the GDPR and CCPA/CPRA.
-      </div>
+  <h2>2. How We Use Information</h2>
+  <p>We use information to provide and improve our services, process payments, respond to inquiries, deliver the website and content we build for you, operate and attribute our referral and affiliate program, send service-related and (with your consent where required) marketing communications, prevent fraud, and comply with legal obligations.</p>
 
-      <h2>1. Who we are</h2>
-      <p>
-        Website Support Studio ("WSS", "we", "us") is a managed website operations and support platform
-        operated by {ORG.legalName}, a limited liability company organized in the {ORG.jurisdiction}. Our
-        principal place of business is in {ORG.address.locality}, {ORG.address.region}. {ORG.legalName} is the data controller for
-        personal information described in this policy. For platform data submitted by our customers, we may
-        act as a processor on the customer's behalf under our service agreement.
-      </p>
+  <h2>3. Cookies &amp; Tracking</h2>
+  <p>We use cookies and similar technologies for site functionality, analytics, and to attribute referrals in our affiliate program (for example, to credit the affiliate who referred you). You can control cookies through your browser settings; disabling some cookies may affect site functionality.</p>
 
-      <h2>2. Scope</h2>
-      <p>
-        This policy covers the public Website Support Studio website and the personal information we handle
-        when you contact us, request a quote, or use the Website Support Studio platform. It does not cover
-        third-party websites we link to, which have their own policies.
-      </p>
+  <h2>4. Service Providers We Share With</h2>
+  <p>We share information with third-party providers that help us operate, including: <strong>Stripe</strong> (payment processing), our <strong>website hosting provider</strong>, our <strong>email and communications tools</strong>, <strong>analytics providers</strong>, and, when active, our <strong>affiliate-tracking platform</strong>. These providers process information on our behalf and are bound to protect it.</p>
 
-      <h2>3. Information we collect</h2>
-      <h3>Information you provide</h3>
-      <ul>
-        <li><strong>Contact and sales information</strong> — your name, email address, organization, and the contents of your message when you email us, book a call, or request a quote.</li>
-        <li><strong>Platform request data</strong> — the website, marketing, and operations requests you or your team submit to the desk, including any details, files, or context attached to those requests.</li>
-        <li><strong>Account information</strong> — authentication identifiers and operator/role information used to access the platform.</li>
-      </ul>
-      <h3>Information collected automatically</h3>
-      <ul>
-        <li><strong>Usage analytics (only when configured)</strong> — analytics is not enabled by default. When it is configured, we use Google Analytics 4 (via Google Tag Manager) to collect, in aggregate, pages viewed, approximate (city-level) location derived from IP address, device, browser and operating system, referral source, and interaction events such as clicks and form submissions. This data is used only to understand and improve the site.</li>
-        <li><strong>Operational and security logs</strong> — our hosting and database providers record technical logs (such as IP address and request metadata) needed to operate the service securely.</li>
-      </ul>
-      <p>
-        We do not use advertising cookies, retargeting pixels, or cross-site tracking, and we do not collect
-        sensitive personal information through site analytics.
-      </p>
+  <h2>5. We Do Not Sell Your Personal Information</h2>
+  <p>We do not sell your personal information for money. We may share data with service providers as described above and as required by law. If we ever engage in activity considered a "sale" or "sharing" for targeted advertising under applicable law, we will provide the required notices and opt-out options.</p>
 
-      <h2>4. How we use information</h2>
-      <ul>
-        <li>To respond to inquiries, scope engagements, and provide quotes.</li>
-        <li>To deliver, maintain, and support the Website Support Studio managed service.</li>
-        <li>To operate the request workflow, including triage, drafting, approval, delivery, and the audit trail required for accountability.</li>
-        <li>To send transactional and notification emails related to your requests and account.</li>
-        <li>To measure and improve the performance of this website.</li>
-        <li>To comply with legal obligations and enforce our agreements.</li>
-      </ul>
+  <h2>6. Data Retention</h2>
+  <p>We retain information for as long as needed to provide the services, maintain business records, resolve disputes, and comply with legal obligations, after which we delete or anonymize it.</p>
 
-      <h2>5. Legal bases (GDPR / UK GDPR)</h2>
-      <p>Where the GDPR applies, we rely on the following legal bases:</p>
-      <ul>
-        <li><strong>Contract</strong> — to provide the service and respond to your requests.</li>
-        <li><strong>Legitimate interests</strong> — to secure, operate, and improve the service and this website, balanced against your rights.</li>
-        <li><strong>Consent</strong> — for non-essential analytics cookies where consent is required; you may withdraw consent at any time.</li>
-        <li><strong>Legal obligation</strong> — to meet recordkeeping, tax, and compliance requirements.</li>
-      </ul>
+  <h2>7. Your Rights</h2>
+  <p>Depending on where you live, you may have rights to access, correct, delete, or obtain a copy of your personal information, and to opt out of certain processing. California residents have rights under the CCPA/CPRA, including the right to know, delete, correct, and opt out, and not to be discriminated against for exercising them. If you are in a jurisdiction with similar laws (such as the EU/UK), additional rights may apply. To exercise any right, contact us using the details below.</p>
 
-      <h2>6. Cookies</h2>
-      <p>
-        We use a small number of cookies and similar technologies. Essential cookies are required for the
-        site and platform to function. When analytics is configured, analytics cookies (Google Analytics 4)
-        are used only to understand site usage; analytics is not enabled by default. Full details — including categories, purposes, and how to opt out — are in our
-        <a href="/cookies">Cookie Policy</a>. You can opt out of Google Analytics using Google's browser
-        add-on at <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">tools.google.com/dlpage/gaoptout</a>.
-      </p>
+  <h2>8. Security</h2>
+  <p>We use reasonable administrative, technical, and physical safeguards to protect information. No method of transmission or storage is completely secure, and we cannot guarantee absolute security.</p>
 
-      <h2>7. How we share information</h2>
-      <p>
-        We do not sell personal information and do not share it for third-party marketing. We share
-        information only with service providers ("sub-processors") who process it on our behalf under
-        contract, and where required by law. Our current sub-processors are:
-      </p>
-      <ul>
-        {SUBPROCESSORS.map((s) => <li><strong>{s.name}</strong> — {s.role} ({s.region}).</li>)}
-      </ul>
+  <h2>9. Children's Privacy</h2>
+  <p>Our services are intended for businesses and are not directed to children. We do not knowingly collect personal information from children under 16.</p>
 
-      <h2>8. International transfers</h2>
-      <p>
-        Our service providers are located in the United States. If you access the service from outside the
-        United States, your information will be transferred to and processed in the United States. Where
-        required, transfers from the EEA, UK, or Switzerland rely on appropriate safeguards such as the
-        Standard Contractual Clauses.
-      </p>
+  <h2>10. Changes to This Policy</h2>
+  <p>We may update this Policy from time to time. Changes are effective when posted, and the "Last updated" date above will reflect the most recent revision.</p>
 
-      <h2>9. Data retention</h2>
-      <p>
-        We retain personal information for as long as needed to provide the service, maintain the audit
-        records that accountability requires, comply with legal obligations, resolve disputes, and enforce
-        our agreements. Analytics data is retained according to our analytics provider's configured
-        retention period. When information is no longer needed, we delete or anonymize it.
-      </p>
+  <h2>11. Contact</h2>
+  <p>For privacy questions or to exercise your rights, contact Corriston Consulting at <a href="mailto:gary.corriston@gmail.com">gary.corriston@gmail.com</a>.</p>
 
-      <h2>10. Your rights</h2>
-      <p><strong>GDPR / UK GDPR.</strong> Subject to applicable law, you may request access to, correction of, deletion of, or restriction of your personal information; object to certain processing; request portability; and withdraw consent. You also have the right to lodge a complaint with your supervisory authority.</p>
-      <p><strong>California (CCPA / CPRA).</strong> California residents may request to know the categories and specific pieces of personal information we collect, request deletion or correction, and opt out of any "sale" or "sharing" of personal information. We do not sell or share personal information as those terms are defined under the CPRA. We will not discriminate against you for exercising these rights.</p>
-      <p>To exercise any right, contact us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. We will verify your request and respond within the timeframes required by applicable law.</p>
-
-      <h2>11. Security</h2>
-      <p>
-        We use administrative, technical, and organizational safeguards appropriate to the sensitivity of
-        the information, including access controls, authentication, and audit logging. No method of
-        transmission or storage is completely secure, and we cannot guarantee absolute security.
-      </p>
-
-      <h2>12. Children</h2>
-      <p>
-        Website Support Studio is a business service not directed to children, and we do not knowingly
-        collect personal information from anyone under 16.
-      </p>
-
-      <h2>13. Changes to this policy</h2>
-      <p>
-        We may update this policy from time to time. We will revise the effective date above and, where
-        appropriate, provide additional notice. Continued use of the site or service after an update
-        constitutes acceptance of the revised policy.
-      </p>
-
-      <h2>14. Contact</h2>
-      <p>
-        Questions or requests regarding this policy or your personal information can be sent to
-        {" "}{ORG.legalName} at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Our principal place
-        of business is in {ORG.address.locality}, {ORG.address.region}.
-      </p>
-    </div>
-  </section>
-</BaseLayout>
+  <footer>
+    <a href="/offer">Offer</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/affiliate">Affiliate Terms</a>
+    <p>© 2026 Corriston Consulting. Website Support Studio is a service of Corriston Consulting.</p>
+  </footer>
+</body>
+</html>

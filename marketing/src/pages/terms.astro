@@ -1,191 +1,85 @@
----
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Label from "../components/Label.astro";
-import { breadcrumbSchema } from "../schema";
-import { ORG, CONTACT, LEGAL_EFFECTIVE_DATE } from "../consts";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service | Website Support Studio</title>
+<meta name="description" content="Terms of Service for Website Support Studio, a service of Corriston Consulting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{max-width:760px;margin:0 auto;padding:48px 24px 96px;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:#0F172A;line-height:1.65;background:#FAFAF7}
+  .brand{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:14px;color:#0B1220;margin-bottom:28px;display:inline-block;text-decoration:none}
+  .brand .u{color:#0443FB}
+  h1{font-size:32px;letter-spacing:-0.02em;margin:0 0 6px;font-weight:800}
+  .meta{color:#64748B;font-size:13px;font-family:'JetBrains Mono',monospace;margin:0 0 32px;border-bottom:1px solid #E5E7EB;padding-bottom:20px}
+  h2{font-size:20px;margin:34px 0 10px;font-weight:700}
+  p,li{font-size:16px;color:#1E293B}
+  strong{color:#0B1220}
+  a{color:#0443FB}
+  footer{margin-top:48px;border-top:1px solid #E5E7EB;padding-top:20px;font-size:13px;color:#64748B}
+  footer a{margin-right:16px;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+  <a class="brand" href="/">website<span class="u">_</span>support<span class="u">_</span>studio</a>
+  <h1>Terms of Service</h1>
+  <p class="meta">Last updated: June 29, 2026</p>
 
-const schemas = [
-  breadcrumbSchema([
-    { name: "Home", path: "/" },
-    { name: "Terms of Service", path: "/terms" },
-  ]),
-];
----
+  <p>These Terms of Service ("Terms") govern your purchase and use of services provided by Corriston Consulting ("Corriston Consulting," "we," "us," or "our") under the brand Website Support Studio ("WSS"). By purchasing or using our services, you ("Client" or "you") agree to these Terms.</p>
 
-<BaseLayout
-  title="Terms of Service"
-  description="The terms governing use of the Website Support Studio website and managed service, operated by Corriston Consulting, LLC. Includes acceptable use, service disclaimers, and limitation of liability under Florida law."
-  path="/terms"
-  schemas={schemas}
->
-  <section class="section">
-    <div class="prose">
-      <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">home</a><span class="sep">/</span><span><Label text="terms_of_service" /></span>
-      </nav>
-      <p class="kicker"><Label text="_legal" /></p>
-      <h1><Label text="terms_of_service" /></h1>
-      <p style="color:var(--text-muted);">Effective {LEGAL_EFFECTIVE_DATE}</p>
+  <h2>1. The Services</h2>
+  <p>WSS provides website design and build services, managed website hosting and maintenance, and content creation (including SEO, AEO, and GEO articles). The specific deliverables, quantities, and term applicable to your purchase are described on the relevant offer page or order at the time of purchase. Our current flagship offer includes a custom website build, twelve (12) months of managed hosting and maintenance, and twenty-four (24) articles (two per month) for a one-time fee, as described on our offer page.</p>
 
-      <div class="summary" style="margin:1.5rem 0;">
-        <strong>Summary.</strong> These terms govern your use of the Website Support Studio website and
-        managed service, operated by {ORG.legalName}. Paid engagements are governed by a separate service
-        agreement; where it conflicts with these terms, the service agreement controls. The service is
-        provided on an "as is" basis, and liability is limited as set out below. These terms are governed by
-        the laws of the {ORG.jurisdiction}.
-      </div>
+  <h2>2. Payment</h2>
+  <p>Fees are stated at the point of purchase and are payable in U.S. dollars. Payments are processed by our third-party payment processor, Stripe; by purchasing, you also agree to Stripe's terms. You are responsible for any applicable taxes. Promotional or affiliate discount codes, where offered, are subject to their stated conditions and may be modified or withdrawn at any time.</p>
 
-      <h2>1. Agreement to terms</h2>
-      <p>
-        By accessing or using the Website Support Studio website or service (the "Service"), you agree to be
-        bound by these Terms of Service ("Terms"). If you are using the Service on behalf of an
-        organization, you represent that you are authorized to bind that organization, and "you" refers to
-        that organization. If you do not agree, do not use the Service.
-      </p>
+  <h2>3. Term &amp; Renewal</h2>
+  <p>Unless otherwise stated, the services are provided for a twelve (12) month term beginning on your kickoff date. Hosting, maintenance, and content delivery are included for that term. After the term, continuation of hosting, maintenance, or content is optional and, if elected, will be billed separately under a then-current plan. There is no automatic obligation to renew baked into the initial purchase.</p>
 
-      <h2>2. Who we are</h2>
-      <p>
-        The Service is operated by {ORG.legalName}, a limited liability company organized in the
-        {" "}{ORG.jurisdiction}, with its principal place of business in {ORG.address.locality}, {ORG.address.region}.
-      </p>
+  <h2>4. Refunds &amp; Cancellation</h2>
+  <p>Because each engagement involves custom work that begins promptly, fees are <strong>non-refundable once work has commenced</strong>. If you cancel before your kickoff call and before any work has begun, you may request a full refund. Refund requests should be sent to the contact address below. This policy does not limit any rights you may have under applicable law.</p>
 
-      <h2>3. The service and engagements</h2>
-      <p>
-        Website Support Studio is a managed website operations and support service. The specific scope,
-        deliverables, response expectations, fees, and term of a paid engagement are defined in a separate
-        written service agreement, order form, or statement of work ("Service Agreement"). These Terms
-        govern your general use of the website and Service; in the event of a conflict between these Terms
-        and a signed Service Agreement, the Service Agreement controls for that engagement.
-      </p>
+  <h2>5. Client Responsibilities</h2>
+  <p>You agree to provide, in a timely manner, the materials and access we reasonably need to perform the services — including brand assets, logos, photos, content, and account access — and to participate in a kickoff call and provide timely feedback. Delays in providing materials or feedback may extend timelines. You represent that you have the rights to any materials you provide to us.</p>
 
-      <h2 id="acceptable-use">4. Customer responsibilities and acceptable use</h2>
-      <p>You agree that you will:</p>
-      <ul>
-        <li>provide accurate information and the access required for us to perform requested work;</li>
-        <li>hold the rights and permissions necessary for any content, credentials, or systems you submit to the desk;</li>
-        <li>not submit unlawful, infringing, or malicious content, or content you are not authorized to share;</li>
-        <li>not use the Service to violate any law or third-party right, to gain unauthorized access to any system, or to interfere with the integrity or performance of the Service;</li>
-        <li>not attempt to circumvent the approval, security, or audit controls of the platform.</li>
-      </ul>
-      <p>
-        You are responsible for maintaining the confidentiality of your account credentials and for activity
-        under your account.
-      </p>
+  <h2>6. Intellectual Property &amp; Ownership</h2>
+  <p>Upon full payment, you own the final website and the articles we create specifically for you. We retain ownership of our pre-existing tools, frameworks, templates, code libraries, and know-how used to deliver the services, and we may reuse these in other engagements. We may reference your project and display non-confidential work in our portfolio unless you ask us in writing not to.</p>
 
-      <h2>5. Approvals and authorized changes</h2>
-      <p>
-        The Service is built around a human approval gate: customer-facing changes are executed only after
-        approval by an authorized approver. You are responsible for designating authorized approvers and for
-        the decisions they make. We are not responsible for outcomes resulting from changes you or your
-        authorized approvers direct or approve.
-      </p>
+  <h2>7. No Guarantee of Results</h2>
+  <p>Search engine optimization, answer engine optimization, and generative engine optimization depend on factors outside our control, including search engine and AI platform algorithms and third-party behavior. <strong>We do not and cannot guarantee any specific search rankings, traffic levels, lead volume, citations, conversions, or revenue.</strong> Any examples or projections are illustrative, not promises of results.</p>
 
-      <h2>6. Intellectual property</h2>
-      <p>
-        The Website Support Studio name, logo, brand, website, and platform — including its design, text, and
-        software — are owned by {ORG.legalName} and protected by applicable law. We grant you a limited,
-        non-exclusive, non-transferable right to use the Service for your internal business purposes during
-        your engagement. You retain ownership of the content and materials you provide to us; you grant us
-        the rights necessary to use them to perform the Service.
-      </p>
+  <h2>8. Third-Party Services</h2>
+  <p>The services rely on third-party providers (for example, hosting and payment processing). Their availability and performance are outside our control, and your use of them may be subject to their own terms. We are not liable for outages or issues caused by third-party providers.</p>
 
-      <h2>7. Fees</h2>
-      <p>
-        Fees, billing frequency, and payment terms are set out in your Service Agreement. Unless otherwise
-        stated, fees are non-refundable. Late or failed payments may result in suspension of the Service in
-        accordance with the Service Agreement.
-      </p>
+  <h2>9. Acceptable Use</h2>
+  <p>You agree not to use the services for unlawful, infringing, deceptive, or harmful purposes, and not to provide content that is illegal or that violates the rights of others. We may suspend or terminate services for violations.</p>
 
-      <h2>8. Third-party services and links</h2>
-      <p>
-        The Service relies on third-party providers (for example, hosting, database, payment, and email
-        providers) and may link to third-party websites. We are not responsible for the content, policies,
-        or practices of third parties, and your use of third-party services may be subject to their terms.
-      </p>
+  <h2>10. Disclaimer of Warranties</h2>
+  <p>The services are provided "as is" and "as available." To the fullest extent permitted by law, we disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose, and non-infringement.</p>
 
-      <h2>9. Service disclaimer</h2>
-      <p>
-        Except as expressly stated in a Service Agreement, the Service is provided "as is" and "as
-        available", without warranties of any kind, whether express, implied, or statutory, including any
-        implied warranties of merchantability, fitness for a particular purpose, title, and
-        non-infringement. We do not warrant that the Service will be uninterrupted, error-free, or that it
-        will meet any particular requirement unless expressly agreed in a Service Agreement. The website and
-        any content on it are provided for general informational purposes and do not constitute professional
-        advice absent a signed engagement.
-      </p>
+  <h2>11. Limitation of Liability</h2>
+  <p>To the fullest extent permitted by law, Corriston Consulting will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for lost profits or revenues. Our total liability arising out of or relating to the services will not exceed the amount you paid to us for the services giving rise to the claim.</p>
 
-      <h2>10. Limitation of liability</h2>
-      <p>
-        To the maximum extent permitted by law, {ORG.legalName} and its owners, personnel, and providers
-        will not be liable for any indirect, incidental, special, consequential, exemplary, or punitive
-        damages, or for any loss of profits, revenue, data, or goodwill, arising out of or related to the
-        Service, even if advised of the possibility of such damages. To the maximum extent permitted by law,
-        our total aggregate liability arising out of or related to the Service will not exceed the greater of
-        the amounts you paid to us for the Service in the three (3) months preceding the event giving rise to
-        the claim, or one hundred U.S. dollars (US$100). Some jurisdictions do not allow certain limitations,
-        so some of the above may not apply to you.
-      </p>
+  <h2>12. Indemnification</h2>
+  <p>You agree to indemnify and hold harmless Corriston Consulting from claims arising out of materials you provide, your use of the services, or your violation of these Terms or applicable law.</p>
 
-      <h2>11. Indemnification</h2>
-      <p>
-        You agree to indemnify and hold harmless {ORG.legalName} from claims, damages, and expenses
-        (including reasonable legal fees) arising from your content, your use of the Service, or your breach
-        of these Terms.
-      </p>
+  <h2>13. Termination</h2>
+  <p>We may suspend or terminate the services for non-payment, breach of these Terms, or unlawful use. Sections intended to survive termination (including ownership, disclaimers, limitation of liability, and indemnification) will survive.</p>
 
-      <h2>12. Suspension and termination</h2>
-      <p>
-        We may suspend or terminate access to the Service if you breach these Terms or your Service
-        Agreement, or to protect the security or integrity of the Service. Provisions that by their nature
-        should survive termination — including intellectual property, disclaimers, limitation of liability,
-        and governing law — will survive.
-      </p>
+  <h2>14. Governing Law</h2>
+  <p>These Terms are governed by the laws of the United States and the state in which Corriston Consulting maintains its principal place of business, without regard to conflict-of-laws rules. The state and federal courts located there will have exclusive jurisdiction over any dispute arising out of these Terms.</p>
 
-      <h2>13. Your website, hosting, and cancellation</h2>
-      <p>
-        <strong>You own your website.</strong> The website we build for you — its content, design, and
-        files — belongs to you, and so does your domain. You also own your own accounts, including Google
-        Analytics, Search Console, Google Business Profile, Google Ads, and Meta Business Manager. We own
-        only the Website Support Studio name, brand, platform, and internal tooling. Nothing in these Terms
-        transfers your website or domain to us.
-      </p>
-      <p>
-        <strong>Hosting and support are a service we provide.</strong> While you are on a paid plan that
-        includes hosting, we host your website and provide support, maintenance, and operations as a
-        service. Your website and content remain yours; hosting is something we do for you, not ownership of
-        your site.
-      </p>
-      <p>
-        <strong>Cancelling does not delete your website.</strong> You can cancel ongoing operations at any
-        time, effective at the end of your current billing period. If you cancel, you may either (1) move
-        your website to another hosting provider, or (2) keep it online with us under a separate Hosting
-        Only arrangement (contact us for current terms). On request, we will provide a reasonable export or
-        migration package — a copy of your website files and content, plus reasonable help to transfer your
-        site and point your domain elsewhere. We do not hold your website or domain hostage. If you do not
-        continue hosting and do not migrate, we will give you reasonable notice before hosting ends, and you
-        remain responsible for fees through your paid period.
-      </p>
+  <h2>15. Changes to These Terms</h2>
+  <p>We may update these Terms from time to time. Changes are effective when posted, and the "Last updated" date above will reflect the most recent revision. Your continued use of the services after changes are posted constitutes acceptance.</p>
 
-      <h2>14. Governing law and disputes</h2>
-      <p>
-        These Terms are governed by the laws of the {ORG.jurisdiction}, without regard to its conflict-of-law
-        rules. The state and federal courts located in Florida will have exclusive jurisdiction over any
-        dispute arising out of or relating to these Terms or the Service, and you consent to their
-        jurisdiction and venue.
-      </p>
+  <h2>16. Contact</h2>
+  <p>Questions about these Terms? Contact Corriston Consulting at <a href="mailto:gary.corriston@gmail.com">gary.corriston@gmail.com</a>.</p>
 
-      <h2>15. Changes to these terms</h2>
-      <p>
-        We may update these Terms from time to time. We will revise the effective date above and, where
-        appropriate, provide additional notice. Continued use of the Service after an update constitutes
-        acceptance of the revised Terms.
-      </p>
-
-      <h2>16. Contact</h2>
-      <p>
-        Questions about these Terms can be sent to {ORG.legalName} at
-        {" "}<a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
-      </p>
-    </div>
-  </section>
-</BaseLayout>
+  <footer>
+    <a href="/offer">Offer</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/affiliate">Affiliate Terms</a>
+    <p>© 2026 Corriston Consulting. Website Support Studio is a service of Corriston Consulting.</p>
+  </footer>
+</body>
+</html>
