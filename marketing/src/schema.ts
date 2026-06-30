@@ -158,11 +158,17 @@ export function articleSchema(opts: {
   datePublished: string;
   dateModified?: string;
   authorName: string;
+  authorType?: "Person" | "Organization";
   image?: string;
 }) {
+  const author =
+    opts.authorType === "Organization"
+      ? { "@type": "Organization", "@id": ID.org, name: opts.authorName }
+      : { "@type": "Person", "@id": ID.founder, name: opts.authorName, worksFor: { "@id": ID.org } };
+
   return {
     "@context": "https://schema.org",
-    "@type": ["Article", "NewsArticle"],
+    "@type": "Article",
     headline: opts.headline,
     description: opts.description,
     mainEntityOfPage: { "@type": "WebPage", "@id": abs(opts.path) },
@@ -170,7 +176,7 @@ export function articleSchema(opts: {
     datePublished: opts.datePublished,
     dateModified: opts.dateModified ?? opts.datePublished,
     image: abs(opts.image ?? DEFAULT_OG_IMAGE),
-    author: { "@type": "Person", "@id": ID.founder, name: opts.authorName, worksFor: { "@id": ID.org } },
+    author,
     publisher: { "@id": ID.org },
     isAccessibleForFree: true,
     inLanguage: "en-US",

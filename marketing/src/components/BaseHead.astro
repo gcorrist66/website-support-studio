@@ -15,6 +15,8 @@ interface Props {
   /** Article-specific OG metadata. */
   publishedTime?: string;
   modifiedTime?: string;
+  /** Use the provided title as-is instead of appending the site name. */
+  titleTemplate?: boolean;
 }
 
 const {
@@ -26,12 +28,13 @@ const {
   noindex = false,
   publishedTime,
   modifiedTime,
+  titleTemplate = true,
 } = Astro.props;
 
 const canonical = new URL(path, SITE_URL).href;
 const imageUrl = new URL(image, SITE_URL).href;
 // Title template — single source so titles never duplicate across pages.
-const fullTitle = path === "/" ? title : `${title} — ${SITE_NAME}`;
+const fullTitle = titleTemplate && path !== "/" ? `${title} — ${SITE_NAME}` : title;
 ---
 
 <meta charset="utf-8" />

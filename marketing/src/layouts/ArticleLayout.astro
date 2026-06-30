@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import { articleSchema, breadcrumbSchema, personSchema } from "../schema";
+import { articleSchema, breadcrumbSchema, faqSchema, personSchema } from "../schema";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
@@ -18,13 +18,16 @@ const schemas = [
     datePublished: data.datePublished,
     dateModified: data.dateModified,
     authorName: data.author,
+    authorType: data.author === "Website Support Studio" ? "Organization" : "Person",
+    image: data.image,
   }),
-  personSchema({ name: data.author, jobTitle: data.authorTitle, path: "/about" }),
+  ...(data.author === "Website Support Studio" ? [] : [personSchema({ name: data.author, jobTitle: data.authorTitle, path: "/about" })]),
   breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Articles", path: "/articles" },
     { name: data.title, path },
   ]),
+  ...(data.faqs ? [faqSchema(data.faqs)] : []),
 ];
 
 const pubDate = new Date(data.datePublished).toLocaleDateString("en-US", {
@@ -35,13 +38,15 @@ const pubDate = new Date(data.datePublished).toLocaleDateString("en-US", {
 ---
 
 <BaseLayout
-  title={data.title}
+  title={data.seoTitle ?? data.title}
   description={data.description}
   path={path}
   ogType="article"
+  image={data.image}
   publishedTime={data.datePublished}
   modifiedTime={data.dateModified ?? data.datePublished}
   schemas={schemas}
+  titleTemplate={!data.seoTitle}
 >
   <article class="section">
     <div class="prose">
