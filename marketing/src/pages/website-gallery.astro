@@ -22,6 +22,32 @@ type GalleryPreview = {
 };
 
 const filters = ["All", "Home Services", "Medical", "Professional", "Food", "Retail", "Automotive", "Construction", "Community"] as const;
+const photoBySlug: Record<string, { src: string; alt: string }> = {
+  "greenline-landscaping": {
+    src: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=900&q=68&auto=format&fit=crop",
+    alt: "Freshly cut lawn and landscaped yard",
+  },
+  "ridgeline-roofing": {
+    src: "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=900&q=68&auto=format&fit=crop",
+    alt: "Roofing work on a shingle roof",
+  },
+  "mainline-plumbing": {
+    src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=900&q=68&auto=format&fit=crop",
+    alt: "Chrome plumbing fixture",
+  },
+  "pearl-dental": {
+    src: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=900&q=68&auto=format&fit=crop",
+    alt: "Dentist reviewing care with a patient",
+  },
+  "table-and-hearth": {
+    src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=68&auto=format&fit=crop",
+    alt: "Warm restaurant dining room",
+  },
+  "mirrorfinish-detail": {
+    src: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=900&q=68&auto=format&fit=crop",
+    alt: "Detailed car with glossy finish",
+  },
+};
 const displayDomainBySlug: Record<string, string> = {
   "greenline-landscaping": "greenlineoutdoor.com",
   "ledger-cpa": "ledgerlanecpa.com",
@@ -38,6 +64,12 @@ const getPreviewDomain = (preview: GalleryPreview) =>
     .toLowerCase()
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]/g, "")}.com`;
+
+const getShortDescription = (preview: GalleryPreview) =>
+  preview.description.split(".")[0].replace(/^An? /, "").replace(/^A /, "") + ".";
+
+const getFilterCount = (filter: (typeof filters)[number]) =>
+  filter === "All" ? galleryPreviews.length : galleryPreviews.filter((preview) => preview.category === filter).length;
 
 const galleryPreviews: GalleryPreview[] = [
   { slug: "greenline-landscaping", category: "Home Services", industry: "Landscaping", business: "Greenline Outdoor Co.", style: "Editorial outdoor service", headline: "Outdoor spaces that feel finished before the first estimate.", description: "A rich landscaping homepage direction with large project visuals, seasonal service paths, and estimate-first messaging. It is built to help homeowners quickly understand the quality of the work and request a consultation.", nav: ["Services", "Projects", "Care Plans"], cta: "Plan My Yard", services: ["Design", "Maintenance", "Lighting"], proof: "124 local yards redesigned", layout: "split", palette: "verdant", demoHref: "/templates/sample/greenline-landscaping" },
@@ -183,7 +215,9 @@ const schemas = [
 
       <div class="gallery-filters" aria-label="Filter website gallery">
         {filters.map((filter, index) => (
-          <button type="button" class="gallery-filter" data-filter={filter} aria-pressed={index === 0 ? "true" : "false"}>{filter}</button>
+          <button type="button" class="gallery-filter" data-filter={filter} aria-pressed={index === 0 ? "true" : "false"}>
+            {filter} <span>{getFilterCount(filter)}</span>
+          </button>
         ))}
       </div>
 
@@ -195,40 +229,54 @@ const schemas = [
             data-category={preview.category}
             style={`--card-index:${galleryPreviews.indexOf(preview) % 7};`}
           >
-            <div class={`site-frame mock-${preview.layout} palette-${preview.palette}`}>
+            <div class={`gallery-browser palette-${preview.palette}`}>
               <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{getPreviewDomain(preview)}</em></div>
-              <div class="mock-site">
-                <div class="mock-top">
+              <div class="gallery-shot">
+                <div class={`gallery-shot-fallback mock-${preview.layout} palette-${preview.palette}`} aria-hidden="true">
+                  <div class="mock-site">
+                    <div class="mock-hero">
+                      <div>
+                        <p>{preview.style}</p>
+                        <h3>{preview.headline}</h3>
+                        <span>{preview.cta}</span>
+                      </div>
+                      <div class="mock-art" aria-hidden="true"><i></i><i></i><i></i></div>
+                    </div>
+                  </div>
+                </div>
+                {photoBySlug[preview.slug] && (
+                  <img
+                    class="gallery-photo"
+                    src={photoBySlug[preview.slug].src}
+                    alt={photoBySlug[preview.slug].alt}
+                    loading="lazy"
+                  />
+                )}
+                <div class="gallery-shot-shade" aria-hidden="true"></div>
+                <div class="gallery-shot-top">
                   <strong>{preview.business}</strong>
                   <nav aria-label={`${preview.business} sample navigation`}>
                     {preview.nav.map((item) => <span>{item}</span>)}
                   </nav>
                 </div>
-                <div class="mock-hero">
-                  <div>
-                    <p>{preview.style}</p>
-                    <h3>{preview.headline}</h3>
-                    <span>{preview.cta}</span>
-                  </div>
-                  <div class="mock-art" aria-hidden="true"><i></i><i></i><i></i></div>
+                <div class="gallery-shot-copy">
+                  <p>{preview.style}</p>
+                  <h3>{preview.headline}</h3>
+                  <span>{preview.cta}</span>
                 </div>
-                <div class="mock-proof">
-                  <strong>{preview.proof}</strong>
-                  {preview.services.map((service) => <span>{service}</span>)}
+                <div class="gallery-card-overlay">
+                  {preview.demoHref && <a class="gallery-overlay-primary" href={preview.demoHref} data-ga-event="click_gallery_view_preview" data-ga-label={preview.slug}>View Preview</a>}
+                  <a class="gallery-overlay-secondary" href={`/free-website-preview?industry=${encodeURIComponent(preview.industry)}&style=${encodeURIComponent(preview.business)}`} data-ga-event="click_gallery_request_like_this" data-ga-label={preview.slug}>Request One Like This</a>
                 </div>
               </div>
             </div>
             <div class="gallery-card-body">
               <div class="gallery-card-meta">
-                <span>{preview.industry}</span>
                 <small>{preview.category}</small>
+                <span>{preview.industry}</span>
               </div>
               <h3>{preview.business}</h3>
-              <p>{preview.description}</p>
-              <div class="gallery-card-actions">
-                {preview.demoHref && <a class="btn btn-ghost" href={preview.demoHref} data-ga-event="click_gallery_view_preview" data-ga-label={preview.slug}>View Preview</a>}
-                <a class="btn btn-green btn-cta" href={`/free-website-preview?industry=${encodeURIComponent(preview.industry)}&style=${encodeURIComponent(preview.business)}`} data-ga-event="click_gallery_request_like_this" data-ga-label={preview.slug}>Request One Like This</a>
-              </div>
+              <p>{getShortDescription(preview)}</p>
             </div>
           </article>
         ))}
@@ -274,25 +322,55 @@ const schemas = [
     .featured-preview { min-width:0; }
     .featured-meta { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:.75rem; color:var(--text-muted); font-size:.85rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
     .featured-meta strong { color:var(--text); letter-spacing:0; text-transform:none; font-size:.95rem; }
-    .gallery-section { padding:clamp(2.5rem,6vw,5rem) 0; background:var(--surface); }
+    .gallery-section { padding:clamp(2.5rem,6vw,5rem) 0; background:var(--surface); font-family:Inter,"Avenir Next","Segoe UI",system-ui,sans-serif; letter-spacing:0; }
     .gallery-section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.72fr); gap:1.5rem; align-items:end; margin-bottom:1.25rem; }
     .gallery-section-head h2 { margin:.35rem 0 0; max-width:13ch; font-size:clamp(2rem,5vw,4.2rem); line-height:.96; letter-spacing:0; }
     .gallery-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
     .gallery-filters { position:sticky; top:0; z-index:2; display:flex; gap:.5rem; overflow:auto; padding:.75rem 0 1rem; margin-bottom:.5rem; background:linear-gradient(180deg,var(--surface) 72%,rgba(250,250,247,0)); scrollbar-width:none; }
     .gallery-filters::-webkit-scrollbar { display:none; }
-    .gallery-filter { flex:0 0 auto; border:1px solid var(--border); border-radius:999px; padding:.58rem .8rem; background:#fff; color:var(--text); font:inherit; font-size:.88rem; font-weight:900; cursor:pointer; transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease; }
+    .gallery-filter { flex:0 0 auto; border:1px solid var(--border); border-radius:999px; padding:.58rem .8rem; background:#fff; color:var(--text); font-family:var(--font-mono); font-size:.82rem; font-weight:900; cursor:pointer; transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease; letter-spacing:0; }
+    .gallery-filter span { opacity:.58; margin-left:.2rem; }
     .gallery-filter[aria-pressed="true"] { background:var(--ink); border-color:var(--ink); color:#fff; }
     .gallery-filter:hover { transform:translateY(-1px); }
-    .website-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(1rem,2vw,1.35rem); align-items:start; }
+    .website-gallery-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr)); gap:clamp(1rem,2vw,1.55rem); align-items:start; }
     .gallery-card { min-width:0; border:1px solid rgba(11,18,32,.1); border-radius:8px; background:#fff; box-shadow:0 18px 54px rgba(11,18,32,.06); overflow:hidden; transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
-    .gallery-card:hover { transform:translateY(-5px) scale(1.01); border-color:rgba(11,18,32,.18); box-shadow:0 26px 70px rgba(11,18,32,.13); }
+    .gallery-card:hover { transform:translateY(-4px); border-color:rgba(11,18,32,.18); box-shadow:0 24px 62px rgba(11,18,32,.13); }
     .gallery-card[hidden] { display:none; }
-    .gallery-card-body { display:grid; gap:.75rem; padding:1rem; }
-    .gallery-card-meta { display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
-    .gallery-card-meta span { display:inline-flex; align-items:center; border:1px solid color-mix(in srgb,var(--accent) 34%,#fff); border-radius:999px; padding:.28rem .55rem; background:color-mix(in srgb,var(--accent) 12%,#fff); color:color-mix(in srgb,var(--accent) 72%,#111); font-size:.75rem; font-weight:950; }
-    .gallery-card-meta small { color:var(--text-muted); font-size:.75rem; font-weight:850; }
-    .gallery-card-body h3 { margin:0; font-size:1.2rem; line-height:1.15; letter-spacing:0; }
-    .gallery-card-body p { margin:0; color:var(--text-muted); line-height:1.58; font-size:.95rem; }
+    .gallery-browser { --accent:#35dcea; --deep:#0b1220; --soft:#eff6f2; --paper:#fff; background:#fff; }
+    .gallery-shot { position:relative; height:238px; overflow:hidden; isolation:isolate; background:var(--soft); }
+    .gallery-shot-fallback,
+    .gallery-photo,
+    .gallery-shot-shade,
+    .gallery-card-overlay { position:absolute; inset:0; }
+    .gallery-shot-fallback { z-index:0; }
+    .gallery-shot-fallback .mock-site { min-height:100%; height:100%; padding:.7rem; }
+    .gallery-shot-fallback .mock-hero { min-height:100%; margin:0; }
+    .gallery-shot-fallback .mock-proof,
+    .gallery-shot-fallback .mock-top { display:none; }
+    .gallery-photo { z-index:1; width:100%; height:100%; object-fit:cover; }
+    .gallery-shot-shade { z-index:2; background:linear-gradient(180deg,rgba(11,18,32,.34),rgba(11,18,32,.06) 36%,rgba(11,18,32,.78)); }
+    .gallery-shot-top { position:absolute; z-index:3; top:.9rem; left:1rem; right:1rem; display:flex; align-items:flex-start; justify-content:space-between; gap:.75rem; color:#fff; text-shadow:0 1px 12px rgba(0,0,0,.4); }
+    .gallery-shot-top strong { min-width:0; font-family:var(--font-mono); font-size:.72rem; line-height:1.2; letter-spacing:0; }
+    .gallery-shot-top nav { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.45rem; font-family:var(--font-mono); font-size:.56rem; font-weight:800; color:rgba(255,255,255,.86); letter-spacing:0; }
+    .gallery-shot-copy { position:absolute; z-index:3; left:1rem; right:1rem; bottom:1rem; color:#fff; text-shadow:0 1px 15px rgba(0,0,0,.42); }
+    .gallery-shot-copy p { margin:0 0 .35rem; color:rgba(255,255,255,.84); font-family:var(--font-mono); font-size:.62rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em; }
+    .gallery-shot-copy h3 { margin:0; max-width:24rem; color:#fff; font-size:clamp(1.25rem,2vw,1.65rem); line-height:1.08; letter-spacing:0; }
+    .gallery-shot-copy span { display:inline-flex; max-width:100%; margin-top:.72rem; border-radius:999px; padding:.5rem .72rem; background:var(--accent); color:#071017; font-family:var(--font-mono); font-size:.7rem; font-weight:950; line-height:1.2; text-shadow:none; }
+    .gallery-card-overlay { z-index:4; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; align-content:center; gap:.65rem; padding:1rem; background:rgba(11,18,32,.58); opacity:0; pointer-events:none; backdrop-filter:blur(2px); transition:opacity .2s ease; }
+    .gallery-card:hover .gallery-card-overlay,
+    .gallery-card:focus-within .gallery-card-overlay { opacity:1; pointer-events:auto; }
+    .gallery-card-overlay a { display:inline-flex; align-items:center; justify-content:center; min-height:2.65rem; border-radius:999px; padding:.72rem 1rem; font-family:var(--font-mono); font-size:.76rem; font-weight:900; line-height:1.15; text-align:center; text-decoration:none; transition:transform .16s ease; }
+    .gallery-card-overlay a:hover { transform:scale(1.04); text-decoration:none; }
+    .gallery-overlay-primary { background:var(--brand-amber); color:var(--text-strong); }
+    .gallery-overlay-secondary { border:1px solid rgba(255,255,255,.78); color:#fff; background:rgba(255,255,255,.08); }
+    .gallery-card-body { display:grid; gap:.45rem; padding:.85rem 1rem 1rem; }
+    .gallery-card-meta { display:flex; flex-direction:column; align-items:flex-start; gap:.38rem; }
+    .gallery-card-meta span,
+    .gallery-card-meta small { display:inline-flex; align-items:center; border-radius:999px; font-family:var(--font-mono); letter-spacing:0; }
+    .gallery-card-meta span { border:1px solid color-mix(in srgb,var(--accent) 34%,#fff); padding:.25rem .55rem; background:color-mix(in srgb,var(--accent) 12%,#fff); color:color-mix(in srgb,var(--accent) 72%,#111); font-size:.7rem; font-weight:950; }
+    .gallery-card-meta small { order:-1; color:var(--text-muted); background:#f4f2ec; padding:.22rem .5rem; font-size:.66rem; font-weight:850; }
+    .gallery-card-body h3 { margin:0; font-size:1.02rem; line-height:1.15; letter-spacing:0; }
+    .gallery-card-body p { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; min-height:2.8em; margin:0; color:var(--text-muted); line-height:1.4; font-size:.9rem; overflow:hidden; }
     .gallery-card-actions .btn { flex:1 1 150px; justify-content:center; min-height:2.55rem; padding-inline:.85rem; white-space:normal; text-align:center; }
     .site-frame { --accent:#35dcea; --deep:#0b1220; --soft:#eff6f2; --paper:#fff; border:1px solid rgba(11,18,32,.13); border-radius:8px; background:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.72); overflow:hidden; }
     .site-frame--large { box-shadow:0 32px 100px rgba(11,18,32,.16); }
