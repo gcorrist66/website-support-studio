@@ -1,0 +1,82 @@
+[
+  {
+    "base": "build-queue-2",
+    "slug": "skyview-roofing-experts",
+    "title": "Skyview Roofing Experts Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": "build-queue-2",
+    "slug": "hoffman-roofing",
+    "title": "Hoffman Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": "build-queue-2",
+    "slug": "rays-roofing-of-central-florida",
+    "title": "Ray's Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": "build-queue-2",
+    "slug": "tr-roofing",
+    "title": "TR Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": "build-queue-2",
+    "slug": "fast-track-roofing",
+    "title": "Fast Track Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": ".artifacts/wss-prospect-previews-deploy/public",
+    "slug": "skyview-roofing-experts",
+    "title": "Skyview Roofing Experts Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": ".artifacts/wss-prospect-previews-deploy/public",
+    "slug": "hoffman-roofing",
+    "title": "Hoffman Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": ".artifacts/wss-prospect-previews-deploy/public",
+    "slug": "rays-roofing-of-central-florida",
+    "title": "Ray's Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": ".artifacts/wss-prospect-previews-deploy/public",
+    "slug": "tr-roofing",
+    "title": "TR Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  },
+  {
+    "base": ".artifacts/wss-prospect-previews-deploy/public",
+    "slug": "fast-track-roofing",
+    "title": "Fast Track Roofing Private Preview",
+    "imagesOk": true,
+    "overflow": 0,
+    "bad": false
+  }
+]

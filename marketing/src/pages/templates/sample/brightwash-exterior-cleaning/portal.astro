@@ -1,0 +1,11 @@
+---
+import RidgelineOwnerPortal from "../../../../components/sample-sites/RidgelineOwnerPortal.astro";
+import { SAMPLE_BUSINESS_BY_SLUG } from "../../../../sampleBusinesses";
+
+const business = SAMPLE_BUSINESS_BY_SLUG["brightwash-exterior-cleaning"];
+if (!business) {
+  throw new Error("BrightWash Exterior Cleaning sample business is missing.");
+}
+---
+
+<RidgelineOwnerPortal business={business} />

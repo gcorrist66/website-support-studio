@@ -3,14 +3,40 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "./Label.astro";
 import QueryParamPreserver from "./QueryParamPreserver.astro";
 import { founderCheckoutHref, type IndustryLandingPage } from "../industryLandingPages";
+import { faqSchema, serviceSchema } from "../schema";
 
 const { page } = Astro.props as { page: IndustryLandingPage };
-const title = `${page.industry} Websites — Founder Website Package`;
-const description = `${page.industry} website landing page for the $500 Founder Website Package. View ${page.demoName} and start a website using this style.`;
+const title = page.seoTitle ?? `${page.industry} Websites — Founder Website Package`;
+const description =
+  page.metaDescription ??
+  `${page.industry} website landing page for the $500 Founder Website Package. View ${page.demoName} and start a website using this style.`;
 const path = `/for/${page.slug}`;
+const isTradePreview = ["roofing", "hvac", "plumbing", "electrical", "pools", "irrigation"].includes(page.slug);
+const primaryCtaHref =
+  page.slug === "electrical"
+    ? "/for/electrical"
+    : page.slug === "pools"
+      ? "/for/pools"
+      : page.slug === "irrigation"
+        ? "/for/irrigation"
+        : isTradePreview
+          ? "/free-website-preview"
+          : founderCheckoutHref;
+const primaryCtaLabel = isTradePreview ? `Get a free ${page.industry.toLowerCase()} website preview` : "Build My Website";
+const primaryCtaEvent = isTradePreview ? "free_preview" : "build";
+const demoCtaLabel = page.demoCtaLabel ?? `View ${page.industry.toLowerCase()} website example`;
+const schemas = [
+  serviceSchema({
+    name: `${page.industry} website design service`,
+    serviceType: `${page.industry} website design and lead capture`,
+    description,
+    path,
+  }),
+  ...(page.faqs ? [faqSchema(page.faqs)] : []),
+];
 ---
 
-<BaseLayout title={title} description={description} path={path}>
+<BaseLayout title={title} description={description} path={path} image={page.ogImage ?? page.heroImage} schemas={schemas} titleTemplate={!page.seoTitle}>
   <section class="industry-hero" style={`--industry-accent:${page.accent};`}>
     <div class="container industry-hero-grid">
       <div>
@@ -18,9 +44,13 @@ const path = `/for/${page.slug}`;
         <h1>{page.title}</h1>
         <p class="lede">{page.description}</p>
         <div class="industry-actions">
-          <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-track={`${page.slug}-build-my-website`} data-ga-event={`click_for_${page.slug}_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-          <a class="btn btn-ghost" href={page.demoRoute} data-track={`${page.slug}-view-example`} data-ga-event={`click_for_${page.slug}_demo`}>{page.demoCtaLabel ?? "View Live Example"}</a>
-          <a class="btn btn-ghost" href="/templates/sample/back-office/" data-track={`${page.slug}-preview-back-office`} data-ga-event={`click_for_${page.slug}_back_office`}>Preview Back Office</a>
+          <a class="btn btn-green btn-cta" href={primaryCtaHref} data-track={`${page.slug}-${isTradePreview ? "free-preview" : "build-my-website"}`} data-ga-event={`click_for_${page.slug}_${primaryCtaEvent}`}>{primaryCtaLabel}</a>
+          <a class="btn btn-ghost" href={page.demoRoute} data-track={`${page.slug}-view-example`} data-ga-event={`click_for_${page.slug}_demo`}>{demoCtaLabel}</a>
+          {isTradePreview ? (
+            <a class="btn btn-ghost" href={`${page.demoRoute}/portal`} data-track={`${page.slug}-preview-owner-portal`} data-ga-event={`click_for_${page.slug}_portal`}>View {page.industry.toLowerCase()} owner portal demo</a>
+          ) : (
+            <a class="btn btn-ghost" href="/templates/sample/back-office/" data-track={`${page.slug}-preview-back-office`} data-ga-event={`click_for_${page.slug}_back_office`}>Preview Back Office</a>
+          )}
         </div>
         <p class="industry-strip">Pay $500 once → 10-minute intake → we build and you preview → launch with 30 days of included support.</p>
       </div>
@@ -92,12 +122,12 @@ const path = `/for/${page.slug}`;
           {page.exampleBullets.map((item) => <li>{item}</li>)}
         </ul>
         <div class="industry-actions">
-          <a class="btn btn-primary" href={page.demoRoute} data-track={`${page.slug}-view-example`}>{page.demoCtaLabel ?? "View Live Example"}</a>
-          <a class="btn btn-ghost" href={founderCheckoutHref} data-track={`${page.slug}-use-this-website-style`} data-ga-event={`click_for_${page.slug}_style`} data-ga-secondary-event="stripe_payment_link_click">Use This Website Style</a>
+          <a class="btn btn-primary" href={page.demoRoute} data-track={`${page.slug}-view-example`}>{demoCtaLabel}</a>
+          <a class="btn btn-ghost" href={primaryCtaHref} data-track={`${page.slug}-${isTradePreview ? "free-preview-style" : "use-this-website-style"}`} data-ga-event={`click_for_${page.slug}_style`}>{isTradePreview ? "Get a free preview in this style" : "Use This Website Style"}</a>
         </div>
       </div>
       <a class="industry-preview" href={page.demoRoute} data-track={`${page.slug}-view-example-preview`} aria-label={`View ${page.demoName}`}>
-        <img src={page.heroImage} alt="" width="1100" height="760" loading="lazy" />
+        <img src={page.heroImage} alt={`${page.demoName} ${page.industry.toLowerCase()} website example preview`} width="1100" height="760" loading="lazy" />
         <span>Open {page.demoName}</span>
       </a>
     </div>
@@ -111,8 +141,8 @@ const path = `/for/${page.slug}`;
           <h2>{page.opportunityPaths.title}</h2>
           <p>{page.opportunityPaths.intro}</p>
           <div class="industry-actions">
-            <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-track={`${page.slug}-build-my-website`} data-ga-event={`click_for_${page.slug}_opportunity_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-            <a class="btn btn-ghost" href={page.demoRoute} data-track={`${page.slug}-view-example`}>{page.demoCtaLabel ?? "View Live Example"}</a>
+            <a class="btn btn-green btn-cta" href={primaryCtaHref} data-track={`${page.slug}-${isTradePreview ? "free-preview" : "build-my-website"}`} data-ga-event={`click_for_${page.slug}_opportunity_${primaryCtaEvent}`}>{primaryCtaLabel}</a>
+            <a class="btn btn-ghost" href={page.demoRoute} data-track={`${page.slug}-view-example`}>{demoCtaLabel}</a>
           </div>
         </div>
         <div class="industry-card-list">
@@ -120,6 +150,49 @@ const path = `/for/${page.slug}`;
             <article class="industry-card">
               <h3>{item.title}</h3>
               <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {page.seoSections?.map((section) => (
+    <section class="section industry-muted">
+      <div class="container industry-split">
+        <div>
+          <p class="kicker"><Label text={section.eyebrow} /></p>
+          <h2>{section.title}</h2>
+          <p>{section.body}</p>
+          {section.eyebrow.includes("examples") && (
+            <div class="industry-actions">
+              <a class="btn btn-primary" href={page.demoRoute}>View the {page.demoName} website example</a>
+              <a class="btn btn-ghost" href={`${page.demoRoute}/portal`}>See the {page.industry.toLowerCase()} owner portal example</a>
+            </div>
+          )}
+        </div>
+        <div class="industry-card-list">
+          {section.items.map((item) => (
+            <article class="industry-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  {page.faqs && (
+    <section class="section">
+      <div class="container">
+        <p class="kicker"><Label text={`_${page.slug}_website_faq`} /></p>
+        <h2>{page.industry} website design FAQs</h2>
+        <div class="industry-card-list industry-faq-list">
+          {page.faqs.map((faq) => (
+            <article class="industry-card">
+              <h3>{faq.q}</h3>
+              <p>{faq.a}</p>
             </article>
           ))}
         </div>
@@ -166,18 +239,18 @@ const path = `/for/${page.slug}`;
       <div>
         <p class="kicker"><Label text="_ready_to_build" /></p>
         <h2>Ready to build your {page.industry.toLowerCase()} website?</h2>
-        <p>Start with the Founder Website Package. We will customize the pages, words, photos, colors, and calls to action around your business.</p>
+        <p>Request a free website preview first. We will customize the pages, words, photos, colors, service areas, and calls to action around your business.</p>
       </div>
       <div class="industry-actions">
-        <a class="btn btn-green btn-cta" href={founderCheckoutHref} data-track={`${page.slug}-build-my-website`} data-ga-event={`click_for_${page.slug}_final_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
-        <a class="btn btn-ghost" href={page.demoRoute} data-track={`${page.slug}-view-example`}>{page.demoCtaLabel ?? "View Live Example"}</a>
-        <a class="btn btn-ghost" href="/templates/sample/back-office/" data-track={`${page.slug}-preview-back-office`}>Preview Back Office</a>
+        <a class="btn btn-green btn-cta" href={primaryCtaHref} data-track={`${page.slug}-${isTradePreview ? "free-preview" : "build-my-website"}`} data-ga-event={`click_for_${page.slug}_final_${primaryCtaEvent}`}>{primaryCtaLabel}</a>
+        <a class="btn btn-ghost" href={page.demoRoute} data-track={`${page.slug}-view-example`}>{demoCtaLabel}</a>
+        <a class="btn btn-ghost" href="/">Visit Website Support Studio home</a>
       </div>
     </div>
   </section>
 
   <div class="industry-mobile-cta">
-    <a href={founderCheckoutHref} data-track={`${page.slug}-build-my-website`} data-ga-event={`click_for_${page.slug}_mobile_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+    <a href={primaryCtaHref} data-track={`${page.slug}-${isTradePreview ? "free-preview" : "build-my-website"}`} data-ga-event={`click_for_${page.slug}_mobile_${primaryCtaEvent}`}>{primaryCtaLabel}</a>
   </div>
 
   <QueryParamPreserver />

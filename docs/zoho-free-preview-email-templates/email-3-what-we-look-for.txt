@@ -1,0 +1,24 @@
+Subject: What we look for when building your preview
+Preview text: We review your services, audience, goals, style, and current website before preparing the preview.
+
+A useful website preview starts with a practical brief.
+
+When you request a free preview, Website Support Studio reviews details like:
+
+- What your business does
+- The services or products you want to highlight
+- Who your customers are
+- What pages you may need
+- The style you like
+- Your current website, if you have one
+- Competitor or inspiration sites
+- The primary goal of the site
+
+Then we prepare a custom homepage preview for you to review. This is not an instant automated build and it is not a paid commitment.
+
+Get My Free Website Preview:
+https://www.websitesupportstudio.com/free-website-preview?utm_source=zoho&utm_medium=email&utm_campaign=wss_free_preview&utm_content={{segment}}
+
+Unsubscribe:
+$[LI:UNSUBSCRIBE]$
+

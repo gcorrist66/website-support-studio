@@ -1,0 +1,51 @@
+name,domain,vertical,naics,revenue,founded,hc_growth_12mo,facebook,screen
+SunTrust Remodeling,suntrustremodeling.com,Remodeling,236118,,2022,0.14,no,real
+Carbon Remodeling,carbonremodeling.com,Remodeling,23611,,2024,2.75,no,real
+Mandolin HVAC Plumbing Electrical,mandolinservices.com,HVAC,23822,,2018,0.40,no,real
+Quality Remodeling Inc,qualityremodelingmd.com,Remodeling,23816,,,0.0,yes,real
+Matrix Plumbing & HVAC,matrixphsvc.com,Plumbing,23822,,2022,0.0,no,real
+TraVek Remodeling,travek.com,Remodeling,23611,15700000,2001,-0.09,yes,real
+Gryphon Roofing & Remodeling,gogryphon.com,Roofing,238160,3333000,1994,0.0,yes,real
+Sunny Bliss Plumbing & Air,sunnybliss.com,Plumbing,23822,,1990,1.5,no,real
+Blue Fox HVAC & Plumbing,bluefoxhvac.com,HVAC,23822,,2018,0.61,no,real
+Cornett Roofing Systems,cornettroofing.com,Roofing,23816,17896000,1991,0.0,yes,real
+MSI Plumbing and Remodeling,msiplumbingandremodeling.com,Plumbing,23822,,,0.0,yes,real
+AG O'Brien Plumbing & Heating,agobrien.com,Plumbing,23822,,1934,-0.10,no,real
+Blue Collars 24hr Plumbing & HVAC,bluecollars.com,Plumbing,238220,,2023,0.66,no,real
+Hill Construction LLC,hillconstructionllc.com,Construction,23621,9733000,2010,0.20,yes,real
+LandMark Constructions,landmarkconst.net,Construction,23622,22734000,1998,0.0,no,real
+Cold Comfort HVAC,coldcomforthvac.com,HVAC,23822,,2020,,no,real
+Kech Development,kechdevelopment.com,Construction,23611,,,−0.43,yes,real
+SCMI Inc,scmi-inc.com,Specialty Trade,23713,,1994,-0.03,no,real
+Swell Energy,swellenergy.com,Solar,238210,8700000,2014,-0.03,yes,real
+DrBalcony,drbalcony.com,Inspection,23816,,2021,-0.36,yes,real
+Olympia Chiropractic & PT,olympiachiroandpt.com,Chiropractic/PT,62131,3035000,1997,-0.12,yes,real
+Veterinary Dental Specialties (VDS),vdspets.com,Veterinary,62139,4012000,1982,-0.06,yes,real
+Physical Therapy First,physicaltherapyfirst.com,Physical Therapy,621340,2776000,2001,-0.06,yes,real
+Suffolk PT & Chiropractic,suffolkptchiro.com,PT/Chiropractic,62131,,2020,0.25,no,real
+E3 Rehab,e3rehab.com,Physical Therapy,62139,,2019,0.0,no,real
+JL Law Firm,thejllawfirm.com,Law Firm,54111,,2015,0.0,yes,real
+Raleigh Immigration Law Firm,raleighimmigrationlawfirm.com,Law Firm,541110,,2015,0.07,no,real
+Gehi & Associates,gehilaw.com,Law Firm,54111,,2001,0.03,no,real
+RobMark Law,robmarklaw.com,Law Firm,54111,,,0.02,no,real
+Marina Sirras & Associates,lawseek.com,Law Firm,54111,14560000,1987,0.06,no,real
+Cash Offer Kentucky,cashofferky.com,Real Estate,53121,,2018,0.21,yes,real
+HVAC School,hvacrschool.com,Training,611519,400000,2016,-0.09,no,dq:not-local-service-training-media
+HVAC-Connect.com,hvac-connect.com,Directory,,,2013,,no,dq:b2b-directory
+ACCA,acca.org,Association,81399,5666000,1968,0.0,yes,dq:association-nonprofit
+BRIX Recruiting Partners,brixrecruiting.com,Recruiting,54161,,2011,0.09,no,dq:recruiting-b2b
+Varsity Plumbing & Heating,,Plumbing,,,1962,0.0,no,dq:no-website
+American Med Spa Association,americanmedspa.org,Association,54161,3971000,2013,-0.06,yes,dq:association-nonprofit
+Med Spa Magic Marketing,medspamagicmarketing.com,Marketing Agency,541810,,,0.11,yes,dq:marketing-agency-b2b
+Dental Career Services,dentalcareerservices.com,Staffing,56132,,1998,0.05,no,dq:staffing-b2b
+PTJ Journal,valueofpt.com,Publication,62139,,1921,0.0,no,dq:publication
+VETgirl,vetgirlontherun.com,Vet Education,61131,,2012,0.13,yes,dq:education-media
+DANB,danb.org,Association,61131,9730000,1948,0.13,yes,dq:association-board
+Feline Veterinary Medical Assoc,catvets.com,Association,54199,5583000,1974,-0.17,yes,dq:association-nonprofit
+Dental Medical Careers,dental-careers.com,Recruiting,54161,,,0.08,yes,dq:recruiting-b2b
+Law Firm Mentor,lawfirmmentor.net,Coaching,611430,,2018,0.08,no,dq:coaching-b2b
+Fractional Law Firm CMO,fractionallawfirmcmo.com,Marketing,54161,,2022,0.0,no,dq:marketing-b2b
+WEBRIS,webris.org,Marketing Agency,54182,7057000,2013,0.04,yes,dq:marketing-agency-b2b
+Considine Search,considinesearch.com,Legal Recruiting,54111,,2012,0.0,yes,dq:recruiting-b2b
+Lexitas Legal,lexitaslegal.com,Legal Staffing,54111,105000000,2003,0.0,yes,dq:enterprise-staffing-PE-owned
+Beyond Paralegals,beyondparalegals.com,Legal Services,54111,,2006,0.0,no,dq:b2b-services

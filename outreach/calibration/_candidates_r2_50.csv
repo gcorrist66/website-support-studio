@@ -1,0 +1,51 @@
+first_name,company,vertical,screen
+Fred,Sunburst Construction Inc.,Construction,real
+Rene,RALCO Electric & Generator,Electrical,real
+Jason,Phillips Home Improvements,Remodeling,real
+Kirby,Solid Concrete Walls LLC,Concrete,real
+Sebastian,Enhanced Mechanical Systems,HVAC,real
+Brian,All Things Restored LLC,Restoration,real
+Kevin,Odyssey Mechanical LLC,HVAC,real
+Victor,Modern Electric Co,Electrical,real
+Alvaro,Comfort City Mechanical Inc.,HVAC,real
+Dustin,Metro Garage Door Co,Garage Doors,real
+Ben,HI Low Roofing,Roofing,real
+James,Abbott Electric,Electrical,real
+Guy,Stellar Painting and Remodeling,Painting,real
+Ron,Skelton Fire Alarm,Fire/Security,real
+Jordon,ASPIRE Therapy & Wellness,Physical Therapy,real
+Tylor,Somos Dental & Orthodontics,Dental,real
+Peter,Eye C Clearly LLC,Optometry,real
+Vic,Social Security Law Group,Law Firm,real
+Bill,Gaggos Flaggman PLLC,Law Firm,real
+Marcella,Burke Law Group,Law Firm,real
+Uma,The Oracle Legal Group,Law Firm,real
+Tristan,MainStreet.law,Law Firm,real
+Glen,Glen J. Dunn & Associates Ltd.,Law Firm,real
+Chris,Krankemann Petersen LLP,Law Firm,real
+Robert,Griffitts LLP,Law Firm,real
+Marti,lumenomics,Lighting,real
+Trang,ERA Empower Realty,Real Estate,real
+Darryll,Perception Real Estate Group Inc.,Real Estate,real
+Michael,Freed By Real Estate,Real Estate,real
+Richard,Flateau Realty Corp.,Real Estate,real
+Steven,Green Label Title,Title/Real Estate,real
+Patrick,The RV Shop,RV/Auto Repair,real
+Charlotte,Foundation Steel LLC,Construction,real
+Ron,Total Service Telecom Inc,Telecom Install,real
+Curtis,Deep Blue Integration Inc.,AV Integration,real
+Robbin,Sound Products By TSI Global,AV/Sound,real
+Ken,Orness Design Group Inc.,Design/Build,real
+Raymond,Novus Law LLC,Legal Services,review
+Tony,Legal Express,Legal Services,review
+Michael,Dilworth IP,IP Law,review
+Peter,Journey Capital Real Estate Partners,RE Investment,dq:investment
+Jon,iRefract,Tech,dq:tech-b2b
+Michael,Vertical Access Inc.,B2B Inspection,dq:b2b
+Robert,Warehouse Equipment Solutions Inc,B2B Equipment,dq:b2b
+Chris,Dobson Industrial Inc.,B2B Industrial,dq:b2b
+Doug,Blackfin Real Estate Investors LLC,RE Investment,dq:investment
+Vasu,Apta Investment Group,Investment,dq:investment
+Dave,Axia Partners,Investment Advisory,dq:investment
+Aaron,Arselle Investments,Investment,dq:investment
+David,Foundation Capital Partners,Investment,dq:investment

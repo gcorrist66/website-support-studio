@@ -1,0 +1,343 @@
+{
+  "proofDir": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942",
+  "production": {
+    "desktop": {
+      "url": "https://www.websitesupportstudio.com/",
+      "status": 200,
+      "data": {
+        "title": "Website Support Studio - Free Website Preview",
+        "path": "/",
+        "heading": "See what your business could look like",
+        "galleryVisible": true,
+        "galleryRect": {
+          "x": 0,
+          "y": 8015,
+          "width": 1440,
+          "height": 2603
+        },
+        "count": 6,
+        "industries": [
+          "Landscaping",
+          "Roofing",
+          "Law Firm",
+          "HVAC",
+          "Restaurant",
+          "Dental"
+        ],
+        "browserBars": 6,
+        "serviceRows": 6,
+        "proofRows": 6,
+        "ctaText": "Get My Free Website Preview",
+        "ctaHref": "/free-website-preview",
+        "mainButtons": [
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "Start My Free Preview",
+            "href": "#preview-questionnaire"
+          },
+          {
+            "text": "See Example Previews",
+            "href": "#industry-preview-feed"
+          },
+          {
+            "text": "Get My Free Website Score",
+            "href": "/website-health"
+          },
+          {
+            "text": "Get My Free Website Preview",
+            "href": "/free-website-preview"
+          }
+        ],
+        "brokenImages": [],
+        "overflow": [],
+        "galleryDisplay": "grid",
+        "bodyWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "layoutStable": true,
+      "screenshotPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/prod-home-desktop.png",
+      "galleryPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/prod-home-desktop-gallery.png"
+    },
+    "mobile": {
+      "url": "https://www.websitesupportstudio.com/",
+      "status": 200,
+      "data": {
+        "title": "Website Support Studio - Free Website Preview",
+        "path": "/",
+        "heading": "See what your business could look like",
+        "galleryVisible": true,
+        "galleryRect": {
+          "x": 0,
+          "y": 20443,
+          "width": 390,
+          "height": 4850
+        },
+        "count": 6,
+        "industries": [
+          "Landscaping",
+          "Roofing",
+          "Law Firm",
+          "HVAC",
+          "Restaurant",
+          "Dental"
+        ],
+        "browserBars": 6,
+        "serviceRows": 6,
+        "proofRows": 6,
+        "ctaText": "Get My Free Website Preview",
+        "ctaHref": "/free-website-preview",
+        "mainButtons": [
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "Start My Free Preview",
+            "href": "#preview-questionnaire"
+          },
+          {
+            "text": "See Example Previews",
+            "href": "#industry-preview-feed"
+          },
+          {
+            "text": "Get My Free Website Score",
+            "href": "/website-health"
+          },
+          {
+            "text": "Get My Free Website Preview",
+            "href": "/free-website-preview"
+          }
+        ],
+        "brokenImages": [],
+        "overflow": [],
+        "galleryDisplay": "grid",
+        "bodyWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "layoutStable": true,
+      "screenshotPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/prod-home-mobile.png",
+      "galleryPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/prod-home-mobile-gallery.png"
+    },
+    "freePreview": {
+      "url": "https://www.websitesupportstudio.com/free-website-preview",
+      "status": 200,
+      "data": {
+        "title": "Free Website Preview — Website Support Studio",
+        "path": "/free-website-preview",
+        "heading": "See what your business could look like",
+        "galleryVisible": true,
+        "galleryRect": {
+          "x": 0,
+          "y": 8015,
+          "width": 1440,
+          "height": 2603
+        },
+        "count": 6,
+        "industries": [
+          "Landscaping",
+          "Roofing",
+          "Law Firm",
+          "HVAC",
+          "Restaurant",
+          "Dental"
+        ],
+        "browserBars": 6,
+        "serviceRows": 6,
+        "proofRows": 6,
+        "ctaText": "Get My Free Website Preview",
+        "ctaHref": "/free-website-preview",
+        "mainButtons": [
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "Start My Free Preview",
+            "href": "#preview-questionnaire"
+          },
+          {
+            "text": "See Example Previews",
+            "href": "#industry-preview-feed"
+          },
+          {
+            "text": "Get My Free Website Score",
+            "href": "/website-health"
+          },
+          {
+            "text": "Get My Free Website Preview",
+            "href": "/free-website-preview"
+          }
+        ],
+        "brokenImages": [],
+        "overflow": [],
+        "galleryDisplay": "grid",
+        "bodyWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "layoutStable": true,
+      "screenshotPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/prod-free-preview-desktop.png",
+      "galleryPath": null
+    },
+    "ctaClick": {
+      "path": "/free-website-preview",
+      "status": null,
+      "heading": "See what your business could look like"
+    }
+  },
+  "local": {
+    "desktop": {
+      "url": "http://127.0.0.1:4331/",
+      "status": 200,
+      "data": {
+        "title": "Website Support Studio - Free Website Preview",
+        "path": "/",
+        "heading": "See what your business could look like",
+        "galleryVisible": true,
+        "galleryRect": {
+          "x": 0,
+          "y": 8015,
+          "width": 1440,
+          "height": 2603
+        },
+        "count": 6,
+        "industries": [
+          "Landscaping",
+          "Roofing",
+          "Law Firm",
+          "HVAC",
+          "Restaurant",
+          "Dental"
+        ],
+        "browserBars": 6,
+        "serviceRows": 6,
+        "proofRows": 6,
+        "ctaText": "Get My Free Website Preview",
+        "ctaHref": "/free-website-preview",
+        "mainButtons": [
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "_login",
+            "href": "https://app.websitesupportstudio.com"
+          },
+          {
+            "text": "_join_now",
+            "href": "/pricing"
+          },
+          {
+            "text": "Start My Free Preview",
+            "href": "#preview-questionnaire"
+          },
+          {
+            "text": "See Example Previews",
+            "href": "#industry-preview-feed"
+          },
+          {
+            "text": "Get My Free Website Score",
+            "href": "/website-health"
+          },
+          {
+            "text": "Get My Free Website Preview",
+            "href": "/free-website-preview"
+          }
+        ],
+        "brokenImages": [],
+        "overflow": [],
+        "galleryDisplay": "grid",
+        "bodyWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "layoutStable": true,
+      "screenshotPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/local-home-desktop.png",
+      "galleryPath": "/Users/corristonconsulting/Projects/website-support-studio/.artifacts/prod-gallery-deploy-20260629-0942/local-home-desktop-gallery.png"
+    }
+  },
+  "compare": {
+    "prodSig": {
+      "heading": "See what your business could look like",
+      "count": 6,
+      "industries": [
+        "Landscaping",
+        "Roofing",
+        "Law Firm",
+        "HVAC",
+        "Restaurant",
+        "Dental"
+      ],
+      "ctaText": "Get My Free Website Preview",
+      "ctaHref": "/free-website-preview"
+    },
+    "localSig": {
+      "heading": "See what your business could look like",
+      "count": 6,
+      "industries": [
+        "Landscaping",
+        "Roofing",
+        "Law Firm",
+        "HVAC",
+        "Restaurant",
+        "Dental"
+      ],
+      "ctaText": "Get My Free Website Preview",
+      "ctaHref": "/free-website-preview"
+    },
+    "matches": true
+  }
+}

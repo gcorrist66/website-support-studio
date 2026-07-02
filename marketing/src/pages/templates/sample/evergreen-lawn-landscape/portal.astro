@@ -1,0 +1,11 @@
+---
+import RidgelineOwnerPortal from "../../../../components/sample-sites/RidgelineOwnerPortal.astro";
+import { SAMPLE_BUSINESS_BY_SLUG } from "../../../../sampleBusinesses";
+
+const business = SAMPLE_BUSINESS_BY_SLUG["evergreen-lawn-landscape"];
+if (!business) {
+  throw new Error("Evergreen Lawn & Landscape sample business is missing.");
+}
+---
+
+<RidgelineOwnerPortal business={business} />

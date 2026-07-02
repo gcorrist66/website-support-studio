@@ -1,0 +1,11 @@
+---
+import RidgelineOwnerPortal from "../../../../components/sample-sites/RidgelineOwnerPortal.astro";
+import { SAMPLE_BUSINESS_BY_SLUG } from "../../../../sampleBusinesses";
+
+const business = SAMPLE_BUSINESS_BY_SLUG["canopy-tree-care"];
+if (!business) {
+  throw new Error("Canopy Tree Care sample business is missing.");
+}
+---
+
+<RidgelineOwnerPortal business={business} />

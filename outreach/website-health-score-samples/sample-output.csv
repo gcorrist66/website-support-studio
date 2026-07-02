@@ -1,0 +1,6 @@
+company,website_url,health_score,tier,top_3_issues
+Website Support Studio,https://www.websitesupportstudio.com,94,Strong,Monitor mobile speed; Keep the quote path front and center; Keep reviews and project proof current
+Google,https://www.google.com,79,Strong,Fix the mobile viewport; Move trust proof above the fold; Tighten the basic search signals
+Example,https://example.com,65,Needs Work,Make the quote or booking path obvious; Move trust proof above the fold; Tighten the basic search signals
+No Such Test,https://this-domain-should-not-exist-wss-score-test-2026.com,0,At Risk,Make the website reachable; Create a dependable web presence; Add a quote or booking path
+Vercel,https://vercel.com,92,Strong,Improve mobile load speed; Monitor mobile speed; Keep the quote path front and center

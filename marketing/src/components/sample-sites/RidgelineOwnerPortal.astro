@@ -1,0 +1,395 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { SampleBusiness } from "../../sampleBusinesses";
+import { samplePath } from "../../sampleBusinesses";
+
+const { business } = Astro.props as { business: SampleBusiness };
+const demoPath = samplePath(business, "home");
+const portalPath = `${demoPath}/portal`;
+const industryPathBySlug: Record<string, string> = {
+  "ridgeline-roofing": "/for/roofing",
+  "northwind-hvac": "/for/hvac",
+  "mainline-plumbing": "/for/plumbing",
+  "brightwire-electric": "/for/electrical",
+  "bluewave-pools": "/for/pools",
+  "greenline-irrigation": "/for/irrigation",
+  "overpro-garage-doors": "/for/garage-doors",
+  "shieldline-pest-control": "/for/pest-control",
+  "evergreen-lawn-landscape": "/for/landscaping",
+  "canopy-tree-care": "/for/tree-service",
+  "cornerstone-concrete": "/for/concrete",
+  "brightwash-exterior-cleaning": "/for/pressure-washing",
+};
+const freePreviewPath = industryPathBySlug[business.slug] ?? "/free-website-preview";
+const brandMark = business.name
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((word) => word[0])
+  .join("")
+  .toUpperCase();
+const portalConfigBySlug = {
+  "ridgeline-roofing": {
+    audience: "roofing company",
+    backLabel: "Back to Ridgeline demo",
+    leadIssueHeader: "Roof issue",
+    leads: [
+      { name: "Megan R.", town: "Lakewood", issue: "Leak near skylight", date: "Jun 19", status: "New" },
+      { name: "Carlos M.", town: "Aurora", issue: "Hail inspection", date: "Jun 18", status: "Contacted" },
+      { name: "Denise P.", town: "Denver", issue: "Replacement estimate", date: "Jun 17", status: "Quoted" },
+      { name: "Theo W.", town: "Golden", issue: "Missing shingles", date: "Jun 16", status: "New" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Denver", text: "Clear estimate process and helpful photo updates before the crew arrived." },
+      { name: "Sample homeowner", town: "Lakewood", text: "The roof repair request was easy to submit from a phone." },
+      { name: "Sample homeowner", town: "Aurora", text: "Good communication around storm damage documentation." },
+    ],
+  },
+  "northwind-hvac": {
+    audience: "HVAC company",
+    backLabel: "Back to Northwind demo",
+    leadIssueHeader: "HVAC issue",
+    leads: [
+      { name: "Erin K.", town: "Minneapolis", issue: "AC blowing warm air", date: "Jun 19", status: "New" },
+      { name: "Marcus B.", town: "St. Paul", issue: "Spring tune-up request", date: "Jun 18", status: "Scheduled" },
+      { name: "Priya S.", town: "Edina", issue: "Furnace replacement quote", date: "Jun 17", status: "Quoted" },
+      { name: "Jon T.", town: "Bloomington", issue: "Indoor air quality question", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Minneapolis", text: "The service request made it easy to describe the AC issue before the call." },
+      { name: "Sample homeowner", town: "St. Paul", text: "Maintenance plan details were clear without feeling pushy." },
+      { name: "Sample homeowner", town: "Edina", text: "Helpful replacement next steps and financing language before booking." },
+    ],
+  },
+  "mainline-plumbing": {
+    audience: "plumbing company",
+    backLabel: "Back to Mainline demo",
+    leadIssueHeader: "Plumbing issue",
+    leads: [
+      { name: "Alyssa R.", town: "Columbus", issue: "Water heater leaking", date: "Jun 19", status: "New" },
+      { name: "Ben C.", town: "Dublin", issue: "Slow kitchen drain", date: "Jun 18", status: "Contacted" },
+      { name: "Maria L.", town: "Worthington", issue: "Emergency shutoff question", date: "Jun 17", status: "Scheduled" },
+      { name: "Owen P.", town: "Grove City", issue: "Fixture install estimate", date: "Jun 16", status: "Quoted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Columbus", text: "The emergency request path made the next step obvious." },
+      { name: "Sample homeowner", town: "Dublin", text: "The water heater service page answered the planning questions clearly." },
+      { name: "Sample homeowner", town: "Worthington", text: "Easy to ask for a plumbing update without touching the website." },
+    ],
+  },
+  "brightwire-electric": {
+    audience: "electrical company",
+    backLabel: "Back to Brightwire demo",
+    leadIssueHeader: "Electrical need",
+    leads: [
+      { name: "Tara W.", town: "Raleigh", issue: "Panel upgrade estimate", date: "Jun 19", status: "New" },
+      { name: "Miles G.", town: "Cary", issue: "EV charger install", date: "Jun 18", status: "Scheduled" },
+      { name: "Nadia P.", town: "Durham", issue: "Generator consult", date: "Jun 17", status: "Quoted" },
+      { name: "Chris L.", town: "Apex", issue: "Breaker keeps tripping", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Raleigh", text: "The panel upgrade request made the safety and estimate steps clear." },
+      { name: "Sample homeowner", town: "Cary", text: "EV charger information answered the main questions before booking." },
+      { name: "Sample homeowner", town: "Durham", text: "Easy to request website changes without touching code." },
+    ],
+  },
+  "bluewave-pools": {
+    audience: "pool company",
+    backLabel: "Back to Bluewave demo",
+    leadIssueHeader: "Pool need",
+    leads: [
+      { name: "Kelly M.", town: "Tampa", issue: "Weekly service quote", date: "Jun 19", status: "New" },
+      { name: "Andre C.", town: "St. Petersburg", issue: "Green-pool cleanup", date: "Jun 18", status: "Scheduled" },
+      { name: "Lena R.", town: "Clearwater", issue: "Resurfacing estimate", date: "Jun 17", status: "Quoted" },
+      { name: "Victor S.", town: "Brandon", issue: "Pump repair", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Tampa", text: "The weekly service quote made the maintenance plan easy to understand." },
+      { name: "Sample homeowner", town: "St. Petersburg", text: "The before-and-after gallery made the resurfacing options feel concrete." },
+      { name: "Sample homeowner", town: "Clearwater", text: "Easy to request updates and add new project photos without touching the website." },
+    ],
+  },
+  "greenline-irrigation": {
+    audience: "irrigation company",
+    backLabel: "Back to Greenline demo",
+    leadIssueHeader: "Sprinkler need",
+    leads: [
+      { name: "Hannah P.", town: "Kansas City", issue: "Spring start-up", date: "Jun 19", status: "New" },
+      { name: "Marco D.", town: "Overland Park", issue: "Broken sprinkler head", date: "Jun 18", status: "Scheduled" },
+      { name: "Sharon L.", town: "Lee's Summit", issue: "Winterization quote", date: "Jun 17", status: "Quoted" },
+      { name: "Evan R.", town: "Lenexa", issue: "Smart controller install", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Kansas City", text: "The seasonal booking path made it easy to pick spring start-up instead of a generic form." },
+      { name: "Sample homeowner", town: "Overland Park", text: "Sprinkler repair details helped describe the broken head before the visit." },
+      { name: "Sample homeowner", town: "Lee's Summit", text: "The smart-controller content explained the water-savings upgrade clearly." },
+    ],
+  },
+  "overpro-garage-doors": {
+    audience: "garage door company",
+    backLabel: "Back to OverPro demo",
+    leadIssueHeader: "Door issue",
+    leads: [
+      { name: "Nora B.", town: "Charlotte", issue: "Door will not open", date: "Jun 19", status: "New" },
+      { name: "Caleb R.", town: "Matthews", issue: "Broken spring", date: "Jun 18", status: "Scheduled" },
+      { name: "Diane S.", town: "Concord", issue: "Opener sensor issue", date: "Jun 17", status: "Contacted" },
+      { name: "Miles T.", town: "Huntersville", issue: "Replacement estimate", date: "Jun 16", status: "Quoted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Charlotte", text: "The repair request helped describe a stuck garage door before the call." },
+      { name: "Sample homeowner", town: "Matthews", text: "Repair versus replacement was easy to understand." },
+      { name: "Sample homeowner", town: "Concord", text: "The owner portal made new door photos simple to request." },
+    ],
+  },
+  "shieldline-pest-control": {
+    audience: "pest control company",
+    backLabel: "Back to Shieldline demo",
+    leadIssueHeader: "Pest issue",
+    leads: [
+      { name: "Elena P.", town: "Phoenix", issue: "Ants in kitchen", date: "Jun 19", status: "New" },
+      { name: "Grant W.", town: "Scottsdale", issue: "Quarterly plan", date: "Jun 18", status: "Scheduled" },
+      { name: "Maya C.", town: "Tempe", issue: "Termite inspection", date: "Jun 17", status: "Quoted" },
+      { name: "Jules R.", town: "Mesa", issue: "Rodent activity", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Phoenix", text: "The form made it easy to explain where pest activity was happening." },
+      { name: "Sample homeowner", town: "Scottsdale", text: "The recurring plan page felt clear before booking." },
+      { name: "Sample homeowner", town: "Tempe", text: "Helpful termite inspection path without overpromising." },
+    ],
+  },
+  "evergreen-lawn-landscape": {
+    audience: "landscaping company",
+    backLabel: "Back to Evergreen demo",
+    leadIssueHeader: "Landscape need",
+    leads: [
+      { name: "Megan S.", town: "Raleigh", issue: "Weekly lawn care", date: "Jun 19", status: "New" },
+      { name: "Chris D.", town: "Cary", issue: "Spring cleanup", date: "Jun 18", status: "Scheduled" },
+      { name: "Leah V.", town: "Apex", issue: "Mulch refresh", date: "Jun 17", status: "Quoted" },
+      { name: "Omar N.", town: "Wake Forest", issue: "Planting estimate", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Raleigh", text: "The weekly lawn care request made route service simple." },
+      { name: "Sample homeowner", town: "Cary", text: "Seasonal cleanup details answered timing questions." },
+      { name: "Sample homeowner", town: "Apex", text: "The photo gallery structure made the mulch refresh easy to picture." },
+    ],
+  },
+  "canopy-tree-care": {
+    audience: "tree service company",
+    backLabel: "Back to Canopy demo",
+    leadIssueHeader: "Tree concern",
+    leads: [
+      { name: "Rachel H.", town: "Nashville", issue: "Large oak removal", date: "Jun 19", status: "New" },
+      { name: "Tom W.", town: "Franklin", issue: "Storm limb on fence", date: "Jun 18", status: "Scheduled" },
+      { name: "Priya K.", town: "Brentwood", issue: "Tree trimming estimate", date: "Jun 17", status: "Quoted" },
+      { name: "Sam L.", town: "Hendersonville", issue: "Stump grinding", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Nashville", text: "The request form captured safety details before the estimate." },
+      { name: "Sample homeowner", town: "Franklin", text: "Storm damage guidance made the next step clear." },
+      { name: "Sample homeowner", town: "Brentwood", text: "The project proof areas made trimming and removal easier to understand." },
+    ],
+  },
+  "cornerstone-concrete": {
+    audience: "concrete contractor",
+    backLabel: "Back to Cornerstone demo",
+    leadIssueHeader: "Concrete project",
+    leads: [
+      { name: "Lena P.", town: "Columbus", issue: "Driveway replacement", date: "Jun 19", status: "New" },
+      { name: "Mark R.", town: "Dublin", issue: "Patio estimate", date: "Jun 18", status: "Scheduled" },
+      { name: "Ana C.", town: "Grove City", issue: "Crack repair", date: "Jun 17", status: "Contacted" },
+      { name: "Bryce W.", town: "Westerville", issue: "Stamped walkway", date: "Jun 16", status: "Quoted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Columbus", text: "Before-and-after sections made the driveway scope easier to understand." },
+      { name: "Sample homeowner", town: "Dublin", text: "The patio estimate form asked for the right project details." },
+      { name: "Sample homeowner", town: "Westerville", text: "The gallery structure made finish options feel concrete." },
+    ],
+  },
+  "brightwash-exterior-cleaning": {
+    audience: "pressure washing company",
+    backLabel: "Back to BrightWash demo",
+    leadIssueHeader: "Cleaning request",
+    leads: [
+      { name: "Kara M.", town: "Tampa", issue: "Driveway cleaning", date: "Jun 19", status: "New" },
+      { name: "Drew C.", town: "St. Petersburg", issue: "House wash", date: "Jun 18", status: "Scheduled" },
+      { name: "Nina R.", town: "Clearwater", issue: "Roof soft wash", date: "Jun 17", status: "Quoted" },
+      { name: "Victor L.", town: "Brandon", issue: "Pool deck cleanup", date: "Jun 16", status: "Contacted" },
+    ],
+    testimonials: [
+      { name: "Sample homeowner", town: "Tampa", text: "The fast quote request made exterior cleaning easy to book." },
+      { name: "Sample homeowner", town: "St. Petersburg", text: "Before-and-after areas made the value obvious." },
+      { name: "Sample homeowner", town: "Clearwater", text: "The roof soft wash explanation helped avoid confusion about pressure." },
+    ],
+  },
+} as const;
+const portalConfig = portalConfigBySlug[business.slug as keyof typeof portalConfigBySlug] ?? portalConfigBySlug["ridgeline-roofing"];
+
+const stats = [
+  { label: "Site visits", value: "1,284", note: "Last 30 days" },
+  { label: "New leads", value: "18", note: "Estimate requests" },
+  { label: "Calls", value: "42", note: "Mobile tap-to-call" },
+];
+
+const leads = portalConfig.leads;
+const testimonials = portalConfig.testimonials;
+---
+
+<BaseLayout
+  title={`${business.name} Owner Portal Demo`}
+  description={`Static sample owner portal for the fictitious ${business.name} website.`}
+  path={portalPath}
+  hideChrome
+>
+  <div class="portal">
+    <aside class="wss-demo-cta" aria-label="Website Support Studio free preview offer">
+      <p><strong>Website Support Studio demo.</strong> Want a site and portal like this for your {portalConfig.audience}?</p>
+      <a href={freePreviewPath}>Get my free preview -></a>
+    </aside>
+
+    <div class="portal-shell">
+      <aside class="sidebar" aria-label={`${business.name} owner portal navigation`}>
+        <a class="brand" href={portalPath} aria-label={`${business.name} owner portal home`}>
+          <span>{brandMark}</span>
+          <strong>{business.name}</strong>
+        </a>
+        <p class="demo-marker">DEMO SAMPLE · FICTITIOUS OWNER PORTAL</p>
+        <nav>
+          <a href="#dashboard">Dashboard</a>
+          <a href="#leads">Leads</a>
+          <a href="#testimonials">Testimonials</a>
+          <a href="#submit-ticket">Submit Ticket</a>
+        </nav>
+        <a class="back-link" href={demoPath}>{portalConfig.backLabel}</a>
+      </aside>
+
+      <main class="workspace">
+        <header class="topline">
+          <div>
+            <p class="eyebrow">Owner portal</p>
+            <h1>{business.name} dashboard</h1>
+          </div>
+          <a href={demoPath}>{portalConfig.backLabel}</a>
+        </header>
+
+        <section class="view" id="dashboard" aria-labelledby="dashboard-title">
+          <div class="section-head">
+            <p class="eyebrow">Dashboard</p>
+            <h2 id="dashboard-title">Site status</h2>
+          </div>
+
+          <div class="status-panel">
+            <div>
+              <span class="live-pill"><span></span> Live</span>
+              <h3>Hosted and SSL secure</h3>
+              <p>Last updated Jun 19, 2026 · 99.98% sample uptime</p>
+            </div>
+            <p class="ownership">You own your domain, site, and content. Monthly plan optional — cancel anytime.</p>
+          </div>
+
+          <div class="stat-grid" aria-label="Sample portal metrics">
+            {stats.map((stat) => (
+              <article>
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+                <small>{stat.note}</small>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="view" id="leads" aria-labelledby="leads-title">
+          <div class="section-head">
+            <p class="eyebrow">Leads</p>
+            <h2 id="leads-title">Estimate requests</h2>
+          </div>
+
+          <div class="lead-table" role="table" aria-label="Sample estimate requests">
+            <div class="lead-row lead-head" role="row">
+              <span role="columnheader">Name</span>
+              <span role="columnheader">Town</span>
+              <span role="columnheader">{portalConfig.leadIssueHeader}</span>
+              <span role="columnheader">Date</span>
+              <span role="columnheader">Status</span>
+            </div>
+            {leads.map((lead) => (
+              <div class="lead-row" role="row">
+                <span role="cell">{lead.name}</span>
+                <span role="cell">{lead.town}</span>
+                <span role="cell">{lead.issue}</span>
+                <span role="cell">{lead.date}</span>
+                <span role="cell"><mark>{lead.status}</mark></span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section class="view" id="testimonials" aria-labelledby="testimonials-title">
+          <div class="section-head section-head-row">
+            <div>
+              <p class="eyebrow">Testimonials</p>
+              <h2 id="testimonials-title">Sample customer reviews</h2>
+            </div>
+            <button type="button">Request more reviews</button>
+          </div>
+
+          <div class="review-list">
+            {testimonials.map((review) => (
+              <article>
+                <p>"{review.text}"</p>
+                <span>{review.name} · {review.town}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="view" id="submit-ticket" aria-labelledby="ticket-title">
+          <div class="section-head">
+            <p class="eyebrow">Submit Ticket</p>
+            <h2 id="ticket-title">Ask Website Support Studio for a change</h2>
+          </div>
+
+          <form class="ticket-form">
+            <label>
+              Subject
+              <select name="subject">
+                <option>Update hours</option>
+                <option>Add a photo</option>
+                <option>Change phone</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label>
+              Message
+              <textarea name="message" rows="5" placeholder="Tell us what should change on the site."></textarea>
+            </label>
+            <button type="button">Submit</button>
+            <p>Demo only — no ticket is sent.</p>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <style is:inline>
+    body[data-page^="/templates/sample/"][data-page$="/portal"] .site-header,
+    body[data-page^="/templates/sample/"][data-page$="/portal"] .site-footer,
+    body[data-page^="/templates/sample/"][data-page$="/portal"] .skip-link{display:none}
+    body[data-page^="/templates/sample/"][data-page$="/portal"]{background:#f8fafc}
+    .portal{--accent:#f97316;--ink:#111827;--muted:#667085;--line:#e5e7eb;--soft:#f8fafc;min-height:100vh;background:#f8fafc;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+    .portal *{box-sizing:border-box}.portal h1,.portal h2,.portal h3,.portal p{margin-top:0}.portal a{color:inherit}.portal p,.portal span,.portal label,.portal td,.portal li{line-height:1.55}.portal p{color:var(--muted)}
+    .wss-demo-cta{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:center;gap:.9rem;padding:.6rem 1rem;background:#fff7ed;border-bottom:1px solid rgba(249,115,22,.22)}.wss-demo-cta p{margin:0;color:#7c2d12;font-size:.9rem;font-weight:700}.wss-demo-cta strong{color:var(--ink)}.wss-demo-cta a{display:inline-flex;align-items:center;justify-content:center;min-height:2.35rem;padding:.55rem .85rem;border-radius:.55rem;background:var(--ink);color:#fff;text-decoration:none;font-size:.86rem;font-weight:850;white-space:nowrap}
+    .portal-shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:calc(100vh - 58px)}
+    .sidebar{position:sticky;top:3.55rem;align-self:start;height:calc(100vh - 58px);display:flex;flex-direction:column;gap:1.25rem;padding:1.25rem;background:#fff;border-right:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:.75rem;text-decoration:none}.brand span{display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:.65rem;background:var(--ink);color:#fff;font-weight:900}.brand strong{font-size:.98rem}
+    .demo-marker{margin:0;padding:.55rem .65rem;border:1px dashed rgba(249,115,22,.4);border-radius:.65rem;background:#fff7ed;color:#9a3412!important;font-size:.72rem;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+    .sidebar nav{display:grid;gap:.25rem}.sidebar nav a{padding:.72rem .8rem;border-radius:.6rem;color:#344054;text-decoration:none;font-size:.92rem;font-weight:750}.sidebar nav a:hover,.sidebar nav a:focus{background:#fff7ed;color:#9a3412;outline:none}.back-link{margin-top:auto;padding:.72rem .8rem;border:1px solid var(--line);border-radius:.6rem;text-decoration:none;font-size:.9rem;font-weight:800;text-align:center}
+    .workspace{min-width:0;padding:1.5rem clamp(1rem,3vw,2rem) 3rem}.topline{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.4rem}.topline h1{margin:0;font-size:1.55rem;line-height:1.2;letter-spacing:0}.topline a{display:inline-flex;align-items:center;justify-content:center;min-height:2.5rem;padding:.55rem .8rem;border:1px solid var(--line);border-radius:.55rem;background:#fff;text-decoration:none;font-size:.88rem;font-weight:800}
+    .eyebrow{margin:0 0 .35rem;color:#c2410c!important;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.view{scroll-margin-top:5rem;margin-bottom:1rem;padding:1.25rem;border:1px solid var(--line);border-radius:.85rem;background:#fff;box-shadow:0 10px 30px rgba(16,24,39,.04)}.section-head{margin-bottom:1rem}.section-head h2{margin:0;font-size:1.18rem;line-height:1.25;letter-spacing:0}.section-head-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .status-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.6fr);gap:1rem;align-items:start;padding:1rem;border-radius:.75rem;background:var(--soft);border:1px solid var(--line)}.status-panel h3{margin:.75rem 0 .25rem;font-size:1rem}.status-panel p{margin-bottom:0}.live-pill{display:inline-flex;align-items:center;gap:.45rem;width:fit-content;padding:.35rem .55rem;border-radius:999px;background:#ecfdf3;color:#166534;font-size:.8rem;font-weight:900}.live-pill span{width:.55rem;height:.55rem;border-radius:999px;background:#22c55e}.ownership{padding:.85rem;border-radius:.65rem;background:#fff;color:#344054!important;font-size:.92rem}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin-top:1rem}.stat-grid article{padding:1rem;border:1px solid var(--line);border-radius:.75rem;background:#fff}.stat-grid strong{display:block;margin-bottom:.35rem;font-size:1.7rem;line-height:1;color:var(--ink)}.stat-grid span{display:block;color:#344054;font-weight:800}.stat-grid small{display:block;margin-top:.25rem;color:var(--muted)}
+    .lead-table{overflow:hidden;border:1px solid var(--line);border-radius:.75rem}.lead-row{display:grid;grid-template-columns:1fr .9fr 1.4fr .7fr .8fr;gap:.75rem;align-items:center;padding:.85rem 1rem;border-top:1px solid var(--line);font-size:.92rem}.lead-row:first-child{border-top:0}.lead-head{background:var(--soft);color:#475467;font-size:.78rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}.lead-row span:first-child{font-weight:850;color:var(--ink)}.lead-row mark{display:inline-flex;padding:.25rem .45rem;border-radius:999px;background:#fff7ed;color:#9a3412;font-size:.78rem;font-weight:850}
+    .section-head button,.ticket-form button{border:0;border-radius:.6rem;background:var(--ink);color:#fff;font:inherit;font-size:.9rem;font-weight:850}.section-head button{min-height:2.45rem;padding:.55rem .8rem}.review-list{display:grid;gap:.75rem}.review-list article{padding:1rem;border:1px solid var(--line);border-radius:.75rem;background:var(--soft)}.review-list p{margin-bottom:.65rem;color:#344054}.review-list span{color:var(--muted);font-size:.88rem;font-weight:800}
+    .ticket-form{display:grid;gap:.9rem;max-width:680px}.ticket-form label{display:grid;gap:.4rem;color:#344054;font-size:.9rem;font-weight:850}.ticket-form select,.ticket-form textarea{width:100%;border:1px solid var(--line);border-radius:.65rem;background:#fff;padding:.8rem;font:inherit;color:var(--ink)}.ticket-form textarea{resize:vertical}.ticket-form button{width:fit-content;min-height:2.7rem;padding:.65rem 1rem;background:var(--accent)}.ticket-form p{margin:0;font-size:.88rem}
+    @media(max-width:800px){.wss-demo-cta{display:grid;grid-template-columns:1fr;justify-items:stretch}.wss-demo-cta p{font-size:.82rem}.wss-demo-cta a{width:100%;white-space:normal;text-align:center}.portal-shell{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:1rem;border-right:0;border-bottom:1px solid var(--line)}.brand{display:none}.demo-marker{font-size:.68rem}.sidebar nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;overflow-x:auto}.sidebar nav a{display:flex;align-items:center;justify-content:center;min-height:2.5rem;padding:.55rem .45rem;background:var(--soft);font-size:.76rem;text-align:center}.back-link{display:none}.workspace{padding:1rem 1rem 2rem}.topline{align-items:flex-start}.topline h1{font-size:1.25rem}.topline a{display:none}.status-panel,.stat-grid{grid-template-columns:1fr}.section-head-row{align-items:flex-start;display:grid}.lead-table{display:grid;gap:.6rem;border:0}.lead-head{display:none}.lead-row{grid-template-columns:1fr;gap:.28rem;border:1px solid var(--line);border-radius:.7rem;padding:.85rem;background:#fff}.lead-row span{display:flex;justify-content:space-between;gap:1rem}.lead-row span:nth-child(2)::before{content:"Town";color:var(--muted);font-weight:700}.lead-row span:nth-child(3)::before{content:"Issue";color:var(--muted);font-weight:700}.lead-row span:nth-child(4)::before{content:"Date";color:var(--muted);font-weight:700}.lead-row span:nth-child(5)::before{content:"Status";color:var(--muted);font-weight:700}}
+  </style>
+</BaseLayout>

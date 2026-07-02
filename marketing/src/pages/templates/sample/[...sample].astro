@@ -1,5 +1,6 @@
 ---
 import SampleBusinessLayout from "../../../components/sample-sites/SampleBusinessLayout.astro";
+import RidgelineRoofingSample from "../../../components/sample-sites/RidgelineRoofingSample.astro";
 import { SAMPLE_BUSINESSES, type SamplePage } from "../../../sampleBusinesses";
 
 export function getStaticPaths() {
@@ -29,5 +30,6 @@ export function getStaticPaths() {
 }
 
 const { business, page } = Astro.props;
+const premiumTradeSlugs = new Set(["ridgeline-roofing", "northwind-hvac", "mainline-plumbing", "brightwire-electric", "bluewave-pools", "greenline-irrigation", "overpro-garage-doors", "shieldline-pest-control", "evergreen-lawn-landscape", "canopy-tree-care", "cornerstone-concrete", "brightwash-exterior-cleaning"]);
 ---
-<SampleBusinessLayout business={business} page={page} />
+{premiumTradeSlugs.has(business.slug) ? <RidgelineRoofingSample business={business} page={page} /> : <SampleBusinessLayout business={business} page={page} />}

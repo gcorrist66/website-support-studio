@@ -52,6 +52,15 @@ const globalSchemas = [organizationSchema(), websiteSchema()];
       )
     }
     {!head.hideChrome && <a class="skip-link" href="#main">skip to content</a>}
+    {
+      !head.hideChrome && (
+        <div class="usa250-promo" role="region" aria-label="USA250 Founder Website Package promotion">
+          <span aria-hidden="true">🎆</span>
+          <strong>America turns 250</strong>
+          <span>Founder Website Package $250 <s>reg. $500</s> with code <b>USA250</b> · ends Monday 7/6</span>
+        </div>
+      )
+    }
     {!head.hideChrome && <Header />}
     <main id="main">
       <slot />

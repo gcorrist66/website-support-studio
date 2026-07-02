@@ -1,0 +1,12 @@
+---
+import RidgelineOwnerPortal from "../../../../components/sample-sites/RidgelineOwnerPortal.astro";
+import { SAMPLE_BUSINESSES } from "../../../../sampleBusinesses";
+
+const business = SAMPLE_BUSINESSES.find((item) => item.slug === "northwind-hvac");
+
+if (!business) {
+  throw new Error("Northwind HVAC sample business is missing.");
+}
+---
+
+<RidgelineOwnerPortal business={business} />

@@ -90,6 +90,35 @@ a:hover {
   color: var(--wordmark-accent);
 }
 
+.usa250-promo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem 0.7rem;
+  padding: 0.68rem 1rem;
+  background: var(--surface-dark);
+  color: #f8fafc;
+  border-bottom: 2px solid var(--brand-amber);
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, 2.3vw, 0.94rem);
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  letter-spacing: 0;
+}
+
+.usa250-promo strong,
+.usa250-promo b {
+  color: var(--brand-amber);
+}
+
+.usa250-promo s {
+  color: #cbd5e1;
+  text-decoration-color: var(--brand-amber);
+  text-decoration-thickness: 2px;
+}
+
 h1,
 h2,
 h3,

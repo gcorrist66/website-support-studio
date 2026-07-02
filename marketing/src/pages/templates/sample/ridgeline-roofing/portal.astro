@@ -1,0 +1,12 @@
+---
+import RidgelineOwnerPortal from "../../../../components/sample-sites/RidgelineOwnerPortal.astro";
+import { SAMPLE_BUSINESSES } from "../../../../sampleBusinesses";
+
+const business = SAMPLE_BUSINESSES.find((item) => item.slug === "ridgeline-roofing");
+
+if (!business) {
+  throw new Error("Ridgeline Roofing sample business is missing.");
+}
+---
+
+<RidgelineOwnerPortal business={business} />

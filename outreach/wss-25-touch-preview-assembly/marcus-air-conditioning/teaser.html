@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MARCUS AIR CONDITIONING INC Preview</title>
+    <style>
+    :root {
+      color-scheme: light;
+      --ink: #101820;
+      --muted: #526070;
+      --line: rgba(16, 24, 32, .12);
+      --paper: #f8fafc;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); }
+    a { color: inherit; text-decoration: none; }
+    .page { min-height: 100vh; }
+    .hero {
+      min-height: 720px;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -12% -35% -12%;
+      height: 48%;
+      z-index: -1;
+      opacity: .58;
+    }
+    .hvac.hero::before {
+      background:
+        radial-gradient(circle at 82% 18%, rgba(176, 231, 255, .55), transparent 28%),
+        linear-gradient(132deg, #0b2840 0%, #14607f 50%, #e6fbff 135%);
+    }
+    .hvac.hero::after {
+      background: repeating-linear-gradient(166deg, rgba(255,255,255,.26) 0 12px, transparent 12px 34px);
+      transform: rotate(-2deg);
+    }
+    .roofing.hero::before {
+      background:
+        linear-gradient(155deg, rgba(8, 22, 35, .92), rgba(28, 95, 137, .68) 48%, rgba(223, 242, 255, .8)),
+        linear-gradient(25deg, transparent 0 46%, rgba(42, 48, 54, .92) 46% 57%, rgba(20, 25, 31, .98) 57% 100%);
+    }
+    .roofing.hero::after {
+      background:
+        linear-gradient(150deg, transparent 0 28%, rgba(11, 18, 24, .92) 28% 52%, transparent 52%),
+        linear-gradient(25deg, transparent 0 42%, rgba(255, 255, 255, .22) 42% 45%, transparent 45%);
+    }
+    .electrical.hero::before {
+      background:
+        radial-gradient(circle at 78% 18%, rgba(116, 197, 255, .52), transparent 26%),
+        linear-gradient(135deg, #071a33 0%, #103f75 52%, #d6eeff 132%);
+    }
+    .electrical.hero::after {
+      background:
+        linear-gradient(128deg, transparent 0 39%, rgba(255,255,255,.34) 39% 43%, transparent 43% 100%),
+        repeating-linear-gradient(165deg, rgba(255,255,255,.18) 0 8px, transparent 8px 30px);
+    }
+    .plumbing.hero::before {
+      background:
+        radial-gradient(circle at 84% 16%, rgba(176, 244, 230, .5), transparent 28%),
+        linear-gradient(135deg, #12343d 0%, #147b84 52%, #dffcf4 134%);
+    }
+    .plumbing.hero::after {
+      background:
+        repeating-linear-gradient(168deg, rgba(255,255,255,.2) 0 10px, transparent 10px 32px),
+        linear-gradient(0deg, rgba(255,255,255,.2), rgba(255,255,255,0));
+    }
+    .nav {
+      height: 92px;
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-size: clamp(14px, 1.7vw, 18px);
+    }
+    .mark {
+      width: 44px;
+      height: 44px;
+      border: 2px solid rgba(255,255,255,.74);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      flex: 0 0 auto;
+      background: rgba(255,255,255,.12);
+    }
+    .license {
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,.58);
+      background: rgba(255,255,255,.14);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .hero-content {
+      width: min(1180px, calc(100% - 48px));
+      margin: auto auto 82px;
+      display: grid;
+      gap: 24px;
+      max-width: 1180px;
+    }
+    .eyebrow {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.4;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.78);
+    }
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(46px, 7vw, 92px);
+      line-height: .98;
+      letter-spacing: 0;
+    }
+    .subhead {
+      max-width: 640px;
+      margin: 0;
+      color: rgba(255,255,255,.88);
+      font-size: clamp(19px, 2vw, 25px);
+      line-height: 1.35;
+      font-weight: 600;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 0 24px;
+      background: #ffffff;
+      color: #101820;
+      font-weight: 900;
+      border: 0;
+    }
+    .motif {
+      color: rgba(255,255,255,.74);
+      font-size: 15px;
+      font-weight: 750;
+    }
+    .section {
+      width: min(1100px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 74px 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: 52px;
+      align-items: start;
+    }
+    .section h2 { margin: 0 0 16px; font-size: clamp(30px, 4vw, 52px); line-height: 1.04; letter-spacing: 0; }
+    .section p { margin: 0; color: var(--muted); font-size: 18px; line-height: 1.65; }
+    .panel {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 28px;
+    }
+    .panel h3 { margin: 0 0 18px; font-size: 18px; }
+    .panel ul { margin: 0; padding: 0; display: grid; gap: 14px; list-style: none; }
+    .panel li { display: flex; gap: 10px; color: #263545; font-weight: 700; }
+    .panel li::before { content: ""; width: 9px; height: 9px; margin-top: 8px; background: #1f7a8c; flex: 0 0 auto; }
+    footer { padding: 34px 24px 54px; text-align: center; color: var(--muted); }
+    .teaser .hero { min-height: 780px; }
+    .teaser .hero-content { margin-bottom: 126px; }
+    .teaser .subhead, .teaser .motif, .teaser .eyebrow { display: none; }
+    @media (max-width: 700px) {
+      .hero { min-height: 700px; }
+      .nav { width: min(100% - 32px, 1180px); height: 84px; align-items: flex-start; padding-top: 18px; flex-direction: column; gap: 10px; }
+      .brand { font-size: 13px; line-height: 1.15; }
+      .mark { width: 38px; height: 38px; }
+      .license { font-size: 12px; padding: 8px 10px; }
+      .hero-content { width: min(100% - 32px, 1180px); margin-bottom: 54px; gap: 18px; }
+      h1 { font-size: clamp(38px, 14vw, 58px); }
+      .subhead { font-size: 18px; }
+      .cta { width: 100%; min-height: 56px; padding: 0 18px; }
+      .section { width: min(100% - 32px, 1100px); grid-template-columns: 1fr; gap: 28px; padding: 54px 0; }
+      .teaser .hero { min-height: 740px; }
+      .teaser .hero-content { margin-bottom: 88px; }
+    }
+  </style>
+  </head>
+  <body class="teaser">
+    <main class="page">
+      <section class="hero hvac" aria-label="MARCUS AIR CONDITIONING INC header">
+        <header class="nav">
+          <div class="brand"><span class="mark">MA</span><span>MARCUS AIR CONDITIONING INC</span></div>
+          <div class="license">FL Licensed CAC1813352</div>
+        </header>
+        <div class="hero-content">
+          <p class="eyebrow">Cooling, heating, and mechanical service</p>
+          <h1>AC &amp; Heating in Bartow</h1>
+          <p class="subhead">We build it. We host it. We maintain it. You run your business.</p>
+          <div class="hero-actions">
+            <a class="cta" href="tel:8635814675">Call for Service (863) 581-4675</a>
+            <span class="motif">Comfort airflow</span>
+          </div>
+        </div>
+      </section>
+      
+    </main>
+  </body>
+</html>

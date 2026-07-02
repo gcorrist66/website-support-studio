@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Website Support Studio website preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5f8f1"/>
+      <stop offset="0.52" stop-color="#e8f1df"/>
+      <stop offset="1" stop-color="#d8e7cc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="78" y="78" width="1044" height="474" rx="42" fill="#ffffff" stroke="#c9d9bd" stroke-width="2"/>
+  <circle cx="145" cy="145" r="18" fill="#7fb069"/>
+  <circle cx="199" cy="145" r="18" fill="#d8e7cc"/>
+  <circle cx="253" cy="145" r="18" fill="#d8e7cc"/>
+  <text x="145" y="270" fill="#20301f" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="34" font-weight="700" letter-spacing="2">WEBSITE SUPPORT STUDIO</text>
+  <text x="145" y="355" fill="#20301f" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="700">Website Preview</text>
+  <text x="145" y="425" fill="#5b6c55" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="28">A WSS-hosted preview, not a live customer website.</text>
+  <rect x="145" y="475" width="355" height="48" rx="24" fill="#2f6f3e"/>
+  <text x="177" y="508" fill="#ffffff" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="20" font-weight="700">previews.websitesupportstudio.com</text>
+</svg>

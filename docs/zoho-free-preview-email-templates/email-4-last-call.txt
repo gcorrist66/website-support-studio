@@ -1,0 +1,21 @@
+Subject: Last call for a free website preview
+Preview text: If a better homepage is on your list, request your free preview before this campaign closes.
+
+Last call for this free website preview offer.
+
+If your current site feels outdated, unclear, hard to update, or not strong enough for the customers you want, this is a simple way to see a better direction.
+
+Fill out the questionnaire and Website Support Studio will review your answers and prepare a free homepage preview.
+
+No payment.
+No obligation.
+One free preview per business.
+
+Get My Free Website Preview:
+https://www.websitesupportstudio.com/free-website-preview?utm_source=zoho&utm_medium=email&utm_campaign=wss_free_preview&utm_content={{segment}}
+
+Website Support Studio is operated by Corriston Consulting, LLC.
+
+Unsubscribe:
+$[LI:UNSUBSCRIBE]$
+

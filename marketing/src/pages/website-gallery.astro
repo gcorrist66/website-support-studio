@@ -22,6 +22,22 @@ type GalleryPreview = {
 };
 
 const filters = ["All", "Home Services", "Medical", "Professional", "Food", "Retail", "Automotive", "Construction", "Community"] as const;
+const displayDomainBySlug: Record<string, string> = {
+  "greenline-landscaping": "greenlineoutdoor.com",
+  "ledger-cpa": "ledgerlanecpa.com",
+  "table-and-hearth": "tableandhearth.com",
+  "doorstead-property": "doorsteadproperty.com",
+  "stem-and-stone": "stemandstonefloral.com",
+  "heritage-flooring": "heritageflooring.com",
+  "helios-solar": "heliossolar.com",
+};
+
+const getPreviewDomain = (preview: GalleryPreview) =>
+  displayDomainBySlug[preview.slug] ??
+  `${preview.business
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]/g, "")}.com`;
 
 const galleryPreviews: GalleryPreview[] = [
   { slug: "greenline-landscaping", category: "Home Services", industry: "Landscaping", business: "Greenline Outdoor Co.", style: "Editorial outdoor service", headline: "Outdoor spaces that feel finished before the first estimate.", description: "A rich landscaping homepage direction with large project visuals, seasonal service paths, and estimate-first messaging. It is built to help homeowners quickly understand the quality of the work and request a consultation.", nav: ["Services", "Projects", "Care Plans"], cta: "Plan My Yard", services: ["Design", "Maintenance", "Lighting"], proof: "124 local yards redesigned", layout: "split", palette: "verdant", demoHref: "/templates/sample/greenline-landscaping" },
@@ -58,7 +74,7 @@ const galleryPreviews: GalleryPreview[] = [
   { slug: "little-harbor-daycare", category: "Community", industry: "Daycare", business: "Little Harbor Learning", style: "Friendly parent trust", headline: "Early learning presented with safety, warmth, and simple enrollment.", description: "A daycare homepage with age-group paths, parent proof, and enrollment clarity. It is playful enough for children and structured enough for parents.", nav: ["Programs", "Tuition", "Visit"], cta: "Schedule A Tour", services: ["Infants", "Toddlers", "Pre-K"], proof: "Secure check-in process", layout: "collage", palette: "crayon" },
   { slug: "freshcoat-grooming", category: "Retail", industry: "Pet Grooming", business: "FreshCoat Grooming", style: "Playful local service", headline: "Pet grooming that looks polished and books fast.", description: "A pet-grooming mockup with package cards, appointment flow, and cheerful trust signals. It is distinct, local, and built for repeat bookings.", nav: ["Services", "Packages", "Book"], cta: "Book Grooming", services: ["Bath", "Haircut", "Nail Trim"], proof: "Text reminders for every visit", layout: "service", palette: "coral" },
   { slug: "stem-and-stone", category: "Retail", industry: "Florist", business: "Stem & Stone Floral", style: "Boutique editorial", headline: "Florals for everyday moments, weddings, and rooms that need life.", description: "A florist homepage with arrangement categories, event paths, and a gallery-forward visual language. It feels artisanal without sacrificing ordering clarity.", nav: ["Shop", "Weddings", "Events"], cta: "Order Flowers", services: ["Bouquets", "Weddings", "Corporate"], proof: "Local delivery windows", layout: "luxury", palette: "garden" },
-  { slug: "heritage-flooring", category: "Home Services", industry: "Flooring", business: "Heritage Flooring Co.", style: "Showroom install", headline: "Flooring installs, refinishing, and showroom visits with polished project flow.", description: "A flooring homepage concept with product paths, installation planning, and showroom-quality visual treatment. It uses a CSS-built flooring mockup, so there is no broken stock image dependency.", nav: ["Hardwood", "Tile", "Showroom"], cta: "Plan My Floors", services: ["Hardwood", "Luxury Vinyl", "Tile"], proof: "Samples and install planning", layout: "product", palette: "walnut" },
+  { slug: "heritage-flooring", category: "Home Services", industry: "Flooring", business: "Heritage Flooring Co.", style: "Showroom install", headline: "Flooring installs, refinishing, and showroom visits with polished project flow.", description: "A flooring homepage concept with product paths, installation planning, and showroom-quality visual treatment.", nav: ["Hardwood", "Tile", "Showroom"], cta: "Plan My Floors", services: ["Hardwood", "Luxury Vinyl", "Tile"], proof: "Samples and install planning", layout: "product", palette: "walnut" },
   { slug: "district-market", category: "Retail", industry: "Retail", business: "District Market", style: "Urban shop", headline: "A local retail homepage that turns discovery into store visits.", description: "A retail concept with featured collections, hours, and product-forward sections. It supports both browsing and urgent local information.", nav: ["New", "Collections", "Visit"], cta: "See New Arrivals", services: ["Apparel", "Gifts", "Local Pickup"], proof: "Weekly collection drops", layout: "grid", palette: "lime" },
   { slug: "brilliant-jewelers", category: "Retail", industry: "Jewelry", business: "Brilliant House Jewelers", style: "Luxury trust", headline: "Fine jewelry, repairs, and custom pieces with appointment-level polish.", description: "A jewelry homepage with luxury visuals, service proof, and consult-first conversion. The layout helps an expensive purchase feel careful and credible.", nav: ["Collections", "Custom", "Repair"], cta: "Book Private Consult", services: ["Rings", "Custom", "Appraisals"], proof: "Private appointment experience", layout: "luxury", palette: "champagne" },
   { slug: "haven-home-builder", category: "Construction", industry: "Home Builder", business: "Haven Home Builders", style: "Premium residential", headline: "Custom homes presented with process, taste, and quiet confidence.", description: "A home-builder homepage with portfolio storytelling, process steps, and premium consultation framing. It makes the builder feel established before the first call.", nav: ["Homes", "Process", "Portfolio"], cta: "Start Home Plan", services: ["Custom Homes", "Renovations", "Design Build"], proof: "Design-build project path", layout: "editorial", palette: "stone" },
@@ -127,7 +143,7 @@ const schemas = [
           <strong>{featured.industry}</strong>
         </div>
         <div class={`site-frame site-frame--large mock-${featured.layout} palette-${featured.palette}`}>
-          <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{featured.business.toLowerCase().replaceAll(" ", "")}.com</em></div>
+          <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{getPreviewDomain(featured)}</em></div>
           <div class="mock-site">
             <div class="mock-top">
               <strong>{featured.business}</strong>
@@ -180,7 +196,7 @@ const schemas = [
             style={`--card-index:${galleryPreviews.indexOf(preview) % 7};`}
           >
             <div class={`site-frame mock-${preview.layout} palette-${preview.palette}`}>
-              <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{preview.business.toLowerCase().replaceAll(" ", "")}.com</em></div>
+              <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{getPreviewDomain(preview)}</em></div>
               <div class="mock-site">
                 <div class="mock-top">
                   <strong>{preview.business}</strong>
@@ -210,7 +226,7 @@ const schemas = [
               <h3>{preview.business}</h3>
               <p>{preview.description}</p>
               <div class="gallery-card-actions">
-                <a class="btn btn-ghost" href={preview.demoHref ?? `#preview-${preview.slug}`} data-ga-event="click_gallery_view_preview" data-ga-label={preview.slug}>View Preview</a>
+                {preview.demoHref && <a class="btn btn-ghost" href={preview.demoHref} data-ga-event="click_gallery_view_preview" data-ga-label={preview.slug}>View Preview</a>}
                 <a class="btn btn-green btn-cta" href={`/free-website-preview?industry=${encodeURIComponent(preview.industry)}&style=${encodeURIComponent(preview.business)}`} data-ga-event="click_gallery_request_like_this" data-ga-label={preview.slug}>Request One Like This</a>
               </div>
             </div>

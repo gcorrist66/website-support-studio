@@ -1,0 +1,146 @@
+[
+  {
+    "slug": "skyview-roofing-experts",
+    "desktopMetrics": {
+      "title": "Skyview Roofing Experts Rescue Preview",
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "images": [
+        {
+          "src": "logo-source.png",
+          "complete": true,
+          "naturalWidth": 612,
+          "naturalHeight": 408
+        },
+        {
+          "src": "skyviewroofingexperts-com.desktop.png",
+          "complete": true,
+          "naturalWidth": 1281,
+          "naturalHeight": 6934
+        }
+      ],
+      "h1": "Certified roof help for homes across Eagle Lake, Winter Haven, and Polk County."
+    },
+    "mobileMetrics": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "callText": "(863) 282-5107",
+      "callHeight": 35
+    },
+    "ok": true
+  },
+  {
+    "slug": "hoffman-roofing",
+    "desktopMetrics": {
+      "title": "Hoffman Roofing Rescue Preview",
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "images": [
+        {
+          "src": "logo-source.png",
+          "complete": true,
+          "naturalWidth": 3199,
+          "naturalHeight": 753
+        },
+        {
+          "src": "hoffmanroofs-com.desktop.png",
+          "complete": true,
+          "naturalWidth": 1280,
+          "naturalHeight": 6557
+        }
+      ],
+      "h1": "Premium roof work with David Hoffman's name on the line."
+    },
+    "mobileMetrics": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "callText": "(813) 966-1688",
+      "callHeight": 37
+    },
+    "ok": true
+  },
+  {
+    "slug": "rays-roofing-of-central-florida",
+    "desktopMetrics": {
+      "title": "Ray's Roofing Rescue Preview",
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "images": [
+        {
+          "src": "logo-source.png",
+          "complete": true,
+          "naturalWidth": 550,
+          "naturalHeight": 110
+        },
+        {
+          "src": "raysroofing-wixsite-com-roofing.desktop.png",
+          "complete": true,
+          "naturalWidth": 1280,
+          "naturalHeight": 1600
+        }
+      ],
+      "h1": "Central Florida roofing from a local company that has been around long enough to be checked."
+    },
+    "mobileMetrics": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "callText": "(863) 967-3170",
+      "callHeight": 37
+    },
+    "ok": true
+  },
+  {
+    "slug": "tr-roofing",
+    "desktopMetrics": {
+      "title": "TR Roofing Rescue Preview",
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "images": [
+        {
+          "src": "logo-source.png",
+          "complete": true,
+          "naturalWidth": 600,
+          "naturalHeight": 325
+        },
+        {
+          "src": "www-trroofingllc-com.desktop.png",
+          "complete": true,
+          "naturalWidth": 1280,
+          "naturalHeight": 2736
+        }
+      ],
+      "h1": "Clear roofing help without the contractor-site clutter."
+    },
+    "mobileMetrics": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "callText": "(863) 557-8452",
+      "callHeight": 37
+    },
+    "ok": true
+  },
+  {
+    "slug": "fast-track-roofing",
+    "desktopMetrics": {
+      "title": "Fast Track Roofing Rescue Preview",
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "images": [
+        {
+          "src": "fasttrackroofing-com.desktop.png",
+          "complete": true,
+          "naturalWidth": 1440,
+          "naturalHeight": 1200
+        }
+      ],
+      "h1": "A faster, cleaner way for Houston homeowners to ask for roof help."
+    },
+    "mobileMetrics": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "callText": "(346) 333-7663",
+      "callHeight": 37
+    },
+    "ok": true
+  }
+]

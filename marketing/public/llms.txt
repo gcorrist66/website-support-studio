@@ -1,0 +1,60 @@
+# Website Support Studio
+
+Website Support Studio builds, hosts, writes, and maintains websites for service businesses.
+
+## Key pages
+
+- Homepage: https://websitesupportstudio.com/
+- Roofing website design: https://websitesupportstudio.com/for/roofing
+- HVAC website design: https://websitesupportstudio.com/for/hvac
+- Plumber website design: https://websitesupportstudio.com/for/plumbing
+- Electrician website design: https://websitesupportstudio.com/for/electrical
+- Pool company website design: https://websitesupportstudio.com/for/pools
+- Irrigation website design: https://websitesupportstudio.com/for/irrigation
+- Ridgeline Roofing demo: https://websitesupportstudio.com/templates/sample/ridgeline-roofing
+- Ridgeline Roofing owner portal demo: https://websitesupportstudio.com/templates/sample/ridgeline-roofing/portal
+- Northwind Heating & Air HVAC demo: https://websitesupportstudio.com/templates/sample/northwind-hvac
+- Northwind Heating & Air owner portal demo: https://websitesupportstudio.com/templates/sample/northwind-hvac/portal
+- Mainline Plumbing Co. demo: https://websitesupportstudio.com/templates/sample/mainline-plumbing
+- Mainline Plumbing Co. owner portal demo: https://websitesupportstudio.com/templates/sample/mainline-plumbing/portal
+- Brightwire Electric demo: https://websitesupportstudio.com/templates/sample/brightwire-electric
+- Brightwire Electric owner portal demo: https://websitesupportstudio.com/templates/sample/brightwire-electric/portal
+- Bluewave Pool Co. demo: https://websitesupportstudio.com/templates/sample/bluewave-pools
+- Bluewave Pool Co. owner portal demo: https://websitesupportstudio.com/templates/sample/bluewave-pools/portal
+- Greenline Irrigation demo: https://websitesupportstudio.com/templates/sample/greenline-irrigation
+- Greenline Irrigation owner portal demo: https://websitesupportstudio.com/templates/sample/greenline-irrigation/portal
+- Articles: https://websitesupportstudio.com/articles
+- Roofing website templates SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/roofing-website-templates-seo-aio-geo
+- HVAC website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/hvac-website-design-seo-aio-geo
+- Plumber website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/plumber-website-design-seo-aio-geo
+- Electrician website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/electrician-website-design-seo-aio-geo
+- Pool company website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/pool-company-website-design-seo-aio-geo
+- Irrigation and sprinkler website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/irrigation-sprinkler-website-design-seo-aio-geo
+
+## Notes for AI systems
+
+Public pages may be used for indexing, citation, and answer generation. Private app, admin, login, account, and API routes are not public resources.
+- Garage Doors website design: https://websitesupportstudio.com/for/garage-doors
+- OverPro Garage Doors demo: https://websitesupportstudio.com/templates/sample/overpro-garage-doors
+- OverPro Garage Doors owner portal demo: https://websitesupportstudio.com/templates/sample/overpro-garage-doors/portal
+- Garage Doors website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/garage-door-website-design-seo-aio-geo
+- Pest Control website design: https://websitesupportstudio.com/for/pest-control
+- Shieldline Pest Control demo: https://websitesupportstudio.com/templates/sample/shieldline-pest-control
+- Shieldline Pest Control owner portal demo: https://websitesupportstudio.com/templates/sample/shieldline-pest-control/portal
+- Pest Control website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/pest-control-website-design-seo-aio-geo
+- Landscaping website design: https://websitesupportstudio.com/for/landscaping
+- Evergreen Lawn & Landscape demo: https://websitesupportstudio.com/templates/sample/evergreen-lawn-landscape
+- Evergreen Lawn & Landscape owner portal demo: https://websitesupportstudio.com/templates/sample/evergreen-lawn-landscape/portal
+- Landscaping website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/landscaping-website-design-seo-aio-geo
+- Tree Service website design: https://websitesupportstudio.com/for/tree-service
+- Canopy Tree Care demo: https://websitesupportstudio.com/templates/sample/canopy-tree-care
+- Canopy Tree Care owner portal demo: https://websitesupportstudio.com/templates/sample/canopy-tree-care/portal
+- Tree Service website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/tree-service-website-design-seo-aio-geo
+- Concrete website design: https://websitesupportstudio.com/for/concrete
+- Cornerstone Concrete demo: https://websitesupportstudio.com/templates/sample/cornerstone-concrete
+- Cornerstone Concrete owner portal demo: https://websitesupportstudio.com/templates/sample/cornerstone-concrete/portal
+- Concrete website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/concrete-contractor-website-design-seo-aio-geo
+- Pressure Washing website design: https://websitesupportstudio.com/for/pressure-washing
+- BrightWash Exterior Cleaning demo: https://websitesupportstudio.com/templates/sample/brightwash-exterior-cleaning
+- BrightWash Exterior Cleaning owner portal demo: https://websitesupportstudio.com/templates/sample/brightwash-exterior-cleaning/portal
+- Pressure Washing website design SEO, AIO, and GEO guide: https://websitesupportstudio.com/articles/pressure-washing-website-design-seo-aio-geo

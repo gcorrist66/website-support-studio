@@ -87,3 +87,7 @@ WSS_EMAIL_FROM=Website Support Studio <notifications@websitesupportstudio.com>
 WSS_EMAIL_REPLY_TO=corristonconsulting@gmail.com
 ALLOWED_ORIGINS=https://websitesupportstudio.com,https://www.websitesupportstudio.com,http://localhost:4321
 ```
+
+The shared CORS helper also allows Vercel preview origins matching
+`https://website-support-studio-marketing-*.vercel.app` so the preview
+deployment can be verified before production promotion.

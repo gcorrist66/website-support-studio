@@ -87,7 +87,7 @@ export function serviceSchema(opts: {
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "Service",
+    "@type": ["Service", "ProfessionalService"],
     name: opts.name,
     serviceType: opts.serviceType ?? "Managed website operations and support",
     description: opts.description,
