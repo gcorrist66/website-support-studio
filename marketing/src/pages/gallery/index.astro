@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gallery · Website Support Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B1220;--amber:#F4B142;--cyan:#35DCEA;--magenta:#A83489;--blue:#0443FA;--mint:#A9EBCB;--muted:#6B7280;--paper:#FAFAF7;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;color:var(--ink);background:#fff}
+.wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+
+/* top nav */
+nav.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid #EDEDE8}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:15px}
+.sq{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;width:24px;height:24px}
+.sq span{border-radius:3px}
+.sq span:nth-child(1){background:var(--amber)}.sq span:nth-child(2){background:var(--magenta)}
+.sq span:nth-child(3){background:var(--blue)}.sq span:nth-child(4){background:var(--cyan)}
+.links{display:flex;gap:26px;font-size:14px}.links a{color:#111;text-decoration:none}
+.links a.on{color:var(--blue);font-weight:700}
+.rgt{display:flex;gap:12px}
+.ghost{border:1px solid #D8D8D2;background:#fff;padding:9px 18px;border-radius:11px;font-size:14px}
+.join{border:1px solid #BEF0DA;background:var(--mint);padding:9px 20px;border-radius:11px;font-size:14px;font-weight:700}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:60px;padding:54px 0 60px;align-items:center}
+.hero .e{color:var(--muted);font-size:13px;letter-spacing:1px;margin-bottom:18px}
+.hero h1{font-weight:800;font-size:66px;line-height:.98;letter-spacing:-2px}
+.hero p{margin-top:24px;max-width:430px;color:#4B5563;font-size:16px;line-height:1.65}
+.hbtns{margin-top:30px;display:flex;gap:14px}
+.cta-primary{position:relative;background:var(--mint);border:none;padding:16px 26px;border-radius:13px;font-family:inherit;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
+.cta-primary::after{content:"";position:absolute;left:20px;right:20px;bottom:9px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--amber),var(--cyan),var(--magenta),var(--blue))}
+.cta-sec{background:#fff;border:1px solid #D8D8D2;padding:15px 24px;border-radius:13px;font-family:inherit;font-size:14px;cursor:pointer}
+
+/* browser frame (shared) */
+.browser{border:1px solid #E6E1D9;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 30px 60px -30px rgba(20,20,25,.3)}
+.chrome{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #EFEBE3}
+.dots{display:flex;gap:7px}.dots i{width:11px;height:11px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:#FF5F57}.dots i:nth-child(2){background:#FEBC2E}.dots i:nth-child(3){background:#28C840}
+.url{color:#9A8F80;font-size:13px}
+.hero .shot{display:block;width:100%;height:auto}
+
+/* section head */
+.sec-head{padding:24px 0 8px}
+.sec-head .k{color:var(--muted);font-size:13px;letter-spacing:1px}
+.sec-head h2{font-weight:800;font-size:40px;letter-spacing:-1px;margin-top:8px}
+.sec-head p{color:#4B5563;font-size:15px;margin-top:10px;max-width:640px;line-height:1.6}
+
+/* gallery grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;padding:34px 0 20px}
+.card{border:1px solid #EAE7E0;border-radius:16px;overflow:hidden;background:#fff;transition:transform .15s ease,box-shadow .15s ease;text-decoration:none;color:inherit;display:block}
+.card:hover{transform:translateY(-4px);box-shadow:0 24px 50px -26px rgba(20,20,25,.35)}
+.minibar{display:flex;align-items:center;gap:7px;padding:10px 13px;background:#fff;border-bottom:1px solid #F0ECE4}
+.minibar i{width:9px;height:9px;border-radius:50%;display:block}
+.minibar i:nth-child(1){background:#FF5F57}.minibar i:nth-child(2){background:#FEBC2E}.minibar i:nth-child(3){background:#28C840}
+.minibar .u{margin-left:6px;font-size:12px;color:#9A8F80}
+.thumb{position:relative;height:240px;overflow:hidden;border-bottom:1px solid #F0ECE4;background:#fff}
+.thumb .frame{position:absolute;top:0;left:0;width:1440px;transform-origin:top left;transform:scale(.275)} /* 1440*.275≈396 */
+.thumb iframe{width:1440px;height:1500px;border:0;pointer-events:none;background:#fff;display:block}
+.meta{padding:18px 20px 20px}
+.tagrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tag{font-size:12px;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+.cta-chip{font-size:12px;font-weight:700;color:#0b6b3a;background:#E4F7EC;border:1px solid #BFE9CF;border-radius:20px;padding:4px 11px}
+.meta h3{font-size:19px;font-weight:800;letter-spacing:-.3px}
+.meta .desc{color:#5B616B;font-size:13.5px;line-height:1.6;margin-top:6px}
+.open{margin-top:14px;font-size:13px;font-weight:700;color:var(--blue)}
+
+/* bottom CTA — light & readable */
+.finale{margin:60px 0 0;background:var(--paper);border:1px solid #ECE9E1;border-radius:22px;padding:64px 40px;text-align:center}
+.finale .k{color:var(--muted);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.finale h2{font-weight:800;font-size:52px;letter-spacing:-1.5px;color:var(--ink)}
+.finale p{max-width:520px;margin:18px auto 0;color:#4B5563;font-size:17px;line-height:1.65}
+.finale .cta-primary{margin-top:30px;font-size:16px;padding:18px 32px}
+
+/* footer */
+.foot{margin-top:60px;border-top:1px solid #EDEDE8;padding:34px 0 50px;display:flex;justify-content:space-between;color:var(--muted);font-size:14px}
+
+@media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero h1{font-size:52px}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+@media(max-width:760px){
+ .wrap{padding:0 20px}
+ nav.top{flex-wrap:wrap;gap:10px;padding:14px 0}
+ .links{display:none}
+ .hero{padding:32px 0 40px}
+ .hero h1{font-size:38px;letter-spacing:-1px}
+ .hero p{font-size:15px}
+ .sec-head h2{font-size:28px}
+ .finale{padding:44px 20px}
+ .finale h2{font-size:32px}
+ .finale p{font-size:15px}
+ .foot{flex-direction:column;gap:12px}
+}
+</style></head>
+<body>
+<div class="wrap">
+
+  <nav class="top">
+    <div class="brand"><div class="sq"><span></span><span></span><span></span><span></span></div>website_support_studio</div>
+    <div class="links"><a href="/products">_products ⌄</a><a href="/gallery" class="on">_gallery</a><a href="/pricing">_pricing</a><a href="/services">_how_it_works</a><a href="/articles">_articles</a><a href="/about">_about</a></div>
+    <div class="rgt"><a class="ghost" href="https://app.websitesupportstudio.com">_login</a><a class="join" href="/pricing">_join_now</a></div>
+  </nav>
+
+  <!-- HERO: real client site -->
+  <section class="hero">
+    <div>
+      <div class="e">_website_gallery</div>
+      <h1>See what your business could look like.</h1>
+      <p>Real, full-site preview concepts across local industries — each built to look like a finished website, not a template. Here’s a live client site we designed and shipped.</p>
+      <div class="hbtns"><a class="cta-primary" href="/free-website-preview">Get My Free Website Preview</a><a class="cta-sec" href="/services">How it works</a></div>
+    </div>
+    <div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><span class="url">hairbyheni.com</span></div>
+      <img class="shot" src="/gallery/heni.png" alt="Hair by Heni — live client website">
+    </div>
+  </section>
+
+  <!-- SIX DISTINCT TEMPLATES -->
+  <div class="sec-head">
+    <div class="k">_sample_concepts</div>
+    <h2>Six distinct template styles.</h2>
+    <p>Different layouts, type, and color for each industry — so a salon never looks like a contractor. Click any concept to open the full-page preview.</p>
+  </div>
+
+  <div class="grid">
+
+    <a class="card" href="/gallery/preview/contractor" target="_blank">
+      <div class="minibar"><i></i><i></i><i></i><span class="u">summitbuildtampa.com</span></div>
+      <div class="thumb"><div class="frame"><iframe src="/gallery/preview/contractor" scrolling="no" loading="lazy"></iframe></div></div>
+      <div class="meta"><div class="tagrow"><span class="tag">Contractor · Home Services</span><span class="cta-chip">Free Estimate</span></div>
+      <h3>Summit Build &amp; Remodel</h3><div class="desc">Bold, industrial layout with trust badges and a fixed-bid promise.</div><div class="open">View full preview →</div></div>
+    </a>
+
+    <a class="card" href="/gallery/preview/salon" target="_blank">
+      <div class="minibar"><i></i><i></i><i></i><span class="u">verdesalon.com</span></div>
+      <div class="thumb"><div class="frame"><iframe src="/gallery/preview/salon" scrolling="no" loading="lazy"></iframe></div></div>
+      <div class="meta"><div class="tagrow"><span class="tag">Salon &amp; Spa</span><span class="cta-chip">Book Appointment</span></div>
+      <h3>Verde Salon &amp; Spa</h3><div class="desc">Soft editorial styling with an unhurried, boutique feel.</div><div class="open">View full preview →</div></div>
+    </a>
+
+    <a class="card" href="/gallery/preview/legal" target="_blank">
+      <div class="minibar"><i></i><i></i><i></i><span class="u">hargrovepierce.com</span></div>
+      <div class="thumb"><div class="frame"><iframe src="/gallery/preview/legal" scrolling="no" loading="lazy"></iframe></div></div>
+      <div class="meta"><div class="tagrow"><span class="tag">Legal · Attorney</span><span class="cta-chip">Free Consultation</span></div>
+      <h3>Hargrove &amp; Pierce</h3><div class="desc">Authoritative navy-and-gold layout built to signal experience.</div><div class="open">View full preview →</div></div>
+    </a>
+
+    <a class="card" href="/gallery/preview/dental" target="_blank">
+      <div class="minibar"><i></i><i></i><i></i><span class="u">brightleafdental.com</span></div>
+      <div class="thumb"><div class="frame"><iframe src="/gallery/preview/dental" scrolling="no" loading="lazy"></iframe></div></div>
+      <div class="meta"><div class="tagrow"><span class="tag">Dental · Medical</span><span class="cta-chip">Request Appointment</span></div>
+      <h3>Brightleaf Dental</h3><div class="desc">Friendly, rounded, reassuring — with same-week booking cues.</div><div class="open">View full preview →</div></div>
+    </a>
+
+    <a class="card" href="/gallery/preview/restaurant" target="_blank">
+      <div class="minibar"><i></i><i></i><i></i><span class="u">oliveandash.com</span></div>
+      <div class="thumb"><div class="frame"><iframe src="/gallery/preview/restaurant" scrolling="no" loading="lazy"></iframe></div></div>
+      <div class="meta"><div class="tagrow"><span class="tag">Restaurant</span><span class="cta-chip">Reserve a Table</span></div>
+      <h3>Olive &amp; Ash</h3><div class="desc">Moody, appetite-forward design with a live menu section.</div><div class="open">View full preview →</div></div>
+    </a>
+
+    <a class="card" href="/gallery/preview/fitness" target="_blank">
+      <div class="minibar"><i></i><i></i><i></i><span class="u">ironhaus.fit</span></div>
+      <div class="thumb"><div class="frame"><iframe src="/gallery/preview/fitness" scrolling="no" loading="lazy"></iframe></div></div>
+      <div class="meta"><div class="tagrow"><span class="tag">Fitness · Gym</span><span class="cta-chip">Start Free Trial</span></div>
+      <h3>IRONHAUS</h3><div class="desc">High-energy, oversized type with clear membership pricing.</div><div class="open">View full preview →</div></div>
+    </a>
+
+  </div>
+
+  <!-- FIXED bottom CTA -->
+  <section class="finale">
+    <div class="k">_ready_to_see_yours</div>
+    <h2>Ready to see YOUR business?</h2>
+    <p>Send your business details and we’ll prepare a custom preview direction built around your services, customers, and next best call to action.</p>
+    <a class="cta-primary" href="/free-website-preview">Get My Free Website Preview</a>
+  </section>
+
+  <footer class="foot"><div class="brand"><div class="sq"><span></span><span></span><span></span><span></span></div>website_support_studio</div><div>Site Built and Maintained by: <a href="https://corristonconsulting.com" title="Corriston Consulting" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-weight:700">Corriston Consulting</a></div></footer>
+
+</div>
+</body></html>

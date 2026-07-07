@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brightleaf Dental</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#12A79B;--teal-d:#0E8579;--mint:#E4F5F1;--sky:#EAF3FB;--ink:#1F2A33;--muted:#63727E;--coral:#FF7A64;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;color:var(--ink);background:#fff}
+.head{display:flex;align-items:center;justify-content:space-between;padding:20px 56px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:22px;color:var(--teal-d)}
+.logo .dot{width:30px;height:30px;border-radius:50% 50% 50% 0;background:var(--teal);display:inline-block;transform:rotate(45deg)}
+.nav{display:flex;gap:30px;font-size:15px;color:#42525E;font-weight:500}
+.book{background:var(--teal);color:#fff;padding:13px 26px;border-radius:40px;font-size:14px;font-weight:600}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:30px;padding:60px 56px 80px;background:
+ radial-gradient(1000px 500px at 80% 30%,var(--mint),transparent 70%)}
+.pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #D6ECE8;color:var(--teal-d);padding:8px 16px;border-radius:40px;font-size:13px;font-weight:500;margin-bottom:22px}
+.pill::before{content:"★";color:var(--coral)}
+.hero h1{font-size:58px;font-weight:700;line-height:1.06;letter-spacing:-1px}
+.hero h1 span{color:var(--teal)}
+.hero p{margin-top:20px;max-width:440px;color:var(--muted);font-size:17px;line-height:1.7}
+.cta{margin-top:30px;display:flex;gap:16px;align-items:center}
+.btn{background:var(--teal);color:#fff;border:none;padding:16px 32px;border-radius:40px;font-family:'Poppins';font-weight:600;font-size:16px}
+.ghost{color:var(--teal-d);font-weight:600;font-size:15px}
+.hero .art{aspect-ratio:5/4;border-radius:28px;position:relative;overflow:hidden;
+ background:url('https://images.unsplash.com/photo-1489278353717-f64c6ee8a4d2?w=1300&q=80&auto=format&fit=crop') center/cover no-repeat}
+.hero .float{position:absolute;background:#fff;border-radius:16px;box-shadow:0 18px 40px -18px rgba(14,133,121,.5);padding:16px 18px;font-size:13px;font-weight:600}
+.f1{bottom:26px;left:26px}.f1 b{color:var(--teal-d);display:block;font-size:22px}
+.f2{top:26px;right:26px;color:var(--coral)}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:20px 56px 70px}
+.fc{background:var(--sky);border-radius:20px;padding:30px 26px}
+.fc.alt{background:var(--mint)}
+.fc .ic{width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;color:var(--teal);font-size:22px;margin-bottom:14px}
+.fc h3{font-size:19px;font-weight:600;margin-bottom:8px}
+.fc p{color:var(--muted);font-size:14px;line-height:1.65}
+.band{margin:0 56px 60px;background:var(--teal-d);border-radius:24px;color:#fff;padding:44px;display:flex;align-items:center;justify-content:space-between}
+.band h2{font-size:28px;font-weight:600;max-width:520px}
+.band .b2{background:#fff;color:var(--teal-d);border:none;padding:15px 30px;border-radius:40px;font-family:'Poppins';font-weight:600;font-size:15px}
+.foot{padding:30px 56px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;border-top:1px solid #EEF2F4}
+@media(max-width:760px){
+ .head{flex-wrap:wrap;gap:10px;padding:16px 22px}
+ .nav{display:none}
+ .hero{grid-template-columns:1fr;padding:36px 22px 46px}
+ .hero h1{font-size:40px}
+ .feat{grid-template-columns:1fr;padding:8px 22px 46px}
+ .band{flex-direction:column;gap:20px;text-align:center;margin:0 22px 40px;padding:34px 26px}
+ .band h2{font-size:24px}
+ .foot{flex-direction:column;gap:8px;padding:24px 22px}
+}
+</style></head>
+<body>
+<header class="head">
+  <div class="logo"><span class="dot"></span>Brightleaf Dental</div>
+  <nav class="nav"><span>Services</span><span>New Patients</span><span>Our Team</span><span>Reviews</span></nav>
+  <a class="book">Request an Appointment</a>
+</header>
+<section class="hero">
+  <div>
+    <div class="pill">Rated 4.9 by 800+ patients</div>
+    <h1>Dental care that <span>actually feels calm.</span></h1>
+    <p>Gentle, modern dentistry for the whole family — same-week appointments, transparent pricing, and zero judgment.</p>
+    <div class="cta"><button class="btn">Request an Appointment</button><a class="ghost">New patient? →</a></div>
+  </div>
+  <div class="art">
+    <div class="float f1"><b>Same week</b>appointments open</div>
+    <div class="float f2">✓ Most insurance accepted</div>
+  </div>
+</section>
+<section class="feat">
+  <div class="fc"><div class="ic">✚</div><h3>General &amp; Preventive</h3><p>Cleanings, exams, and honest guidance to keep problems small.</p></div>
+  <div class="fc alt"><div class="ic">✦</div><h3>Cosmetic &amp; Whitening</h3><p>Veneers, bonding, and brightening for a smile you’ll show off.</p></div>
+  <div class="fc"><div class="ic">☺</div><h3>Kids &amp; Families</h3><p>Patient, friendly visits that make little ones actually look forward to it.</p></div>
+</section>
+<section class="band"><h2>Your first visit is easy. We’ll handle the insurance part.</h2><button class="b2">Request an Appointment</button></section>
+<footer class="foot"><span>© 2026 Brightleaf Dental · Tampa, FL</span><span>Mon–Fri 8–5 · (813) 555-0133</span></footer>
+</body></html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Summit Build &amp; Remodel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14151A;--char:#1E2026;--amber:#FFB000;--paper:#F4F2EF;--muted:#9AA0AA;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:#fff}
+.head{display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:var(--ink);color:#fff}
+.logo{font-family:'Oswald';font-weight:700;font-size:24px;letter-spacing:1px;text-transform:uppercase}
+.logo b{color:var(--amber)}
+.nav{display:flex;gap:34px;font-size:14px;font-weight:500;color:#D4D6DB}
+.head .phone{font-family:'Oswald';font-size:20px;color:var(--amber);letter-spacing:.5px}
+.hero{position:relative;color:#fff;padding:110px 56px 120px;overflow:hidden;
+ background:linear-gradient(90deg,rgba(15,16,20,.95) 0%,rgba(15,16,20,.78) 40%,rgba(15,16,20,.28) 100%),
+ url('https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=1700&q=80&auto=format&fit=crop') center 30%/cover no-repeat}
+.hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:5px;background:var(--amber)}
+.hero .tag{display:inline-block;font-family:'Oswald';letter-spacing:3px;font-size:13px;color:var(--amber);text-transform:uppercase;border-left:3px solid var(--amber);padding-left:12px;margin-bottom:22px}
+.hero h1{font-family:'Oswald';font-weight:700;font-size:78px;line-height:.98;text-transform:uppercase;max-width:760px;letter-spacing:.5px}
+.hero p{margin-top:22px;max-width:520px;color:#C7CAD1;font-size:18px;line-height:1.6}
+.cta{display:inline-flex;gap:16px;margin-top:36px;position:relative;z-index:2}
+.btn-a{background:var(--amber);color:#14151A;font-family:'Oswald';font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:18px 34px;border:none;border-radius:2px}
+.btn-b{background:transparent;color:#fff;border:2px solid #464a54;font-family:'Oswald';font-weight:600;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:16px 30px;border-radius:2px}
+.badges{display:flex;gap:40px;margin-top:52px;position:relative;z-index:2}
+.badges div{font-family:'Oswald';text-transform:uppercase;font-size:14px;letter-spacing:1px;color:#EDEEF0}
+.badges span{display:block;color:var(--amber);font-size:30px;line-height:1.1}
+.svc{padding:80px 56px;background:var(--paper)}
+.svc h2{font-family:'Oswald';font-size:40px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.svc .sub{color:#6B7280;margin-bottom:40px;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:#fff;border:1px solid #E4E1DC;border-top:4px solid var(--amber);padding:30px 26px}
+.card .n{font-family:'Oswald';color:var(--muted);font-size:15px}
+.card h3{font-family:'Oswald';text-transform:uppercase;font-size:22px;margin:8px 0 10px}
+.card p{color:#5B616B;font-size:15px;line-height:1.6}
+.band{background:var(--char);color:#fff;padding:56px;display:flex;justify-content:space-around;text-align:center}
+.band div span{display:block;font-family:'Oswald';font-size:52px;color:var(--amber)}
+.band div p{color:#B7BBC4;text-transform:uppercase;letter-spacing:1px;font-size:14px;margin-top:6px}
+.foot{background:var(--ink);color:#8A8F99;padding:40px 56px;font-size:14px;display:flex;justify-content:space-between}
+@media(max-width:760px){
+ .head{flex-wrap:wrap;gap:8px;padding:16px 22px}
+ .nav{display:none}
+ .head .phone{font-size:16px}
+ .hero{padding:56px 22px 66px}
+ .hero h1{font-size:38px}
+ .hero p{font-size:16px}
+ .cta{flex-wrap:wrap;gap:12px}
+ .badges{gap:22px;flex-wrap:wrap;margin-top:36px}
+ .svc{padding:48px 22px}
+ .grid{grid-template-columns:1fr}
+ .band{flex-direction:column;gap:22px;padding:40px 22px}
+ .foot{flex-direction:column;gap:10px;padding:28px 22px}
+}
+</style></head>
+<body>
+<header class="head">
+  <div class="logo">SUMMIT<b>/</b>BUILD</div>
+  <nav class="nav"><span>Services</span><span>Projects</span><span>About</span><span>Reviews</span><span>Contact</span></nav>
+  <div class="phone">(813) 555-0142</div>
+</header>
+<section class="hero">
+  <div class="tag">Licensed &amp; Insured · Tampa Bay</div>
+  <h1>Built right. Priced fair. On schedule.</h1>
+  <p>Remodels, additions, and new construction from a crew that shows up, communicates, and cleans up. No surprises — just solid work.</p>
+  <div class="cta"><button class="btn-a">Get a Free Estimate</button><button class="btn-b">See Our Work</button></div>
+  <div class="badges">
+    <div><span>25+</span>Years building</div>
+    <div><span>600+</span>Projects done</div>
+    <div><span>4.9★</span>Google rating</div>
+  </div>
+</section>
+<section class="svc">
+  <h2>What we build</h2>
+  <div class="sub">Whole-home to single-room — one accountable team start to finish.</div>
+  <div class="grid">
+    <div class="card"><div class="n">01</div><h3>Kitchens &amp; Baths</h3><p>Full gut-and-rebuild remodels with in-house design, cabinetry, and tile.</p></div>
+    <div class="card"><div class="n">02</div><h3>Additions</h3><p>Second stories, in-law suites, and expansions engineered and permitted.</p></div>
+    <div class="card"><div class="n">03</div><h3>New Construction</h3><p>Custom builds managed from foundation to final walkthrough.</p></div>
+  </div>
+</section>
+<section class="band">
+  <div><span>On-time</span><p>90% jobs on schedule</p></div>
+  <div><span>Fixed bids</span><p>No hourly surprises</p></div>
+  <div><span>10-yr</span><p>Workmanship warranty</p></div>
+</section>
+<footer class="foot"><div class="logo" style="font-size:18px">SUMMIT<b style="color:var(--amber)">/</b>BUILD</div><div>© 2026 Summit Build &amp; Remodel · Tampa, FL · CBC1258841</div></footer>
+</body></html>

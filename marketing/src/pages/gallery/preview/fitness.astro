@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IRONHAUS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0C0E;--panel:#141417;--lime:#C6F53C;--ink:#0C0C0E;--muted:#8A8D93;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#fff}
+.head{display:flex;align-items:center;justify-content:space-between;padding:20px 56px;border-bottom:1px solid #1E1E22}
+.logo{font-family:'Anton';font-size:26px;letter-spacing:2px}
+.logo span{color:var(--lime)}
+.nav{display:flex;gap:30px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#C4C6CB}
+.join{background:var(--lime);color:#0C0C0E;font-weight:700;padding:12px 24px;font-size:14px;text-transform:uppercase;letter-spacing:1px}
+.hero{padding:96px 56px 100px;position:relative;overflow:hidden;
+ background:linear-gradient(90deg,rgba(12,12,14,.96) 0%,rgba(12,12,14,.82) 42%,rgba(12,12,14,.45) 100%),
+ url('https://images.unsplash.com/photo-1554344728-77cf90d9ed26?w=1700&q=80&auto=format&fit=crop') center 25%/cover no-repeat}
+.hero::before{content:"";position:absolute;left:0;bottom:0;width:100%;height:4px;background:var(--lime);z-index:0}
+.hero .in{position:relative;z-index:2}
+.tag{color:var(--lime);font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:14px;margin-bottom:20px}
+.hero h1{font-family:'Anton';font-size:120px;line-height:.86;text-transform:uppercase;letter-spacing:-1px;max-width:820px}
+.hero h1 span{color:var(--lime)}
+.hero p{margin-top:26px;max-width:460px;color:#B7BAC0;font-size:18px;line-height:1.6}
+.cta{margin-top:36px;display:flex;gap:16px}
+.btn{background:var(--lime);color:#0C0C0E;border:none;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;padding:18px 36px;font-family:'Inter'}
+.btn-o{background:transparent;color:#fff;border:2px solid #2A2A30;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;padding:16px 30px}
+.stats{display:flex;gap:60px;margin-top:56px}
+.stats div{position:relative;z-index:2}
+.stats span{font-family:'Anton';font-size:44px;color:var(--lime);display:block;line-height:1}
+.stats p{color:#8A8D93;text-transform:uppercase;letter-spacing:1px;font-size:13px;margin-top:4px}
+.plans{padding:70px 56px;background:var(--panel)}
+.plans h2{font-family:'Anton';font-size:48px;text-transform:uppercase;margin-bottom:36px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.p{background:#0C0C0E;border:1px solid #22232A;padding:32px 28px}
+.p.hot{border-color:var(--lime);background:linear-gradient(180deg,#16180F,#0C0C0E)}
+.p .k{text-transform:uppercase;letter-spacing:2px;font-size:13px;color:var(--muted)}
+.p.hot .k{color:var(--lime)}
+.p .price{font-family:'Anton';font-size:54px;margin:10px 0 4px}
+.p .price small{font-size:16px;color:var(--muted);font-family:'Inter'}
+.p ul{list-style:none;margin-top:18px;color:#C4C6CB;font-size:15px}
+.p li{padding:8px 0;border-bottom:1px solid #1C1D23}
+.p li::before{content:"›";color:var(--lime);margin-right:10px;font-weight:700}
+.foot{padding:34px 56px;color:#7C7F86;font-size:14px;display:flex;justify-content:space-between;border-top:1px solid #1E1E22}
+@media(max-width:760px){
+ .head{flex-wrap:wrap;gap:10px;padding:14px 22px}
+ .nav{display:none}
+ .hero{padding:52px 22px 60px}
+ .hero h1{font-size:60px;line-height:.9}
+ .hero p{font-size:16px}
+ .cta{flex-wrap:wrap;gap:12px}
+ .stats{gap:28px;flex-wrap:wrap;margin-top:40px}
+ .plans{padding:48px 22px}
+ .plans h2{font-size:38px}
+ .grid{grid-template-columns:1fr}
+ .foot{flex-direction:column;gap:8px;padding:24px 22px}
+}
+</style></head>
+<body>
+<header class="head">
+  <div class="logo">IRON<span>HAUS</span></div>
+  <nav class="nav"><span>Classes</span><span>Coaching</span><span>Memberships</span><span>Results</span></nav>
+  <a class="join">Start Free Trial</a>
+</header>
+<section class="hero"><div class="in">
+  <div class="tag">Strength &amp; conditioning · Tampa</div>
+  <h1>Show up.<br><span>Get strong.</span></h1>
+  <p>Coach-led small-group training that actually gets results — no lock-in contracts, no ego, just work that pays off.</p>
+  <div class="cta"><button class="btn">Start Free Trial</button><button class="btn-o">View Classes</button></div>
+  <div class="stats">
+    <div><span>7-day</span><p>Free trial</p></div>
+    <div><span>40+</span><p>Weekly classes</p></div>
+    <div><span>No</span><p>Contract lock-in</p></div>
+  </div>
+</div></section>
+<section class="plans">
+  <h2>Pick your pace</h2>
+  <div class="grid">
+    <div class="p"><div class="k">Classes</div><div class="price">$89<small>/mo</small></div><ul><li>Unlimited group classes</li><li>App workout tracking</li><li>Open gym access</li></ul></div>
+    <div class="p hot"><div class="k">Most popular</div><div class="price">$149<small>/mo</small></div><ul><li>Everything in Classes</li><li>2 personal sessions/mo</li><li>Nutrition coaching</li></ul></div>
+    <div class="p"><div class="k">1:1 Coaching</div><div class="price">$249<small>/mo</small></div><ul><li>Weekly private sessions</li><li>Custom programming</li><li>Priority scheduling</li></ul></div>
+  </div>
+</section>
+<footer class="foot"><span>© 2026 IRONHAUS · Tampa, FL</span><span>Open 5am–10pm · (813) 555-0155</span></footer>
+</body></html>

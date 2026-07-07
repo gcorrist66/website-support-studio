@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Olive &amp; Ash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#1E2B24;--forest-2:#26362D;--cream:#F0E9DA;--terra:#C97B4E;--terra-d:#B4633A;--muted:#B9C3B7;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--forest);color:var(--cream)}
+.head{display:flex;align-items:center;justify-content:space-between;padding:24px 60px}
+.logo{font-family:'Fraunces';font-size:26px;font-weight:600;letter-spacing:.5px}
+.nav{display:flex;gap:30px;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.resv{border:1px solid var(--terra);color:var(--terra);padding:11px 22px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase}
+.hero{padding:96px 60px 90px;text-align:center;position:relative;
+ background:linear-gradient(180deg,rgba(30,43,36,.60) 0%,rgba(30,43,36,.78) 55%,rgba(30,43,36,.95) 100%),
+ url('https://images.unsplash.com/photo-1663530761401-15eefb544889?w=1700&q=80&auto=format&fit=crop') center 35%/cover no-repeat}
+.e{color:var(--terra);letter-spacing:5px;text-transform:uppercase;font-size:13px;margin-bottom:24px}
+.hero h1{font-family:'Fraunces';font-weight:500;font-size:88px;line-height:.98;letter-spacing:-1px;max-width:900px;margin:0 auto}
+.hero h1 i{font-style:italic;color:var(--terra)}
+.hero p{margin:26px auto 0;max-width:520px;color:var(--muted);font-size:18px;line-height:1.7}
+.cta{margin-top:38px;display:flex;gap:18px;justify-content:center}
+.btn{background:var(--terra);color:#20130B;border:none;padding:16px 36px;font-family:'Inter';font-weight:500;font-size:15px;letter-spacing:1px;text-transform:uppercase}
+.btn-o{background:transparent;color:var(--cream);border:1px solid #3E4E43;padding:15px 30px;font-size:15px;letter-spacing:1px;text-transform:uppercase}
+.imgrow{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:70px}
+.imgrow div{height:180px}
+.imgrow div{background-size:cover;background-position:center}
+.imgrow div:nth-child(1){background-image:url('https://images.unsplash.com/photo-1682264933304-1943bfa8df38?w=900&q=80&auto=format&fit=crop')}
+.imgrow div:nth-child(2){background-image:url('https://images.unsplash.com/photo-1681270543584-8e541a1bb056?w=900&q=80&auto=format&fit=crop')}
+.imgrow div:nth-child(3){background-image:url('https://images.unsplash.com/photo-1627858034922-72a657d6b3c2?w=900&q=80&auto=format&fit=crop')}
+.menu{background:var(--cream);color:var(--forest);padding:80px 60px}
+.menu .e{color:var(--terra-d);text-align:center}
+.menu h2{font-family:'Fraunces';text-align:center;font-size:42px;font-weight:500;margin-bottom:44px}
+.cols{max-width:820px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:16px 60px}
+.row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dotted #C7BBA4;padding:12px 0}
+.row .nm{font-family:'Fraunces';font-size:19px;font-weight:500}
+.row .ds{display:block;font-size:13px;color:#6C6353;margin-top:2px;max-width:230px}
+.row .pr{font-family:'Fraunces';color:var(--terra-d);font-size:18px}
+.foot{padding:40px 60px;display:flex;justify-content:space-between;color:var(--muted);font-size:13px;letter-spacing:1px}
+@media(max-width:760px){
+ .head{flex-wrap:wrap;gap:10px;padding:16px 22px}
+ .nav{display:none}
+ .hero{padding:56px 22px 56px}
+ .hero h1{font-size:52px}
+ .hero p{font-size:16px}
+ .cta{flex-wrap:wrap;gap:12px}
+ .imgrow{grid-template-columns:1fr;margin-top:48px}
+ .imgrow div{height:200px}
+ .menu{padding:48px 22px}
+ .cols{grid-template-columns:1fr;gap:6px 0}
+ .foot{flex-direction:column;gap:8px;padding:30px 22px}
+}
+</style></head>
+<body>
+<header class="head">
+  <div class="logo">Olive &amp; Ash</div>
+  <nav class="nav"><span>Menu</span><span>Wine</span><span>Private Events</span><span>Story</span></nav>
+  <a class="resv">Reserve</a>
+</header>
+<section class="hero">
+  <div class="e">Wood-fired · Seasonal · Tampa</div>
+  <h1>Dinner worth<br><i>lingering</i> over.</h1>
+  <p>A neighborhood table built around the open hearth — market produce, natural wine, and a room that hums until close.</p>
+  <div class="cta"><button class="btn">Reserve a Table</button><button class="btn-o">View the Menu</button></div>
+  <div class="imgrow"><div></div><div></div><div></div></div>
+</section>
+<section class="menu">
+  <div class="e">A taste</div>
+  <h2>From the hearth</h2>
+  <div class="cols">
+    <div class="row"><div><span class="nm">Charred Sourdough</span><span class="ds">cultured butter, sea salt</span></div><span class="pr">9</span></div>
+    <div class="row"><div><span class="nm">Ember Carrots</span><span class="ds">whipped feta, dukkah, honey</span></div><span class="pr">16</span></div>
+    <div class="row"><div><span class="nm">Wood-fired Branzino</span><span class="ds">fennel, citrus, salsa verde</span></div><span class="pr">34</span></div>
+    <div class="row"><div><span class="nm">40-day Ribeye</span><span class="ds">bone marrow, charred allium</span></div><span class="pr">52</span></div>
+    <div class="row"><div><span class="nm">Bucatini</span><span class="ds">guanciale, black pepper, pecorino</span></div><span class="pr">26</span></div>
+    <div class="row"><div><span class="nm">Olive Oil Cake</span><span class="ds">mascarpone, blood orange</span></div><span class="pr">12</span></div>
+  </div>
+</section>
+<footer class="foot"><span>Olive &amp; Ash · 214 Water St, Tampa</span><span>Tue–Sun from 5pm · (813) 555-0188</span></footer>
+</body></html>

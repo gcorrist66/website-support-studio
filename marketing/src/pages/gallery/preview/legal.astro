@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hargrove &amp; Pierce · Attorneys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0E2038;--navy-2:#16304F;--gold:#C6A15B;--gold-d:#A9863F;--paper:#F5F3EE;--ink:#1D2733;--muted:#5E6875;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Source Sans 3',sans-serif;color:var(--ink);background:#fff}
+.bar{background:var(--navy);color:#C9D2DE;font-size:13px;padding:9px 60px;display:flex;justify-content:space-between;letter-spacing:.3px}
+.bar b{color:var(--gold)}
+.head{display:flex;align-items:center;justify-content:space-between;padding:22px 60px;border-bottom:1px solid #E7E3DA}
+.logo{font-family:'Playfair Display';font-weight:600;font-size:26px;color:var(--navy);letter-spacing:.5px}
+.logo span{display:block;font-family:'Source Sans 3';font-size:11px;letter-spacing:4px;color:var(--gold-d);text-transform:uppercase;margin-top:2px}
+.nav{display:flex;gap:30px;font-size:15px;color:#33404F}
+.consult{background:var(--navy);color:#fff;padding:12px 22px;font-size:14px;letter-spacing:.5px}
+.hero{color:#fff;padding:96px 60px 104px;position:relative;
+ background:linear-gradient(100deg,rgba(14,32,56,.96) 0%,rgba(14,32,56,.86) 45%,rgba(14,32,56,.55) 100%),
+ url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=1700&q=80&auto=format&fit=crop') center/cover no-repeat}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 85% 20%,rgba(198,161,91,.16),transparent 70%)}
+.hero .in{position:relative;max-width:720px}
+.hero .e{color:var(--gold);letter-spacing:4px;text-transform:uppercase;font-size:13px;margin-bottom:20px}
+.hero h1{font-family:'Playfair Display';font-weight:600;font-size:60px;line-height:1.08}
+.rule{width:70px;height:3px;background:var(--gold);margin:26px 0}
+.hero p{color:#C6CEDA;font-size:19px;line-height:1.65;max-width:600px}
+.cta{margin-top:36px;display:flex;gap:16px}
+.btn-g{background:var(--gold);color:var(--navy);font-weight:600;padding:16px 32px;border:none;font-size:16px;letter-spacing:.5px}
+.btn-o{background:transparent;color:#fff;border:1px solid #3C5471;padding:15px 28px;font-size:16px}
+.prac{padding:80px 60px;background:var(--paper)}
+.prac .e{text-align:center;color:var(--gold-d);letter-spacing:4px;text-transform:uppercase;font-size:13px;margin-bottom:10px}
+.prac h2{text-align:center;font-family:'Playfair Display';font-size:40px;color:var(--navy);margin-bottom:46px}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border:1px solid #E4DFD4}
+.col{padding:34px 26px;border-right:1px solid #E9E4D8}
+.col:last-child{border-right:none}
+.col h3{font-family:'Playfair Display';font-size:22px;color:var(--navy);margin-bottom:12px}
+.col p{color:var(--muted);font-size:14px;line-height:1.65}
+.col .no{font-family:'Playfair Display';color:var(--gold);font-size:15px;margin-bottom:14px}
+.trust{background:var(--navy);color:#fff;padding:56px 60px;display:flex;justify-content:space-around;text-align:center}
+.trust span{font-family:'Playfair Display';font-size:46px;color:var(--gold);display:block}
+.trust p{color:#AEB8C6;text-transform:uppercase;letter-spacing:1px;font-size:13px;margin-top:6px}
+.foot{padding:34px 60px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;border-top:1px solid #E7E3DA}
+@media(max-width:760px){
+ .bar{flex-direction:column;gap:4px;padding:8px 22px;text-align:center}
+ .head{flex-wrap:wrap;gap:10px;padding:16px 22px}
+ .nav{display:none}
+ .hero{padding:52px 22px 60px}
+ .hero h1{font-size:36px}
+ .hero p{font-size:16px}
+ .cta{flex-wrap:wrap;gap:12px}
+ .prac{padding:48px 22px}
+ .cols{grid-template-columns:1fr}
+ .col{border-right:none;border-bottom:1px solid #E9E4D8}
+ .col:last-child{border-bottom:none}
+ .trust{flex-direction:column;gap:22px;padding:40px 22px}
+ .foot{flex-direction:column;gap:8px;padding:24px 22px}
+}
+</style></head>
+<body>
+<div class="bar"><span>Serving Florida since 1994</span><span><b>Free consultation:</b> (813) 555-0170</span></div>
+<header class="head">
+  <div class="logo">Hargrove &amp; Pierce<span>Attorneys at Law</span></div>
+  <nav class="nav"><span>Practice Areas</span><span>Attorneys</span><span>Results</span><span>Insights</span></nav>
+  <a class="consult">Free Consultation</a>
+</header>
+<section class="hero"><div class="in">
+  <div class="e">Personal Injury · Estate · Business Law</div>
+  <h1>When it matters most, experience matters.</h1>
+  <div class="rule"></div>
+  <p>Four decades representing Florida families and businesses — with the candor of a small firm and the resources of a large one.</p>
+  <div class="cta"><button class="btn-g">Request a Free Consultation</button><button class="btn-o">Our Case Results</button></div>
+</div></section>
+<section class="prac">
+  <div class="e">How we help</div>
+  <h2>Practice Areas</h2>
+  <div class="cols">
+    <div class="col"><div class="no">01</div><h3>Personal Injury</h3><p>Auto, premises, and wrongful death claims pursued on contingency.</p></div>
+    <div class="col"><div class="no">02</div><h3>Estate Planning</h3><p>Wills, trusts, and probate handled with discretion and care.</p></div>
+    <div class="col"><div class="no">03</div><h3>Business Law</h3><p>Formation, contracts, and disputes for local companies.</p></div>
+    <div class="col"><div class="no">04</div><h3>Real Estate</h3><p>Transactions, title, and litigation across the Gulf Coast.</p></div>
+  </div>
+</section>
+<section class="trust">
+  <div><span>$85M+</span><p>Recovered for clients</p></div>
+  <div><span>30+</span><p>Years of practice</p></div>
+  <div><span>No fee</span><p>Unless we win</p></div>
+</section>
+<footer class="foot"><span>© 2026 Hargrove &amp; Pierce, P.A. · Tampa, FL</span><span>Attorney advertising. Prior results do not guarantee outcomes.</span></footer>
+</body></html>
