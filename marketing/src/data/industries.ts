@@ -20,9 +20,6 @@ export type IndustryPage = {
   proofPoints: string[];
 };
 
-const sampleGap = (industry: string, closest: string) =>
-  `No dedicated ${industry} sample exists yet, so this page shows ${closest} as the closest existing starting point.`;
-
 export const INDUSTRY_PAGES = [
   {
     slug: "concrete",
@@ -32,14 +29,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Concrete buyers need to see services, finish quality, local proof, and a fast mobile request path before they call.",
     metaDescription:
-      "Concrete contractor website preview page with the closest existing sample, CTA, and SEO/AEO/GEO guide link.",
+      "Concrete contractor website preview page showing the Cornerstone Concrete sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/ridgeline-roofing",
-      name: "Ridgeline Roofing",
-      description: "Closest contractor-style sample for estimate-first exterior services.",
+      route: "/templates/sample/cornerstone-concrete",
+      name: "Cornerstone Concrete",
+      description: "Dedicated concrete contractor sample for driveways, patios, slabs, repairs, and estimate requests.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("concrete contractor", "Ridgeline Roofing"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Concrete crew preparing a residential slab form",
     accent: "#737373",
@@ -53,14 +49,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Electrical work is bought on trust, so the page needs safety signals, emergency paths, and clear next steps for EV chargers, panels, generators, and repairs.",
     metaDescription:
-      "Electrician website preview page with the closest existing trade sample, CTA, and SEO/AEO/GEO guide link.",
+      "Electrician website preview page showing the Brightwire Electric sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/mainline-plumbing",
-      name: "Mainline Plumbing",
-      description: "Closest trade-style sample for urgent in-home repair and service paths.",
+      route: "/templates/sample/brightwire-electric",
+      name: "Brightwire Electric",
+      description: "Dedicated electrician sample for panel work, EV chargers, troubleshooting, and urgent service paths.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("electrician", "Mainline Plumbing"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Electrician working near a residential electrical panel",
     accent: "#f59e0b",
@@ -74,14 +69,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Garage door buyers need fast repair options, replacement clarity, service-area confidence, and a simple path when a spring breaks or a door will not open.",
     metaDescription:
-      "Garage door website preview page with the closest existing exterior-services sample, CTA, and SEO/AEO/GEO guide link.",
+      "Garage door website preview page showing the OverPro Garage Doors sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/ridgeline-roofing",
-      name: "Ridgeline Roofing",
-      description: "Closest exterior-services sample for urgent repair and replacement requests.",
+      route: "/templates/sample/overpro-garage-doors",
+      name: "OverPro Garage Doors",
+      description: "Dedicated garage door sample for springs, openers, repairs, replacement, and urgent stuck-door calls.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("garage door", "Ridgeline Roofing"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1621155346337-1d19476ba7d6?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Modern residential garage door and driveway",
     accent: "#475569",
@@ -115,14 +109,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Sprinkler demand follows the calendar: spring start-ups, summer repairs, fall winterization, and water-saving upgrades need clear paths.",
     metaDescription:
-      "Irrigation and sprinkler website preview page with the closest existing landscaping sample, CTA, and SEO/AEO/GEO guide link.",
+      "Irrigation and sprinkler website preview page showing the SprinklerWorks Irrigation sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/greenline-landscaping",
-      name: "Greenline Landscaping",
-      description: "Closest outdoor-services sample with irrigation checks and seasonal service framing.",
+      route: "/templates/sample/sprinklerworks-irrigation",
+      name: "SprinklerWorks Irrigation",
+      description: "Dedicated irrigation sample for sprinkler repair, start-ups, winterization, and water-smart upgrades.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("irrigation and sprinkler", "Greenline Landscaping"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Lawn sprinkler watering a green yard",
     accent: "#0891b2",
@@ -156,14 +149,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Pest control buyers need either urgent help for an active problem or a recurring protection plan for prevention.",
     metaDescription:
-      "Pest control website preview page with the closest existing in-home service sample, CTA, and SEO/AEO/GEO guide link.",
+      "Pest control website preview page showing the Shieldline Pest Control sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/mainline-plumbing",
-      name: "Mainline Plumbing",
-      description: "Closest urgent in-home service sample for repair-style calls and trust-first contact paths.",
+      route: "/templates/sample/shieldline-pest-control",
+      name: "Shieldline Pest Control",
+      description: "Dedicated pest control sample for active pest help, recurring plans, treatment expectations, and service areas.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("pest control", "Mainline Plumbing"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1586280268958-9483002d016a?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Pest control technician preparing residential treatment equipment",
     accent: "#16a34a",
@@ -197,14 +189,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Pool company websites win when weekly service is easy to start and before-and-after work is easy to understand.",
     metaDescription:
-      "Pool company website preview page with the closest existing outdoor-services sample, CTA, and SEO/AEO/GEO guide link.",
+      "Pool company website preview page showing the Bluewave Pools sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/greenline-landscaping",
-      name: "Greenline Landscaping",
-      description: "Closest outdoor recurring-service sample for maintenance and project requests.",
+      route: "/templates/sample/bluewave-pools",
+      name: "Bluewave Pools",
+      description: "Dedicated pool company sample for weekly service, cleaning, repairs, inspections, and renovation estimates.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("pool company", "Greenline Landscaping"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Clean backyard swimming pool and patio",
     accent: "#0284c7",
@@ -218,14 +209,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Pressure washing is visual: buyers understand the value in one before-and-after, then need a fast quote path.",
     metaDescription:
-      "Pressure washing website preview page with the closest existing exterior-services sample, CTA, and SEO/AEO/GEO guide link.",
+      "Pressure washing website preview page showing the Brightwash Exterior Cleaning sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/greenline-landscaping",
-      name: "Greenline Landscaping",
-      description: "Closest outdoor-services sample for visual proof, service areas, and estimate requests.",
+      route: "/templates/sample/brightwash-exterior-cleaning",
+      name: "Brightwash Exterior Cleaning",
+      description: "Dedicated pressure washing sample for house washing, driveways, soft washing, patios, and fast quotes.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("pressure washing", "Greenline Landscaping"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Clean home exterior and driveway after exterior washing",
     accent: "#2563eb",
@@ -259,14 +249,13 @@ export const INDUSTRY_PAGES = [
     subhead:
       "Tree service buyers are weighing safety, cost, storm urgency, property risk, and whether the right crew can handle the work.",
     metaDescription:
-      "Tree service website preview page with the closest existing outdoor-services sample, CTA, and SEO/AEO/GEO guide link.",
+      "Tree service website preview page showing the Canopy Tree Care sample, CTA, and SEO/AEO/GEO guide link.",
     sample: {
-      route: "/templates/sample/greenline-landscaping",
-      name: "Greenline Landscaping",
-      description: "Closest outdoor-services sample for project proof, service-area clarity, and estimate requests.",
+      route: "/templates/sample/canopy-tree-care",
+      name: "Canopy Tree Care",
+      description: "Dedicated tree service sample for removal, pruning, storm cleanup, stump grinding, and safety-first estimates.",
     },
-    sampleGap: true,
-    gapNote: sampleGap("tree service", "Greenline Landscaping"),
+    sampleGap: false,
     heroImage: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1400&q=82",
     heroAlt: "Tall trees and residential green space",
     accent: "#15803d",
