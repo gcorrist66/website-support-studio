@@ -75,4 +75,4 @@ Concrete is visual and high-commitment. Before-and-after photos help homeowners 
 ### Should concrete sites explain repair versus replacement?
 Yes. Crack repair, resurfacing, and replacement are different decisions, and clear comparison content helps visitors request the right estimate.
 
-*This article was written and published by Website Support Studio - we build, host, and maintain concrete websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample concrete site ->](/templates) or [get your free preview ->](/contact).*
+*This article was written and published by Website Support Studio - we build, host, and maintain concrete websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample concrete site ->](/templates) or [get your free preview ->](/for/concrete).*

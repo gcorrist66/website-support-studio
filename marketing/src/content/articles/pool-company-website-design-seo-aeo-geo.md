@@ -82,4 +82,4 @@ Visual proof. New builds and renovations are sold on before-and-after galleries,
 ### Do I need GEO if I already do SEO?
 Yes. AI assistants increasingly cite different sources than Google’s top links, and “pool service near me” is now asked of AI directly. You want to be the name it returns.
 
-*This article was written and published by Website Support Studio - we build, host, and maintain pool company websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample pool company site ->](/templates) or [get your free preview ->](/contact).*
+*This article was written and published by Website Support Studio - we build, host, and maintain pool company websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample pool company site ->](/templates) or [get your free preview ->](/for/pool-company).*

@@ -75,4 +75,4 @@ Yes. Emergency pest calls solve the immediate problem, but recurring plans creat
 ### How can pest control companies get cited by AI search?
 They need specific service pages, city coverage, plain-language pest FAQs, treatment expectations, safety notes, reviews, and structured data that AI tools can extract.
 
-*This article was written and published by Website Support Studio - we build, host, and maintain pest control websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample pest control site ->](/templates) or [get your free preview ->](/contact).*
+*This article was written and published by Website Support Studio - we build, host, and maintain pest control websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample pest control site ->](/templates) or [get your free preview ->](/for/pest-control).*

@@ -75,4 +75,4 @@ Yes. Homeowners often do not know whether a stuck, dented, noisy, or aging door 
 ### Why does GEO matter for garage door companies?
 AI search tools answer urgent local questions like who can fix a garage door that will not open, so the website needs service-area clarity, emergency language, FAQs, and structured data.
 
-*This article was written and published by Website Support Studio - we build, host, and maintain garage door websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample garage door site ->](/templates) or [get your free preview ->](/contact).*
+*This article was written and published by Website Support Studio - we build, host, and maintain garage door websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample garage door site ->](/templates) or [get your free preview ->](/for/garage-door).*

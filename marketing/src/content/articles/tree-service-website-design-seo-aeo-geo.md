@@ -75,4 +75,4 @@ Tree work is high-risk and high-ticket. Homeowners need to see insurance, proces
 ### How can tree companies get cited in AI search?
 Dedicated pages for removal, trimming, storm damage, emergency work, and city service areas make it easier for AI tools to cite the company for specific local questions.
 
-*This article was written and published by Website Support Studio - we build, host, and maintain tree service websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample tree service site ->](/templates/sample/greenline-landscaping) or [get your free preview ->](/contact).*
+*This article was written and published by Website Support Studio - we build, host, and maintain tree service websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample tree service site ->](/templates/sample/greenline-landscaping) or [get your free preview ->](/for/tree-service).*

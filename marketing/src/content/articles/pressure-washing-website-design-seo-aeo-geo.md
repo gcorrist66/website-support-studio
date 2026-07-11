@@ -75,4 +75,4 @@ Pressure washing is instantly visual. Before-and-after proof helps homeowners un
 ### Should pressure washing sites explain soft washing?
 Yes. Roofs, siding, and delicate surfaces need clear soft washing language so buyers know the company understands safe cleaning methods.
 
-*This article was written and published by Website Support Studio - we build, host, and maintain pressure washing websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample pressure washing site ->](/templates) or [get your free preview ->](/contact).*
+*This article was written and published by Website Support Studio - we build, host, and maintain pressure washing websites engineered to do exactly what’s above, and we write the content that keeps them findable. [See a sample pressure washing site ->](/templates) or [get your free preview ->](/for/pressure-washing).*

@@ -1,0 +1,129 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Label from "../../components/Label.astro";
+import { CONTACT } from "../../consts";
+import { breadcrumbSchema, serviceSchema } from "../../schema";
+import { INDUSTRY_PAGES, type IndustryPage } from "../../data/industries";
+
+export function getStaticPaths() {
+  return INDUSTRY_PAGES.map((page) => ({
+    params: { industry: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props as { page: IndustryPage };
+const path = `/for/${page.slug}`;
+const previewHref = `/contact?source=free-website-preview&industry=${page.slug}`;
+const articlePath = `/articles/${page.articleSlug}`;
+const title = `${page.displayName} Websites — Sample + Free Preview`;
+const schemas = [
+  serviceSchema({
+    name: `${page.displayName} website design and launch`,
+    description: page.metaDescription,
+    serviceType: "Website design and launch",
+    path,
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: `${page.displayName} websites`, path },
+  ]),
+];
+---
+
+<BaseLayout title={title} description={page.metaDescription} path={path} image={page.heroImage} schemas={schemas}>
+  <section class="industry-hero" style={`--industry-accent:${page.accent};`}>
+    <div class="container industry-hero-grid">
+      <div>
+        <p class="kicker"><Label text={`_${page.slug.replaceAll("-", "_")}_websites`} /></p>
+        <h1>{page.headline}</h1>
+        <p class="lede">{page.subhead}</p>
+        <div class="industry-actions">
+          <a class="btn btn-green btn-cta" href={previewHref} data-ga-event={`click_for_${page.slug}_preview`}>
+            Get your {page.displayName.toLowerCase()} website preview
+          </a>
+          <a class="btn btn-ghost" href={CONTACT.bookingUrl} target="_blank" rel="noopener" data-ga-event={`click_for_${page.slug}_book_call`}>
+            Book a call
+          </a>
+          <a class="btn btn-ghost" href={articlePath} data-ga-event={`click_for_${page.slug}_article`}>
+            Read the {page.displayName.toLowerCase()} guide
+          </a>
+        </div>
+      </div>
+      <figure class="industry-photo">
+        <img src={page.heroImage} alt={page.heroAlt} width="1400" height="980" loading="eager" />
+        <figcaption>{page.displayName} website preview</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section industry-muted">
+    <div class="container industry-example">
+      <div>
+        <p class="kicker"><Label text={page.sampleGap ? "_closest_existing_sample" : "_industry_sample"} /></p>
+        <h2>{page.sampleGap ? `Closest sample: ${page.sample.name}` : `See the ${page.sample.name} sample`}</h2>
+        <p>{page.sample.description}</p>
+        {page.sampleGap && page.gapNote && <p class="sample-gap-note">{page.gapNote}</p>}
+        <ul class="industry-checks">
+          {page.proofPoints.map((item) => <li>{item}</li>)}
+        </ul>
+        <div class="industry-actions">
+          <a class="btn btn-primary" href={page.sample.route} data-ga-event={`click_for_${page.slug}_sample`}>
+            See the full sample
+          </a>
+          <a class="btn btn-ghost" href={previewHref} data-ga-event={`click_for_${page.slug}_sample_preview`}>
+            Get your preview
+          </a>
+        </div>
+      </div>
+      <a class="model-preview model-preview-large industry-preview" href={page.sample.route} aria-label={`Open ${page.sample.name}`}>
+        <img src={page.heroImage} alt="" width="1100" height="720" loading="lazy" />
+        <div class="model-preview-ui">
+          <span>{page.sampleGap ? "Closest starting point" : "Industry sample"}</span>
+          <strong>{page.sample.name}</strong>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container industry-split">
+      <div>
+        <p class="kicker"><Label text="_what_this_page_is_for" /></p>
+        <h2>Your website should make the next step obvious.</h2>
+        <p>
+          These pages are built from the same ideas as the industry guide: specific services, clear local
+          trust signals, mobile-friendly CTAs, and a sample you can click through before asking for a preview.
+        </p>
+      </div>
+      <div class="industry-card-list">
+        {page.proofPoints.map((item) => <article class="industry-card"><p>{item}</p></article>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section industry-muted">
+    <div class="container industry-final-cta">
+      <div>
+        <p class="kicker"><Label text="_ready_for_a_preview" /></p>
+        <h2>Get a {page.displayName.toLowerCase()} website preview.</h2>
+        <p>
+          Send the basics. We will use the closest sample direction, your services, and the guide’s structure
+          to shape a preview around your business.
+        </p>
+      </div>
+      <div class="industry-actions">
+        <a class="btn btn-green btn-cta" href={previewHref} data-ga-event={`click_for_${page.slug}_final_preview`}>
+          Get your preview
+        </a>
+        <a class="btn btn-ghost" href={CONTACT.bookingUrl} target="_blank" rel="noopener" data-ga-event={`click_for_${page.slug}_final_book_call`}>
+          Book a call
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <style is:inline>
+    .industry-hero{padding:clamp(3rem,7vw,5.5rem) 0;background:radial-gradient(circle at 78% 8%,color-mix(in srgb,var(--industry-accent) 18%,transparent),transparent 28rem),linear-gradient(180deg,#fff,var(--surface-muted));overflow:hidden}.industry-hero-grid,.industry-example,.industry-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.92fr);gap:clamp(1.5rem,5vw,3.5rem);align-items:center}.industry-hero h1{max-width:14ch;font-size:clamp(2.2rem,6.5vw,4.8rem);line-height:.96;margin:.5rem 0 1rem}.industry-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.35rem}.industry-photo{position:relative;overflow:hidden;min-height:440px;margin:0;border-radius:24px;border:1px solid var(--border);background:#fff;box-shadow:0 28px 80px rgba(11,18,32,.15)}.industry-photo img{display:block;width:100%;height:100%;object-fit:cover}.industry-photo figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;border-radius:999px;padding:.65rem .85rem;background:rgba(11,18,32,.82);color:#fff;font-size:.78rem;font-weight:800}.industry-muted{background:var(--surface-muted)}.industry-preview{min-height:420px;color:inherit;text-decoration:none}.sample-gap-note{margin-top:1rem;padding:1rem;border-left:4px solid var(--industry-accent);border-radius:12px;background:#fff;color:var(--text-muted);font-weight:700}.industry-checks{display:grid;gap:.7rem;margin:1rem 0 0;padding:0;list-style:none}.industry-checks li{position:relative;padding-left:1.4rem}.industry-checks li::before{content:"";position:absolute;left:0;top:.55rem;width:.55rem;height:.55rem;border-radius:999px;background:var(--industry-accent)}.industry-card-list{display:grid;gap:.85rem}.industry-card,.industry-final-cta{border:1px solid var(--border);border-radius:20px;background:#fff;padding:1.25rem;box-shadow:0 18px 48px rgba(11,18,32,.06)}.industry-card p{margin:0}.industry-final-cta{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;border-left:6px solid var(--industry-accent);padding:clamp(1.4rem,4vw,2.4rem)}.industry-final-cta h2{margin-top:.25rem}@media(max-width:820px){.industry-hero-grid,.industry-example,.industry-split,.industry-final-cta{grid-template-columns:1fr;display:grid}.industry-photo,.industry-preview{min-height:300px}.industry-actions .btn{width:100%;justify-content:center}}
+  </style>
+</BaseLayout>

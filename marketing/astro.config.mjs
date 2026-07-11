@@ -34,6 +34,12 @@ const orphanTemplateRedirects = {
     destination: "/templates/sample/ridgeline-roofing/service-area",
   },
 };
+const industryAliasRedirects = {
+  "/for/plumbing": {
+    status: 301,
+    destination: "/for/plumber",
+  },
+};
 const aioToAeoRedirects = {
   "/articles/concrete-contractor-website-design-seo-aio-geo": {
     status: 301,
@@ -140,6 +146,7 @@ export default defineConfig({
   trailingSlash: "never",
   redirects: {
     ...orphanTemplateRedirects,
+    ...industryAliasRedirects,
     ...aioToAeoRedirects,
   },
   build: {
