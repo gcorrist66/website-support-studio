@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Faq from "../components/Faq.astro";
 import Label from "../components/Label.astro";
-import { breadcrumbSchema } from "../schema";
+import { breadcrumbSchema, faqSchema } from "../schema";
 import { CONTACT, CONTACT_NOTIFY_URL, SITE_NAME } from "../consts";
 import { ID } from "../schema";
+import { CONTACT_PAGE_FAQS } from "../faqs";
 
 const schemas = [
   {
@@ -24,6 +26,7 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "Contact", path: "/contact" },
   ]),
+  faqSchema(CONTACT_PAGE_FAQS),
 ];
 const contactNotifyUrl =
   CONTACT_NOTIFY_URL || "https://sfhllezyyylduxvwdxki.supabase.co/functions/v1/contact-notification";
@@ -69,6 +72,16 @@ const contactNotifyUrl =
           </p>
         </div>
       </div>
+    </div>
+  </section>
+  <section class="section" style="background:var(--surface-muted);">
+    <div class="container" style="max-width:820px;">
+      <p class="kicker"><Label text="_questions" /></p>
+      <h2>Questions before you send a note.</h2>
+      <Faq items={CONTACT_PAGE_FAQS} />
+      <p style="margin-top:1.25rem;">
+        <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
+      </p>
     </div>
   </section>
   <script is:inline>

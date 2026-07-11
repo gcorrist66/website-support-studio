@@ -1,5 +1,6 @@
 ---
 title: "Pool Company Websites: Built for Recurring Service & Showing Off the Work (SEO, AEO & GEO, 2026)"
+seoTitle: "Pool Company Websites for Recurring Service"
 description: "Pool service is a recurring relationship. Learn how pool company websites can win maintenance plans, show before-and-after work, and earn AI citations."
 summary: "Pool company websites win when they make recurring weekly service easy to start and show visual proof through before-and-after galleries. This guide covers SEO, AEO, and GEO for maintenance plans, cleaning, repairs, seasonal service, builds, and renovations."
 category: "Pool Company Websites"

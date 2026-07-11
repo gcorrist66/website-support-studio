@@ -1,5 +1,6 @@
 ---
 title: "Plumber Websites That Win the Emergency Call (SEO, AEO & GEO, 2026)"
+seoTitle: "Plumber Websites That Win Emergency Calls"
 description: "A plumbing website has to win the 2am emergency and the planned project. Learn how plumber websites rank and get cited by AI."
 summary: "A plumbing website has to win two customers: the panicked emergency caller and the careful project planner. This guide shows how plumbing companies can combine SEO, AEO, and GEO so their sites rank, build trust, and get cited by AI search."
 category: "Plumbing Websites"

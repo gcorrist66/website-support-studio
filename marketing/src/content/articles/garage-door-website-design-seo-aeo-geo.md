@@ -1,5 +1,6 @@
 ---
 title: "Garage Door Website Design: SEO, AEO & GEO for Stuck-Door Searches (2026)"
+seoTitle: "Garage Door Websites for Stuck-Door Searches"
 description: "Garage door searches are urgent and repair-or-replace driven. Learn how to build a garage door website that wins repair calls and gets cited by AI search."
 summary: "Garage door searches usually start when a door will not open, a spring breaks, or a homeowner is comparing repair versus replacement. This guide shows how garage door companies can combine SEO, AEO, and GEO so local buyers and AI search can understand, trust, and cite the business."
 category: "Garage Door Websites"

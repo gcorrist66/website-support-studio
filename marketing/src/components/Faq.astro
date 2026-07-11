@@ -1,35 +1,18 @@
 ---
 /**
- * FAQ list — renders {q, a} pairs as <details> with the question shown in the WSS
- * snake_case brand voice (underscores in brand blue), while the original readable
- * question is what gets fed to FAQ structured data (see faqSchema) for clean SEO.
+ * FAQ list — renders {q, a} pairs as visible text that exactly matches
+ * FAQPage structured data.
  */
-import Label from "./Label.astro";
-
 interface Props {
   items: { q: string; a: string }[];
 }
 const { items } = Astro.props;
-
-/** "What is a Website Request?" -> "_what_is_a_website_request?" */
-function toMarker(q: string): string {
-  const trimmed = q.trim();
-  const hasQuestion = trimmed.endsWith("?");
-  const base = trimmed
-    .replace(/\?+$/, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  return "_" + base + (hasQuestion ? "?" : "");
-}
 ---
 <div class="faq">
   {
     items.map((f) => (
       <details>
-        <summary>
-          <Label text={toMarker(f.q)} />
-        </summary>
+        <summary>{f.q}</summary>
         <p>{f.a}</p>
       </details>
     ))

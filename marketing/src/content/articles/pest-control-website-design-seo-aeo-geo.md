@@ -1,5 +1,6 @@
 ---
 title: "Pest Control Website Design: SEO, AEO & GEO for Emergency and Plan-Based Leads (2026)"
+seoTitle: "Pest Control Websites for Emergency Leads"
 description: "Pest control sites need emergency booking and recurring plan clarity. Learn how to rank, structure content for AI, and get cited in local pest searches."
 summary: "Pest control websites have to handle two different buyer modes: emergency help for an active problem and recurring protection plans for prevention. This guide shows how pest companies can combine SEO, AEO, and GEO so homeowners find the right service fast and AI tools can cite the business accurately."
 category: "Pest Control Websites"

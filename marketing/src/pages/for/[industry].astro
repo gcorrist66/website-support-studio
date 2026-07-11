@@ -16,7 +16,7 @@ const { page } = Astro.props as { page: IndustryPage };
 const path = `/for/${page.slug}`;
 const previewHref = `/contact?source=free-website-preview&industry=${page.slug}`;
 const articlePath = `/articles/${page.articleSlug}`;
-const title = `${page.displayName} Websites — Sample + Free Preview`;
+const title = `${page.displayName} Website Preview`;
 const schemas = [
   serviceSchema({
     name: `${page.displayName} website design and launch`,

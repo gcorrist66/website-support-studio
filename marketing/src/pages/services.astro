@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Faq from "../components/Faq.astro";
 import Label from "../components/Label.astro";
-import { serviceSchema, breadcrumbSchema } from "../schema";
+import { serviceSchema, breadcrumbSchema, faqSchema } from "../schema";
 import { JOIN_PATH } from "../consts";
+import { SERVICES_PAGE_FAQS } from "../faqs";
 
 const lifecycle = [
   { step: "You send a request", desc: "Tell us exactly what needs help on your site." },
@@ -39,6 +41,7 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
   ]),
+  faqSchema(SERVICES_PAGE_FAQS),
 ];
 ---
 
@@ -126,14 +129,14 @@ const schemas = [
     </div>
   </section>
 
-  <!-- Questions → single source of truth at /faqs -->
   <section class="section">
     <div class="container" style="max-width:820px;">
       <p class="kicker"><Label text="_questions" /></p>
       <h2>Questions, answered.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Platforms, approvals, timing, and pricing details are all in one place.
+        Platforms, approvals, timing, and request scope.
       </p>
+      <Faq items={SERVICES_PAGE_FAQS} />
       <p style="margin-top:1.25rem;">
         <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
       </p>

@@ -1,6 +1,7 @@
 ---
 title: "Introducing Website Support Studio: A New Approach to Website Operations, Support, and Digital Reliability"
-description: "Website Support Studio is a managed website operations and support platform for organizations with revenue-critical websites — built to replace fragmented support with operational visibility, accountable response workflows, and a single owner for every request."
+seoTitle: "Introducing Website Support Studio"
+description: "Introducing Website Support Studio: managed website operations from Corriston Consulting, with visible requests, approval gates, and accountable support."
 summary: "Website Support Studio gives marketing, marketing operations, digital, and IT teams a single managed desk for every website request — with operational visibility, defined response workflows, and human accountability at every approval point. It is operated by Corriston Consulting, LLC."
 category: "Press Release"
 author: "Gary Corriston"

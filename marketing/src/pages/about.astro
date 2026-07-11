@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Faq from "../components/Faq.astro";
 import Label from "../components/Label.astro";
-import { breadcrumbSchema, personSchema } from "../schema";
+import { breadcrumbSchema, faqSchema, personSchema } from "../schema";
 import { ORG, JOIN_PATH } from "../consts";
+import { ABOUT_PAGE_FAQS } from "../faqs";
 
 const schemas = [
   personSchema({ name: ORG.founder, jobTitle: "Founder, Corriston Consulting, LLC", path: "/about" }),
@@ -10,6 +12,7 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
   ]),
+  faqSchema(ABOUT_PAGE_FAQS),
 ];
 ---
 
@@ -66,7 +69,8 @@ const schemas = [
       <div style="margin-top:3rem;">
         <p class="kicker"><Label text="_questions" /></p>
         <h2>Questions, answered.</h2>
-        <p style="margin-top:0.75rem;">
+        <Faq items={ABOUT_PAGE_FAQS} />
+        <p style="margin-top:1.25rem;">
           <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
         </p>
       </div>

@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FounderTrustLayer from "../components/FounderTrustLayer.astro";
+import Faq from "../components/Faq.astro";
 import Label from "../components/Label.astro";
-import { breadcrumbSchema, serviceSchema } from "../schema";
+import { breadcrumbSchema, faqSchema, serviceSchema } from "../schema";
 import { PLANS, ADDONS, CHECKOUT_URL, CONTACT, FOUNDER_PRICING, WEBSITE_PACKAGE, ACCOUNT_OWNERSHIP } from "../consts";
+import { PRICING_PAGE_FAQS } from "../faqs";
 
 const schemas = [
   serviceSchema({
@@ -16,12 +18,13 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "Pricing", path: "/pricing" },
   ]),
+  faqSchema(PRICING_PAGE_FAQS),
 ];
 ---
 
 <BaseLayout
-  title="Pricing — Founder Website Package $500, then support from $199/mo"
-  description="Founder Website Package: a $500 one-time professional website (mobile, contact forms, basic SEO, launch, 30 days of support). After launch, optional website support is $199/month, locked in while your account remains active. You own your accounts."
+  title="Pricing: $500 Website + $199 Support"
+  description="See WSS pricing: a $500 Founder Website Package, optional $199/month support after launch, Growth plans, top-ups, ownership, and next steps."
   path="/pricing"
   schemas={schemas}
 >
@@ -193,14 +196,14 @@ const schemas = [
     </div>
   </section>
 
-  <!-- Questions → single source of truth at /faqs -->
   <section class="section" style="background:var(--surface-muted);">
     <div class="container" style="max-width:820px;">
       <p class="kicker"><Label text="_questions" /></p>
       <h2>Questions, answered.</h2>
       <p class="lede" style="margin-top:0.75rem;">
-        Cost, Website Requests, top-ups, getting started, and custom plans — all in one place.
+        Cost, Website Requests, top-ups, getting started, and custom plans.
       </p>
+      <Faq items={PRICING_PAGE_FAQS} />
       <p style="margin-top:1.25rem;">
         <a href="/faqs" style="font-weight:600;"><Label text="see_all_questions" /> →</a>
       </p>

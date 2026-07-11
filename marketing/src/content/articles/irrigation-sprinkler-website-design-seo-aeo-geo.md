@@ -1,5 +1,6 @@
 ---
 title: "Sprinkler & Irrigation Websites: Win the Season, the Repair, and the Water-Savings Sale (SEO, AEO & GEO, 2026)"
+seoTitle: "Sprinkler & Irrigation Websites"
 description: "Lawn irrigation runs on the calendar. Learn how sprinkler company websites can capture start-ups, repairs, winterization, water-saving upgrades, and AI citations."
 summary: "Irrigation websites succeed when they are built around the seasonal calendar: spring start-ups, summer repairs, and fall winterization. This guide shows how sprinkler companies can combine seasonal booking, smart-controller water savings, SEO, AEO, and GEO."
 category: "Irrigation Websites"

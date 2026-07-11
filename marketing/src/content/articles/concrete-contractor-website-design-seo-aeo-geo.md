@@ -1,5 +1,6 @@
 ---
 title: "Concrete Contractor Website Design: SEO, AEO & GEO for Visual Project Leads (2026)"
+seoTitle: "Concrete Contractor Websites: SEO, AEO & GEO"
 description: "Concrete and masonry websites need visual proof, project scopes, and estimate clarity. Learn how to rank, answer AI searches, and win local leads."
 summary: "Concrete buyers need to see whether a contractor handles driveways, patios, slabs, repairs, masonry, and the finish quality they want. This guide shows how concrete contractors can combine SEO, AEO, and GEO with before-and-after proof and project-specific pages."
 category: "Concrete Websites"

@@ -3,14 +3,27 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "./Label.astro";
 import QueryParamPreserver from "./QueryParamPreserver.astro";
 import { founderCheckoutHref, type IndustryLandingPage } from "../industryLandingPages";
+import { breadcrumbSchema, serviceSchema } from "../schema";
 
 const { page } = Astro.props as { page: IndustryLandingPage };
 const title = `${page.industry} Websites — Founder Website Package`;
 const description = `${page.industry} website landing page for the $500 Founder Website Package. View ${page.demoName} and start a website using this style.`;
 const path = `/for/${page.slug}`;
+const schemas = [
+  serviceSchema({
+    name: `${page.industry} website design and launch`,
+    description,
+    serviceType: "Website design and launch",
+    path,
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: `${page.industry} websites`, path },
+  ]),
+];
 ---
 
-<BaseLayout title={title} description={description} path={path}>
+<BaseLayout title={title} seoTitle={`${page.industry} Website Package`} description={description} path={path} schemas={schemas}>
   <section class="industry-hero" style={`--industry-accent:${page.accent};`}>
     <div class="container industry-hero-grid">
       <div>

@@ -1,5 +1,6 @@
 ---
 title: "Electrician Websites: Winning on Trust, Safety & the New Demand (SEO, AEO & GEO, 2026)"
+seoTitle: "Electrician Websites: Trust, Safety & SEO"
 description: "Electrical work is bought on trust. Learn how electrician websites can win emergency calls, EV charger leads, panel upgrades, and AI citations."
 summary: "Electrical work is bought on trust because homeowners are choosing who to let near their panel. This guide shows how electrician websites can combine safety signals, emergency paths, EV charger and panel upgrade content, SEO, AEO, and GEO."
 category: "Electrician Websites"

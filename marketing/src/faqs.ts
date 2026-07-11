@@ -1,9 +1,8 @@
 /**
  * Single source of truth for every FAQ on the site.
  *
- * The /faqs page renders all groups and is the only page that emits FAQPage
- * structured data. Other pages link to it via "see_all_questions →" rather than
- * duplicating questions (which would split FAQ rich-result signals across pages).
+ * The /faqs page renders all groups. Key information pages render small,
+ * route-specific subsets with matching FAQPage structured data.
  */
 export interface Faq {
   q: string;
@@ -102,3 +101,33 @@ export const FAQ_GROUPS: FaqGroup[] = [
 ];
 
 export const ALL_FAQS: Faq[] = FAQ_GROUPS.flatMap((g) => g.items);
+
+export const PRICING_PAGE_FAQS: Faq[] = [
+  FAQ_GROUPS[3].items[0],
+  FAQ_GROUPS[3].items[2],
+  FAQ_GROUPS[3].items[4],
+  FAQ_GROUPS[3].items[5],
+  FAQ_GROUPS[3].items[7],
+];
+
+export const ABOUT_PAGE_FAQS: Faq[] = [
+  FAQ_GROUPS[4].items[0],
+  FAQ_GROUPS[4].items[1],
+  FAQ_GROUPS[0].items[1],
+  FAQ_GROUPS[0].items[3],
+];
+
+export const SERVICES_PAGE_FAQS: Faq[] = [
+  FAQ_GROUPS[1].items[0],
+  FAQ_GROUPS[1].items[1],
+  FAQ_GROUPS[1].items[2],
+  FAQ_GROUPS[1].items[7],
+  FAQ_GROUPS[1].items[10],
+];
+
+export const CONTACT_PAGE_FAQS: Faq[] = [
+  FAQ_GROUPS[0].items[0],
+  FAQ_GROUPS[3].items[6],
+  FAQ_GROUPS[1].items[2],
+  FAQ_GROUPS[1].items[11],
+];

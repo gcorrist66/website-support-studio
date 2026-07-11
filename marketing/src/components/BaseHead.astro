@@ -3,6 +3,8 @@ import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from "../consts";
 
 interface Props {
   title: string;
+  /** Optional metadata-only title when the visible page title is intentionally longer. */
+  seoTitle?: string;
   description: string;
   /** Path of the current page, e.g. "/services". Used for canonical + OG url. */
   path: string;
@@ -19,6 +21,7 @@ interface Props {
 
 const {
   title,
+  seoTitle,
   description,
   path,
   ogType = "website",
@@ -31,7 +34,8 @@ const {
 const canonical = new URL(path, SITE_URL).href;
 const imageUrl = new URL(image, SITE_URL).href;
 // Title template — single source so titles never duplicate across pages.
-const fullTitle = path === "/" ? title : `${title} — ${SITE_NAME}`;
+const metaTitle = seoTitle ?? title;
+const fullTitle = path === "/" ? metaTitle : `${metaTitle} | WSS`;
 ---
 
 <meta charset="utf-8" />
