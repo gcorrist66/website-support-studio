@@ -160,6 +160,11 @@ export function articleSchema(opts: {
   authorName: string;
   image?: string;
 }) {
+  const author =
+    opts.authorName === SITE_NAME
+      ? { "@type": "Organization", "@id": ID.org, name: SITE_NAME }
+      : { "@type": "Person", "@id": ID.founder, name: opts.authorName, worksFor: { "@id": ID.org } };
+
   return {
     "@context": "https://schema.org",
     "@type": ["Article", "NewsArticle"],
@@ -170,7 +175,7 @@ export function articleSchema(opts: {
     datePublished: opts.datePublished,
     dateModified: opts.dateModified ?? opts.datePublished,
     image: abs(opts.image ?? DEFAULT_OG_IMAGE),
-    author: { "@type": "Person", "@id": ID.founder, name: opts.authorName, worksFor: { "@id": ID.org } },
+    author,
     publisher: { "@id": ID.org },
     isAccessibleForFree: true,
     inLanguage: "en-US",

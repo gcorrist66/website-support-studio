@@ -9,12 +9,17 @@ const stripMarkdown = (value: string) =>
 
 export function extractArticleFaqs(markdown: string): ArticleFaq[] {
   const withoutFrontmatter = markdown.replace(/^---[\s\S]*?---\s*/, "");
-  const faqStart = withoutFrontmatter.search(/^##\s+Frequently asked questions\s*$/im);
+  const faqStart = withoutFrontmatter.search(/^##\s+(Frequently asked questions|FAQ)\s*$/im);
   if (faqStart === -1) return [];
 
   const faqSection = withoutFrontmatter.slice(faqStart);
   const nextSection = faqSection.slice(1).search(/\n##\s+/);
-  const scopedFaqSection = nextSection === -1 ? faqSection : faqSection.slice(0, nextSection + 1);
+  const sectionEnd = nextSection === -1 ? faqSection.length : nextSection + 1;
+  const ctaStart = faqSection.search(/^\*This article was written and published by Website Support Studio\b/im);
+  const scopedFaqSection = faqSection.slice(
+    0,
+    ctaStart === -1 ? sectionEnd : Math.min(sectionEnd, ctaStart),
+  );
   const matches = Array.from(scopedFaqSection.matchAll(/^###\s+(.+?)\s*$([\s\S]*?)(?=^###\s+|(?![\s\S]))/gm));
 
   return matches

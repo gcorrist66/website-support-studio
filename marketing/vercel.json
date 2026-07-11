@@ -4,6 +4,20 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/articles/concrete-contractor-website-design-seo-aio-geo", "destination": "/articles/concrete-contractor-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/electrician-website-design-seo-aio-geo", "destination": "/articles/electrician-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/garage-door-website-design-seo-aio-geo", "destination": "/articles/garage-door-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/hvac-website-design-seo-aio-geo", "destination": "/articles/hvac-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/irrigation-sprinkler-website-design-seo-aio-geo", "destination": "/articles/irrigation-sprinkler-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/landscaping-website-design-seo-aio-geo", "destination": "/articles/landscaping-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/pest-control-website-design-seo-aio-geo", "destination": "/articles/pest-control-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/plumber-website-design-seo-aio-geo", "destination": "/articles/plumber-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/pool-company-website-design-seo-aio-geo", "destination": "/articles/pool-company-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/pressure-washing-website-design-seo-aio-geo", "destination": "/articles/pressure-washing-website-design-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/roofing-website-templates-seo-aio-geo", "destination": "/articles/roofing-website-templates-seo-aeo-geo", "statusCode": 301 },
+    { "source": "/articles/tree-service-website-design-seo-aio-geo", "destination": "/articles/tree-service-website-design-seo-aeo-geo", "statusCode": 301 }
+  ],
   "headers": [
     {
       "source": "/_astro/(.*)",

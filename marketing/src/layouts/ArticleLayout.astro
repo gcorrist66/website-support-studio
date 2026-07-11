@@ -21,7 +21,7 @@ const schemas = [
     dateModified: data.dateModified,
     authorName: data.author,
   }),
-  personSchema({ name: data.author, jobTitle: data.authorTitle, path: "/about" }),
+  ...(data.author === "Website Support Studio" ? [] : [personSchema({ name: data.author, jobTitle: data.authorTitle, path: "/about" })]),
   breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Articles", path: "/articles" },

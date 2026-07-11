@@ -8,6 +8,56 @@ import { SITE_URL } from "./src/consts";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const srcDir = join(rootDir, "src");
+const aioToAeoRedirects = {
+  "/articles/concrete-contractor-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/concrete-contractor-website-design-seo-aeo-geo",
+  },
+  "/articles/electrician-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/electrician-website-design-seo-aeo-geo",
+  },
+  "/articles/garage-door-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/garage-door-website-design-seo-aeo-geo",
+  },
+  "/articles/hvac-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/hvac-website-design-seo-aeo-geo",
+  },
+  "/articles/irrigation-sprinkler-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/irrigation-sprinkler-website-design-seo-aeo-geo",
+  },
+  "/articles/landscaping-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/landscaping-website-design-seo-aeo-geo",
+  },
+  "/articles/pest-control-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/pest-control-website-design-seo-aeo-geo",
+  },
+  "/articles/plumber-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/plumber-website-design-seo-aeo-geo",
+  },
+  "/articles/pool-company-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/pool-company-website-design-seo-aeo-geo",
+  },
+  "/articles/pressure-washing-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/pressure-washing-website-design-seo-aeo-geo",
+  },
+  "/articles/roofing-website-templates-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/roofing-website-templates-seo-aeo-geo",
+  },
+  "/articles/tree-service-website-design-seo-aio-geo": {
+    status: 301,
+    destination: "/articles/tree-service-website-design-seo-aeo-geo",
+  },
+};
 
 function sourceLastmod(filePath) {
   if (!existsSync(filePath)) return new Date().toISOString();
@@ -62,6 +112,7 @@ export default defineConfig({
   site: SITE_URL,
   output: "static",
   trailingSlash: "never",
+  redirects: aioToAeoRedirects,
   build: {
     format: "directory",
   },
