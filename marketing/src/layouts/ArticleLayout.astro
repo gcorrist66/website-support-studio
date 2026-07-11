@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import { articleSchema, breadcrumbSchema, personSchema } from "../schema";
+import { articleSchema, breadcrumbSchema, faqSchema, personSchema } from "../schema";
+import { extractArticleFaqs } from "../articleFaqs";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 const { entry } = Astro.props;
 const { data } = entry;
 const path = `/articles/${entry.slug}`;
+const articleFaqs = extractArticleFaqs(entry.body);
 
 const schemas = [
   articleSchema({
@@ -25,6 +27,7 @@ const schemas = [
     { name: "Articles", path: "/articles" },
     { name: data.title, path },
   ]),
+  ...(articleFaqs.length > 0 ? [faqSchema(articleFaqs)] : []),
 ];
 
 const pubDate = new Date(data.datePublished).toLocaleDateString("en-US", {

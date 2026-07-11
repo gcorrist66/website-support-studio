@@ -24,6 +24,10 @@ interface Props {
 }
 
 const { schemas = [], ...head } = Astro.props;
+const effectiveHead = {
+  ...head,
+  noindex: head.noindex ?? (head.path === "/templates" || head.path.startsWith("/templates/")),
+};
 // Organization + WebSite ship on every page so the entity graph is always resolvable.
 const globalSchemas = [organizationSchema(), websiteSchema()];
 ---
@@ -31,12 +35,12 @@ const globalSchemas = [organizationSchema(), websiteSchema()];
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead {...head} />
+    <BaseHead {...effectiveHead} />
     {globalSchemas.map((s) => <JsonLd schema={s} />)}
     {schemas.map((s) => <JsonLd schema={s} />)}
     <Analytics />
   </head>
-  <body data-page={head.path}>
+  <body data-page={effectiveHead.path}>
     {
       gtmId && (
         <noscript>

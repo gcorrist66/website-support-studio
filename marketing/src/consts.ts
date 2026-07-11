@@ -8,7 +8,7 @@
  */
 
 // ---- Canonical site ---------------------------------------------------------
-export const SITE_URL = "https://websitesupportstudio.com";
+export const SITE_URL = "https://www.websitesupportstudio.com";
 export const SITE_NAME = "Website Support Studio";
 export const SITE_TAGLINE = "Professional websites built, launched, and managed — you own everything";
 

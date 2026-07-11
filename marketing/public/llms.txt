@@ -1,0 +1,42 @@
+# Website Support Studio
+
+> Website Support Studio builds and supports practical business websites for small businesses and local service operators. Customers can start with a $500 Founder Website Package, choose a proven website style, launch with mobile-friendly pages and contact paths, and optionally keep ongoing website support after launch.
+
+Website Support Studio is operated by Corriston Consulting, LLC. The service is built around clear ownership, simple website launch paths, customer-owned accounts, and ongoing support for updates, fixes, forms, lead flow, and site improvements.
+
+## Primary pages
+
+- [Home](https://www.websitesupportstudio.com/): $500 Founder Website Package, sample website styles, Back Office preview, and ownership promise.
+- [Services](https://www.websitesupportstudio.com/services): What Website Support Studio builds and supports.
+- [Pricing](https://www.websitesupportstudio.com/pricing): Founder Website Package, ongoing support plans, request credits, and add-ons.
+- [Design Systems](https://www.websitesupportstudio.com/templates): Website style gallery and sample site starting points.
+- [FAQs](https://www.websitesupportstudio.com/faqs): Questions about ownership, support, pricing, requests, and what happens after payment.
+- [Articles](https://www.websitesupportstudio.com/articles): WSS announcements and operational thinking.
+- [Contact](https://www.websitesupportstudio.com/contact): Book a call or send project details.
+
+## Industry pages
+
+- [Attorney websites](https://www.websitesupportstudio.com/for/attorney)
+- [Boutique websites](https://www.websitesupportstudio.com/for/boutique)
+- [Coffee shop websites](https://www.websitesupportstudio.com/for/coffee-shop)
+- [Construction websites](https://www.websitesupportstudio.com/for/construction)
+- [Consultant websites](https://www.websitesupportstudio.com/for/consultant)
+- [Dental websites](https://www.websitesupportstudio.com/for/dental)
+- [Financial websites](https://www.websitesupportstudio.com/for/financial)
+- [HVAC websites](https://www.websitesupportstudio.com/for/hvac)
+- [Landscaping websites](https://www.websitesupportstudio.com/for/landscaping)
+- [Medical websites](https://www.websitesupportstudio.com/for/medical)
+- [Plumbing websites](https://www.websitesupportstudio.com/for/plumbing)
+- [Restaurant websites](https://www.websitesupportstudio.com/for/restaurant)
+- [Roofing websites](https://www.websitesupportstudio.com/for/roofing)
+- [Salon websites](https://www.websitesupportstudio.com/for/salon)
+
+## Articles
+
+- [Introducing Website Support Studio](https://www.websitesupportstudio.com/articles/introducing-website-support-studio): Announcement and explanation of Website Support Studio as a managed website operations and support model.
+
+## Administrative
+
+- [Privacy Policy](https://www.websitesupportstudio.com/privacy)
+- [Terms of Service](https://www.websitesupportstudio.com/terms)
+- [Cookie Policy](https://www.websitesupportstudio.com/cookies)
