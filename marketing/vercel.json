@@ -5,6 +5,12 @@
   "outputDirectory": "dist",
   "trailingSlash": false,
   "redirects": [
+    { "source": "/templates/luna", "destination": "/templates", "statusCode": 301 },
+    { "source": "/templates/ridgeline-roofing", "destination": "/templates/sample/ridgeline-roofing", "statusCode": 301 },
+    { "source": "/templates/ridgeline-roofing/services", "destination": "/templates/sample/ridgeline-roofing/services", "statusCode": 301 },
+    { "source": "/templates/ridgeline-roofing/about", "destination": "/templates/sample/ridgeline-roofing/about", "statusCode": 301 },
+    { "source": "/templates/ridgeline-roofing/contact", "destination": "/templates/sample/ridgeline-roofing/contact", "statusCode": 301 },
+    { "source": "/templates/ridgeline-roofing/service-area", "destination": "/templates/sample/ridgeline-roofing/service-area", "statusCode": 301 },
     { "source": "/articles/concrete-contractor-website-design-seo-aio-geo", "destination": "/articles/concrete-contractor-website-design-seo-aeo-geo", "statusCode": 301 },
     { "source": "/articles/electrician-website-design-seo-aio-geo", "destination": "/articles/electrician-website-design-seo-aeo-geo", "statusCode": 301 },
     { "source": "/articles/garage-door-website-design-seo-aio-geo", "destination": "/articles/garage-door-website-design-seo-aeo-geo", "statusCode": 301 },

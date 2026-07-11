@@ -8,6 +8,32 @@ import { SITE_URL } from "./src/consts";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const srcDir = join(rootDir, "src");
+const orphanTemplateRedirects = {
+  "/templates/luna": {
+    status: 301,
+    destination: "/templates",
+  },
+  "/templates/ridgeline-roofing": {
+    status: 301,
+    destination: "/templates/sample/ridgeline-roofing",
+  },
+  "/templates/ridgeline-roofing/services": {
+    status: 301,
+    destination: "/templates/sample/ridgeline-roofing/services",
+  },
+  "/templates/ridgeline-roofing/about": {
+    status: 301,
+    destination: "/templates/sample/ridgeline-roofing/about",
+  },
+  "/templates/ridgeline-roofing/contact": {
+    status: 301,
+    destination: "/templates/sample/ridgeline-roofing/contact",
+  },
+  "/templates/ridgeline-roofing/service-area": {
+    status: 301,
+    destination: "/templates/sample/ridgeline-roofing/service-area",
+  },
+};
 const aioToAeoRedirects = {
   "/articles/concrete-contractor-website-design-seo-aio-geo": {
     status: 301,
@@ -112,7 +138,10 @@ export default defineConfig({
   site: SITE_URL,
   output: "static",
   trailingSlash: "never",
-  redirects: aioToAeoRedirects,
+  redirects: {
+    ...orphanTemplateRedirects,
+    ...aioToAeoRedirects,
+  },
   build: {
     format: "directory",
   },

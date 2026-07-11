@@ -2,17 +2,26 @@
 
 Date: 2026-07-11
 Repo: `/Users/garycorriston/website-support-studio`
-Scope: inventory only. No templates, sample pages, or demo pages were deleted or rewritten.
+Scope: template/sample/demo route inventory after orphan-removal cleanup.
 
 ## Summary
 
-All template/sample/demo routes remain functional. Phase 1 now keeps them out of the sitemap and emits `noindex, follow` on `/templates` and all `/templates/*` routes.
+All kept template/sample/demo routes remain functional. Phase 1 keeps them out of the sitemap and emits `noindex, follow` on `/templates` and all `/templates/*` routes.
 
 Classification counts:
 
 - KEEP: 66 routes
 - UPDATE CANDIDATE: 1 route
-- DELETION CANDIDATE: 6 routes
+- REMOVED WITH 301: 6 routes
+
+Removed routes:
+
+- `/templates/luna` -> `/templates`
+- `/templates/ridgeline-roofing` -> `/templates/sample/ridgeline-roofing`
+- `/templates/ridgeline-roofing/services` -> `/templates/sample/ridgeline-roofing/services`
+- `/templates/ridgeline-roofing/about` -> `/templates/sample/ridgeline-roofing/about`
+- `/templates/ridgeline-roofing/contact` -> `/templates/sample/ridgeline-roofing/contact`
+- `/templates/ridgeline-roofing/service-area` -> `/templates/sample/ridgeline-roofing/service-area`
 
 Current article CTA check:
 
@@ -25,7 +34,7 @@ Current article CTA check:
 |---|---|---|---|---|
 | `/templates` | `marketing/src/pages/templates.astro` | Home CTAs, pricing CTAs, FAQ CTAs, `FounderTrustLayer`, sample Back Office | 2026-07-11 | UPDATE CANDIDATE - useful gallery/design-system page, but noindexed as a template gallery |
 | `/templates/sample/back-office` | `marketing/src/pages/templates/sample/back-office/index.astro` | Home, pricing, FAQs, `/templates`, `/for/*`, sample layouts, Luna sample layouts | 2026-07-11 | KEEP - preview funnel and repeated CTA target |
-| `/templates/luna` | `marketing/src/pages/templates/luna/index.astro` | No non-self inbound link found in source | 2026-07-11 | DELETION CANDIDATE - orphaned design-system overview |
+| `/templates/luna` | Deleted | No non-self inbound link found in source | 2026-07-11 | REMOVED WITH 301 to `/templates` |
 | `/templates/luna/salon` | `marketing/src/pages/templates/luna/salon/index.astro` | `/templates`, home sample cards, `/for/salon`, `DESIGN_SYSTEMS.sampleSites`, Luna internal nav | 2026-07-11 | KEEP |
 | `/templates/luna/salon/services` | `marketing/src/pages/templates/luna/salon/services/index.astro` | Luna salon internal nav and page CTAs | 2026-07-11 | KEEP |
 | `/templates/luna/salon/gallery` | `marketing/src/pages/templates/luna/salon/gallery/index.astro` | Luna salon internal nav and page CTAs | 2026-07-11 | KEEP |
@@ -41,11 +50,11 @@ Current article CTA check:
 | `/templates/luna/boutique/about` | `marketing/src/pages/templates/luna/boutique/about/index.astro` | Luna boutique internal nav and page CTAs | 2026-07-11 | KEEP |
 | `/templates/luna/boutique/visit` | `marketing/src/pages/templates/luna/boutique/visit/index.astro` | Luna boutique internal nav, header CTA, page CTAs | 2026-07-11 | KEEP |
 | `/templates/luna/boutique/contact` | `marketing/src/pages/templates/luna/boutique/contact/index.astro` | Luna boutique internal nav and page CTAs | 2026-07-11 | KEEP |
-| `/templates/ridgeline-roofing` | `marketing/src/pages/templates/ridgeline-roofing/index.astro` | Only linked inside old static Ridgeline route group | 2026-07-11 | DELETION CANDIDATE - superseded by `/templates/sample/ridgeline-roofing` |
-| `/templates/ridgeline-roofing/services` | `marketing/src/pages/templates/ridgeline-roofing/services.astro` | Only linked inside old static Ridgeline route group | 2026-07-11 | DELETION CANDIDATE - superseded by dynamic sample |
-| `/templates/ridgeline-roofing/about` | `marketing/src/pages/templates/ridgeline-roofing/about.astro` | Only linked inside old static Ridgeline route group | 2026-07-11 | DELETION CANDIDATE - superseded by dynamic sample |
-| `/templates/ridgeline-roofing/contact` | `marketing/src/pages/templates/ridgeline-roofing/contact.astro` | Only linked inside old static Ridgeline route group | 2026-07-11 | DELETION CANDIDATE - superseded by dynamic sample |
-| `/templates/ridgeline-roofing/service-area` | `marketing/src/pages/templates/ridgeline-roofing/service-area.astro` | Only linked inside old static Ridgeline route group | 2026-07-11 | DELETION CANDIDATE - superseded by dynamic sample |
+| `/templates/ridgeline-roofing` | Deleted | Only linked inside old static Ridgeline route group | 2026-07-11 | REMOVED WITH 301 to `/templates/sample/ridgeline-roofing` |
+| `/templates/ridgeline-roofing/services` | Deleted | Only linked inside old static Ridgeline route group | 2026-07-11 | REMOVED WITH 301 to `/templates/sample/ridgeline-roofing/services` |
+| `/templates/ridgeline-roofing/about` | Deleted | Only linked inside old static Ridgeline route group | 2026-07-11 | REMOVED WITH 301 to `/templates/sample/ridgeline-roofing/about` |
+| `/templates/ridgeline-roofing/contact` | Deleted | Only linked inside old static Ridgeline route group | 2026-07-11 | REMOVED WITH 301 to `/templates/sample/ridgeline-roofing/contact` |
+| `/templates/ridgeline-roofing/service-area` | Deleted | Only linked inside old static Ridgeline route group | 2026-07-11 | REMOVED WITH 301 to `/templates/sample/ridgeline-roofing/service-area` |
 
 ## Dynamic Sample Routes
 
