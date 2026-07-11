@@ -1,6 +1,6 @@
 ---
 title: "Landscaping Website Design: SEO, AEO & GEO for Recurring Lawn Care (2026)"
-seoTitle: "Landscaping Websites for Recurring Lawn Care"
+seoTitle: "Landscaping Websites: Lawn SEO"
 description: "Landscaping websites win when they sell recurring maintenance, seasonal cleanups, and local service-area clarity. Learn SEO, AEO, and GEO for lawn care."
 summary: "Landscaping websites have to convert recurring maintenance shoppers and seasonal project buyers at the same time. This guide shows how lawn care and landscape companies can combine SEO, AEO, and GEO so homeowners find weekly service, cleanups, planting, and project estimates quickly."
 category: "Landscaping Websites"

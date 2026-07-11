@@ -1,6 +1,6 @@
 ---
 title: "HVAC Website Design: How to Get Found When the AC Dies in July (SEO, AEO & GEO, 2026)"
-seoTitle: "HVAC Websites for Emergency Service Calls"
+seoTitle: "HVAC Websites: Emergency SEO"
 description: "HVAC demand is urgent, seasonal, and local. Learn how to build an HVAC website that wins emergency calls and gets cited by AI search."
 summary: "HVAC demand is urgent, seasonal, and local. This guide shows how HVAC companies can combine SEO, AEO, and GEO so their sites win emergency calls, promote maintenance plans, and become citeable sources for AI search."
 category: "Hvac Websites"

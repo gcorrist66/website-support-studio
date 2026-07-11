@@ -1,6 +1,6 @@
 ---
 title: "Roofing Website Templates: How to Make Yours SEO, AEO & GEO-Friendly (2026)"
-seoTitle: "Roofing Website Templates: SEO, AEO & GEO"
+seoTitle: "Roofing Templates: SEO, AEO & GEO"
 description: "A roofing website template only wins jobs if people and AI can find it. Learn how to make a roofing site rank in Google and get cited by AI search."
 summary: "A roofing website template only wins jobs if people and AI can find it. This guide shows how roofing companies can combine SEO, AEO, and GEO so their sites rank in Google, answer homeowner questions, and become citeable sources for AI search."
 category: "Roofing Websites"

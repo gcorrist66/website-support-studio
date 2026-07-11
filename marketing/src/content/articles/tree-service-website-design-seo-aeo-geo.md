@@ -1,6 +1,6 @@
 ---
 title: "Tree Service Website Design: SEO, AEO & GEO for Safety and Storm Leads (2026)"
-seoTitle: "Tree Service Websites for Safety & Storm Leads"
+seoTitle: "Tree Service Websites: Storm SEO"
 description: "Tree service is high-risk, high-ticket, and storm-driven. Learn how tree care websites can rank, answer AI searches, and win safe estimate requests."
 summary: "Tree service buyers are often weighing safety, cost, storm urgency, and property risk. This guide shows how tree care companies can combine SEO, AEO, and GEO so homeowners understand removal, trimming, emergency work, stump grinding, and why the right crew matters."
 category: "Tree Service Websites"

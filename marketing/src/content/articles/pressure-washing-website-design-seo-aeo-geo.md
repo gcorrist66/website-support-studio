@@ -1,6 +1,6 @@
 ---
 title: "Pressure Washing Website Design: SEO, AEO & GEO for Fast Booking (2026)"
-seoTitle: "Pressure Washing Websites for Fast Booking"
+seoTitle: "Pressure Washing Websites: SEO"
 description: "Pressure washing websites win with instant before-and-after proof, fast quote paths, and service-area clarity. Learn SEO, AEO, and GEO."
 summary: "Pressure washing is one of the most visual home services: a buyer can understand the value in one before-and-after. This guide shows how exterior cleaning companies can combine SEO, AEO, and GEO with fast booking, service-area pages, and proof that is easy for people and AI tools to understand."
 category: "Pressure Washing Websites"

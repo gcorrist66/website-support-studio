@@ -35,7 +35,7 @@ const canonical = new URL(path, SITE_URL).href;
 const imageUrl = new URL(image, SITE_URL).href;
 // Title template — single source so titles never duplicate across pages.
 const metaTitle = seoTitle ?? title;
-const fullTitle = path === "/" ? metaTitle : `${metaTitle} | WSS`;
+const fullTitle = path === "/" ? metaTitle : `${metaTitle} | ${SITE_NAME}`;
 ---
 
 <meta charset="utf-8" />
