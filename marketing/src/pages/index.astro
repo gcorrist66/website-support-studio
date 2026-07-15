@@ -1,9 +1,322 @@
 ---
-import FreeWebsitePreviewPage from "./free-website-preview.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Label from "../components/Label.astro";
+import FounderTrustLayer from "../components/FounderTrustLayer.astro";
+import { WEBSITE_PACKAGE, FOUNDER_WEBSITE_INCLUDES } from "../consts";
+import { faqSchema, serviceSchema } from "../schema";
+
+const schemas = [
+  serviceSchema({
+    name: "Website Support Studio",
+    description:
+      "Website Support Studio builds professional small-business websites, provides sample website previews, and supports the site after launch.",
+    serviceType: "Small business website design, launch, and support",
+    path: "/",
+  }),
+  faqSchema([
+    {
+      q: "What does Website Support Studio do?",
+      a: "Website Support Studio builds and launches professional websites for small businesses, then supports the website after launch with updates, requests, and practical website operations help.",
+    },
+    {
+      q: "Can I see examples before I request a website?",
+      a: "Yes. The Website Gallery shows sample website directions across local industries so business owners can see the kind of design, messaging, and conversion structure Website Support Studio can prepare.",
+    },
+    {
+      q: "What is the free website preview?",
+      a: "The free website preview is a no-obligation request path. You share business details, services, goals, and style preferences, and Website Support Studio prepares a preview direction before you decide whether to move forward.",
+    },
+  ]),
+];
 ---
 
-<FreeWebsitePreviewPage
-  pagePath="/"
-  pageTitle="Website Support Studio - Free Website Preview"
-  pageDescription="We'll create a free custom website preview for your business, built around your services, customers, and best next call to action."
-/>
+<BaseLayout
+  title="Small Business Websites Built and Supported"
+  description="Website Support Studio builds professional small-business websites, shows sample website directions, and supports your site after launch."
+  path="/"
+  image="/og/og-default.png"
+  schemas={schemas}
+>
+  <section class="home-hero">
+    <div class="container home-hero-grid">
+      <div>
+        <p class="kicker"><Label text="_website_support_studio" /></p>
+        <h1>Small business websites that look ready to sell.</h1>
+        <p class="lede">
+          Website Support Studio builds clear, modern websites for local businesses: strong first impression,
+          practical service pages, mobile-ready contact paths, and support after launch.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-green btn-cta" href="/free-website-preview" data-ga-event="click_home_free_preview">Get My Free Website Preview</a>
+          <a class="btn btn-ghost" href="/website-gallery" data-ga-event="click_home_gallery">See Website Gallery</a>
+          <a class="btn btn-ghost" href="/pricing" data-ga-event="click_home_pricing">See Pricing</a>
+        </div>
+        <ul class="home-proof-list" aria-label="Website Support Studio proof points">
+          <li><strong>{WEBSITE_PACKAGE.price}</strong><span>Founder Website Package</span></li>
+          <li><strong>5 pages</strong><span>included website structure</span></li>
+          <li><strong>30 days</strong><span>post-launch support</span></li>
+        </ul>
+      </div>
+      <div class="home-preview-stack" aria-label="Website examples">
+        <a class="home-preview-card primary" href="/website-gallery">
+          <img src="/templates/luna/screenshots/luna-overview-desktop.png" alt="Luna sample website overview" width="900" height="620" loading="eager" />
+          <span>Sample concepts</span>
+          <strong>See visual directions by industry.</strong>
+        </a>
+        <a class="home-preview-card" href="/templates/sample/ridgeline-roofing">
+          <img src="/templates/ridgeline-roofing-desktop.png" alt="Ridgeline Roofing sample website" width="700" height="480" loading="lazy" />
+          <span>Contractor sample</span>
+        </a>
+        <a class="home-preview-card" href="/templates/sample/mainline-plumbing">
+          <img src="/templates/mainline-plumbing-desktop.png" alt="Mainline Plumbing sample website" width="700" height="480" loading="lazy" />
+          <span>Trade sample</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-answer-section" id="how-it-works">
+    <div class="container">
+      <p class="kicker"><Label text="_how_it_works" /></p>
+      <h2>How does the website process work?</h2>
+      <p class="answer-first">
+        You send a short brief, Website Support Studio prepares a direction, then the site is built, reviewed,
+        launched, and supported. The goal is a practical website customers can understand quickly.
+      </p>
+      <div class="home-steps">
+        <article><span>01</span><h3>Request a preview</h3><p>Share the business, services, service area, goals, and style preferences.</p></article>
+        <article><span>02</span><h3>Review the direction</h3><p>Use the preview and gallery examples to choose the clearest path forward.</p></article>
+        <article><span>03</span><h3>Build and launch</h3><p>Website Support Studio adapts the structure, copy, imagery, calls to action, and SEO basics.</p></article>
+        <article><span>04</span><h3>Get support after launch</h3><p>Use the support plan for website requests, updates, and practical ongoing help.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-gallery-band">
+    <div class="container home-split">
+      <div>
+        <p class="kicker"><Label text="_website_gallery" /></p>
+        <h2>Where should I look for examples?</h2>
+        <p class="answer-first">
+          Use the Website Gallery as the single examples page. It collects sample concepts and industry directions
+          so the site does not split attention between a homepage, a gallery page, and a separate templates page.
+        </p>
+      </div>
+      <a class="home-gallery-panel" href="/website-gallery">
+        <span>Browse examples</span>
+        <strong>Website Gallery</strong>
+        <p>Sample website directions for trades, professional services, restaurants, retail, and local service businesses.</p>
+      </a>
+    </div>
+  </section>
+
+  <FounderTrustLayer />
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker"><Label text="_included" /></p>
+      <h2>What is included in the Founder Website Package?</h2>
+      <p class="answer-first">
+        The Founder Website Package includes the core website pieces most small businesses need to look legitimate,
+        capture leads, and launch without a drawn-out custom project.
+      </p>
+      <ul class="template-feature-strip" aria-label="Founder Website Package includes">
+        {FOUNDER_WEBSITE_INCLUDES.map((item) => <li>{item}</li>)}
+      </ul>
+      <div class="hero-actions">
+        <a class="btn btn-green btn-cta" href="/free-website-preview" data-ga-event="click_home_final_preview">Get My Free Website Preview</a>
+        <a class="btn btn-ghost" href="/founder-website-package" data-ga-event="click_home_founder_package">Founder Website Package</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .home-hero {
+      padding: clamp(2rem, 5vw, 4.5rem) 0;
+      background:
+        linear-gradient(90deg, rgba(4, 67, 251, 0.08) 0 1px, transparent 1px 100%),
+        linear-gradient(0deg, rgba(11, 18, 32, 0.06) 0 1px, transparent 1px 100%),
+        var(--surface);
+      background-size: 44px 44px;
+    }
+    .home-hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .home-hero h1 {
+      max-width: 16ch;
+      margin: 0;
+    }
+    .home-proof-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+      list-style: none;
+      margin: 1.5rem 0 0;
+      padding: 0;
+    }
+    .home-proof-list li {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 0.8rem;
+    }
+    .home-proof-list strong,
+    .home-proof-list span {
+      display: block;
+    }
+    .home-proof-list span {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+    .home-preview-stack {
+      display: grid;
+      grid-template-columns: 1fr 0.72fr;
+      grid-template-rows: repeat(2, 190px);
+      gap: 0.85rem;
+    }
+    .home-preview-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(11, 18, 32, 0.18);
+      border-radius: 8px;
+      background: var(--surface-dark);
+      color: #fff;
+      box-shadow: 0 20px 50px rgba(11, 18, 32, 0.14);
+    }
+    .home-preview-card.primary {
+      grid-row: span 2;
+    }
+    .home-preview-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(11, 18, 32, 0.04), rgba(11, 18, 32, 0.72));
+    }
+    .home-preview-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .home-preview-card span,
+    .home-preview-card strong {
+      position: absolute;
+      z-index: 1;
+      left: 1rem;
+      right: 1rem;
+    }
+    .home-preview-card span {
+      top: 1rem;
+      width: max-content;
+      max-width: calc(100% - 2rem);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 999px;
+      padding: 0.2rem 0.5rem;
+      background: rgba(11, 18, 32, 0.58);
+      color: #fff7ed;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+    .home-preview-card strong {
+      bottom: 1rem;
+      color: #fff;
+      line-height: 1.22;
+    }
+    .answer-first {
+      max-width: 70ch;
+      color: var(--text);
+      font-size: 1.04rem;
+    }
+    .home-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .home-steps article {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-elevated);
+      padding: 1rem;
+    }
+    .home-steps span {
+      color: var(--brand-blue);
+      font-weight: 900;
+      font-size: 0.82rem;
+    }
+    .home-steps h3 {
+      margin: 0.6rem 0 0;
+    }
+    .home-steps p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .home-gallery-band {
+      background: var(--surface-muted);
+    }
+    .home-split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.6fr);
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+    .home-gallery-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-elevated);
+      padding: 1.25rem;
+      color: var(--text);
+      box-shadow: 0 18px 44px rgba(11, 18, 32, 0.07);
+    }
+    .home-gallery-panel:hover {
+      text-decoration: none;
+    }
+    .home-gallery-panel span {
+      color: var(--brand-blue);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+    .home-gallery-panel strong {
+      color: var(--text-strong);
+      font-size: 1.4rem;
+      margin-top: 0.35rem;
+    }
+    .home-gallery-panel p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+    @media (max-width: 920px) {
+      .home-hero-grid,
+      .home-split {
+        grid-template-columns: 1fr;
+      }
+      .home-preview-stack {
+        grid-template-rows: repeat(2, 160px);
+      }
+      .home-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 560px) {
+      .home-proof-list,
+      .home-steps,
+      .home-preview-stack {
+        grid-template-columns: 1fr;
+      }
+      .home-preview-card.primary {
+        grid-row: auto;
+      }
+      .home-preview-card {
+        min-height: 230px;
+      }
+    }
+  </style>
+</BaseLayout>

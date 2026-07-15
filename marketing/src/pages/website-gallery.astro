@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Label from "../components/Label.astro";
 import { DEFAULT_OG_IMAGE, SITE_URL } from "../consts";
-import { breadcrumbSchema, ID } from "../schema";
+import { breadcrumbSchema, faqSchema, ID } from "../schema";
 
 type GalleryPreview = {
   slug: string;
@@ -146,12 +146,26 @@ const schemas = [
     { name: "Home", path: "/" },
     { name: "Website Gallery", path: "/website-gallery" },
   ]),
+  faqSchema([
+    {
+      q: "What is the Website Gallery?",
+      a: "The Website Gallery is the main examples page for Website Support Studio. It shows sample homepage directions by industry so small-business owners can compare visual styles, messaging, service structures, and calls to action before requesting a custom preview.",
+    },
+    {
+      q: "Are these finished client websites?",
+      a: "No. These are sample concepts and fictional mockups, not finished client projects or performance claims. They show the kind of website direction Website Support Studio can adapt from a business brief.",
+    },
+    {
+      q: "How should I use the Website Gallery?",
+      a: "Choose the industry, tone, or layout closest to your business, then request a free website preview. Website Support Studio uses your services, service area, goals, and style preferences to prepare a custom direction.",
+    },
+  ]),
 ];
 ---
 
 <BaseLayout
-  title="Website Gallery"
-  description="Browse premium browser-framed sample homepage directions for local businesses, professional services, medical offices, restaurants, retail, construction, and more."
+  title="Website Gallery Examples"
+  description="Browse sample website directions for local businesses, professional services, medical offices, restaurants, retail, construction, and more."
   path="/website-gallery"
   image={DEFAULT_OG_IMAGE}
   schemas={schemas}
@@ -211,6 +225,27 @@ const schemas = [
         <p>
           These are sample previews and mockups, not claims of finished client sites. They show the kind of polished homepage direction we can prepare from your business details.
         </p>
+      </div>
+
+      <div class="gallery-answer-grid" aria-label="Website Gallery questions">
+        <article>
+          <h2>What is the Website Gallery?</h2>
+          <p>
+            The Website Gallery is the single examples page for Website Support Studio. It helps small-business owners compare sample website directions by industry, design style, service structure, proof points, and conversion path.
+          </p>
+        </article>
+        <article>
+          <h2>Are these finished client websites?</h2>
+          <p>
+            No. These are sample concepts and fictional mockups, not finished client projects or performance claims. They show what a polished direction can look like before a custom preview is prepared from your business details.
+          </p>
+        </article>
+        <article>
+          <h2>How should I use the Website Gallery?</h2>
+          <p>
+            Pick the industry, tone, or layout closest to your business, then request a free website preview. Website Support Studio adapts the direction around your services, service area, customer questions, and best next call to action.
+          </p>
+        </article>
       </div>
 
       <div class="gallery-filters" aria-label="Filter website gallery">
@@ -326,6 +361,10 @@ const schemas = [
     .gallery-section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.72fr); gap:1.5rem; align-items:end; margin-bottom:1.25rem; }
     .gallery-section-head h2 { margin:.35rem 0 0; max-width:13ch; font-size:clamp(2rem,5vw,4.2rem); line-height:.96; letter-spacing:0; }
     .gallery-section-head p { margin:0; color:var(--text-muted); line-height:1.65; }
+    .gallery-answer-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin:1rem 0 1.25rem; }
+    .gallery-answer-grid article { border:1px solid rgba(11,18,32,.1); border-radius:8px; padding:1rem; background:#fff; box-shadow:0 12px 34px rgba(11,18,32,.045); }
+    .gallery-answer-grid h2 { margin:0; font-size:1.05rem; line-height:1.2; letter-spacing:0; }
+    .gallery-answer-grid p { margin:.6rem 0 0; color:var(--text-muted); line-height:1.55; font-size:.93rem; }
     .gallery-filters { position:sticky; top:0; z-index:2; display:flex; gap:.5rem; overflow:auto; padding:.75rem 0 1rem; margin-bottom:.5rem; background:linear-gradient(180deg,var(--surface) 72%,rgba(250,250,247,0)); scrollbar-width:none; }
     .gallery-filters::-webkit-scrollbar { display:none; }
     .gallery-filter { flex:0 0 auto; border:1px solid var(--border); border-radius:999px; padding:.58rem .8rem; background:#fff; color:var(--text); font-family:var(--font-mono); font-size:.82rem; font-weight:900; cursor:pointer; transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease; letter-spacing:0; }
@@ -485,6 +524,7 @@ const schemas = [
       .gallery-hero-copy h1 { max-width:100%; font-size:clamp(2.35rem,13vw,3.45rem); }
       .gallery-section-head { grid-template-columns:1fr; align-items:start; }
       .gallery-section-head h2 { max-width:14ch; }
+      .gallery-answer-grid { grid-template-columns:1fr; }
       .website-gallery-grid { grid-template-columns:1fr; }
       .gallery-card { box-shadow:0 14px 42px rgba(11,18,32,.07); }
       .site-frame--large .mock-site,

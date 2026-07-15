@@ -5,6 +5,8 @@ Website Support Studio builds, hosts, writes, and maintains websites for service
 ## Key pages
 
 - Homepage: https://websitesupportstudio.com/
+- Website Gallery: https://websitesupportstudio.com/website-gallery
+- Free Website Preview: https://websitesupportstudio.com/free-website-preview
 - Roofing website design: https://websitesupportstudio.com/for/roofing
 - HVAC website design: https://websitesupportstudio.com/for/hvac
 - Plumber website design: https://websitesupportstudio.com/for/plumbing

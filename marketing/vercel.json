@@ -4,6 +4,12 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/templates", "destination": "/website-gallery", "permanent": true },
+    { "source": "/templates/", "destination": "/website-gallery", "permanent": true },
+    { "source": "/gallery", "destination": "/website-gallery", "permanent": true },
+    { "source": "/gallery/", "destination": "/website-gallery", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/_astro/(.*)",

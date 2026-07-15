@@ -27,7 +27,10 @@ export default defineConfig({
         !page.includes("/admin") &&
         !page.includes("/api/") &&
         !page.includes("/login") &&
-        !page.includes("/account"),
+        !page.includes("/account") &&
+        !page.endsWith("/templates") &&
+        !page.endsWith("/gallery") &&
+        !page.includes("/gallery/preview"),
     }),
   ],
 });
