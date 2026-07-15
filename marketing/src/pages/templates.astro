@@ -24,6 +24,10 @@ const schemas = [
     { name: "Design Systems", path: "/templates" },
   ]),
 ];
+
+const featuredSystems = DESIGN_SYSTEMS.slice(0, 3);
+const systemCount = DESIGN_SYSTEMS.length;
+const sampleCount = DESIGN_SYSTEMS.reduce((total, system) => total + system.sampleSites.length, 0);
 ---
 
 <BaseLayout
@@ -32,64 +36,85 @@ const schemas = [
   path="/templates"
   schemas={schemas}
 >
-  <section class="hero" style="padding-top:1.25rem;padding-bottom:1rem;">
-    <div class="container">
-      <p class="kicker"><Label text="_design_systems" /></p>
-      <h1>Choose the website style you want.</h1>
-      <p class="lede">
-        Choose a design system that feels right. We customize the words, photos, colors, services,
-        calls to action, and local trust signals for your business.
-      </p>
-      <ul class="conversion-proof-strip" aria-label="Founder Website Package quick facts">
-        <li><strong>$500</strong><span>one-time build</span></li>
-        <li><strong>$199/month</strong><span>locked while active</span></li>
-        <li><strong>You own it</strong><span>site, domain, content</span></li>
-        <li><strong>Back Office</strong><span>leads, requests, plan</span></li>
-      </ul>
-      <div class="hero-actions" style="margin-top:1.25rem;">
-        <a
-          class="btn btn-green btn-cta"
-          href={WEBSITE_PACKAGE.ctaHref}
-          data-ga-event="click_build_my_website"
-          data-ga-secondary-event="stripe_payment_link_click"
-        >
-          Build My Website
-        </a>
-        <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
-        <a class="btn btn-ghost" href="/pricing">See Pricing</a>
+  <section class="template-hero">
+    <div class="container template-hero-grid">
+      <div class="template-hero-copy">
+        <p class="kicker"><Label text="_design_systems" /></p>
+        <h1>Pick a website that already feels close.</h1>
+        <p class="lede">
+          Start from a polished local-business style, then we adapt the copy, photos, services,
+          colors, calls to action, and trust signals around your actual business.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="btn btn-green btn-cta"
+            href={WEBSITE_PACKAGE.ctaHref}
+            data-ga-event="click_build_my_website"
+            data-ga-secondary-event="stripe_payment_link_click"
+          >
+            Build My Website
+          </a>
+          <a class="btn btn-ghost" href="#design-systems">Browse Styles</a>
+          <a class="btn btn-ghost" href="/templates/sample/back-office/">Preview Back Office</a>
+        </div>
+        <ul class="template-hero-proof" aria-label="Founder Website Package quick facts">
+          <li><strong>$500</strong><span>one-time build</span></li>
+          <li><strong>5 pages</strong><span>mobile-ready site</span></li>
+          <li><strong>{sampleCount} samples</strong><span>across {systemCount} styles</span></li>
+          <li><strong>You own it</strong><span>site, domain, content</span></li>
+        </ul>
       </div>
-      <div class="accent-bar" style="max-width:240px; margin-top:2rem;"></div>
+      <div class="template-hero-showcase" aria-label="Featured website styles">
+        {
+          featuredSystems.map((system, index) => (
+            <a class={`template-showcase-card card-${index + 1}`} href={`#${system.key}`}>
+              <img src={system.preview.image} alt={system.preview.alt} width="760" height="520" loading={index === 0 ? "eager" : "lazy"} />
+              <span>{system.name}</span>
+              <strong>{system.preview.headline}</strong>
+            </a>
+          ))
+        }
+      </div>
     </div>
   </section>
 
   <!-- Every Founder Website includes -->
-  <section class="section" style="padding-top:1.2rem;">
+  <section class="template-included-band">
     <div class="container">
-      <p class="kicker"><Label text="_whats_included" /></p>
-      <h2 style="margin-top:0;">Every Founder Website includes</h2>
+      <div class="template-included-header">
+        <div>
+          <p class="kicker"><Label text="_whats_included" /></p>
+          <h2>Every style becomes a finished business website.</h2>
+        </div>
+        <p>
+          One-time {WEBSITE_PACKAGE.price}. After launch: optional website support at{" "}
+          {WEBSITE_PACKAGE.afterLaunch.founder}. You own your website and all your accounts.
+        </p>
+      </div>
       <ul class="template-feature-strip" aria-label="Every Founder Website includes">
         {FOUNDER_WEBSITE_INCLUDES.map((item) => <li>{item}</li>)}
       </ul>
-      <p style="margin-top:1rem; color:var(--text-muted); max-width:62ch;">
-        One-time {WEBSITE_PACKAGE.price}. After launch: optional website support at{" "}
-        {WEBSITE_PACKAGE.afterLaunch.founder}. {WEBSITE_PACKAGE.afterLaunch.standard} You own your
-        website and all your accounts.
-      </p>
     </div>
   </section>
-
-  <FounderTrustLayer />
-
   <!-- Design system starting points -->
-  <section class="section" style="background:var(--surface-muted);">
+  <section class="template-catalog section" id="design-systems">
     <div class="container">
       <p class="kicker"><Label text="_starting_points" /></p>
-      <h2 style="margin-top:0;">Design systems that can become your business website.</h2>
-      <div style="display:grid; gap:2rem; margin-top:2rem;">
+      <div class="template-catalog-head">
+        <h2>Choose by how you want the business to feel.</h2>
+        <p>
+          Each starting point has a real conversion job: earn trust quickly, show the work,
+          make the service clear, and move visitors toward a call, booking, estimate, or visit.
+        </p>
+      </div>
+      <nav class="template-style-nav" aria-label="Jump to a design system">
+        {DESIGN_SYSTEMS.map((t) => <a href={`#${t.key}`}>{t.name}</a>)}
+      </nav>
+      <div class="template-cards">
         {
           DESIGN_SYSTEMS.map((t) => (
-            <div class="card design-system-card" id={t.key} style="scroll-margin-top:5rem;">
-              <div class="grid grid-2" style="align-items:start;">
+            <article class="template-system-card" id={t.key}>
+              <div class="template-system-media">
                 <div class="model-preview model-preview-large">
                   <img src={t.preview.image} alt={t.preview.alt} width="1100" height="720" loading="lazy" />
                   <div class="model-preview-ui">
@@ -97,58 +122,69 @@ const schemas = [
                     <strong>{t.name}</strong>
                   </div>
                 </div>
-                <div style="display:flex; flex-direction:column; min-height:100%;">
-                  <h3 style="margin:0;">{t.name}</h3>
-                  <p class="design-system-fit">{t.industry}</p>
-                  <p style="margin:0.65rem 0 0; color:var(--text-muted);">{t.personality}</p>
-                  <p style="margin:0.8rem 0 0; color:var(--text);">{t.preview.headline}</p>
-                  <ul class="model-signals" aria-label={`${t.name} visual signals`}>
-                    {t.preview.signals.map((signal) => <li>{signal}</li>)}
-                  </ul>
-                  <div class="design-system-adapt-box">
-                    <p><strong>Finished sample sites:</strong> {t.sampleSites.map((site) => site.label.replace(" Sample", "")).join(", ")}</p>
-                    <p><strong>Good for:</strong> {t.fits.join(", ")}.</p>
-                  </div>
-                  <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Industries it fits</p>
-                  <ul class="model-signals" aria-label={`${t.name} industries`}>
-                    {t.fits.map((fit) => <li>{fit}</li>)}
-                  </ul>
-                  <p style="margin:1rem 0 0; font-weight:700; color:var(--text-strong);">Included pages</p>
-                  <ul class="design-system-pages">
-                    {t.pages.map((page) => (
-                      <li>{page}</li>
-                    ))}
-                  </ul>
-                  <p style="margin:1.25rem 0 0; font-weight:700; color:var(--text-strong);">Included features</p>
-                  <ul style="padding-left:1.1rem; margin:0.5rem 0 0; color:var(--text);">
-                    {t.features.map((f) => (
-                      <li style="margin-bottom:0.35rem;">{f}</li>
-                    ))}
-                  </ul>
-                  <div class="design-system-actions">
-                    <a
-                      class="btn btn-green btn-cta"
-                      href={WEBSITE_PACKAGE.ctaHref}
-                      data-ga-event="click_template_start"
-                      data-ga-secondary-event="stripe_payment_link_click"
-                      data-ga-label={t.key}
-                    >
-                      Start With This Style
+                <div class="template-system-samples">
+                  {t.sampleSites.map((site) => (
+                    <a href={site.href} data-ga-event="click_sample_site" data-ga-label={`${t.key}_${site.label.toLowerCase().replaceAll(" ", "_")}`}>
+                      {site.label}
                     </a>
-                    {t.sampleSites.map((site) => (
-                      <a class="btn btn-ghost" href={site.href} data-ga-event="click_sample_site" data-ga-label={`${t.key}_${site.label.toLowerCase().replaceAll(" ", "_")}`}>
-                        {site.label}
-                      </a>
-                    ))}
-                  </div>
+                  ))}
                 </div>
               </div>
-            </div>
+              <div class="template-system-copy">
+                <div class="template-system-title">
+                  <p>{t.industry}</p>
+                  <h3>{t.name}</h3>
+                </div>
+                <p class="template-system-headline">{t.preview.headline}</p>
+                <p class="template-system-personality">{t.personality}</p>
+                <ul class="model-signals" aria-label={`${t.name} visual signals`}>
+                  {t.preview.signals.map((signal) => <li>{signal}</li>)}
+                </ul>
+                <div class="template-system-grid">
+                  <div>
+                    <p class="template-system-label">Best fit</p>
+                    <ul>
+                      {t.fits.slice(0, 4).map((fit) => <li>{fit}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="template-system-label">Page plan</p>
+                    <ul>
+                      {t.pages.slice(0, 5).map((page) => <li>{page}</li>)}
+                    </ul>
+                  </div>
+                </div>
+                <div class="template-system-feature">
+                  <p class="template-system-label">What this style does well</p>
+                  <ul>
+                    {t.features.slice(0, 3).map((f) => <li>{f}</li>)}
+                  </ul>
+                </div>
+                <div class="design-system-actions">
+                  <a
+                    class="btn btn-green btn-cta"
+                    href={WEBSITE_PACKAGE.ctaHref}
+                    data-ga-event="click_template_start"
+                    data-ga-secondary-event="stripe_payment_link_click"
+                    data-ga-label={t.key}
+                  >
+                    Start With {t.name}
+                  </a>
+                  {t.sampleSites[0] && (
+                    <a class="btn btn-ghost" href={t.sampleSites[0].href} data-ga-event="click_sample_site" data-ga-label={`${t.key}_primary_sample`}>
+                      View Sample
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
           ))
         }
       </div>
     </div>
   </section>
+
+  <FounderTrustLayer />
 
   <!-- Customizable vs custom work -->
   <section class="section" id="whats-customizable">
