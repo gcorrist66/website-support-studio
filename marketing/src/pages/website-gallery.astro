@@ -118,7 +118,9 @@ const galleryPreviews: GalleryPreview[] = [
   { slug: "movewell-logistics", category: "Home Services", industry: "Moving Company", business: "MoveWell Logistics", style: "Organized local move", headline: "A moving company homepage that lowers stress before move day.", description: "A moving-company concept with quote steps, service types, and trust cues for families planning a transition. It makes the process feel scheduled and controlled.", nav: ["Local", "Packing", "Storage"], cta: "Get Moving Quote", services: ["Homes", "Apartments", "Packing"], proof: "Room-by-room move planning", layout: "dashboard", palette: "route" },
 ];
 
-const featured = galleryPreviews[0];
+const featured = galleryPreviews.find((preview) => preview.slug === "table-and-hearth") ?? galleryPreviews[0];
+const featuredPhoto = photoBySlug[featured.slug];
+const featuredHeroHeadline = "A restaurant site that feels ready to book.";
 const previewCount = galleryPreviews.length;
 
 const schemas = [
@@ -188,26 +190,59 @@ const schemas = [
           <span>Featured Preview</span>
           <strong>{featured.industry}</strong>
         </div>
-        <div class={`site-frame site-frame--large mock-${featured.layout} palette-${featured.palette}`}>
+        <div class={`site-frame site-frame--large featured-photo-frame palette-${featured.palette}`}>
           <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{getPreviewDomain(featured)}</em></div>
-          <div class="mock-site">
-            <div class="mock-top">
+          <div class="featured-photo-site">
+            {featuredPhoto && (
+              <img
+                src={featuredPhoto.src}
+                alt={featuredPhoto.alt}
+                width="900"
+                height="620"
+                loading="eager"
+              />
+            )}
+            <div class="featured-photo-shade" aria-hidden="true"></div>
+            <div class="featured-photo-top">
               <strong>{featured.business}</strong>
               <nav aria-label={`${featured.business} sample navigation`}>
                 {featured.nav.map((item) => <span>{item}</span>)}
               </nav>
             </div>
-            <div class="mock-hero">
-              <div>
-                <p>{featured.style}</p>
-                <h2 id="featured-preview-heading">{featured.headline}</h2>
-                <span>{featured.cta}</span>
-              </div>
-              <div class="mock-art" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="featured-photo-copy">
+              <p>{featured.style}</p>
+              <h2 id="featured-preview-heading">{featuredHeroHeadline}</h2>
+              <a href={featured.demoHref ?? "/free-website-preview"}>{featured.cta}</a>
             </div>
-            <div class="mock-proof">
+            <div class="featured-photo-proof">
               <strong>{featured.proof}</strong>
               {featured.services.map((service) => <span>{service}</span>)}
+            </div>
+          </div>
+        </div>
+        <div class="featured-mini-grid" aria-hidden="true">
+          <div class={`site-frame mock-${galleryPreviews[1].layout} palette-${galleryPreviews[1].palette}`}>
+            <div class="browser-bar"><span></span><span></span><span></span><em>{getPreviewDomain(galleryPreviews[1])}</em></div>
+            <div class="mock-site">
+              <div class="mock-hero">
+                <div>
+                  <p>{galleryPreviews[1].industry}</p>
+                  <h3>{galleryPreviews[1].headline}</h3>
+                </div>
+                <div class="mock-art"><i></i><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
+          <div class={`site-frame mock-${galleryPreviews[4].layout} palette-${galleryPreviews[4].palette}`}>
+            <div class="browser-bar"><span></span><span></span><span></span><em>{getPreviewDomain(galleryPreviews[4])}</em></div>
+            <div class="mock-site">
+              <div class="mock-hero">
+                <div>
+                  <p>{galleryPreviews[4].industry}</p>
+                  <h3>{galleryPreviews[4].headline}</h3>
+                </div>
+                <div class="mock-art"><i></i><i></i><i></i></div>
+              </div>
             </div>
           </div>
         </div>
@@ -357,6 +392,30 @@ const schemas = [
     .featured-preview { min-width:0; }
     .featured-meta { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:.75rem; color:var(--text-muted); font-size:.85rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
     .featured-meta strong { color:var(--text); letter-spacing:0; text-transform:none; font-size:.95rem; }
+    .featured-photo-frame { transform:rotate(-1deg); box-shadow:0 34px 100px rgba(11,18,32,.18); }
+    .featured-photo-site { position:relative; min-height:470px; overflow:hidden; isolation:isolate; background:var(--deep); }
+    .featured-photo-site img { position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:cover; transform:scale(1.03); }
+    .featured-photo-shade { position:absolute; inset:0; z-index:1; background:
+      linear-gradient(90deg,rgba(11,18,32,.88),rgba(11,18,32,.54) 42%,rgba(11,18,32,.18)),
+      linear-gradient(0deg,rgba(11,18,32,.72),rgba(11,18,32,.04) 52%); }
+    .featured-photo-top { position:absolute; z-index:2; top:1.1rem; left:1.1rem; right:1.1rem; display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; color:#fff; }
+    .featured-photo-top strong { font-size:.92rem; font-weight:950; letter-spacing:0; text-shadow:0 1px 14px rgba(0,0,0,.45); }
+    .featured-photo-top nav { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.55rem; color:rgba(255,255,255,.78); font-family:var(--font-mono); font-size:.62rem; font-weight:900; }
+    .featured-photo-copy { position:absolute; z-index:2; left:1.25rem; right:1.25rem; bottom:5.55rem; max-width:30rem; color:#fff; text-shadow:0 2px 22px rgba(0,0,0,.44); }
+    .featured-photo-copy p { margin:0 0 .45rem; color:rgba(255,255,255,.82); font-family:var(--font-mono); font-size:.7rem; font-weight:950; text-transform:uppercase; letter-spacing:.08em; }
+    .featured-photo-copy h2 { margin:0; max-width:14ch; color:#fff; font-size:clamp(1.9rem,3.25vw,3.15rem); line-height:1.02; letter-spacing:0; }
+    .featured-photo-copy a { display:inline-flex; width:max-content; max-width:100%; margin-top:1rem; border-radius:999px; padding:.72rem 1rem; background:var(--accent); color:#071017; font-family:var(--font-mono); font-size:.82rem; font-weight:950; line-height:1.1; text-decoration:none; text-shadow:none; box-shadow:0 14px 34px rgba(0,0,0,.2); }
+    .featured-photo-proof { position:absolute; z-index:2; left:1.1rem; right:1.1rem; bottom:1.1rem; display:grid; grid-template-columns:1.35fr repeat(3,minmax(0,1fr)); gap:.55rem; }
+    .featured-photo-proof strong,
+    .featured-photo-proof span { min-width:0; border:1px solid rgba(255,255,255,.2); border-radius:8px; padding:.65rem .7rem; background:rgba(255,255,255,.9); color:var(--deep); font-size:.7rem; font-weight:950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; box-shadow:0 10px 28px rgba(0,0,0,.12); }
+    .featured-mini-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin:-1.3rem 2rem 0; position:relative; z-index:2; }
+    .featured-mini-grid .site-frame { box-shadow:0 18px 54px rgba(11,18,32,.12); }
+    .featured-mini-grid .browser-bar { height:1.55rem; }
+    .featured-mini-grid .browser-bar em { font-size:.58rem; }
+    .featured-mini-grid .mock-site { min-height:150px; padding:.65rem; }
+    .featured-mini-grid .mock-hero { min-height:118px; margin:0; }
+    .featured-mini-grid .mock-hero h3 { font-size:clamp(.95rem,1.3vw,1.25rem); }
+    .featured-mini-grid .mock-art { min-height:92px; }
     .gallery-section { padding:clamp(2.5rem,6vw,5rem) 0; background:var(--surface); font-family:Inter,"Avenir Next","Segoe UI",system-ui,sans-serif; letter-spacing:0; }
     .gallery-section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.72fr); gap:1.5rem; align-items:end; margin-bottom:1.25rem; }
     .gallery-section-head h2 { margin:.35rem 0 0; max-width:13ch; font-size:clamp(2rem,5vw,4.2rem); line-height:.96; letter-spacing:0; }
@@ -518,6 +577,7 @@ const schemas = [
       .website-gallery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .gallery-hero-grid { grid-template-columns:1fr; }
       .gallery-hero-copy h1 { max-width:780px; }
+      .featured-photo-frame { transform:none; }
     }
     @media (max-width: 760px) {
       .gallery-hero { padding-top:2rem; }
@@ -535,6 +595,15 @@ const schemas = [
       .mock-hero h3 { font-size:clamp(1.35rem,7vw,2rem); }
       .site-frame--large .mock-art,
       .mock-art { min-height:96px; }
+      .featured-photo-site { min-height:430px; }
+      .featured-photo-shade { background:linear-gradient(0deg,rgba(11,18,32,.82),rgba(11,18,32,.28)); }
+      .featured-photo-top { flex-direction:column; }
+      .featured-photo-top nav { justify-content:flex-start; }
+      .featured-photo-copy { bottom:6.75rem; }
+      .featured-photo-copy h2 { max-width:13ch; font-size:clamp(1.6rem,7.8vw,2.55rem); }
+      .featured-photo-proof { grid-template-columns:1fr 1fr; }
+      .featured-photo-proof strong { grid-column:1 / -1; }
+      .featured-mini-grid { grid-template-columns:1fr; margin:.8rem 0 0; }
       .mock-proof { grid-template-columns:1fr 1fr; }
       .mock-proof strong { grid-column:1 / -1; }
       .mock-top { align-items:flex-start; }
