@@ -48,6 +48,40 @@ const photoBySlug: Record<string, { src: string; alt: string }> = {
     alt: "Detailed car with glossy finish",
   },
 };
+const photoByCategory: Record<GalleryPreview["category"], { src: string; alt: string }> = {
+  "Home Services": {
+    src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=68&auto=format&fit=crop",
+    alt: "Well-kept home exterior",
+  },
+  Medical: {
+    src: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=900&q=68&auto=format&fit=crop",
+    alt: "Modern healthcare reception area",
+  },
+  Professional: {
+    src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=68&auto=format&fit=crop",
+    alt: "Polished professional office interior",
+  },
+  Food: {
+    src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=68&auto=format&fit=crop",
+    alt: "Warm restaurant dining room",
+  },
+  Retail: {
+    src: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=900&q=68&auto=format&fit=crop",
+    alt: "Modern retail storefront display",
+  },
+  Automotive: {
+    src: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=900&q=68&auto=format&fit=crop",
+    alt: "Detailed car with glossy finish",
+  },
+  Construction: {
+    src: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&q=68&auto=format&fit=crop",
+    alt: "Construction site with architectural structure",
+  },
+  Community: {
+    src: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=68&auto=format&fit=crop",
+    alt: "Community gathering in a bright space",
+  },
+};
 const displayDomainBySlug: Record<string, string> = {
   "greenline-landscaping": "greenlineoutdoor.com",
   "ledger-cpa": "ledgerlanecpa.com",
@@ -70,6 +104,8 @@ const getShortDescription = (preview: GalleryPreview) =>
 
 const getFilterCount = (filter: (typeof filters)[number]) =>
   filter === "All" ? galleryPreviews.length : galleryPreviews.filter((preview) => preview.category === filter).length;
+
+const getPreviewPhoto = (preview: GalleryPreview) => photoBySlug[preview.slug] ?? photoByCategory[preview.category];
 
 const galleryPreviews: GalleryPreview[] = [
   { slug: "greenline-landscaping", category: "Home Services", industry: "Landscaping", business: "Greenline Outdoor Co.", style: "Editorial outdoor service", headline: "Outdoor spaces that feel finished before the first estimate.", description: "A rich landscaping homepage direction with large project visuals, seasonal service paths, and estimate-first messaging. It is built to help homeowners quickly understand the quality of the work and request a consultation.", nav: ["Services", "Projects", "Care Plans"], cta: "Plan My Yard", services: ["Design", "Maintenance", "Lighting"], proof: "124 local yards redesigned", layout: "split", palette: "verdant", demoHref: "/templates/sample/greenline-landscaping" },
@@ -119,8 +155,12 @@ const galleryPreviews: GalleryPreview[] = [
 ];
 
 const featured = galleryPreviews.find((preview) => preview.slug === "table-and-hearth") ?? galleryPreviews[0];
-const featuredPhoto = photoBySlug[featured.slug];
+const featuredPhoto = getPreviewPhoto(featured);
 const featuredHeroHeadline = "A restaurant site that feels ready to book.";
+const featuredMiniPreviews = [galleryPreviews[1], galleryPreviews[4]].map((preview) => ({
+  preview,
+  photo: getPreviewPhoto(preview),
+}));
 const previewCount = galleryPreviews.length;
 
 const schemas = [
@@ -221,30 +261,18 @@ const schemas = [
           </div>
         </div>
         <div class="featured-mini-grid" aria-hidden="true">
-          <div class={`site-frame mock-${galleryPreviews[1].layout} palette-${galleryPreviews[1].palette}`}>
-            <div class="browser-bar"><span></span><span></span><span></span><em>{getPreviewDomain(galleryPreviews[1])}</em></div>
-            <div class="mock-site">
-              <div class="mock-hero">
+          {featuredMiniPreviews.map(({ preview, photo }) => (
+            <div class="site-frame featured-mini-card">
+              <div class="browser-bar"><span></span><span></span><span></span><em>{getPreviewDomain(preview)}</em></div>
+              <div class="featured-mini-photo">
+                <img src={photo.src} alt="" loading="lazy" />
                 <div>
-                  <p>{galleryPreviews[1].industry}</p>
-                  <h3>{galleryPreviews[1].headline}</h3>
+                  <p>{preview.industry}</p>
+                  <h3>{preview.headline}</h3>
                 </div>
-                <div class="mock-art"><i></i><i></i><i></i></div>
               </div>
             </div>
-          </div>
-          <div class={`site-frame mock-${galleryPreviews[4].layout} palette-${galleryPreviews[4].palette}`}>
-            <div class="browser-bar"><span></span><span></span><span></span><em>{getPreviewDomain(galleryPreviews[4])}</em></div>
-            <div class="mock-site">
-              <div class="mock-hero">
-                <div>
-                  <p>{galleryPreviews[4].industry}</p>
-                  <h3>{galleryPreviews[4].headline}</h3>
-                </div>
-                <div class="mock-art"><i></i><i></i><i></i></div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </article>
     </div>
@@ -302,26 +330,12 @@ const schemas = [
             <div class={`gallery-browser palette-${preview.palette}`}>
               <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><em>{getPreviewDomain(preview)}</em></div>
               <div class="gallery-shot">
-                <div class={`gallery-shot-fallback mock-${preview.layout} palette-${preview.palette}`} aria-hidden="true">
-                  <div class="mock-site">
-                    <div class="mock-hero">
-                      <div>
-                        <p>{preview.style}</p>
-                        <h3>{preview.headline}</h3>
-                        <span>{preview.cta}</span>
-                      </div>
-                      <div class="mock-art" aria-hidden="true"><i></i><i></i><i></i></div>
-                    </div>
-                  </div>
-                </div>
-                {photoBySlug[preview.slug] && (
-                  <img
-                    class="gallery-photo"
-                    src={photoBySlug[preview.slug].src}
-                    alt={photoBySlug[preview.slug].alt}
-                    loading="lazy"
-                  />
-                )}
+                <img
+                  class="gallery-photo"
+                  src={getPreviewPhoto(preview).src}
+                  alt={getPreviewPhoto(preview).alt}
+                  loading="lazy"
+                />
                 <div class="gallery-shot-shade" aria-hidden="true"></div>
                 <div class="gallery-shot-top">
                   <strong>{preview.business}</strong>
@@ -412,10 +426,12 @@ const schemas = [
     .featured-mini-grid .site-frame { box-shadow:0 18px 54px rgba(11,18,32,.12); }
     .featured-mini-grid .browser-bar { height:1.55rem; }
     .featured-mini-grid .browser-bar em { font-size:.58rem; }
-    .featured-mini-grid .mock-site { min-height:150px; padding:.65rem; }
-    .featured-mini-grid .mock-hero { min-height:118px; margin:0; }
-    .featured-mini-grid .mock-hero h3 { font-size:clamp(.95rem,1.3vw,1.25rem); }
-    .featured-mini-grid .mock-art { min-height:92px; }
+    .featured-mini-photo { position:relative; min-height:150px; overflow:hidden; isolation:isolate; color:#fff; }
+    .featured-mini-photo img { position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:cover; transform:scale(1.03); }
+    .featured-mini-photo::after { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,rgba(11,18,32,.12),rgba(11,18,32,.76)); }
+    .featured-mini-photo div { position:absolute; z-index:2; left:.8rem; right:.8rem; bottom:.8rem; text-shadow:0 1px 12px rgba(0,0,0,.38); }
+    .featured-mini-photo p { margin:0 0 .35rem; color:rgba(255,255,255,.78); font-family:var(--font-mono); font-size:.58rem; font-weight:950; text-transform:uppercase; letter-spacing:.08em; }
+    .featured-mini-photo h3 { margin:0; color:#fff; font-size:clamp(.95rem,1.3vw,1.25rem); line-height:1.08; letter-spacing:0; }
     .gallery-section { padding:clamp(2.5rem,6vw,5rem) 0; background:var(--surface); font-family:Inter,"Avenir Next","Segoe UI",system-ui,sans-serif; letter-spacing:0; }
     .gallery-section-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.72fr); gap:1.5rem; align-items:end; margin-bottom:1.25rem; }
     .gallery-section-head h2 { margin:.35rem 0 0; max-width:13ch; font-size:clamp(2rem,5vw,4.2rem); line-height:.96; letter-spacing:0; }
@@ -436,15 +452,9 @@ const schemas = [
     .gallery-card[hidden] { display:none; }
     .gallery-browser { --accent:#35dcea; --deep:#0b1220; --soft:#eff6f2; --paper:#fff; background:#fff; }
     .gallery-shot { position:relative; height:238px; overflow:hidden; isolation:isolate; background:var(--soft); }
-    .gallery-shot-fallback,
     .gallery-photo,
     .gallery-shot-shade,
     .gallery-card-overlay { position:absolute; inset:0; }
-    .gallery-shot-fallback { z-index:0; }
-    .gallery-shot-fallback .mock-site { min-height:100%; height:100%; padding:.7rem; }
-    .gallery-shot-fallback .mock-hero { min-height:100%; margin:0; }
-    .gallery-shot-fallback .mock-proof,
-    .gallery-shot-fallback .mock-top { display:none; }
     .gallery-photo { z-index:1; width:100%; height:100%; object-fit:cover; }
     .gallery-shot-shade { z-index:2; background:linear-gradient(180deg,rgba(11,18,32,.34),rgba(11,18,32,.06) 36%,rgba(11,18,32,.78)); }
     .gallery-shot-top { position:absolute; z-index:3; top:.9rem; left:1rem; right:1rem; display:flex; align-items:flex-start; justify-content:space-between; gap:.75rem; color:#fff; text-shadow:0 1px 12px rgba(0,0,0,.4); }
@@ -478,51 +488,6 @@ const schemas = [
     .browser-bar span:nth-child(2) { background:#f7c34f; }
     .browser-bar span:nth-child(3) { background:#57c779; }
     .browser-bar em { min-width:0; margin-left:.35rem; color:rgba(11,18,32,.55); font-size:.69rem; font-style:normal; font-weight:850; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .mock-site { min-height:300px; padding:.85rem; background:
-      radial-gradient(circle at 82% 18%, color-mix(in srgb,var(--accent) 34%,transparent), transparent 28%),
-      linear-gradient(135deg,var(--paper),var(--soft)); color:var(--deep); }
-    .site-frame--large .mock-site { min-height:470px; padding:1.2rem; }
-    .mock-top { display:flex; align-items:center; justify-content:space-between; gap:.8rem; }
-    .mock-top strong { font-size:.88rem; letter-spacing:0; }
-    .mock-top nav { display:flex; gap:.45rem; color:color-mix(in srgb,var(--deep) 68%,#fff); font-size:.58rem; font-weight:900; }
-    .mock-hero { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(86px,.78fr); gap:.8rem; align-items:center; min-height:155px; margin-top:.85rem; }
-    .site-frame--large .mock-hero { min-height:265px; }
-    .mock-hero p { margin:0 0 .38rem; color:color-mix(in srgb,var(--accent) 70%,var(--deep)); font-size:.58rem; font-weight:950; text-transform:uppercase; letter-spacing:.08em; }
-    .mock-hero h2,
-    .mock-hero h3 { margin:0; max-width:100%; font-size:clamp(1.15rem,1.65vw,1.65rem); line-height:1.04; letter-spacing:0; overflow-wrap:normal; word-break:normal; hyphens:none; }
-    .site-frame--large .mock-hero h2 { font-size:clamp(1.75rem,3.1vw,3.2rem); line-height:1; }
-    .mock-hero span { display:inline-flex; width:max-content; max-width:100%; margin-top:.65rem; border-radius:999px; padding:.48rem .65rem; background:var(--accent); color:#071017; font-size:.68rem; font-weight:950; }
-    .mock-art { position:relative; min-height:130px; border-radius:8px; background:
-      linear-gradient(135deg,color-mix(in srgb,var(--accent) 78%,#fff),color-mix(in srgb,var(--deep) 88%,#fff));
-      overflow:hidden; }
-    .site-frame--large .mock-art { min-height:230px; }
-    .mock-art i { position:absolute; display:block; border-radius:999px; background:rgba(255,255,255,.68); }
-    .mock-art i:first-child { width:58%; height:58%; right:-16%; top:-10%; }
-    .mock-art i:nth-child(2) { width:36%; height:70%; left:10%; bottom:-22%; border-radius:8px; }
-    .mock-art i:nth-child(3) { width:46%; height:12%; right:14%; bottom:18%; border-radius:999px; }
-    .mock-proof { display:grid; grid-template-columns:1.35fr repeat(3,1fr); gap:.5rem; margin-top:.8rem; }
-    .mock-proof strong,
-    .mock-proof span { min-width:0; border:1px solid rgba(11,18,32,.08); border-radius:8px; padding:.55rem; background:rgba(255,255,255,.72); font-size:.62rem; font-weight:900; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .mock-proof strong { color:var(--deep); }
-    .mock-proof span { color:color-mix(in srgb,var(--deep) 72%,#fff); }
-    .mock-impact .mock-hero,
-    .mock-luxury .mock-hero,
-    .mock-industrial .mock-hero { grid-template-columns:1fr; }
-    .mock-impact .mock-art,
-    .mock-luxury .mock-art,
-    .mock-industrial .mock-art { min-height:90px; }
-    .mock-dashboard .mock-hero { grid-template-columns:1fr .9fr; align-items:start; }
-    .mock-dashboard .mock-art { display:grid; grid-template-columns:repeat(2,1fr); gap:.4rem; padding:.5rem; background:rgba(255,255,255,.54); }
-    .mock-dashboard .mock-art i { position:static; width:auto; height:auto; min-height:45px; border-radius:8px; background:linear-gradient(135deg,var(--accent),rgba(255,255,255,.72)); }
-    .mock-grid .mock-proof { grid-template-columns:repeat(2,1fr); }
-    .mock-editorial .mock-hero { grid-template-columns:.78fr 1fr; }
-    .mock-minimal .mock-site { background:#fff; }
-    .mock-minimal .mock-art { background:linear-gradient(180deg,var(--soft),#fff); border:1px solid rgba(11,18,32,.08); }
-    .mock-product .mock-art { border-radius:999px 999px 8px 8px; }
-    .mock-collage .mock-art { clip-path:polygon(8% 0,100% 10%,92% 100%,0 88%); }
-    .mock-service .mock-proof { grid-template-columns:1fr; }
-    .mock-service .mock-proof span,
-    .mock-service .mock-proof strong { white-space:normal; }
     .palette-verdant { --accent:#6dbf4b; --deep:#19351f; --soft:#eef6e8; --paper:#fffdf4; }
     .palette-steel { --accent:#f4b142; --deep:#17202c; --soft:#e9edf2; --paper:#fff; }
     .palette-frost { --accent:#35dcea; --deep:#10293d; --soft:#eaf8fb; --paper:#fff; }
@@ -587,14 +552,6 @@ const schemas = [
       .gallery-answer-grid { grid-template-columns:1fr; }
       .website-gallery-grid { grid-template-columns:1fr; }
       .gallery-card { box-shadow:0 14px 42px rgba(11,18,32,.07); }
-      .site-frame--large .mock-site,
-      .mock-site { min-height:270px; padding:.75rem; }
-      .site-frame--large .mock-hero,
-      .mock-hero { grid-template-columns:1fr; min-height:auto; }
-      .site-frame--large .mock-hero h2,
-      .mock-hero h3 { font-size:clamp(1.35rem,7vw,2rem); }
-      .site-frame--large .mock-art,
-      .mock-art { min-height:96px; }
       .featured-photo-site { min-height:430px; }
       .featured-photo-shade { background:linear-gradient(0deg,rgba(11,18,32,.82),rgba(11,18,32,.28)); }
       .featured-photo-top { flex-direction:column; }
@@ -604,10 +561,6 @@ const schemas = [
       .featured-photo-proof { grid-template-columns:1fr 1fr; }
       .featured-photo-proof strong { grid-column:1 / -1; }
       .featured-mini-grid { grid-template-columns:1fr; margin:.8rem 0 0; }
-      .mock-proof { grid-template-columns:1fr 1fr; }
-      .mock-proof strong { grid-column:1 / -1; }
-      .mock-top { align-items:flex-start; }
-      .mock-top nav { flex-wrap:wrap; justify-content:flex-end; }
       .gallery-hero-actions .btn,
       .gallery-card-actions .btn { flex:1 1 100%; }
     }

@@ -60,6 +60,56 @@ const schemas = [
 ];
 
 const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
+const previewPhotos: Record<string, { src: string; alt: string }> = {
+  landscaping: {
+    src: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=900&q=68&auto=format&fit=crop",
+    alt: "Freshly maintained residential landscape",
+  },
+  roofing: {
+    src: "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=900&q=68&auto=format&fit=crop",
+    alt: "Roofing work on a shingle roof",
+  },
+  law: {
+    src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=68&auto=format&fit=crop",
+    alt: "Polished professional office interior",
+  },
+  hvac: {
+    src: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=900&q=68&auto=format&fit=crop",
+    alt: "HVAC technician working on equipment",
+  },
+  restaurant: {
+    src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=68&auto=format&fit=crop",
+    alt: "Warm restaurant dining room",
+  },
+  dental: {
+    src: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=900&q=68&auto=format&fit=crop",
+    alt: "Dentist reviewing care with a patient",
+  },
+  electrical: {
+    src: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=900&q=68&auto=format&fit=crop",
+    alt: "Electrician working on wiring",
+  },
+  plumbing: {
+    src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=900&q=68&auto=format&fit=crop",
+    alt: "Chrome plumbing fixture",
+  },
+  pest: {
+    src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=900&q=68&auto=format&fit=crop",
+    alt: "Garden plants and home exterior detail",
+  },
+  flooring: {
+    src: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&q=68&auto=format&fit=crop",
+    alt: "Warm finished room with wood floor",
+  },
+  pool: {
+    src: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?w=900&q=68&auto=format&fit=crop",
+    alt: "Clean swimming pool and patio",
+  },
+  auto: {
+    src: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=900&q=68&auto=format&fit=crop",
+    alt: "Detailed car with glossy finish",
+  },
+};
 ---
 
 <BaseLayout
@@ -452,15 +502,18 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
                 <em>{preview.cta}</em>
               </div>
               <div class="mock-hero-shot">
+                {previewPhotos[preview.className] && (
+                  <img
+                    src={previewPhotos[preview.className].src}
+                    alt={previewPhotos[preview.className].alt}
+                    loading="eager"
+                  />
+                )}
                 <div class="mock-hero-copy">
                   <small>{preview.eyebrow}</small>
                   <h3>{preview.title}</h3>
                   <p>{preview.body}</p>
                   <b>{preview.cta}</b>
-                </div>
-                <div class="mock-art" aria-hidden="true">
-                  <span></span>
-                  <span></span>
                 </div>
               </div>
               <div class="mock-service-row">
@@ -994,21 +1047,33 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       min-height: 300px;
       overflow: hidden;
       border-radius: 7px;
-      background: var(--mock-hero);
+      background: #0b1220;
       color: #fff;
       padding: clamp(1rem, 2.4vw, 1.35rem);
+      isolation: isolate;
+    }
+
+    .mock-hero-shot img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.03);
     }
 
     .mock-hero-shot::before {
       content: "";
       position: absolute;
       inset: 0;
+      z-index: 1;
       background: linear-gradient(90deg, rgba(8, 18, 32, 0.9) 0%, rgba(8, 18, 32, 0.58) 48%, rgba(8, 18, 32, 0.12) 100%);
     }
 
-    .mock-hero-copy,
-    .mock-art {
+    .mock-hero-copy {
       position: relative;
+      z-index: 2;
     }
 
     .mock-hero-copy {
@@ -1059,34 +1124,6 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       font-weight: 900;
       letter-spacing: 0;
       padding: 0.62rem 0.74rem;
-    }
-
-    .mock-art {
-      display: none;
-    }
-
-    .mock-art span {
-      position: absolute;
-      display: block;
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      background: rgba(255, 255, 255, 0.14);
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.18);
-    }
-
-    .mock-art span:nth-child(1) {
-      width: 190px;
-      height: 150px;
-      right: 0;
-      top: 12px;
-      border-radius: 8px;
-    }
-
-    .mock-art span:nth-child(2) {
-      width: 130px;
-      height: 90px;
-      right: 92px;
-      bottom: 8px;
-      border-radius: 8px;
     }
 
     .mock-service-row {
@@ -1266,10 +1303,6 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         linear-gradient(135deg, #171a1d 0%, #374151 56%, #f97316 100%);
     }
 
-    .roofing .mock-art span {
-      clip-path: polygon(50% 0, 100% 42%, 100% 100%, 0 100%, 0 42%);
-    }
-
     .law .mock-hero-shot::before {
       background: linear-gradient(180deg, rgba(8, 18, 32, 0.88) 0%, rgba(8, 18, 32, 0.54) 58%, rgba(8, 18, 32, 0.18) 100%);
     }
@@ -1278,41 +1311,12 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       align-content: end;
     }
 
-    .hvac .mock-art span {
-      border-radius: 999px;
-    }
-
     .restaurant .mock-service-row {
       grid-template-columns: 1.15fr 1fr 1fr;
     }
 
-    .restaurant .mock-art span:nth-child(1) {
-      border-radius: 999px;
-    }
-
     .dental .mock-hero-shot {
       border-radius: 18px 7px 18px 7px;
-    }
-
-    .dental .mock-art span {
-      border-radius: 999px 999px 8px 8px;
-    }
-
-    .pest .mock-art span:nth-child(1) {
-      border-radius: 999px;
-    }
-
-    .pest .mock-art span:nth-child(2) {
-      border-radius: 999px 999px 8px 8px;
-    }
-
-    .flooring .mock-art span {
-      border-radius: 4px;
-      transform: skewX(-10deg);
-    }
-
-    .auto .mock-art span {
-      border-radius: 999px 999px 8px 8px;
     }
 
     .urgency-block {
