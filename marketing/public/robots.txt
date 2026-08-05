@@ -76,5 +76,6 @@ Disallow: /api/
 Disallow: /login
 Disallow: /account
 
+Sitemap: https://www.websitesupportstudio.com/sitemap.xml
 Sitemap: https://www.websitesupportstudio.com/sitemap-index.xml
 Host: https://www.websitesupportstudio.com
