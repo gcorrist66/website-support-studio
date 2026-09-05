@@ -19,7 +19,17 @@ const lunaPalettes = [
         {marigoldNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
       <div class="mm-header-actions"><a class="mm-login" href="/templates/sample/back-office" data-ga-event="click_marigold_back_office">Preview Back Office</a><a class="mm-book" href="/templates/luna/salon/contact#appointment">Request Appointment</a></div>
+      <button class="mm-menu-toggle" type="button" aria-expanded="false" aria-controls="mm-mobile-drawer" aria-label="Open menu"><span></span><span></span><span></span></button>
     </header>
+    <div class="mm-drawer" id="mm-mobile-drawer" hidden>
+      <nav class="mm-drawer-nav" aria-label="Marigold & Mane mobile navigation">
+        {marigoldNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <div class="mm-drawer-actions">
+        <a class="mm-login" href="/templates/sample/back-office" data-ga-event="click_marigold_drawer_back_office">Preview Back Office</a>
+        <a class="mm-book" href="/templates/luna/salon/contact#appointment" data-ga-event="click_marigold_drawer_book">Request Appointment</a>
+      </div>
+    </div>
     <section class="mm-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this salon website?</p>
       <div>
@@ -46,8 +56,21 @@ const lunaPalettes = [
       <div><strong>{marigold.name}</strong><p>{marigold.location}</p><p>{marigold.badge} · Fictional example. Not a real salon.</p></div>
       <div><p>{marigold.address}</p><p><a href={marigold.phoneHref}>{marigold.phoneLabel}</a></p></div>
     </footer>
-    <div class="mm-sticky"><a href={marigold.checkoutHref} data-ga-event="click_marigold_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+    <div class="mm-sticky"><a class="mm-sticky-biz" href="/templates/luna/salon/contact#appointment" data-ga-event="click_marigold_mobile_sticky_appointment">Request Appointment</a><a class="mm-sticky-build" href={marigold.checkoutHref} data-ga-event="click_marigold_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var toggle = document.querySelector(".mm-menu-toggle");
+      var drawer = document.getElementById("mm-mobile-drawer");
+      if (!toggle || !drawer) return;
+      function open() { drawer.hidden = false; drawer.classList.add("is-open"); toggle.setAttribute("aria-expanded", "true"); toggle.setAttribute("aria-label", "Close menu"); }
+      function close() { drawer.classList.remove("is-open"); drawer.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-label", "Open menu"); }
+      toggle.addEventListener("click", function () { toggle.getAttribute("aria-expanded") === "true" ? close() : open(); });
+      drawer.addEventListener("click", function (e) { if (e.target.closest("a")) close(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { close(); toggle.focus(); } });
+    })();
+  </script>
 
   <style is:inline>
     body[data-page^="/templates/luna/salon"] .site-header,
@@ -67,6 +90,18 @@ const lunaPalettes = [
     .mm-book,.mm-btn-primary,.mm-sticky a { background:var(--mm-clay); color:#fff; }
     .mm-login { background:#fff; color:var(--mm-ink); border-color:rgba(47,33,28,.18); }
     .mm-header-actions { display:flex; align-items:center; gap:.55rem; }
+    .mm-menu-toggle { display:none; flex-direction:column; justify-content:center; gap:5px; width:44px; height:44px; padding:0 10px; border:1px solid rgba(47,33,28,.18); border-radius:12px; background:#fff; cursor:pointer; }
+    .mm-menu-toggle span { display:block; height:2px; width:100%; background:var(--mm-ink); border-radius:2px; transition:transform .2s ease,opacity .2s ease; }
+    .mm-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .mm-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity:0; }
+    .mm-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .mm-drawer { display:none; }
+    .mm-drawer[hidden] { display:none; }
+    .mm-drawer-nav { display:grid; gap:.2rem; }
+    .mm-drawer-nav a { padding:.85rem .6rem; border-radius:.9rem; color:var(--mm-ink); font-family:var(--font-mono); font-weight:800; font-size:.95rem; text-decoration:none; }
+    .mm-drawer-nav a[aria-current="page"] { color:var(--mm-clay); background:rgba(191,111,94,.1); }
+    .mm-drawer-actions { display:grid; gap:.55rem; margin-top:.9rem; padding-top:.9rem; border-top:1px solid rgba(191,111,94,.18); }
+    .mm-drawer-actions a { width:100%; }
     .mm-btn-secondary { background:#fff; color:var(--mm-ink); }
     .mm-btn-quiet { color:var(--mm-ink); background:transparent; }
     .mm-conversion-strip { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:.75rem 1rem; background:linear-gradient(90deg,var(--mm-ink),#7f4f62); color:var(--mm-cream); }
@@ -91,7 +126,9 @@ const lunaPalettes = [
     .mm-price { margin:.7rem 0 0; color:var(--mm-clay) !important; font-family:var(--font-mono); font-weight:900; font-size:.9rem; }
     .mm-soft { background:rgba(246,223,214,.58); }
     .mm-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.9rem; margin-top:1.4rem; }
-    .mm-gallery-tile { min-height:220px; display:flex; align-items:end; border-radius:1.6rem; padding:1rem; color:#fff; font-weight:900; background:linear-gradient(180deg,transparent,rgba(47,33,28,.78)), radial-gradient(circle at 15% 10%,#f5c8b8,var(--mm-clay)); }
+    .mm-gallery-tile { position:relative; margin:0; min-height:220px; overflow:hidden; border-radius:1.6rem; border:1px solid rgba(191,111,94,.2); box-shadow:0 18px 50px rgba(47,33,28,.1); background:var(--mm-blush); }
+    .mm-gallery-tile img { display:block; width:100%; height:100%; min-height:220px; object-fit:cover; }
+    .mm-gallery-tile .mm-caption { margin:0; }
     .mm-info-list { display:grid; gap:.7rem; padding:0; margin:1rem 0 0; list-style:none; }
     .mm-info-list li { padding:.8rem; border-radius:1rem; background:rgba(255,255,255,.7); border:1px solid rgba(191,111,94,.16); }
     .mm-form { display:grid; gap:.85rem; }
@@ -109,6 +146,6 @@ const lunaPalettes = [
     .mm-founder-cta .mm-btn-secondary,.mm-founder-cta .mm-btn-quiet { background:transparent; color:var(--mm-cream); border-color:rgba(255,248,239,.78); }
     .mm-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(191,111,94,.18); }
     .mm-sticky { display:none; }
-    @media (max-width:900px) { .mm-header{align-items:start}.mm-nav,.mm-header-actions{display:none}.mm-hero-grid,.mm-split,.mm-card-grid,.mm-gallery-grid,.mm-founder-cta,.mm-footer{grid-template-columns:1fr;display:grid}.mm-photo-card{min-height:280px}.mm-location-map{height:152px}.mm-hero h1{max-width:100%;font-size:clamp(1.95rem,8vw,3.1rem)}.mm-section{padding-left:1rem;padding-right:1rem}.mm-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,248,239,.92);border:1px solid rgba(191,111,94,.28);box-shadow:0 16px 44px rgba(47,33,28,.2);backdrop-filter:blur(12px)}.mm-sticky a{width:100%} }
+    @media (max-width:900px) { .mm-header{align-items:center}.mm-nav,.mm-header-actions{display:none}.mm-menu-toggle{display:flex}.mm-drawer{display:none;position:sticky;top:0;z-index:69;padding:1rem clamp(1rem,4vw,3rem) 1.25rem;background:rgba(255,248,239,.97);border-bottom:1px solid rgba(191,111,94,.18);backdrop-filter:blur(14px)}.mm-drawer.is-open{display:block}.mm-drawer[hidden]{display:none}.mm-hero-grid,.mm-split,.mm-card-grid,.mm-gallery-grid,.mm-founder-cta,.mm-footer{grid-template-columns:1fr;display:grid}.mm-photo-card{min-height:280px}.mm-location-map{height:152px}.mm-hero h1{max-width:100%;font-size:clamp(1.95rem,8vw,3.1rem)}.mm-section{padding-left:1rem;padding-right:1rem}.mm-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:flex;gap:.4rem;padding:.35rem;border-radius:999px;background:rgba(255,248,239,.92);border:1px solid rgba(191,111,94,.28);box-shadow:0 16px 44px rgba(47,33,28,.2);backdrop-filter:blur(12px)}.mm-sticky a{flex:1;min-width:0;padding:.7rem .4rem;font-size:.78rem;white-space:nowrap}.mm-sticky-biz{background:#fff;color:var(--mm-ink);border-color:rgba(47,33,28,.18)} }
   </style>
 </BaseLayout>

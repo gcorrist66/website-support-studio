@@ -37,12 +37,12 @@ export const moonroomMenu = [
 ] as const;
 
 export const moonroomFeatured = [
-  "House espresso bar",
-  "Seasonal cold brew",
-  "Morning pastry case",
-  "Window seats and work tables",
-  "Weekend makers pop-ups",
-  "Coffee boxes for small teams",
+  { img: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=900&q=80", caption: "House espresso bar" },
+  { img: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=80", caption: "Seasonal cold brew" },
+  { img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80", caption: "Morning pastry case" },
+  { img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=900&q=80", caption: "Window seats and work tables" },
+  { img: "https://images.unsplash.com/photo-1453614512568-c4024d13c247?auto=format&fit=crop&w=900&q=80", caption: "Weekend makers pop-ups" },
+  { img: "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=900&q=80", caption: "Coffee boxes for small teams" },
 ] as const;
 
 export const moonroomEvents = [

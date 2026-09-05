@@ -37,12 +37,12 @@ export const willowCollections = [
 ] as const;
 
 export const willowGallery = [
-  "New rack edit",
-  "Gift table",
-  "Linen weekend pieces",
-  "Accessory tray",
-  "Fitting room detail",
-  "Local maker shelf",
+  { img: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=900&q=80", caption: "New rack edit" },
+  { img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80", caption: "Gift table" },
+  { img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=80", caption: "Linen weekend pieces" },
+  { img: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=900&q=80", caption: "Accessory tray" },
+  { img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=900&q=80", caption: "Fitting room detail" },
+  { img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80", caption: "Local maker shelf" },
 ] as const;
 
 export const willowTrust = [

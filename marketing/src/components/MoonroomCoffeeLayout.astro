@@ -19,7 +19,17 @@ const lunaPalettes = [
         {moonroomNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
       <div class="mc-header-actions"><a class="mc-login" href="/templates/sample/back-office" data-ga-event="click_moonroom_back_office">Preview Back Office</a><a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit">Plan Your Visit</a></div>
+      <button class="mc-menu-toggle" type="button" aria-expanded="false" aria-controls="mc-mobile-drawer" aria-label="Open menu"><span></span><span></span><span></span></button>
     </header>
+    <div class="mc-drawer" id="mc-mobile-drawer" hidden>
+      <nav class="mc-drawer-nav" aria-label="Moonroom Coffee mobile navigation">
+        {moonroomNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <div class="mc-drawer-actions">
+        <a class="mc-login" href="/templates/sample/back-office" data-ga-event="click_moonroom_drawer_back_office">Preview Back Office</a>
+        <a class="mc-visit" href="/templates/luna/coffee-shop/contact#visit" data-ga-event="click_moonroom_drawer_visit">Plan Your Visit</a>
+      </div>
+    </div>
     <section class="mc-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this coffee shop website?</p>
       <div>
@@ -46,8 +56,21 @@ const lunaPalettes = [
       <div><strong>{moonroom.name}</strong><p>{moonroom.location}</p><p>{moonroom.badge} · Fictional example. Not a real coffee shop.</p></div>
       <div><p>{moonroom.address}</p><p><a href={moonroom.phoneHref}>{moonroom.phoneLabel}</a></p></div>
     </footer>
-    <div class="mc-sticky"><a href={moonroom.checkoutHref} data-ga-event="click_moonroom_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+    <div class="mc-sticky"><a class="mc-sticky-biz" href="/templates/luna/coffee-shop/contact#visit" data-ga-event="click_moonroom_mobile_sticky_visit">Plan Your Visit</a><a class="mc-sticky-build" href={moonroom.checkoutHref} data-ga-event="click_moonroom_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var toggle = document.querySelector(".mc-menu-toggle");
+      var drawer = document.getElementById("mc-mobile-drawer");
+      if (!toggle || !drawer) return;
+      function open() { drawer.hidden = false; drawer.classList.add("is-open"); toggle.setAttribute("aria-expanded", "true"); toggle.setAttribute("aria-label", "Close menu"); }
+      function close() { drawer.classList.remove("is-open"); drawer.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-label", "Open menu"); }
+      toggle.addEventListener("click", function () { toggle.getAttribute("aria-expanded") === "true" ? close() : open(); });
+      drawer.addEventListener("click", function (e) { if (e.target.closest("a")) close(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { close(); toggle.focus(); } });
+    })();
+  </script>
 
   <style is:inline>
     body[data-page^="/templates/luna/coffee-shop"] .site-header,
@@ -67,6 +90,18 @@ const lunaPalettes = [
     .mc-visit,.mc-btn-primary,.mc-sticky a { background:var(--mc-espresso); color:#fff; border-color:var(--mc-espresso); }
     .mc-login { background:#fffaf1; color:var(--mc-ink); border-color:rgba(58,36,24,.18); }
     .mc-header-actions { display:flex; align-items:center; gap:.55rem; }
+    .mc-menu-toggle { display:none; flex-direction:column; justify-content:center; gap:5px; width:44px; height:44px; padding:0 10px; border:1px solid rgba(58,36,24,.18); border-radius:12px; background:#fffaf1; cursor:pointer; }
+    .mc-menu-toggle span { display:block; height:2px; width:100%; background:var(--mc-ink); border-radius:2px; transition:transform .2s ease,opacity .2s ease; }
+    .mc-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .mc-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity:0; }
+    .mc-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .mc-drawer { display:none; }
+    .mc-drawer[hidden] { display:none; }
+    .mc-drawer-nav { display:grid; gap:.2rem; }
+    .mc-drawer-nav a { padding:.85rem .6rem; border-radius:.9rem; color:var(--mc-ink); font-family:var(--font-mono); font-weight:800; font-size:.95rem; text-decoration:none; }
+    .mc-drawer-nav a[aria-current="page"] { color:var(--mc-caramel); background:rgba(184,120,63,.1); }
+    .mc-drawer-actions { display:grid; gap:.55rem; margin-top:.9rem; padding-top:.9rem; border-top:1px solid rgba(58,36,24,.15); }
+    .mc-drawer-actions a { width:100%; }
     .mc-btn-secondary { background:#fffaf1; color:var(--mc-ink); }
     .mc-btn-quiet { color:var(--mc-ink); background:transparent; }
     .mc-conversion-strip { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:.75rem 1rem; background:linear-gradient(90deg,var(--mc-ink),var(--mc-espresso)); color:var(--mc-cream); }
@@ -91,7 +126,9 @@ const lunaPalettes = [
     .mc-price { margin:.7rem 0 0; color:var(--mc-caramel) !important; font-family:var(--font-mono); font-weight:900; font-size:.9rem; }
     .mc-soft { background:rgba(219,196,168,.42); }
     .mc-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.9rem; margin-top:1.4rem; }
-    .mc-gallery-tile { min-height:220px; display:flex; align-items:end; border-radius:1.6rem; padding:1rem; color:#fff; font-weight:900; background:linear-gradient(180deg,transparent,rgba(33,21,15,.8)),radial-gradient(circle at 20% 10%,#d7a66f,var(--mc-espresso)); }
+    .mc-gallery-tile { position:relative; margin:0; min-height:220px; overflow:hidden; border-radius:1.6rem; border:1px solid rgba(58,36,24,.16); box-shadow:0 18px 50px rgba(33,21,15,.1); background:#dbc4a8; }
+    .mc-gallery-tile img { display:block; width:100%; height:100%; min-height:220px; object-fit:cover; }
+    .mc-gallery-tile .mc-caption { margin:0; }
     .mc-info-list { display:grid; gap:.7rem; padding:0; margin:1rem 0 0; list-style:none; }
     .mc-info-list li { padding:.8rem; border-radius:1rem; background:rgba(255,250,241,.78); border:1px solid rgba(58,36,24,.12); }
     .mc-form { display:grid; gap:.85rem; }
@@ -109,6 +146,6 @@ const lunaPalettes = [
     .mc-founder-cta .mc-btn-secondary,.mc-founder-cta .mc-btn-quiet { background:transparent; color:var(--mc-cream); border-color:rgba(246,239,226,.78); }
     .mc-footer { display:flex; justify-content:space-between; gap:1rem; padding:2rem clamp(1rem,4vw,3rem) 6rem; border-top:1px solid rgba(58,36,24,.15); }
     .mc-sticky { display:none; }
-    @media (max-width:900px) { .mc-header{align-items:start}.mc-nav,.mc-header-actions{display:none}.mc-hero-grid,.mc-split,.mc-card-grid,.mc-gallery-grid,.mc-founder-cta,.mc-footer{grid-template-columns:1fr;display:grid}.mc-photo-card{min-height:280px}.mc-location-map{height:152px}.mc-hero h1{max-width:100%;font-size:clamp(1.95rem,8vw,3.1rem)}.mc-section{padding-left:1rem;padding-right:1rem}.mc-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,241,.92);border:1px solid rgba(184,120,63,.28);box-shadow:0 16px 44px rgba(33,21,15,.2);backdrop-filter:blur(12px)}.mc-sticky a{width:100%} }
+    @media (max-width:900px) { .mc-header{align-items:center}.mc-nav,.mc-header-actions{display:none}.mc-menu-toggle{display:flex}.mc-drawer{display:none;position:sticky;top:0;z-index:69;padding:1rem clamp(1rem,4vw,3rem) 1.25rem;background:rgba(246,239,226,.97);border-bottom:1px solid rgba(58,36,24,.15);backdrop-filter:blur(14px)}.mc-drawer.is-open{display:block}.mc-drawer[hidden]{display:none}.mc-hero-grid,.mc-split,.mc-card-grid,.mc-gallery-grid,.mc-founder-cta,.mc-footer{grid-template-columns:1fr;display:grid}.mc-photo-card{min-height:280px}.mc-location-map{height:152px}.mc-hero h1{max-width:100%;font-size:clamp(1.95rem,8vw,3.1rem)}.mc-section{padding-left:1rem;padding-right:1rem}.mc-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:flex;gap:.4rem;padding:.35rem;border-radius:999px;background:rgba(255,250,241,.92);border:1px solid rgba(184,120,63,.28);box-shadow:0 16px 44px rgba(33,21,15,.2);backdrop-filter:blur(12px)}.mc-sticky a{flex:1;min-width:0;padding:.7rem .4rem;font-size:.78rem;white-space:nowrap}.mc-sticky-biz{background:#fffaf1;color:var(--mc-ink);border-color:rgba(58,36,24,.18)} }
   </style>
 </BaseLayout>

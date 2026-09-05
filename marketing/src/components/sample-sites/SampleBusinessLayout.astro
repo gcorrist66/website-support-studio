@@ -60,10 +60,30 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
         {business.nav.map((item) => <a href={item.href} aria-current={item.page === page ? "page" : undefined}>{item.label}</a>)}
       </nav>
       <div class="sb-header-actions">
+        <a class="sb-login sb-phone" href={business.phoneHref} data-track={`${trackPrefix}-call-header`} data-ga-event={`click_${business.slug}_header_call`}><span aria-hidden="true">☎</span> {business.phoneLabel}</a>
         <a class="sb-login" href="/templates/sample/back-office" data-track={`${trackPrefix}-preview-back-office`} data-ga-event={`click__back_office`}>Preview Back Office</a>
         <a class="sb-top-cta" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_header_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
       </div>
+      <button class="sb-hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sb-mobile-drawer">
+        <span class="sb-hamburger-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
     </header>
+
+    <div class="sb-drawer-backdrop" hidden></div>
+    <nav class="sb-drawer" id="sb-mobile-drawer" aria-label={`${business.name} mobile navigation`} hidden>
+      <div class="sb-drawer-head">
+        <span class="sb-drawer-title">{business.name}</span>
+        <button class="sb-drawer-close" type="button" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="sb-drawer-links">
+        {business.nav.map((item) => <a href={item.href} aria-current={item.page === page ? "page" : undefined}>{item.label}</a>)}
+      </div>
+      <div class="sb-drawer-actions">
+        <a class="sb-login sb-phone" href={business.phoneHref} data-track={`${trackPrefix}-call-drawer`} data-ga-event={`click_${business.slug}_drawer_call`}><span aria-hidden="true">☎</span> {business.phoneLabel}</a>
+        <a class="sb-login" href="/templates/sample/back-office" data-track={`${trackPrefix}-preview-back-office`} data-ga-event={`click__drawer_back_office`}>Preview Back Office</a>
+        <a class="sb-top-cta" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_drawer_build`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+      </div>
+    </nav>
 
     <section class="sb-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this sample website?</p>
@@ -140,7 +160,7 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
           <div class="sb-container">
             <p class="sb-eyebrow">{business.proofLabel}</p>
             <h2>Sample service proof</h2>
-            <div class="sb-proof-grid">{business.proofItems.slice(0, 3).map((item) => <div class="sb-proof">{item}</div>)}</div>
+            <div class="sb-proof-grid">{business.proofItems.slice(0, 3).map((item, index) => <div class="sb-proof"><span class="sb-proof-index">Scenario {String(index + 1).padStart(2, "0")}</span><p class="sb-proof-text">{item}</p></div>)}</div>
             <div class="sb-actions"><a class="sb-btn sb-btn-secondary" href={samplePath(business, "proof")}>See sample scenarios</a></div>
           </div>
         </section>
@@ -330,7 +350,7 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
         </section>
         <section class="sb-section sb-soft">
           <div class="sb-container">
-            <div class="sb-proof-grid">{business.proofItems.map((item) => <div class="sb-proof">{item}</div>)}</div>
+            <div class="sb-proof-grid">{business.proofItems.map((item, index) => <div class="sb-proof"><span class="sb-proof-index">Scenario {String(index + 1).padStart(2, "0")}</span><p class="sb-proof-text">{item}</p></div>)}</div>
             <div class="sb-actions"><a class="sb-btn sb-btn-primary" href={samplePath(business, "contact")}>{business.primaryCtaLabel ?? "Ask a Question"}</a></div>
           </div>
         </section>
@@ -448,10 +468,46 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
       <div><p>{business.address}</p><p><a href={business.phoneHref}>{business.phoneLabel}</a></p></div>
     </footer>
 
-    <div class="sb-sticky"><a href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_mobile_sticky`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+    <div class="sb-sticky">
+      <a class="sb-sticky-call" href={business.phoneHref} data-track={`${trackPrefix}-call-sticky`} data-ga-event={`click_${business.slug}_mobile_sticky_call`}><span aria-hidden="true">☎</span> Call</a>
+      <a class="sb-sticky-build" href={checkoutHref} data-track={`${trackPrefix}-build-my-website`} data-ga-event={`click_${business.slug}_mobile_sticky`} data-ga-secondary-event="stripe_payment_link_click">Build My Website</a>
+    </div>
   </div>
 
   <QueryParamPreserver />
+
+  <script is:inline>
+    (function () {
+      var btn = document.querySelector(".sb-hamburger");
+      var drawer = document.getElementById("sb-mobile-drawer");
+      var backdrop = document.querySelector(".sb-drawer-backdrop");
+      var closeBtn = document.querySelector(".sb-drawer-close");
+      if (!btn || !drawer || !backdrop) return;
+      function open() {
+        drawer.hidden = false;
+        backdrop.hidden = false;
+        btn.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+      }
+      function close() {
+        drawer.hidden = true;
+        backdrop.hidden = true;
+        btn.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      }
+      btn.addEventListener("click", function () {
+        drawer.hidden ? open() : close();
+      });
+      backdrop.addEventListener("click", close);
+      if (closeBtn) closeBtn.addEventListener("click", close);
+      drawer.addEventListener("click", function (e) {
+        if (e.target.closest("a")) close();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !drawer.hidden) close();
+      });
+    })();
+  </script>
 
   <style is:inline>
     body[data-page^="/templates/sample/"] .site-header,body[data-page^="/templates/sample/"] .site-footer,body[data-page^="/templates/sample/"] .skip-link{display:none}
@@ -465,8 +521,18 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
     .sb-nav a,.sb-footer a{color:var(--sb-dark)}.sb-nav a[aria-current="page"]{color:var(--sb-dark);font-weight:950;text-decoration:underline;text-decoration-color:var(--sb-accent);text-underline-offset:.25rem}
     .sb-top-cta,.sb-login,.sb-btn,.sb-sticky a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.85rem 1.1rem;border:1px solid var(--sb-accent);font-family:var(--font-mono);font-weight:900;font-size:.86rem;text-decoration:none}
     .sb-top-cta,.sb-btn-primary,.sb-sticky a{background:var(--sb-dark);color:#fff;border-color:var(--sb-dark)}
+    .sb-sticky-call{background:#fff!important;color:var(--sb-dark)!important;border-color:color-mix(in srgb,var(--sb-accent) 45%,transparent)!important}
     .sb-login{background:#fff;color:var(--sb-dark);border-color:color-mix(in srgb,var(--sb-dark) 22%,transparent)}
     .sb-header-actions{display:flex;align-items:center;gap:.55rem}
+    .sb-phone{gap:.35rem;border-color:color-mix(in srgb,var(--sb-accent) 50%,transparent);color:var(--sb-accent)}.sb-phone span{font-size:.9em}
+    .sb-hamburger{display:none;align-items:center;justify-content:center;width:46px;height:46px;border-radius:.85rem;border:1px solid color-mix(in srgb,var(--sb-dark) 22%,transparent);background:#fff;cursor:pointer;padding:0}
+    .sb-hamburger-bars{display:grid;gap:5px;width:22px}.sb-hamburger-bars span{height:2px;width:100%;background:var(--sb-dark);border-radius:2px}
+    .sb-drawer-backdrop{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
+    .sb-drawer{position:fixed;z-index:96;top:0;right:0;height:100dvh;width:min(86vw,340px);display:flex;flex-direction:column;gap:1.1rem;padding:1.2rem;background:#fff;box-shadow:-18px 0 60px rgba(0,0,0,.28);overflow-y:auto}
+    .sb-drawer-head{display:flex;align-items:center;justify-content:space-between}.sb-drawer-title{font-family:Georgia,serif;font-weight:900;font-size:1.15rem;color:var(--sb-dark)}
+    .sb-drawer-close{appearance:none;border:none;background:transparent;font-size:1.8rem;line-height:1;color:var(--sb-dark);cursor:pointer;padding:.1rem .4rem}
+    .sb-drawer-links{display:flex;flex-direction:column;gap:.2rem;font-family:var(--font-mono);font-size:.95rem}.sb-drawer-links a{color:var(--sb-dark);text-decoration:none;padding:.7rem .5rem;border-radius:.7rem;border-bottom:1px solid color-mix(in srgb,var(--sb-dark) 8%,transparent)}.sb-drawer-links a[aria-current="page"]{font-weight:900;color:var(--sb-accent)}
+    .sb-drawer-actions{display:flex;flex-direction:column;gap:.6rem;margin-top:auto}.sb-drawer-actions a{width:100%}
     .sb-btn-secondary{background:#fff;color:var(--sb-dark)}
     .sb-btn-quiet{color:var(--sb-dark);background:transparent}
     .sb-conversion-strip{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;padding:.75rem 1rem;background:linear-gradient(90deg,var(--sb-dark),color-mix(in srgb,var(--sb-dark) 82%,var(--sb-accent)));color:#fff}.sb-conversion-strip p{margin:0;color:#fff;font-family:var(--font-mono);font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.sb-conversion-strip div{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center}.sb-conversion-strip a{display:inline-flex;align-items:center;justify-content:center;min-height:2.15rem;padding:0 .85rem;border-radius:999px;background:#fff;color:var(--sb-dark);border:2px solid color-mix(in srgb,var(--sb-accent) 70%,#fff);font-family:var(--font-mono);font-size:.74rem;font-weight:950;text-decoration:none;text-transform:uppercase;letter-spacing:.04em;box-shadow:0 10px 26px rgba(0,0,0,.16)}
@@ -476,7 +542,7 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
     .sb-container{max-width:1120px;margin:0 auto}.sb-eyebrow,.sb-sample{display:inline-flex;width:fit-content;border-radius:999px;font-family:var(--font-mono);font-size:.76rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
     .sb-eyebrow{color:var(--sb-accent)}.sb-sample{padding:.32rem .65rem;border:1px dashed color-mix(in srgb,var(--sb-accent) 55%,transparent);background:rgba(255,255,255,.68)}
     .sb-hero-grid,.sb-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:clamp(1.4rem,5vw,3.5rem);align-items:center}
-    .sb-hero h1{max-width:14ch;margin:.7rem 0 0;font-size:clamp(1.18rem,3.4vw,2.1rem);line-height:1.03;overflow-wrap:normal;word-break:normal}
+    .sb-hero h1{max-width:18ch;margin:.7rem 0 0;font-size:clamp(2rem,4.6vw,3.2rem);line-height:1.04;overflow-wrap:break-word;word-break:normal}
     .sb-lede{max-width:60ch;font-size:1.05rem;line-height:1.7}
     .sb-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.25rem}
     .sb-photo{position:relative;min-height:170px;overflow:hidden;border-radius:1.6rem;border:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent);box-shadow:0 28px 72px rgba(20,20,20,.16);background:var(--sb-soft)}
@@ -489,7 +555,9 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
     .sb-meta{margin:.7rem 0 0;color:var(--sb-dark)!important;font-family:var(--font-mono);font-weight:950;font-size:.9rem}
     .sb-soft{background:color-mix(in srgb,var(--sb-soft) 72%,#fff)}
     .sb-proof-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1.4rem}
-    .sb-proof{min-height:150px;display:flex;align-items:end;border-radius:1.6rem;padding:1rem;color:#fff;font-weight:900;background:linear-gradient(180deg,transparent,rgba(0,0,0,.82)),radial-gradient(circle at 18% 12%,var(--sb-accent),var(--sb-dark))}
+    .sb-proof{min-height:160px;display:flex;flex-direction:column;justify-content:space-between;gap:.9rem;border-radius:1.6rem;padding:1.15rem 1.2rem;color:#fff;background:linear-gradient(155deg,color-mix(in srgb,var(--sb-accent) 38%,var(--sb-dark)),var(--sb-dark));border:1px solid color-mix(in srgb,var(--sb-accent) 45%,transparent);box-shadow:0 18px 50px rgba(20,20,20,.18)}
+    .sb-proof-index{display:inline-flex;width:fit-content;align-items:center;border-radius:999px;padding:.3rem .7rem;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);font-family:var(--font-mono);font-size:.7rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase;color:#fff}
+    .sb-proof-text{margin:0;color:#fff!important;font-weight:800;font-size:1.02rem;line-height:1.4;text-wrap:balance}
     .sb-list{display:grid;gap:.7rem;padding:0;margin:1rem 0 0;list-style:none}.sb-list li{padding:.8rem;border-radius:1rem;background:rgba(255,255,255,.82);border:1px solid color-mix(in srgb,var(--sb-dark) 12%,transparent)}
     .sb-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:1.2rem}.sb-check-grid span,.sb-chip-panel span{border-radius:999px;background:color-mix(in srgb,var(--sb-accent) 12%,#fff);border:1px solid color-mix(in srgb,var(--sb-accent) 24%,#dbeafe);color:var(--sb-dark);font-family:var(--font-mono);font-size:.78rem;font-weight:950;padding:.72rem .9rem}
     .sb-owner-card{background:linear-gradient(135deg,rgba(255,255,255,.96),color-mix(in srgb,var(--sb-accent) 10%,#fff));border-color:color-mix(in srgb,var(--sb-accent) 28%,#dbeafe)}
@@ -503,11 +571,14 @@ const paletteExamples = stylePalettes[business.systemKey as keyof typeof stylePa
     .sb-founder-cta{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;margin:0 clamp(1rem,4vw,3rem) 2rem;padding:clamp(1.25rem,4vw,2rem);border-radius:2rem;background:linear-gradient(135deg,var(--sb-dark),color-mix(in srgb,var(--sb-dark) 78%,var(--sb-accent)));color:#fff;border:4px solid color-mix(in srgb,var(--sb-accent) 68%,#fff);box-shadow:0 26px 70px rgba(0,0,0,.2)}.sb-founder-cta h2,.sb-founder-cta p{color:#fff}.sb-founder-cta .sb-btn-primary{background:#fff;color:var(--sb-dark);border-color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.22)}.sb-founder-cta .sb-btn-secondary,.sb-founder-cta .sb-btn-quiet{background:transparent;color:#fff;border-color:rgba(255,255,255,.78)}
     .sb-footer{display:flex;justify-content:space-between;gap:1rem;padding:2rem clamp(1rem,4vw,3rem) 6rem;border-top:1px solid color-mix(in srgb,var(--sb-dark) 14%,transparent)}
     .sb-sticky{display:none}
+    .sb-drawer[hidden],.sb-drawer-backdrop[hidden]{display:none}
+    @media(min-width:901px){.sb-drawer,.sb-drawer-backdrop{display:none!important}}
     @media(max-width:900px){
-      .sb-header{align-items:start}.sb-nav,.sb-header-actions{display:none}.sb-hero-grid,.sb-split,.sb-card-grid,.sb-proof-grid,.sb-founder-cta,.sb-footer,.sb-area-grid,.sb-financing-grid{grid-template-columns:1fr;display:grid}
+      .sb-header{align-items:center}.sb-nav,.sb-header-actions{display:none}.sb-hamburger{display:inline-flex}.sb-hero-grid,.sb-split,.sb-card-grid,.sb-proof-grid,.sb-founder-cta,.sb-footer,.sb-area-grid,.sb-financing-grid{grid-template-columns:1fr;display:grid}
       .sb-check-grid{grid-template-columns:1fr}.sb-conversion-strip{padding:.65rem .85rem}.sb-conversion-strip a{width:100%}
-      .sb-photo{min-height:160px}.sb-hero-photo{min-height:150px}.sb-hero h1{max-width:100%;font-size:1.15rem}.sb-section{padding-left:1rem;padding-right:1rem}.sb-service-map{height:156px}.sb-map-pin{font-size:.65rem;padding:.15rem .32rem}
-      .sb-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--sb-accent) 28%,transparent);box-shadow:0 16px 44px rgba(0,0,0,.2);backdrop-filter:blur(12px)}.sb-sticky a{width:100%}
+      .sb-photo{min-height:160px}.sb-hero-photo{min-height:150px}.sb-hero h1{max-width:100%;font-size:clamp(1.7rem,7vw,2.3rem)}.sb-section{padding-left:1rem;padding-right:1rem}.sb-service-map{height:156px}.sb-map-pin{font-size:.65rem;padding:.15rem .32rem}
+      .sb-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:flex;gap:.4rem;padding:.35rem;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid color-mix(in srgb,var(--sb-accent) 28%,transparent);box-shadow:0 16px 44px rgba(0,0,0,.2);backdrop-filter:blur(12px)}
+      .sb-sticky a{flex:1;min-width:0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.sb-sticky-call{flex:0 0 auto;gap:.3rem}
     }
   </style>
 </BaseLayout>

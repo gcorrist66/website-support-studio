@@ -19,7 +19,17 @@ const lunaPalettes = [
         {willowNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
       </nav>
       <div class="wt-header-actions"><a class="wt-login" href="/templates/sample/back-office" data-ga-event="click_willow_back_office">Preview Back Office</a><a class="wt-visit" href="/templates/luna/boutique/visit">Plan Your Visit</a></div>
+      <button class="wt-menu-toggle" type="button" aria-expanded="false" aria-controls="wt-mobile-drawer" aria-label="Open menu"><span></span><span></span><span></span></button>
     </header>
+    <div class="wt-drawer" id="wt-mobile-drawer" hidden>
+      <nav class="wt-drawer-nav" aria-label="Willow Thread mobile navigation">
+        {willowNav.map((item) => <a href={item.href} aria-current={path === item.href ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <div class="wt-drawer-actions">
+        <a class="wt-login" href="/templates/sample/back-office" data-ga-event="click_willow_drawer_back_office">Preview Back Office</a>
+        <a class="wt-visit" href="/templates/luna/boutique/visit" data-ga-event="click_willow_drawer_visit">Plan Your Visit</a>
+      </div>
+    </div>
     <section class="wt-conversion-strip" aria-label="Founder Website Package actions">
       <p>Like this boutique website?</p>
       <div>
@@ -46,8 +56,21 @@ const lunaPalettes = [
       <div><strong>{willow.name}</strong><p>{willow.location}</p><p>{willow.badge} · Fictional example. Not a real boutique.</p></div>
       <div><p>{willow.address}</p><p><a href={willow.phoneHref}>{willow.phoneLabel}</a></p></div>
     </footer>
-    <div class="wt-sticky"><a href={willow.checkoutHref} data-ga-event="click_willow_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
+    <div class="wt-sticky"><a class="wt-sticky-biz" href="/templates/luna/boutique/visit" data-ga-event="click_willow_mobile_sticky_visit">Plan Your Visit</a><a class="wt-sticky-build" href={willow.checkoutHref} data-ga-event="click_willow_mobile_sticky" data-ga-secondary-event="stripe_payment_link_click">Build My Website</a></div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var toggle = document.querySelector(".wt-menu-toggle");
+      var drawer = document.getElementById("wt-mobile-drawer");
+      if (!toggle || !drawer) return;
+      function open() { drawer.hidden = false; drawer.classList.add("is-open"); toggle.setAttribute("aria-expanded", "true"); toggle.setAttribute("aria-label", "Close menu"); }
+      function close() { drawer.classList.remove("is-open"); drawer.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-label", "Open menu"); }
+      toggle.addEventListener("click", function () { toggle.getAttribute("aria-expanded") === "true" ? close() : open(); });
+      drawer.addEventListener("click", function (e) { if (e.target.closest("a")) close(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { close(); toggle.focus(); } });
+    })();
+  </script>
 
   <style is:inline>
     body[data-page^="/templates/luna/boutique"] .site-header,
@@ -67,6 +90,18 @@ const lunaPalettes = [
     .wt-visit,.wt-btn-primary,.wt-sticky a { background:var(--wt-ink); color:#fff; border-color:var(--wt-ink); }
     .wt-login { background:#fffaf5; color:var(--wt-ink); border-color:rgba(38,27,33,.18); }
     .wt-header-actions { display:flex; align-items:center; gap:.55rem; }
+    .wt-menu-toggle { display:none; flex-direction:column; justify-content:center; gap:5px; width:44px; height:44px; padding:0 10px; border:1px solid rgba(38,27,33,.18); border-radius:12px; background:#fffaf5; cursor:pointer; }
+    .wt-menu-toggle span { display:block; height:2px; width:100%; background:var(--wt-ink); border-radius:2px; transition:transform .2s ease,opacity .2s ease; }
+    .wt-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .wt-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity:0; }
+    .wt-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .wt-drawer { display:none; }
+    .wt-drawer[hidden] { display:none; }
+    .wt-drawer-nav { display:grid; gap:.2rem; }
+    .wt-drawer-nav a { padding:.85rem .6rem; border-radius:.9rem; color:var(--wt-ink); font-family:var(--font-mono); font-weight:800; font-size:.95rem; text-decoration:none; }
+    .wt-drawer-nav a[aria-current="page"] { color:var(--wt-berry); background:rgba(143,91,116,.1); }
+    .wt-drawer-actions { display:grid; gap:.55rem; margin-top:.9rem; padding-top:.9rem; border-top:1px solid rgba(38,27,33,.14); }
+    .wt-drawer-actions a { width:100%; }
     .wt-btn-secondary { background:#fffaf5; color:var(--wt-ink); }
     .wt-btn-quiet { color:var(--wt-ink); background:transparent; }
     .wt-conversion-strip { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:.75rem 1rem; background:linear-gradient(90deg,var(--wt-ink),var(--wt-berry)); color:var(--wt-cream); }
@@ -91,7 +126,9 @@ const lunaPalettes = [
     .wt-price { margin:.7rem 0 0; color:var(--wt-berry) !important; font-family:var(--font-mono); font-weight:900; font-size:.9rem; }
     .wt-soft { background:rgba(243,227,223,.62); }
     .wt-gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.9rem; margin-top:1.4rem; }
-    .wt-gallery-tile { min-height:220px; display:flex; align-items:end; border-radius:1.6rem; padding:1rem; color:#fff; font-weight:900; background:linear-gradient(180deg,transparent,rgba(38,27,33,.78)),radial-gradient(circle at 18% 10%,#cda3a4,var(--wt-berry)); }
+    .wt-gallery-tile { position:relative; margin:0; min-height:220px; overflow:hidden; border-radius:1.6rem; border:1px solid rgba(38,27,33,.14); box-shadow:0 18px 50px rgba(38,27,33,.1); background:#ead8d0; }
+    .wt-gallery-tile img { display:block; width:100%; height:100%; min-height:220px; object-fit:cover; }
+    .wt-gallery-tile .wt-caption { margin:0; }
     .wt-info-list { display:grid; gap:.7rem; padding:0; margin:1rem 0 0; list-style:none; }
     .wt-info-list li { padding:.8rem; border-radius:1rem; background:rgba(255,250,245,.78); border:1px solid rgba(38,27,33,.12); }
     .wt-form { display:grid; gap:.85rem; }
@@ -109,6 +146,6 @@ const lunaPalettes = [
     .wt-location-label { display:inline-flex; background:var(--wt-ink); color:#fff; border-radius:999px; padding:.33rem .62rem; font-size:.74rem; font-family:var(--font-mono); font-weight:900; }
     .wt-location-chipset { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:.8rem; }
     .wt-location-chipset span { padding:.26rem .66rem; border-radius:999px; border:1px solid rgba(38,27,33,.2); background:rgba(255,250,245,.82); font-family:var(--font-mono); font-size:.78rem; font-weight:900; }
-    @media (max-width:900px) { .wt-header{align-items:start}.wt-nav,.wt-header-actions{display:none}.wt-hero-grid,.wt-split,.wt-card-grid,.wt-gallery-grid,.wt-founder-cta,.wt-footer{grid-template-columns:1fr;display:grid}.wt-photo-card{min-height:260px}.wt-hero h1{max-width:100%}.wt-location-map{height:142px}.wt-section{padding-left:1rem;padding-right:1rem}.wt-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:block;padding:.35rem;border-radius:999px;background:rgba(255,250,245,.92);border:1px solid rgba(143,91,116,.28);box-shadow:0 16px 44px rgba(38,27,33,.2);backdrop-filter:blur(12px)}.wt-sticky a{width:100%} }
+    @media (max-width:900px) { .wt-header{align-items:center}.wt-nav,.wt-header-actions{display:none}.wt-menu-toggle{display:flex}.wt-drawer{display:none;position:sticky;top:0;z-index:69;padding:1rem clamp(1rem,4vw,3rem) 1.25rem;background:rgba(251,245,237,.97);border-bottom:1px solid rgba(38,27,33,.14);backdrop-filter:blur(14px)}.wt-drawer.is-open{display:block}.wt-drawer[hidden]{display:none}.wt-hero-grid,.wt-split,.wt-card-grid,.wt-gallery-grid,.wt-founder-cta,.wt-footer{grid-template-columns:1fr;display:grid}.wt-photo-card{min-height:260px}.wt-hero h1{max-width:100%}.wt-location-map{height:142px}.wt-section{padding-left:1rem;padding-right:1rem}.wt-sticky{position:fixed;z-index:90;left:.75rem;right:.75rem;bottom:.75rem;display:flex;gap:.4rem;padding:.35rem;border-radius:999px;background:rgba(255,250,245,.92);border:1px solid rgba(143,91,116,.28);box-shadow:0 16px 44px rgba(38,27,33,.2);backdrop-filter:blur(12px)}.wt-sticky a{flex:1;min-width:0;padding:.7rem .4rem;font-size:.78rem;white-space:nowrap}.wt-sticky-biz{background:#fffaf5;color:var(--wt-ink);border-color:rgba(38,27,33,.18)} }
   </style>
 </BaseLayout>

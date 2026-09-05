@@ -39,12 +39,12 @@ export const marigoldServices = [
 ] as const;
 
 export const marigoldGallery = [
-  "Soft brunette gloss",
-  "Face-framing layers",
-  "Lived-in blonde",
-  "Loose event waves",
-  "Copper refresh",
-  "Quiet salon detail",
+  { img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=900&q=80", caption: "Soft brunette gloss" },
+  { img: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=900&q=80", caption: "Face-framing layers" },
+  { img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=900&q=80", caption: "Lived-in blonde" },
+  { img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=900&q=80", caption: "Loose event waves" },
+  { img: "https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=900&q=80", caption: "Copper refresh" },
+  { img: "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=900&q=80", caption: "Quiet salon detail" },
 ] as const;
 
 export const marigoldTrust = [

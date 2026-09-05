@@ -45,18 +45,29 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
           <a class="btn btn-ghost" href="/contact" data-ga-event="click_home_book_call">Book A Call</a>
         </div>
       </div>
-      <aside class="home-back-office-card" aria-label="Back Office preview summary">
+      <form class="home-sample-request-card" id="home-sample-request-form" aria-label="Custom sample website request" novalidate>
         <div class="home-card-topbar"><span></span><span></span><span></span></div>
-        <p class="kicker">Website + Back Office</p>
-        <h2>What you get after launch</h2>
-        <ul>
-          <li>Leads and form submissions</li>
-          <li>Simple analytics and top pages</li>
-          <li>Website requests and support</li>
-          <li>Testimonials, profile, and plan info</li>
-        </ul>
-        <a class="btn btn-green" href="/templates/sample/back-office" data-ga-event="click_home_card_back_office">Open Sample Back Office</a>
-      </aside>
+        <p class="kicker">Custom sample site</p>
+        <h2>Don't like our samples? Let us build you one.</h2>
+        <label>
+          <span>Your website URL</span>
+          <input name="website" type="url" autocomplete="url" placeholder="https://yourwebsite.com" required />
+        </label>
+        <label>
+          <span>What do you like about your site?</span>
+          <textarea name="likes" rows="3" required></textarea>
+        </label>
+        <label>
+          <span>What don't you like?</span>
+          <textarea name="dislikes" rows="3" required></textarea>
+        </label>
+        <label>
+          <span>What do you wish it had?</span>
+          <textarea name="wishlist" rows="3" required></textarea>
+        </label>
+        <button class="btn btn-green" type="submit" data-ga-event="submit_home_sample_request">Build My Sample Site</button>
+        <p class="home-sample-request-status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 
@@ -242,6 +253,30 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
     </div>
   </section>
 
+  <script is:inline>
+    (() => {
+      const form = document.getElementById("home-sample-request-form");
+      if (!(form instanceof HTMLFormElement)) return;
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const status = form.querySelector("[role='status']");
+        if (!(status instanceof HTMLElement)) return;
+
+        if (!form.checkValidity()) {
+          status.textContent = "Please fill out each field so we can shape the sample around your site.";
+          return;
+        }
+
+        const payload = Object.fromEntries(new FormData(form).entries());
+        console.log("WSS custom sample request:", payload);
+        status.textContent = "Thanks. Your custom sample request is ready for review.";
+        form.reset();
+      });
+    })();
+  </script>
+
   <style>
     .home-hero--tight { padding:clamp(1.15rem,3vw,2.4rem) 0 clamp(.85rem,2vw,1.5rem); }
     .home-hero-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,.72fr); gap:clamp(1.25rem,4vw,2.5rem); align-items:center; }
@@ -251,12 +286,16 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
     .home-price-strip span { display:inline-flex; align-items:center; gap:.35rem; border:1px solid var(--border); border-radius:999px; padding:.55rem .75rem; background:var(--surface); color:var(--text-muted); font-size:.92rem; }
     .home-price-strip strong { color:var(--text); }
     .home-actions { gap:.65rem; margin-top:1.1rem; }
-    .home-back-office-card { border:1px solid var(--border); border-radius:1.5rem; padding:1rem; background:linear-gradient(180deg,#fff,var(--surface-muted)); box-shadow:0 22px 70px rgba(15,23,42,.08); }
+    .home-sample-request-card { display:grid; gap:.7rem; border:1px solid var(--border); border-radius:1.5rem; padding:1rem; background:linear-gradient(180deg,#fff,var(--surface-muted)); box-shadow:0 22px 70px rgba(15,23,42,.08); }
     .home-card-topbar { display:flex; gap:.35rem; margin-bottom:1rem; }
     .home-card-topbar span { width:.7rem; height:.7rem; border-radius:999px; background:var(--border); }
-    .home-back-office-card h2 { margin:.25rem 0 .65rem; font-size:1.35rem; }
-    .home-back-office-card ul { display:grid; gap:.55rem; margin:0 0 1rem; padding:0; list-style:none; color:var(--text-muted); }
-    .home-back-office-card li { padding:.6rem .7rem; border:1px solid var(--border); border-radius:.8rem; background:#fff; }
+    .home-sample-request-card h2 { margin:.25rem 0 .15rem; font-size:1.35rem; }
+    .home-sample-request-card label { display:grid; gap:.35rem; color:var(--text); font-size:.82rem; font-weight:700; }
+    .home-sample-request-card input,
+    .home-sample-request-card textarea { width:100%; border:1px solid var(--border); border-radius:.8rem; background:#fff; color:var(--text); font:inherit; font-size:.88rem; padding:.65rem .7rem; }
+    .home-sample-request-card textarea { min-height:4.5rem; resize:vertical; }
+    .home-sample-request-card .btn { width:max-content; margin-top:.15rem; }
+    .home-sample-request-status { min-height:1.1rem; margin:0; color:var(--text-muted); font-size:.82rem; }
     .home-examples { padding-top:clamp(0.6rem,1.8vw,1.2rem); }
     .home-section-head { display:grid; grid-template-columns:minmax(0,.95fr) minmax(260px,.7fr); gap:1rem; align-items:end; margin-bottom:1.25rem; }
     .home-section-head h2 { margin-top:0; }
@@ -276,6 +315,6 @@ const homepageDesignSystems = DESIGN_SYSTEMS.slice(0, 6);
     .home-dashboard-table em { font-style:normal; border-radius:999px; padding:.25rem .45rem; background:#e8f4ec; color:#17633f; font-family:var(--font-mono); font-size:.7rem; font-weight:900; }
     .home-summary { max-width:880px; }
     @media (max-width:900px) { .home-hero-grid,.home-section-head,.home-back-office-grid { grid-template-columns:1fr; } .home-hero h1 { max-width:100%; font-size:clamp(2.8rem,14vw,4.5rem); } .home-dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media (max-width:640px) { .home-hero--tight { padding-top:1.75rem; } .home-actions .btn { width:100%; justify-content:center; } .home-price-strip span { width:100%; } .home-dashboard-nav,.home-dashboard-table p { display:grid; } .home-dashboard-stats { grid-template-columns:1fr; } }
+    @media (max-width:640px) { .home-hero--tight { padding-top:1.75rem; } .home-actions .btn,.home-sample-request-card .btn { width:100%; justify-content:center; } .home-price-strip span { width:100%; } .home-dashboard-nav,.home-dashboard-table p { display:grid; } .home-dashboard-stats { grid-template-columns:1fr; } }
   </style>
 </BaseLayout>
