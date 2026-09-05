@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+dist
+.env
+.vscode
+.supabase/
+supabase/.temp/
+.vercel/
+artifacts/

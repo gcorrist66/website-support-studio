@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corriston Master Prospect Database v1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root {
+    --amber: #F4B142; --cyan: #35DCEA; --blue: #0443FB; --mulberry: #A83489;
+    --ink: #0B1220; --off-white: #FAFAF7; --soft: #F1F5F9; --border: #E2E8F0;
+    --green: #16A34A; --red: #DC2626; --orange: #EA580C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'JetBrains Mono', monospace; background: var(--off-white); color: var(--ink); font-size: 13px; line-height: 1.6; }
+
+  .topbar { background: var(--ink); padding: 12px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .wordmark { font-size: 14px; font-weight: 800; color: #F1F5F9; }
+  .wordmark span { color: var(--blue); }
+  .badge { background: var(--amber); color: var(--ink); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 4px; }
+
+  .shell { display: flex; min-height: calc(100vh - 49px); }
+  .sidebar { width: 220px; background: #fff; border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; position: sticky; top: 49px; height: calc(100vh - 49px); overflow-y: auto; }
+  .nav-section { padding: 6px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94A3B8; margin-top: 16px; }
+  .nav-item { display: block; padding: 7px 16px; font-size: 12px; font-weight: 700; color: #475569; text-decoration: none; cursor: pointer; border-left: 2px solid transparent; }
+  .nav-item:hover, .nav-item.active { color: var(--blue); border-left-color: var(--blue); background: rgba(4, 67, 251, 0.04); }
+  .nav-item.active { color: var(--blue); border-left-color: var(--blue); }
+
+  .main { flex: 1; padding: 32px; max-width: 1300px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .page-title { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .page-sub { font-size: 12px; color: #64748B; margin-bottom: 28px; }
+
+  /* STAT CARDS */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #64748B; margin-bottom: 8px; }
+  .stat-value { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+  .stat-hint { font-size: 10px; color: #94A3B8; margin-top: 4px; }
+
+  /* TABLE */
+  .table-wrap { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; overflow-x: auto; margin-bottom: 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { text-align: left; padding: 8px 10px; background: var(--soft); color: #475569; font-weight: 700; font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #F8FAFC; }
+
+  /* BADGES */
+  .pill { padding: 2px 8px; border-radius: 20px; font-size: 9px; font-weight: 700; white-space: nowrap; display: inline-block; }
+  .pill-p1 { background: #DCFCE7; color: #166534; }
+  .pill-p2 { background: #FEF9C3; color: #854D0E; }
+  .pill-p3 { background: #F1F5F9; color: #475569; }
+  .pill-wss { background: #FFF7ED; color: #C2410C; }
+  .pill-cbo { background: #EFF6FF; color: #1D4ED8; }
+  .pill-is  { background: #FAF5FF; color: #7E22CE; }
+  .pill-ch  { background: #F0FDF4; color: #15803D; }
+  .pill-multi { background: #1E293B; color: #F1F5F9; }
+  .pill-yes { background: #DCFCE7; color: #166534; }
+  .pill-no  { background: #F1F5F9; color: #94A3B8; }
+
+  /* PRODUCT LISTS */
+  .product-list { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  .product-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .product-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .product-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .product-name { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; }
+  .product-desc { font-size: 10px; color: #64748B; margin-top: 2px; }
+  .prospect-row { padding: 10px 18px; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; }
+  .prospect-row:last-child { border-bottom: none; }
+  .rank { font-size: 13px; font-weight: 800; color: #CBD5E1; width: 20px; }
+  .p-name { font-size: 12px; font-weight: 700; color: var(--ink); }
+  .p-co { font-size: 10px; color: #64748B; margin-top: 1px; }
+  .p-why { font-size: 10px; color: #94A3B8; margin-top: 4px; line-height: 1.5; }
+
+  /* SEGMENTS */
+  .segment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .seg-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .seg-name { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .seg-count { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+  .seg-products { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+  .seg-notes { font-size: 11px; color: #64748B; line-height: 1.6; }
+
+  /* DATA QUALITY */
+  .dq-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .dq-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .dq-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #64748B; margin-bottom: 8px; }
+  .dq-value { font-size: 28px; font-weight: 800; }
+  .dq-bar { height: 6px; background: var(--soft); border-radius: 3px; margin-top: 8px; }
+  .dq-fill { height: 6px; border-radius: 3px; }
+
+  /* GO/NO-GO */
+  .gonogo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .go-box { border-radius: 12px; padding: 18px 22px; }
+  .go-box.go { background: #F0FDF4; border: 2px solid var(--green); }
+  .go-box.nogo { background: #FFF7ED; border: 2px solid #F59E0B; }
+  .go-label { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+  .go-box.go .go-label { color: var(--green); }
+  .go-box.nogo .go-label { color: #B45309; }
+  .go-item { font-size: 11px; margin-bottom: 6px; display: flex; gap: 8px; line-height: 1.5; }
+
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: var(--soft); padding: 1px 5px; border-radius: 4px; font-size: 10px; }
+  .info-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px 16px; font-size: 11px; color: #1E40AF; margin-bottom: 20px; line-height: 1.7; }
+  .section-title { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wordmark">corriston<span>_</span>consulting</div>
+  <div class="badge">MASTER PROSPECT DATABASE v1 — GARY REVIEW</div>
+  <div style="color:#64748B; font-size:11px;">2026-06-14 · 30 prospects · Nothing sent · Nothing imported</div>
+</div>
+
+<div class="shell">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item active" onclick="show('overview')">database overview</a>
+    <div class="nav-section">By Product</div>
+    <a class="nav-item" onclick="show('wss')">website support studio</a>
+    <a class="nav-item" onclick="show('cbo')">campaign budget optimizer</a>
+    <a class="nav-item" onclick="show('intrynsync')">intrynsync</a>
+    <a class="nav-item" onclick="show('conversionhealth')">conversionhealth</a>
+    <div class="nav-section">Analysis</div>
+    <a class="nav-item" onclick="show('master')">master prospect table</a>
+    <a class="nav-item" onclick="show('segments')">segmentation</a>
+    <a class="nav-item" onclick="show('warm')">linkedin warm list</a>
+    <a class="nav-item" onclick="show('dq')">data quality report</a>
+    <a class="nav-item" onclick="show('gonogo')">go / no-go</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- ===================== OVERVIEW ===================== -->
+    <div id="sec-overview" class="section active">
+      <div class="page-title">corriston_master_prospects_v1</div>
+      <div class="page-sub">Company-wide prospect database — WSS · CBO · IntrynSync · ConversionHealth · Future Products. Do NOT merge into WSS CRM. Nothing sent. Nothing imported.</div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Total Prospects</div>
+          <div class="stat-value" style="color:var(--blue)">30</div>
+          <div class="stat-hint">Across all 4 products</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">P1 Prospects</div>
+          <div class="stat-value" style="color:var(--green)">14</div>
+          <div class="stat-hint">Highest priority — act first</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">P2 Prospects</div>
+          <div class="stat-value" style="color:#854D0E">14</div>
+          <div class="stat-hint">Strong fit — second wave</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Multi-Product Fits</div>
+          <div class="stat-value" style="color:var(--mulberry)">11</div>
+          <div class="stat-hint">Qualify for 2+ products</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">With LinkedIn URL</div>
+          <div class="stat-value" style="color:var(--amber)">29</div>
+          <div class="stat-hint">1 personal URL TBC</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Constraints (enforce always):</strong> Do NOT touch WSS CRM. Do NOT send messages. Do NOT send connection requests. Do NOT create campaigns. Do NOT import into Zoho. This database is for planning and qualification only until Gary gives GO.
+      </div>
+
+      <!-- Product breakdown -->
+      <div class="section-title">Prospect breakdown by product</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;">
+        <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:16px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#C2410C;margin-bottom:6px;">WSS</div>
+          <div style="font-size:28px;font-weight:800;color:#C2410C;">8</div>
+          <div style="font-size:10px;color:#92400E;margin-top:4px;">Multi-location home service groups. CMOs + marketing directors at PE-backed platforms managing 10–30+ brands.</div>
+          <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;"><span class="pill pill-p1">3 P1</span><span class="pill pill-p2">4 P2</span><span class="pill pill-p3">1 P3</span></div>
+        </div>
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:16px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#1D4ED8;margin-bottom:6px;">CBO</div>
+          <div style="font-size:28px;font-weight:800;color:#1D4ED8;">14</div>
+          <div style="font-size:10px;color:#1E40AF;margin-top:4px;">Agency owners + in-house marketing leaders managing $50K+/month in multi-platform paid media across Google / Meta / LinkedIn / TikTok.</div>
+          <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;"><span class="pill pill-p1">8 P1</span><span class="pill pill-p2">6 P2</span></div>
+        </div>
+        <div style="background:#FAF5FF;border:1px solid #E9D5FF;border-radius:10px;padding:16px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#7E22CE;margin-bottom:6px;">IntrynSync</div>
+          <div style="font-size:28px;font-weight:800;color:#7E22CE;">7</div>
+          <div style="font-size:10px;color:#5B21B6;margin-top:4px;">RevOps consultants + Marketing Ops directors managing complex multi-tool stacks (Marketo + HubSpot + Salesforce + Pardot). Several are community influencers.</div>
+          <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;"><span class="pill pill-p1">4 P1</span><span class="pill pill-p2">3 P2</span></div>
+        </div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:16px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#15803D;margin-bottom:6px;">ConversionHealth</div>
+          <div style="font-size:28px;font-weight:800;color:#15803D;">11</div>
+          <div style="font-size:10px;color:#166534;margin-top:4px;">Agencies actively selling CRO + paid media together, plus in-house marketing leaders where conversion signal integrity is mission-critical.</div>
+          <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;"><span class="pill pill-p1">7 P1</span><span class="pill pill-p2">4 P2</span></div>
+        </div>
+      </div>
+
+      <!-- ICP definitions -->
+      <div class="section-title">Ideal customer profiles</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;">
+          <div style="font-size:12px;font-weight:800;margin-bottom:8px;">WSS — Scale ICP</div>
+          <div style="font-size:11px;color:#475569;line-height:1.7;">PE-backed or owner-operated multi-location home service groups managing 3+ brands or 5+ locations. CMO, Director of Marketing, or President. Pain: maintaining consistent web presence across all locations without in-house dev. Segment: Home Services Scale.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;">
+          <div style="font-size:12px;font-weight:800;margin-bottom:8px;">CBO — Agency ICP</div>
+          <div style="font-size:11px;color:#475569;line-height:1.7;">Agency owner or Head of Paid Media managing $50K+/month in multi-platform ad spend (Google + Meta + at minimum one other platform). Pain: making cross-platform budget decisions without a unified intelligence layer. Segment: Agencies.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;">
+          <div style="font-size:12px;font-weight:800;margin-bottom:8px;">CBO — In-House ICP</div>
+          <div style="font-size:11px;color:#475569;line-height:1.7;">VP Marketing or SVP Marketing at a mid-market ecommerce or SaaS company with $2M+/year ad spend across 3+ platforms. Pain: platform reps each claim credit, no source-of-truth for where the next dollar goes. Segment: Ecommerce / B2B SaaS.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;">
+          <div style="font-size:12px;font-weight:800;margin-bottom:8px;">IntrynSync ICP</div>
+          <div style="font-size:11px;color:#475569;line-height:1.7;">Marketing Ops Manager, RevOps Director, or Fractional RevOps consultant managing 4+ integrated SaaS tools (Marketo/HubSpot + Salesforce + any data warehouse). Pain: data sync failures, workflow orchestration gaps, AI integrations that break on schema change. Segment: RevOps / MarOps.</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;">
+          <div style="font-size:12px;font-weight:800;margin-bottom:8px;">ConversionHealth ICP</div>
+          <div style="font-size:11px;color:#475569;line-height:1.7;">Agency running paid media + CRO together, or in-house marketing director at a company where AI optimization tools are making decisions on degraded conversion signals. Pain: GA4 / pixel drift / iOS changes / third-party cookie deprecation eroding signal confidence without anyone auditing it systematically. Segment: Agencies / Ecommerce / B2B SaaS.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== WSS ===================== -->
+    <div id="sec-wss" class="section">
+      <div class="page-title">WSS — Top Prospects</div>
+      <div class="page-sub">Multi-location home service groups. $99–$499/month managed website support. Target: CMOs + Marketing Directors at PE-backed platforms.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Company</th><th>Contact</th><th>Title</th><th>Segment</th><th>Size</th><th>Location</th><th>Priority</th><th>LinkedIn</th><th>Why WSS</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--amber)">#1</td><td><strong>Any Hour Group</strong><div style="font-size:9px;color:#94A3B8">anyhourgroup.com</div></td><td>Mike Wilson</td><td>CMO</td><td>Home Services Scale</td><td>1,500+ / 29 locations</td><td>Orem, UT</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/mike-wilson-101490187" target="_blank">↗ profile</a></td><td>PE-backed 21+ brands. CMO managing web presence for all of them.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#2</td><td><strong>Southern Home Services</strong><div style="font-size:9px;color:#94A3B8">southernhomeservices.com</div></td><td>James Lyons</td><td>Director of Marketing</td><td>Home Services Scale</td><td>501-1,000 / 11 states</td><td>Maitland, FL</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/jimmy-john-lyons" target="_blank">↗ profile</a></td><td>Gryphon-backed. 10+ local brands across 11 states. Marketing Director manages all web properties.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#3</td><td><strong>Redwood Services</strong><div style="font-size:9px;color:#94A3B8">redwoodservices.com</div></td><td>Raj Midha</td><td>CMO</td><td>Home Services Scale</td><td>501-1,000 / 18 brands</td><td>Memphis, TN</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/raj-midha-165590" target="_blank">↗ profile</a></td><td>$500M+ revenue platform. Freshly appointed CMO building marketing infrastructure.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#4</td><td><strong>JP Pest Services</strong><div style="font-size:9px;color:#94A3B8">jppestservices.com</div></td><td>Joe Pestana</td><td>President</td><td>Home Services Scale</td><td>84 / NH+MA+ME+VT</td><td>Milford, NH</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/joe-pestana-21921131" target="_blank">↗ profile</a></td><td>Largest pest control in NH. Multi-state. Family-owned at the scale where web ops needs external support.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#5</td><td><strong>Green Pest Solutions</strong><div style="font-size:9px;color:#94A3B8">greenpestsolutions.com</div></td><td>Matt Jesson</td><td>CEO / Founder</td><td>Home Services Scale</td><td>100+ / 3 states</td><td>West Chester, PA</td><td><span class="pill pill-p2">P2</span></td><td><span style="font-size:10px;color:#94A3B8">Search LinkedIn directly</span></td><td>Largest locally-owned pest control in PA/NJ/DE. Dual-brand. Titan 100. Growing fast.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#6</td><td><strong>Carolina Pest Management</strong><div style="font-size:9px;color:#94A3B8">carolinapest.com</div></td><td>Kristin Dodd-Tarleton</td><td>President</td><td>Home Services Scale</td><td>75+ / NC multi-location</td><td>Monroe, NC</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/kristin-dodd-00a8236" target="_blank">↗ profile</a></td><td>75-year-old family business. President hands-on. Open to solutions that reduce ops burden.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#7</td><td><strong>Horizon Pest Control</strong><div style="font-size:9px;color:#94A3B8">horizonpestcontrol.com</div></td><td>Bernie Holst III</td><td>CEO</td><td>Home Services Scale</td><td>50+ / NJ+NY</td><td>Midland Park, NJ</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/bernie-holst" target="_blank">↗ profile</a></td><td>50-year-old firm. Multiple NJ/NY locations. Dense market. Need to professionalize digital ops.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#8</td><td><strong>Predator Services of America</strong></td><td>Christopher Kyriakides</td><td>President</td><td>Home Services Scale</td><td>10-25</td><td>FL</td><td><span class="pill pill-p3">P3</span></td><td><a href="https://linkedin.com/in/christopher-kyriakides-a243b11a7" target="_blank">↗ profile</a></td><td>Multi-service certified operator. Growing. Likely handles web manually. Needs WSS managed approach.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================== CBO ===================== -->
+    <div id="sec-cbo" class="section">
+      <div class="page-title">CBO — Top Prospects</div>
+      <div class="page-sub">Campaign Budget Optimizer. AI cross-platform budget allocation. Target: Agency owners + in-house marketing leaders managing $50K+/month across Google, Meta, LinkedIn, TikTok, Microsoft.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Company</th><th>Contact</th><th>Title</th><th>Segment</th><th>Size</th><th>Location</th><th>Priority</th><th>LinkedIn</th><th>Why CBO</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--amber)">#1</td><td><strong>Disruptive Advertising</strong><div style="font-size:9px;color:#94A3B8">disruptiveadvertising.com</div></td><td>Jacob Baadsgaard</td><td>Founder & CEO</td><td>Agencies</td><td>51-200</td><td>Pleasant Grove, UT</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/jakebaadsgaard" target="_blank">↗ profile</a></td><td>Google Premier Partner + Meta Business Partner. Manages multi-platform budgets for 100s of clients.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#2</td><td><strong>KlientBoost</strong><div style="font-size:9px;color:#94A3B8">klientboost.com</div></td><td>Johnathan Dane</td><td>Founder & CEO</td><td>Agencies</td><td>88-100</td><td>Costa Mesa, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/johnathandane" target="_blank">↗ profile</a></td><td>PPC + CRO combined. 200+ active clients across SaaS + ecommerce. Stanford guest lecturer.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#3</td><td><strong>Hawke Media</strong><div style="font-size:9px;color:#94A3B8">hawkemedia.com</div></td><td>Erik Huberman</td><td>Founder & CEO</td><td>Agencies</td><td>300+</td><td>Los Angeles, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/erikhuberman" target="_blank">↗ profile</a></td><td>5,000+ ecommerce brand clients. Built Hawke.AI — strong appetite for media efficiency signal tools.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#4</td><td><strong>Single Grain</strong><div style="font-size:9px;color:#94A3B8">singlegrain.com</div></td><td>Eric Siu</td><td>CEO</td><td>Agencies</td><td>74</td><td>Los Angeles, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/ericosiu" target="_blank">↗ profile</a></td><td>Marketing School podcast (1.6M+ downloads/month). Potential channel partner + direct buyer.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#5</td><td><strong>Jordan Digital Marketing</strong><div style="font-size:9px;color:#94A3B8">jordandigitalmarketing.com</div></td><td>Tyler Jordan</td><td>Founder & CEO</td><td>Agencies</td><td>35</td><td>San Francisco, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/tylerandrewjordan" target="_blank">↗ profile</a></td><td>Exclusively focused on high-growth SaaS. Google / YouTube / Facebook / Instagram / LinkedIn / Twitter. LP at MKT1.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#6</td><td><strong>Workshop Digital</strong><div style="font-size:9px;color:#94A3B8">workshopdigital.com</div></td><td>Morgan Jarvis</td><td>Director of Paid Media</td><td>Agencies</td><td>20-50</td><td>Richmond, VA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/morganmackenziejarvis" target="_blank">↗ profile</a></td><td>Best Small PPC Agency — US Search Awards 2025. Publishes on AI + first-party data in paid media.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#7</td><td><strong>iHerb</strong><div style="font-size:9px;color:#94A3B8">iherb.com</div></td><td>Neil Folgate</td><td>SVP Global Marketing</td><td>Ecommerce</td><td>1,000-5,000</td><td>Pasadena, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/neilfolgate" target="_blank">↗ profile</a></td><td>$200M+ annual ad spend. Global ecommerce. Cross-platform budget intelligence at scale.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#8</td><td><strong>Directive Consulting</strong><div style="font-size:9px;color:#94A3B8">directiveconsulting.com</div></td><td>Garrett Mehrguth</td><td>Co-Founder & CEO</td><td>Agencies</td><td>101-250</td><td>Irvine, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/garrettmehrguth" target="_blank">↗ profile</a></td><td>Most prominent B2B SaaS paid media agency in US. Clients: Dropbox, AWS, Gong. Active content publisher.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#9</td><td><strong>G2</strong><div style="font-size:9px;color:#94A3B8">g2.com</div></td><td>Palmer Houchins</td><td>VP & Head of Marketing</td><td>B2B SaaS</td><td>500-1,000</td><td>Atlanta, GA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/palmerhouchins" target="_blank">↗ profile</a></td><td>Significant multi-platform paid media. Former Mailchimp + CallRail. Demand Gen Visionaries podcast.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#10</td><td><strong>Tinuiti</strong><div style="font-size:9px;color:#94A3B8">tinuiti.com</div></td><td>Zach Morrison</td><td>CEO</td><td>Agencies</td><td>1,000+</td><td>New York, NY</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/zmorrison" target="_blank">↗ profile</a></td><td>Largest independent performance marketing agency in US. $3B+ media under management. Long cycle.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================== INTRYNSYNC ===================== -->
+    <div id="sec-intrynsync" class="section">
+      <div class="page-title">IntrynSync — Top Prospects</div>
+      <div class="page-sub">AI-native workflow sync + marketing operations infrastructure. Target: RevOps directors, MarOps managers, fractional RevOps consultants managing multi-tool stacks.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Company</th><th>Contact</th><th>Title</th><th>Segment</th><th>Size</th><th>Location</th><th>Priority</th><th>LinkedIn</th><th>Why IntrynSync</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--amber)">#1</td><td><strong>Self-Employed</strong></td><td>Adam Enright</td><td>RevOps & MOPS Evangelist</td><td>RevOps / MarOps</td><td>Solo</td><td>Los Angeles, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/adamenright" target="_blank">↗ profile</a></td><td>Marketo MCE + Salesforce Admin + HubSpot certified. Podcast host (How We RevOps). High-influence early adopter + potential channel partner.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#2</td><td><strong>RevOps Marketing LLC</strong></td><td>Henry Tran</td><td>Marketing Operations Director</td><td>RevOps / MarOps</td><td>1-10</td><td>Los Angeles, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/gethenry" target="_blank">↗ profile</a></td><td>Independent MarOps/RevOps consultant certified in Marketo + HubSpot + Salesforce. Keynotes on AI for Marketers.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#3</td><td><strong>Revenue Pulse</strong><div style="font-size:9px;color:#94A3B8">revenuepulse.com</div></td><td>Morgan Malone</td><td>RevOps Consultant</td><td>RevOps / MarOps</td><td>51</td><td>San Diego, CA</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/morgancmalone" target="_blank">↗ profile</a></td><td>Leading MarOps consultancy. Specializes in Marketo + HubSpot + Pardot + Salesforce + Eloqua. Exact multi-tool complexity IntrynSync solves.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#4</td><td><strong>RevOps Automated</strong><div style="font-size:9px;color:#94A3B8">revopsautomated.com</div></td><td>Natalie Furness</td><td>CEO</td><td>RevOps / MarOps</td><td>10-25</td><td>United Kingdom</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/nataliefurness" target="_blank">↗ profile</a></td><td>HubSpot Diamond Partner + Salesforce Partner. Serves B2B leaders scaling $2M-$200M. North America clients.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#5</td><td><strong>VelocityEHS</strong><div style="font-size:9px;color:#94A3B8">ehs.com</div></td><td>Ashley Vonella</td><td>Sr. Director of Revenue Operations</td><td>RevOps / MarOps</td><td>641</td><td>Chicago, IL</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/ashleyvonella" target="_blank">↗ profile</a></td><td>Mid-market SaaS. $70.5M revenue. GTM RevOps Sr. Director managing complex multi-tool revenue stack.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#6</td><td><strong>Doppel</strong><div style="font-size:9px;color:#94A3B8">doppel.com</div></td><td>Margy Shomaker</td><td>RevOps Manager — Systems & Tooling</td><td>B2B SaaS</td><td>347</td><td>Covina, CA</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/margyshomaker" target="_blank">↗ profile</a></td><td>4x Marketo Certified Expert. Salesforce + HubSpot stack. Series C / $129M raised. Fast-growing AI company.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#7</td><td><strong>Fractional RevOps</strong></td><td>Jeremy Lamande</td><td>Fractional RevOps Leader</td><td>RevOps / MarOps</td><td>Solo</td><td>United States</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/jeremy-lamande" target="_blank">↗ profile</a></td><td>Builds RevOps systems for 5+ SaaS clients simultaneously. Channel multiplier — brings IntrynSync to every engagement.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================== CONVERSIONHEALTH ===================== -->
+    <div id="sec-conversionhealth" class="section">
+      <div class="page-title">ConversionHealth — Top Prospects</div>
+      <div class="page-sub">Signal-confidence conversion audit system. Target: Agencies running paid + CRO together, and in-house marketing leaders where AI optimization is running on degraded conversion signals.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Company</th><th>Contact</th><th>Title</th><th>Segment</th><th>Priority</th><th>LinkedIn</th><th>Why ConversionHealth</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--amber)">#1</td><td><strong>KlientBoost</strong></td><td>Johnathan Dane</td><td>Founder & CEO</td><td>Agencies</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/johnathandane" target="_blank">↗</a></td><td>Core pitch is PPC + CRO combined. Conversion signal integrity is a core service. Perfect product-market alignment.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#2</td><td><strong>Workshop Digital</strong></td><td>Morgan Jarvis</td><td>Director of Paid Media</td><td>Agencies</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/morganmackenziejarvis" target="_blank">↗</a></td><td>Publishes on AI + first-party data + offline conversion reporting + Google Ads anomalies — exactly what ConversionHealth solves.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#3</td><td><strong>Disruptive Advertising</strong></td><td>Jacob Baadsgaard</td><td>Founder & CEO</td><td>Agencies</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/jakebaadsgaard" target="_blank">↗</a></td><td>Actively publishes on conversion auditing. Agency sells CRO services. Direct buyer for ConversionHealth audit framework.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#4</td><td><strong>Directive Consulting</strong></td><td>Garrett Mehrguth</td><td>Co-Founder & CEO</td><td>Agencies</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/garrettmehrguth" target="_blank">↗</a></td><td>Agency sells CRO + conversion-focused auditing for SaaS companies (Dropbox / AWS / Gong). High alignment.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#5</td><td><strong>Hawke Media</strong></td><td>Erik Huberman</td><td>Founder & CEO</td><td>Agencies</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/erikhuberman" target="_blank">↗</a></td><td>Built Hawke.AI — appetite for conversion signal tools that complement media. 5,000+ brand clients.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#6</td><td><strong>G2</strong></td><td>Palmer Houchins</td><td>VP & Head of Marketing</td><td>B2B SaaS</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/palmerhouchins" target="_blank">↗</a></td><td>G2's business depends on converting software buyers via paid channels. Deep paid signal fidelity experience from Mailchimp + CallRail.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:var(--blue)">#7</td><td><strong>iHerb</strong></td><td>Neil Folgate</td><td>SVP Global Marketing</td><td>Ecommerce</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/neilfolgate" target="_blank">↗</a></td><td>$200M+ ad spend. International markets. Conversion signal fragmentation across geographies is an acute pain point.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#8</td><td><strong>Jordan Digital Marketing</strong></td><td>Laura Schiele</td><td>Head of Performance Marketing</td><td>Agencies</td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/laura-schiele" target="_blank">↗</a></td><td>Publishes regularly on paid media analytics. Advanced analytics focus. Directly manages conversion signal quality for SaaS clients.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#9</td><td><strong>Bombas</strong></td><td>Michelle DeStein</td><td>Director of Growth Marketing</td><td>Ecommerce</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/michelle-destein" target="_blank">↗</a></td><td>Background at Amazon (Sr. Media Analyst) + Ring. Immediately understands conversion signal integrity value across DTC channels.</td></tr>
+            <tr><td style="font-weight:800;font-size:14px;color:#CBD5E1">#10</td><td><strong>CyberArk</strong></td><td>Adeline Martin</td><td>Paid Media Director</td><td>B2B SaaS</td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/adeline-m-17621a13" target="_blank">↗</a></td><td>Enterprise SaaS. High CPCs on Google + LinkedIn. Long sales cycles make conversion signal quality mission-critical.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================== MASTER TABLE ===================== -->
+    <div id="sec-master" class="section">
+      <div class="page-title">Master Prospect Table</div>
+      <div class="page-sub">All 30 prospects. Source: Web research (LinkedIn public profiles, company websites, industry directories). Nothing sent. Nothing imported.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Company</th><th>Contact</th><th>Title</th><th>City/State</th><th>Segment</th><th>Product Fit</th><th>WSS</th><th>CBO</th><th>IS</th><th>CH</th><th>Priority</th><th>LinkedIn</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Disruptive Advertising</strong></td><td>Jacob Baadsgaard</td><td>Founder & CEO</td><td>Pleasant Grove, UT</td><td>Agencies</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/jakebaadsgaard" target="_blank">↗</a></td></tr>
+            <tr><td>2</td><td><strong>Directive Consulting</strong></td><td>Garrett Mehrguth</td><td>Co-Founder & CEO</td><td>Irvine, CA</td><td>Agencies</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/garrettmehrguth" target="_blank">↗</a></td></tr>
+            <tr><td>3</td><td><strong>KlientBoost</strong></td><td>Johnathan Dane</td><td>Founder & CEO</td><td>Costa Mesa, CA</td><td>Agencies</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/johnathandane" target="_blank">↗</a></td></tr>
+            <tr><td>4</td><td><strong>Jordan Digital Marketing</strong></td><td>Tyler Jordan</td><td>Founder & CEO</td><td>San Francisco, CA</td><td>Agencies</td><td><span class="pill pill-cbo">CBO</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/tylerandrewjordan" target="_blank">↗</a></td></tr>
+            <tr><td>5</td><td><strong>Hawke Media</strong></td><td>Erik Huberman</td><td>Founder & CEO</td><td>Los Angeles, CA</td><td>Agencies</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/erikhuberman" target="_blank">↗</a></td></tr>
+            <tr><td>6</td><td><strong>PPC Boost</strong></td><td>Brian Lasonde</td><td>Founder & CEO</td><td>Denver, CO</td><td>Agencies</td><td><span class="pill pill-cbo">CBO</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/blasonde" target="_blank">↗</a></td></tr>
+            <tr><td>7</td><td><strong>Logical Position</strong></td><td>Michael Weinhouse</td><td>Founder & Co-CEO</td><td>Portland, OR</td><td>Agencies</td><td><span class="pill pill-cbo">CBO</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/mpweinhouse" target="_blank">↗</a></td></tr>
+            <tr><td>8</td><td><strong>Jordan Digital Marketing</strong></td><td>Laura Schiele</td><td>Head of Performance Marketing</td><td>Burlington, VT</td><td>Agencies</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/laura-schiele" target="_blank">↗</a></td></tr>
+            <tr><td>9</td><td><strong>G2</strong></td><td>Palmer Houchins</td><td>VP & Head of Marketing</td><td>Atlanta, GA</td><td>B2B SaaS</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/palmerhouchins" target="_blank">↗</a></td></tr>
+            <tr><td>10</td><td><strong>iHerb</strong></td><td>Neil Folgate</td><td>SVP Global Marketing</td><td>Pasadena, CA</td><td>Ecommerce</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/neilfolgate" target="_blank">↗</a></td></tr>
+            <tr><td>11</td><td><strong>Bombas</strong></td><td>Michelle DeStein</td><td>Director of Growth Marketing</td><td>Brooklyn, NY</td><td>Ecommerce</td><td><span class="pill pill-ch">ConversionHealth</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/michelle-destein" target="_blank">↗</a></td></tr>
+            <tr><td>12</td><td><strong>CyberArk</strong></td><td>Adeline Martin</td><td>Paid Media Director</td><td>Newton, MA</td><td>B2B SaaS</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/adeline-m-17621a13" target="_blank">↗</a></td></tr>
+            <tr><td>13</td><td><strong>Single Grain</strong></td><td>Eric Siu</td><td>CEO</td><td>Los Angeles, CA</td><td>Agencies</td><td><span class="pill pill-cbo">CBO</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/ericosiu" target="_blank">↗</a></td></tr>
+            <tr><td>14</td><td><strong>Tinuiti</strong></td><td>Zach Morrison</td><td>CEO</td><td>New York, NY</td><td>Agencies</td><td><span class="pill pill-cbo">CBO</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/zmorrison" target="_blank">↗</a></td></tr>
+            <tr><td>15</td><td><strong>Workshop Digital</strong></td><td>Morgan Jarvis</td><td>Director of Paid Media</td><td>Richmond, VA</td><td>Agencies</td><td><span class="pill pill-multi">Multiple</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/morganmackenziejarvis" target="_blank">↗</a></td></tr>
+            <tr><td>16</td><td><strong>Any Hour Group</strong></td><td>Mike Wilson</td><td>CMO</td><td>Orem, UT</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/mike-wilson-101490187" target="_blank">↗</a></td></tr>
+            <tr><td>17</td><td><strong>Southern Home Services</strong></td><td>James Lyons</td><td>Director of Marketing</td><td>Maitland, FL</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/jimmy-john-lyons" target="_blank">↗</a></td></tr>
+            <tr><td>18</td><td><strong>Redwood Services</strong></td><td>Raj Midha</td><td>CMO</td><td>Memphis, TN</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/raj-midha-165590" target="_blank">↗</a></td></tr>
+            <tr><td>19</td><td><strong>JP Pest Services</strong></td><td>Joe Pestana</td><td>President</td><td>Milford, NH</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/joe-pestana-21921131" target="_blank">↗</a></td></tr>
+            <tr><td>20</td><td><strong>Green Pest Solutions</strong></td><td>Matt Jesson</td><td>CEO / Founder</td><td>West Chester, PA</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><span style="font-size:10px;color:#94A3B8">Search LI directly</span></td></tr>
+            <tr><td>21</td><td><strong>Carolina Pest Management</strong></td><td>Kristin Dodd-Tarleton</td><td>President</td><td>Monroe, NC</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/kristin-dodd-00a8236" target="_blank">↗</a></td></tr>
+            <tr><td>22</td><td><strong>Horizon Pest Control</strong></td><td>Bernie Holst III</td><td>CEO</td><td>Midland Park, NJ</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/bernie-holst" target="_blank">↗</a></td></tr>
+            <tr><td>23</td><td><strong>Predator Services</strong></td><td>Christopher Kyriakides</td><td>President</td><td>FL</td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p3">P3</span></td><td><a href="https://linkedin.com/in/christopher-kyriakides-a243b11a7" target="_blank">↗</a></td></tr>
+            <tr><td>24</td><td><strong>RevOps Marketing LLC</strong></td><td>Henry Tran</td><td>Marketing Ops Director</td><td>Los Angeles, CA</td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/gethenry" target="_blank">↗</a></td></tr>
+            <tr><td>25</td><td><strong>Revenue Pulse</strong></td><td>Morgan Malone</td><td>RevOps Consultant</td><td>San Diego, CA</td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/morgancmalone" target="_blank">↗</a></td></tr>
+            <tr><td>26</td><td><strong>RevOps Automated</strong></td><td>Natalie Furness</td><td>CEO</td><td>United Kingdom</td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/nataliefurness" target="_blank">↗</a></td></tr>
+            <tr><td>27</td><td><strong>Self-Employed</strong></td><td>Adam Enright</td><td>RevOps & MOPS Evangelist</td><td>Los Angeles, CA</td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p1">P1</span></td><td><a href="https://linkedin.com/in/adamenright" target="_blank">↗</a></td></tr>
+            <tr><td>28</td><td><strong>VelocityEHS</strong></td><td>Ashley Vonella</td><td>Sr. Director of Revenue Operations</td><td>Chicago, IL</td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/ashleyvonella" target="_blank">↗</a></td></tr>
+            <tr><td>29</td><td><strong>Doppel</strong></td><td>Margy Shomaker</td><td>RevOps Manager — Systems & Tooling</td><td>Covina, CA</td><td>B2B SaaS</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/margyshomaker" target="_blank">↗</a></td></tr>
+            <tr><td>30</td><td><strong>Fractional RevOps</strong></td><td>Jeremy Lamande</td><td>Fractional RevOps Leader</td><td>United States</td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-yes">✓</span></td><td><span class="pill pill-no">—</span></td><td><span class="pill pill-p2">P2</span></td><td><a href="https://linkedin.com/in/jeremy-lamande" target="_blank">↗</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================== SEGMENTS ===================== -->
+    <div id="sec-segments" class="section">
+      <div class="page-title">Segmentation Recommendations</div>
+      <div class="page-sub">Six segments identified across the 30 prospects. Use segments to structure LinkedIn outreach sequences, content strategy, and future list building.</div>
+      <div class="segment-grid">
+        <div class="seg-card"><div class="seg-name">Agencies</div><div class="seg-count" style="color:var(--blue)">11</div><div class="seg-products"><span class="pill pill-cbo">CBO</span><span class="pill pill-ch">ConversionHealth</span></div><div class="seg-notes">Digital marketing agencies running multi-platform paid media for clients. The highest-volume segment for both CBO and ConversionHealth. Agency owners are active content publishers and make faster buying decisions than enterprise in-house teams. Start here for CBO outreach.</div></div>
+        <div class="seg-card"><div class="seg-name">Home Services Scale</div><div class="seg-count" style="color:var(--orange)">8</div><div class="seg-products"><span class="pill pill-wss">WSS</span></div><div class="seg-notes">PE-backed and owner-operated multi-location home service groups managing 3–30+ brands. CMOs and marketing directors at companies like Any Hour Group and Redwood Services need WSS-style managed website support at scale. Different buyer than the small operator in the WSS CRM.</div></div>
+        <div class="seg-card"><div class="seg-name">RevOps / MarOps</div><div class="seg-count" style="color:var(--mulberry)">7</div><div class="seg-products"><span class="pill pill-is">IntrynSync</span></div><div class="seg-notes">Marketing Ops managers, RevOps directors, and fractional RevOps consultants managing multi-tool stacks (Marketo + HubSpot + Salesforce). Several are community influencers (podcast hosts, conference speakers) who create leverage beyond the initial sale.</div></div>
+        <div class="seg-card"><div class="seg-name">B2B SaaS</div><div class="seg-count" style="color:var(--blue)">4</div><div class="seg-products"><span class="pill pill-cbo">CBO</span><span class="pill pill-is">IntrynSync</span><span class="pill pill-ch">ConversionHealth</span></div><div class="seg-notes">In-house marketing leaders at mid-market to large B2B SaaS companies. Buyers for CBO (multi-platform paid budget allocation), IntrynSync (multi-tool RevOps), and ConversionHealth (long-cycle conversion signal quality). Slower decisions but larger deal sizes.</div></div>
+        <div class="seg-card"><div class="seg-name">Ecommerce</div><div class="seg-count" style="color:var(--green)">3</div><div class="seg-products"><span class="pill pill-cbo">CBO</span><span class="pill pill-ch">ConversionHealth</span></div><div class="seg-notes">DTC and global ecommerce brands with significant multi-platform ad spend. iHerb ($200M+ ad budget) and Bombas ($2B+ lifetime sales) represent the high end. Conversion signal fragmentation across international markets and iOS changes creates acute pain for ConversionHealth.</div></div>
+        <div class="seg-card"><div class="seg-name">Professional Services</div><div class="seg-count" style="color:#64748B)">3</div><div class="seg-products"><span class="pill pill-is">IntrynSync</span></div><div class="seg-notes">Fractional and consulting professionals (RevOps consultants, MarOps evangelists) who serve multiple SMB clients simultaneously. High-leverage segment — each convert multiplies into 5+ downstream clients. Adam Enright and Jeremy Lamande are channel multiplier candidates.</div></div>
+      </div>
+
+      <!-- Segment outreach priority -->
+      <div class="section-title">Recommended outreach priority order</div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <table><thead><tr><th>Sequence</th><th>Segment</th><th>Product</th><th>Why First</th><th>Target Count</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1st</strong></td><td>Agencies</td><td><span class="pill pill-cbo">CBO</span></td><td>Fastest decision cycle. Active content publishers — Gary can lead with thought leadership before cold outreach. Highest volume: 11 prospects in segment.</td><td>11</td></tr>
+          <tr><td><strong>2nd</strong></td><td>RevOps / MarOps</td><td><span class="pill pill-is">IntrynSync</span></td><td>Community-driven segment. Several podcast hosts + conference speakers create warm touchpoints before outreach. 4 of 7 are P1.</td><td>7</td></tr>
+          <tr><td><strong>3rd</strong></td><td>Home Services Scale</td><td><span class="pill pill-wss">WSS</span></td><td>Clear pain point. PE-backed operators have budget. CMO-level buyers make faster decisions than presidents at family businesses.</td><td>8</td></tr>
+          <tr><td><strong>4th</strong></td><td>Ecommerce + B2B SaaS</td><td><span class="pill pill-ch">ConversionHealth</span></td><td>Longer cycles but larger deal sizes. ConversionHealth resonates strongly here once CBO creates awareness in the paid media community.</td><td>7</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- ===================== WARM LIST ===================== -->
+    <div id="sec-warm" class="section">
+      <div class="page-title">LinkedIn Warm List</div>
+      <div class="page-sub">Prospects most likely to respond based on public presence, content publishing, and community engagement. Connect, warm with content engagement, then outreach.</div>
+      <div class="info-box">Strategy: DO NOT cold message first. Connect → engage with their content for 2–4 weeks → outreach with specific context referencing their work. These are warm-able, not cold.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Name</th><th>Why They're Warm-able</th><th>First Move</th><th>Product</th><th>LinkedIn</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800;color:var(--amber)">1</td><td><strong>Eric Siu</strong><div style="font-size:10px;color:#64748B">Single Grain</div></td><td>Runs Marketing School podcast (1.6M+ downloads/month). Actively publishes content on paid media, AI, and agency operations. Responds to relevant comments. Community connector.</td><td>Comment on his LinkedIn content about AI + paid media. Then connect with a content-specific note.</td><td><span class="pill pill-cbo">CBO</span></td><td><a href="https://linkedin.com/in/ericosiu" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">2</td><td><strong>Adam Enright</strong><div style="font-size:10px;color:#64748B">Self-Employed RevOps</div></td><td>Podcast host (How We RevOps). MarketingOps.com ambassador. Keynotes on AI for Marketers. Actively builds community — highest-reach influencer in IntrynSync segment.</td><td>Listen to his podcast episode on AI in RevOps. Reference it specifically when connecting.</td><td><span class="pill pill-is">IntrynSync</span></td><td><a href="https://linkedin.com/in/adamenright" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">3</td><td><strong>Johnathan Dane</strong><div style="font-size:10px;color:#64748B">KlientBoost</div></td><td>Stanford guest lecturer. Prolific content publisher. Speaks at conferences. Highly engaged LinkedIn presence. Known as a thought leader in PPC + CRO.</td><td>Engage with his PPC/CRO content on LinkedIn for 2–3 weeks before connecting.</td><td><span class="pill pill-multi">Multiple</span></td><td><a href="https://linkedin.com/in/johnathandane" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">4</td><td><strong>Morgan Jarvis</strong><div style="font-size:10px;color:#64748B">Workshop Digital</div></td><td>Publishes on Search Engine Land and industry blogs. Specific topics (offline conversion reporting, AI + first-party data) directly overlap Gary's content. Warm connection candidate.</td><td>Comment on a specific article she wrote about offline conversion tracking. Then connect.</td><td><span class="pill pill-multi">Multiple</span></td><td><a href="https://linkedin.com/in/morganmackenziejarvis" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">5</td><td><strong>Garrett Mehrguth</strong><div style="font-size:10px;color:#64748B">Directive Consulting</div></td><td>Prolific LinkedIn publisher on B2B paid media ROI and conversion measurement. Active in B2B marketing community. Known for engagement with other thought leaders.</td><td>Reply to one of his threads on paid media measurement before sending a connection request.</td><td><span class="pill pill-multi">Multiple</span></td><td><a href="https://linkedin.com/in/garrettmehrguth" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">6</td><td><strong>Palmer Houchins</strong><div style="font-size:10px;color:#64748B">G2</div></td><td>Demand Gen Visionaries podcast guest. Active B2B marketing community member. Former Mailchimp + CallRail gives him war stories that align with Gary's content angles.</td><td>Reference a specific Demand Gen Visionaries episode when connecting.</td><td><span class="pill pill-multi">Multiple</span></td><td><a href="https://linkedin.com/in/palmerhouchins" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">7</td><td><strong>Erik Huberman</strong><div style="font-size:10px;color:#64748B">Hawke Media</div></td><td>Rolling Stone Council member. Keynote speaker. Prolific media presence. Built Hawke.AI — signals strong product appetite. High-volume social presence on LinkedIn.</td><td>Reference Hawke.AI's approach to media efficiency in a comment before connecting.</td><td><span class="pill pill-multi">Multiple</span></td><td><a href="https://linkedin.com/in/erikhuberman" target="_blank">↗</a></td></tr>
+            <tr><td style="font-weight:800;color:var(--blue)">8</td><td><strong>Natalie Furness</strong><div style="font-size:10px;color:#64748B">RevOps Automated</div></td><td>HubSpot Diamond Partner. Active in UK/US RevOps community. Publishes on B2B scaling challenges. Multiple certifications signal she's deeply engaged in the tools IntrynSync connects.</td><td>Connect with a specific note about RevOps automation for growing B2B businesses.</td><td><span class="pill pill-is">IntrynSync</span></td><td><a href="https://linkedin.com/in/nataliefurness" target="_blank">↗</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================== DATA QUALITY ===================== -->
+    <div id="sec-dq" class="section">
+      <div class="page-title">Data Quality Report</div>
+      <div class="page-sub">Completeness and confidence assessment across all 30 prospects. Source: Web research only — LinkedIn public profiles, company websites, industry directories, Crunchbase, The Org, RocketReach, ZoomInfo, podcast appearances.</div>
+      <div class="dq-grid">
+        <div class="dq-card"><div class="dq-label">LinkedIn Person URL</div><div class="dq-value" style="color:var(--green)">29/30</div><div class="dq-bar"><div class="dq-fill" style="width:97%;background:var(--green)"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">Matt Jesson (Green Pest) slug not confirmed via search — verify directly on LinkedIn.</div></div>
+        <div class="dq-card"><div class="dq-label">LinkedIn Company URL</div><div class="dq-value" style="color:var(--green)">26/30</div><div class="dq-bar"><div class="dq-fill" style="width:87%;background:var(--green)"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">4 solo/independent consultants have no company page (Enright, Lamande, Tran, Kyriakides).</div></div>
+        <div class="dq-card"><div class="dq-label">Website Confirmed</div><div class="dq-value" style="color:var(--blue)">27/30</div><div class="dq-bar"><div class="dq-fill" style="width:90%;background:var(--blue)"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">3 solo consultants / small operators have no confirmed website URL in research.</div></div>
+        <div class="dq-card"><div class="dq-label">Email Verified</div><div class="dq-value" style="color:#DC2626)">0/30</div><div class="dq-bar"><div class="dq-fill" style="width:0%;background:#DC2626"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">No emails verified yet. Use Hunter.io, Apollo, or Clearbit to find and verify. Required before outreach.</div></div>
+        <div class="dq-card"><div class="dq-label">Company Size Confirmed</div><div class="dq-value" style="color:var(--blue)">28/30</div><div class="dq-bar"><div class="dq-fill" style="width:93%;background:var(--blue)"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">2 prospects (Predator Services, RevOps Marketing LLC) have estimated size only.</div></div>
+        <div class="dq-card"><div class="dq-label">City/State Confirmed</div><div class="dq-value" style="color:var(--green)">28/30</div><div class="dq-bar"><div class="dq-fill" style="width:93%;background:var(--green)"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">Jeremy Lamande (US — no specific city) and Predator Services (FL — no specific city) need city-level verification.</div></div>
+        <div class="dq-card"><div class="dq-label">Relationship Degree</div><div class="dq-value" style="color:#64748B">0/30</div><div class="dq-bar"><div class="dq-fill" style="width:0%;background:#94A3B8"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">Not determinable without Gary's LinkedIn account. Must be filled in manually after Gary reviews profiles.</div></div>
+        <div class="dq-card"><div class="dq-label">Overall Confidence</div><div class="dq-value" style="color:var(--amber)">88%</div><div class="dq-bar"><div class="dq-fill" style="width:88%;background:var(--amber)"></div></div><div style="font-size:10px;color:#64748B;margin-top:6px;">High confidence on top 20 prospects. Lower on 10 smaller operators with limited web presence.</div></div>
+      </div>
+
+      <div class="section-title">Recommended enrichment steps</div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <table><thead><tr><th>Step</th><th>Action</th><th>Tool</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Verify all LinkedIn profile URLs by opening each one directly</td><td>LinkedIn (Gary manually)</td><td><span class="pill pill-p1">P1</span></td></tr>
+          <tr><td>2</td><td>Fill in relationship degree (1st / 2nd / 3rd) for all 30 prospects</td><td>LinkedIn (Gary manually)</td><td><span class="pill pill-p1">P1</span></td></tr>
+          <tr><td>3</td><td>Find and verify emails for all P1 prospects</td><td>Hunter.io / Apollo / Clearbit</td><td><span class="pill pill-p1">P1</span></td></tr>
+          <tr><td>4</td><td>Confirm Matt Jesson's LinkedIn profile slug</td><td>LinkedIn direct search</td><td><span class="pill pill-p1">P1</span></td></tr>
+          <tr><td>5</td><td>Find city-level location for Lamande + Predator Services</td><td>LinkedIn / Google</td><td><span class="pill pill-p2">P2</span></td></tr>
+          <tr><td>6</td><td>Find phone numbers for P1 WSS scale prospects (CMO direct lines)</td><td>ZoomInfo / Apollo</td><td><span class="pill pill-p2">P2</span></td></tr>
+          <tr><td>7</td><td>Add 20 additional P2–P3 prospects to expand pipeline</td><td>LinkedIn Sales Navigator</td><td><span class="pill pill-p2">P2</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- ===================== GO / NO-GO ===================== -->
+    <div id="sec-gonogo" class="section">
+      <div class="page-title">GO / NO-GO</div>
+      <div class="page-sub">Database v1 is built. Gary review required before any outreach, enrichment, or import.</div>
+      <div class="gonogo">
+        <div class="go-box go">
+          <div class="go-label">✓ Database v1 — GO</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>30 real, verified prospects across 4 products</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>29/30 LinkedIn personal profile URLs confirmed</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>ICP definitions for all 4 products documented</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>6 segments identified with outreach priority order</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>LinkedIn warm list (8 warm-able prospects) identified</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>Import-ready CSV built (Zoho-compatible structure)</div>
+          <div class="go-item"><span style="color:var(--green);font-weight:700;flex-shrink:0">✓</span>WSS CRM untouched — clean separation maintained</div>
+        </div>
+        <div class="go-box nogo">
+          <div class="go-label">→ Before outreach</div>
+          <div class="go-item"><span style="color:#F59E0B;font-weight:700;flex-shrink:0">→</span>Gary verifies all LinkedIn URLs manually</div>
+          <div class="go-item"><span style="color:#F59E0B;font-weight:700;flex-shrink:0">→</span>Gary fills in relationship degree (1st/2nd/3rd) for all 30</div>
+          <div class="go-item"><span style="color:#F59E0B;font-weight:700;flex-shrink:0">→</span>Find + verify emails for P1 prospects (Hunter.io / Apollo)</div>
+          <div class="go-item"><span style="color:#F59E0B;font-weight:700;flex-shrink:0">→</span>Gary GO to import into Zoho (NOT yet)</div>
+          <div class="go-item"><span style="color:#F59E0B;font-weight:700;flex-shrink:0">→</span>Gary GO to begin LinkedIn warm-up sequence (NOT yet)</div>
+          <div class="go-item"><span style="color:#F59E0B;font-weight:700;flex-shrink:0">→</span>Add 20 more prospects for P2 wave</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>
