@@ -355,7 +355,7 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
           Website Support Studio reviews your input and prepares a free website preview you can look over before deciding what to do next.
         </p>
         <div class="preview-actions">
-          <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_hero_cta">Get My Free Website Preview</a>
+          <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_hero_cta">Start My Free Preview</a>
           <a class="btn btn-ghost" href="#preview-examples" data-ga-event="click_free_preview_examples">See Preview Styles</a>
         </div>
         <div class="trust-strip" aria-label="Offer details">
@@ -365,25 +365,123 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
         </div>
       </div>
 
-      <aside class="hero-browser" aria-label="Example preview mockup">
-        <div class="browser-bar"><span></span><span></span><span></span></div>
-        <div class="browser-hero">
-          <div>
-            <p>Local service business</p>
-            <strong>Clean homepage preview</strong>
-            <span>Clear services, trust signals, and a simple lead path.</span>
+      <aside class="hero-form-card" id="preview-questionnaire" aria-label="Free website preview questionnaire">
+        <div class="form-intro">
+          <p class="kicker"><Label text="_questionnaire" /></p>
+          <h2>Tell us what your website needs to do.</h2>
+          <p>
+            The more specific you are, the better the preview brief will be. Your submission is stored as a structured request with a timestamp, source, and status of <strong>new_preview_request</strong>.
+          </p>
+          <div class="request-note">
+            <strong>Clear request details</strong>
+            <span>Submissions are saved with labeled fields so Website Support Studio can review your business, goals, and preview direction.</span>
           </div>
-          <div class="browser-photo" aria-hidden="true"></div>
         </div>
-        <div class="browser-grid">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="browser-row"><strong></strong><span></span></div>
-        <div class="browser-row"><strong></strong><span></span></div>
+
+        <form class="preview-form" data-endpoint={previewEndpoint} novalidate>
+          <input type="text" name="company_website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div class="form-status" role="status" aria-live="polite" hidden></div>
+
+          <div class="field-pair">
+            <label>
+              <span>Name *</span>
+              <input name="name" autocomplete="name" required />
+            </label>
+            <label>
+              <span>Email *</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+          </div>
+
+          <div class="field-pair">
+            <label>
+              <span>Phone</span>
+              <input name="phone" autocomplete="tel" inputmode="tel" />
+            </label>
+            <label>
+              <span>Business name *</span>
+              <input name="business_name" autocomplete="organization" required />
+            </label>
+          </div>
+
+          <div class="field-pair">
+            <label>
+              <span>Current website URL, optional</span>
+              <input type="url" name="current_website_url" placeholder="https://example.com" />
+            </label>
+            <label>
+              <span>Business type / industry</span>
+              <input name="industry" placeholder="Roofing, law firm, salon, consulting..." />
+            </label>
+          </div>
+
+          <label>
+            <span>What does your business do? *</span>
+            <textarea name="business_description" rows="4" required placeholder="Tell us what you sell, who you help, and what customers usually ask for."></textarea>
+          </label>
+
+          <fieldset>
+            <legend>What pages do you need?</legend>
+            <div class="check-grid">
+              {["Home", "About", "Services", "Contact", "Pricing", "Gallery", "Blog"].map((page) => (
+                <label><input type="checkbox" name="pages_needed" value={page} /> <span>{page}</span></label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label>
+            <span>What style do you like?</span>
+            <input name="preferred_style" placeholder="Modern, simple, bold, luxury, friendly, local, professional..." />
+          </label>
+
+          <label>
+            <span>Competitor or inspiration websites</span>
+            <textarea name="inspiration_websites" rows="3" placeholder="Paste links or describe sites you like."></textarea>
+          </label>
+
+          <label>
+            <span>Primary goal *</span>
+            <select name="primary_goal" required>
+              <option value="">Select a goal</option>
+              <option value="get_leads">Get leads</option>
+              <option value="book_appointments">Book appointments</option>
+              <option value="sell_products">Sell products</option>
+              <option value="look_more_professional">Look more professional</option>
+              <option value="replace_old_website">Replace old website</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Services/products to highlight</span>
+            <textarea name="services_to_highlight" rows="3"></textarea>
+          </label>
+
+          <label>
+            <span>Target customers</span>
+            <textarea name="target_customers" rows="3" placeholder="Who should the website speak to?"></textarea>
+          </label>
+
+          <fieldset>
+            <legend>Logo/brand colors available?</legend>
+            <div class="radio-row">
+              <label><input type="radio" name="logo_brand_colors_available" value="yes" /> <span>Yes</span></label>
+              <label><input type="radio" name="logo_brand_colors_available" value="no" /> <span>No</span></label>
+            </div>
+          </fieldset>
+
+          <label>
+            <span>Anything else we should know?</span>
+            <textarea name="additional_notes" rows="4"></textarea>
+          </label>
+
+          <button class="btn btn-green btn-cta" type="submit" data-ga-event="submit_free_preview_request">Get My Free Website Preview</button>
+          <p class="privacy-note">Submitting this form creates a structured preview request for Website Support Studio to review. No paid commitment is created by this form.</p>
+        </form>
       </aside>
     </div>
   </section>
-
 
   <section class="section industry-feed" id="industry-preview-feed">
     <div class="container">
@@ -520,124 +618,6 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       <div class="gallery-cta">
         <a class="btn btn-green btn-cta" href="#preview-questionnaire" data-ga-event="click_free_preview_gallery_cta">Start My Free Preview</a>
       </div>
-    </div>
-  </section>
-
-  <section class="section form-section" id="preview-questionnaire">
-    <div class="container form-grid">
-      <div class="form-intro">
-        <p class="kicker"><Label text="_questionnaire" /></p>
-        <h2>Tell us what your website needs to do.</h2>
-        <p>
-          The more specific you are, the better the preview brief will be. Your submission is stored as a structured request with a timestamp, source, and status of <strong>new_preview_request</strong>.
-        </p>
-        <div class="request-note">
-          <strong>Clear request details</strong>
-          <span>Submissions are saved with labeled fields so Website Support Studio can review your business, goals, and preview direction.</span>
-        </div>
-      </div>
-
-      <form class="preview-form" data-endpoint={previewEndpoint} novalidate>
-        <input type="text" name="company_website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
-
-        <div class="form-status" role="status" aria-live="polite" hidden></div>
-
-        <div class="field-pair">
-          <label>
-            <span>Name *</span>
-            <input name="name" autocomplete="name" required />
-          </label>
-          <label>
-            <span>Email *</span>
-            <input type="email" name="email" autocomplete="email" required />
-          </label>
-        </div>
-
-        <div class="field-pair">
-          <label>
-            <span>Phone</span>
-            <input name="phone" autocomplete="tel" inputmode="tel" />
-          </label>
-          <label>
-            <span>Business name *</span>
-            <input name="business_name" autocomplete="organization" required />
-          </label>
-        </div>
-
-        <div class="field-pair">
-          <label>
-            <span>Current website URL, optional</span>
-            <input type="url" name="current_website_url" placeholder="https://example.com" />
-          </label>
-          <label>
-            <span>Business type / industry</span>
-            <input name="industry" placeholder="Roofing, law firm, salon, consulting..." />
-          </label>
-        </div>
-
-        <label>
-          <span>What does your business do? *</span>
-          <textarea name="business_description" rows="4" required placeholder="Tell us what you sell, who you help, and what customers usually ask for."></textarea>
-        </label>
-
-        <fieldset>
-          <legend>What pages do you need?</legend>
-          <div class="check-grid">
-            {["Home", "About", "Services", "Contact", "Pricing", "Gallery", "Blog"].map((page) => (
-              <label><input type="checkbox" name="pages_needed" value={page} /> <span>{page}</span></label>
-            ))}
-          </div>
-        </fieldset>
-
-        <label>
-          <span>What style do you like?</span>
-          <input name="preferred_style" placeholder="Modern, simple, bold, luxury, friendly, local, professional..." />
-        </label>
-
-        <label>
-          <span>Competitor or inspiration websites</span>
-          <textarea name="inspiration_websites" rows="3" placeholder="Paste links or describe sites you like."></textarea>
-        </label>
-
-        <label>
-          <span>Primary goal *</span>
-          <select name="primary_goal" required>
-            <option value="">Select a goal</option>
-            <option value="get_leads">Get leads</option>
-            <option value="book_appointments">Book appointments</option>
-            <option value="sell_products">Sell products</option>
-            <option value="look_more_professional">Look more professional</option>
-            <option value="replace_old_website">Replace old website</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-
-        <label>
-          <span>Services/products to highlight</span>
-          <textarea name="services_to_highlight" rows="3"></textarea>
-        </label>
-
-        <label>
-          <span>Target customers</span>
-          <textarea name="target_customers" rows="3" placeholder="Who should the website speak to?"></textarea>
-        </label>
-
-        <fieldset>
-          <legend>Logo/brand colors available?</legend>
-          <div class="radio-row">
-            <label><input type="radio" name="logo_brand_colors_available" value="yes" /> <span>Yes</span></label>
-            <label><input type="radio" name="logo_brand_colors_available" value="no" /> <span>No</span></label>
-          </div>
-        </fieldset>
-
-        <label>
-          <span>Anything else we should know?</span>
-          <textarea name="additional_notes" rows="4"></textarea>
-        </label>
-
-        <button class="btn btn-green btn-cta" type="submit" data-ga-event="submit_free_preview_request">Get My Free Website Preview</button>
-        <p class="privacy-note">Submitting this form creates a structured preview request for Website Support Studio to review. No paid commitment is created by this form.</p>
-      </form>
     </div>
   </section>
 
@@ -796,6 +776,19 @@ const previewEndpoint = WEBSITE_PREVIEW_REQUEST_URL;
       border-radius: 8px;
       overflow: hidden;
       padding: 0.9rem;
+    }
+
+    .hero-form-card {
+      display: grid;
+      gap: 1rem;
+      align-self: start;
+      max-height: min(780px, calc(100vh - 6rem));
+      overflow: auto;
+      padding-right: 0.15rem;
+    }
+
+    .hero-form-card .form-intro {
+      max-width: none;
     }
 
     .browser-bar,
